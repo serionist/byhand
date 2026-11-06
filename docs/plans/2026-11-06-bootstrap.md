@@ -1,9 +1,9 @@
 ---
 title: Bootstrap byhand, a plugin that writes in the user's own voice without the signs of AI writing
 issue: "#1"
-status: draft
-approved_by:
-approved_at:
+status: approved
+approved_by: serionist
+approved_at: 2026-11-06
 ---
 
 # Bootstrap byhand, a plugin that writes in the user's own voice without the signs of AI writing

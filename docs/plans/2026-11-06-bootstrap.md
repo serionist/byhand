@@ -244,7 +244,7 @@ tools/gate.py full`, `review-code` until clean, the PR. This plan's progress log
      (a docstring, a commit message, a README); 5 `check` cases graded `tool_used: Skill` on `check`, and 2 where
      `check` and `write` meet, graded on the skill each should start; a case with
      a history file of invented turns for a second draft in another language, graded `tool_order` (`write` invoked
-     again before the `Read` of `signs/`); `check` run on a sample of the signs without a `check`, their `passes`
+     again before a `Read` whose input matches the second draft's language, `signs[\\/]hu[\\/]`, either separator); `check` run on a sample of the signs without a `check`, their `passes`
      texts above all. The bar: 21 of 23 writing requests, 1 of 10 others at most, 6 of the 7 `check` and boundary
      cases; a `passes` text a sign flags is a finding, fixed before Step 8.
    - By hand, on Windows at least: a session started outside the clone, two drafts in a row and one after `/compact`,
@@ -399,4 +399,4 @@ the `0.0.0` placeholder against the one-version rule (never committed); start-wo
 
 | # | Improvement | Answer |
 |---|---|---|
-| I16 | Step 7's history case grades `tool_order` with an `input_match` on the second draft's language path, accepting either separator (`signs[\\/]hu[\\/]`): a path the invented history never reads, and a Windows `Read` path has backslashes | open |
+| I16 | Step 7's history case grades `tool_order` with an `input_match` on the second draft's language path, accepting either separator (`signs[\\/]hu[\\/]`): a path the invented history never reads, and a Windows `Read` path has backslashes | taken |

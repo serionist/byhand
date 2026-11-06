@@ -1,0 +1,116 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "byhand"
+# One version for the package and the plugin: plugin/.claude-plugin/plugin.json and every byhand==X.Y.Z pin under
+# plugin/ equal it, and the gate refuses a difference.
+version = "0.1.0"
+description = "Write like a person, in your own voice and language, without the signs of AI writing"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [
+    { name = "Soma Osvay" },
+]
+keywords = ["writing", "style", "voice", "ai-writing", "multilingual", "claude-code"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: End Users/Desktop",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Text Processing :: Linguistic",
+]
+# Exact pins, as in the house's other repos: Dependabot moves them, and CI proves each move.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/serionist/byhand"
+Repository = "https://github.com/serionist/byhand"
+Issues = "https://github.com/serionist/byhand/issues"
+
+[dependency-groups]
+dev = [
+    "basedpyright==1.40.2",
+    "coverage==7.17.0",
+    "import-linter==2.15",
+    "pytest==9.2.0",
+    "pytest-xdist==3.8.0",
+    "ruff==0.17.2",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/byhand"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "tests/", "tools/", "README.md", "CHANGELOG.md", "LICENSE"]
+
+# Strict from the start, as in omniverse-mcp: an unknown marker or setting, an xfail that passes, a repeated
+# parametrize id and any warning are errors. The tests run on every core (pytest-xdist's -n auto); -n 0 runs them all
+# in one process, for a debugger or a single test.
+[tool.pytest]
+addopts = ["--import-mode=importlib", "-ra", "-n", "auto"]
+testpaths = ["tests"]
+# tests/test_gate.py imports the gate, the hooks and setup from tools/, which are scripts, not a package.
+pythonpath = ["tools"]
+strict_config = true
+strict_markers = true
+strict_parametrization_ids = true
+strict_xfail = true
+filterwarnings = ["error"]
+
+# Lines and branches of the package. The floor only rises, and the gate refuses a lower one.
+[tool.coverage.run]
+source_pkgs = ["byhand"]
+branch = true
+# The tests run on every core (pytest-xdist, -n auto above): each worker is a subprocess, measured through this patch
+# into a data file of its own, combined before the report (`coverage combine`). The xdist controller and the tools'
+# subprocesses never import the package, so their warnings that nothing was collected say nothing.
+patch = ["subprocess"]
+disable_warnings = ["module-not-imported", "no-data-collected"]
+
+[tool.coverage.report]
+fail_under = 95  # the bootstrap's floor; only rises
+precision = 2
+show_missing = true
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF", "S", "C4", "PTH", "PL", "N", "RET", "TID", "BLE"]
+ignore = [
+    "PLR0911", # too many returns: checks return early on each bad input
+    "PLR2004", # magic values: thresholds read clearer inline
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "S101",    # assert is how pytest checks
+    "PLC0415", # imports inside a test keep a slow or optional import local to it
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["byhand"]
+
+# The package never imports the repo's tools: they are the harness, and a wheel doesn't carry them.
+[tool.importlinter]
+root_packages = ["byhand"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "The package imports none of the repo's tools"
+type = "forbidden"
+source_modules = ["byhand"]
+forbidden_modules = ["gate", "hooks", "setup"]
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+pythonVersion = "3.12"
+include = ["src", "tests", "tools"]
+exclude = ["**/__pycache__", ".venv"]
+extraPaths = ["tools"]

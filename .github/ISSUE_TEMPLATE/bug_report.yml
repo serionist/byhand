@@ -1,0 +1,56 @@
+name: Bug report
+description: Something a skill, the package or the catalogue does wrong.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Never paste a key, a token or a password, or anyone's real mail or messages: write a short made-up text that shows the same thing. A security vulnerability goes through a [private report](https://github.com/serionist/byhand/security/advisories/new), never an issue.
+  - type: input
+    id: version
+    attributes:
+      label: byhand version
+      description: The plugin's version (`claude plugin list`), or the commit you ran from a clone.
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: claude-code
+    attributes:
+      label: Claude Code version and model
+      description: "`claude --version`, and the model the session ran on."
+      placeholder: 2.1.285, claude-opus-5-5
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      description: The language of the text, and of the style if it was a different one.
+      placeholder: Hungarian
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you asked for (a mail, a message, a deck), the style it used, and what came back. A sign that flagged plain human writing, a sign it missed, the wrong style or language, a skill that didn't start, an error.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: An invented example
+      description: A short made-up text that shows it. Never a real one.
+      render: text
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: Windows 11, Ubuntu 24.04, macOS 26

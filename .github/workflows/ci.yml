@@ -1,0 +1,140 @@
+# The gate on every pull request, every push to main and once a day on main. Checks (Linux) runs the gate's quick lane
+# (lock, lint, format, types, the import contracts and the coverage floor, the version, the harness, the plugin
+# validated by Claude Code, no tool attribution in the commits, gitleaks over them); the tests run on Linux on Python
+# 3.12 to 3.14, on Windows on 3.12 and on macOS on 3.14, and the Linux 3.12 leg measures coverage against its floor;
+# Package (Linux) builds and checks what a release would publish. CI needs all three; it and pr-text.yml's PR text are
+# the two checks the ruleset on main requires. Hosted CI never runs a Claude session or reads the live sources, so a
+# PR that touches the plugin or the refresh says what ran by hand.
+#
+# The daily run is for Dependabot's merges: dependabot-auto-merge.yml turns on auto-merge with the workflow's token,
+# and a push made with that token starts no run, so main is tested within a day of one instead.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 6 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Superseded PR runs are cancelled. Each run on main, a push or the daily one, has a group per commit and keeps its
+  # own result: one group for main would cancel a waiting run when the next push came.
+  group: ci-${{ github.ref }}-${{ github.event_name == 'pull_request' && 'pr' || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  checks:
+    name: Checks (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The attribution and secret checks read the commits since the base, which a shallow clone doesn't have.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          enable-cache: true
+      - name: Install gitleaks
+        run: |
+          curl -sSfL -o /tmp/gitleaks.tgz \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  /tmp/gitleaks.tgz" | sha256sum -c -
+          sudo tar -xzf /tmp/gitleaks.tgz -C /usr/local/bin gitleaks
+      # The gate validates the plugin and the marketplace with Claude Code itself, at a pinned version.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "24"
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code@2.1.285
+      # The commits checked start after the PR's base, or after the commit main was on before the push. A PR's checkout
+      # is the merge of its branch into the base, so that merge is checked too. A push's before is all zeros for a new
+      # branch, and a commit no longer in the history after a force push; the daily run has none. Then the head commit
+      # alone is checked, since a squash merge is one commit. --locked fails on a stale uv.lock before anything is
+      # installed. GATE_REQUIRE_GITLEAKS and GATE_REQUIRE_CLAUDE make a missing gitleaks or Claude Code a failure, not a
+      # warning.
+      - name: The gate's quick lane
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          GATE_REQUIRE_GITLEAKS: "1"
+          GATE_REQUIRE_CLAUDE: "1"
+        run: |
+          if ! git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            echo "::notice::${BASE:-no base} is not in the history; checking HEAD~1..HEAD"
+            BASE=HEAD~1
+          fi
+          uv run --locked tools/gate.py quick --base "$BASE"
+
+  tests:
+    name: Tests (${{ matrix.name }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, name: Linux, python: "3.12", coverage: true }
+          - { os: ubuntu-latest, name: Linux, python: "3.13" }
+          - { os: ubuntu-latest, name: Linux, python: "3.14" }
+          - { os: windows-latest, name: Windows, python: "3.12" }
+          - { os: macos-latest, name: macOS, python: "3.14" }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          enable-cache: true
+      # uv run makes the environment on the leg's Python, which overrides .python-version's 3.12, and fails on a stale
+      # uv.lock before anything is installed.
+      - name: Tests
+        if: ${{ !matrix.coverage }}
+        run: uv run --locked --python ${{ matrix.python }} pytest
+      # Each pytest-xdist worker writes its own coverage data file: combined before the report.
+      - name: Tests, under coverage, and the coverage floor
+        if: ${{ matrix.coverage }}
+        run: |
+          uv run --locked --python ${{ matrix.python }} coverage erase
+          uv run --locked --python ${{ matrix.python }} coverage run -m pytest
+          uv run --locked --python ${{ matrix.python }} coverage combine --quiet
+          uv run --locked --python ${{ matrix.python }} coverage report
+
+  # What a release would publish, built and checked on every pull request: PyPI's rules for the metadata, the wheel's
+  # contents and a README PyPI can show. The release workflow comes with its own plan.
+  package:
+    name: Package (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          enable-cache: true
+      - name: Build, and check what PyPI would get
+        run: |
+          uv build
+          uvx twine==7.0.0 check --strict dist/*
+          uvx check-wheel-contents==0.6.3 dist/*.whl
+
+  # The check the ruleset on main requires: the checks, every test leg and the package passed. It runs when one of them
+  # failed too, since a skipped job would count as passed.
+  ci:
+    name: CI
+    needs: [checks, tests, package]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: The checks, every test leg and the package passed
+        env:
+          CHECKS: ${{ needs.checks.result }}
+          TESTS: ${{ needs.tests.result }}
+          PACKAGE: ${{ needs.package.result }}
+        run: test "$CHECKS" = success && test "$TESTS" = success && test "$PACKAGE" = success

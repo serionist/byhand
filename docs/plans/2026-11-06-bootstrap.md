@@ -259,8 +259,21 @@ tools/gate.py full`, `review-code` until clean, the PR. This plan's progress log
 
 If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 8 (Round 1, Q4).
 
+### Progress log
+
+| Step | Issue | PR | State |
+|---|---|---|---|
+| 1. The harness and this plan | #1 | this branch's | plan approved 2026-11-06 |
+| 2. The catalogue's schema | #2 | | |
+| 3. Render and its gate check | #3 | | |
+| 4. `propose-signs` and the seed | #4 | | |
+| 5. `check` | #5 | | |
+| 6. Styles, `learn` and `write` | #6 | | |
+| 7. Tried in real sessions | #7 | | |
+| 8. Release `0.1.0` | #8 | | |
+
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
-`0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, opened when this plan is approved.
+`0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.
 
 ## Tests
 

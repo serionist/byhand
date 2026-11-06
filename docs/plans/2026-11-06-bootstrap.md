@@ -55,7 +55,7 @@ TOML in the package, `src/byhand/catalogue/`, read with the standard library's `
 |---|---|
 | `languages.toml` | the 100 most spoken languages: BCP 47 code, English and native name, rank; the list's source and its date |
 | `models.toml` | model families (`claude`, `gpt`, `gemini`, `grok`, `llama`, `deepseek`, `qwen`, ...), each with the id patterns that name it and how a version is read from an id (`claude-opus-5-5` is claude 5.5, `gpt-5.6-sol` is gpt 5.6) |
-| `sources.toml` | every source a sign cites: id, URL, kind (wiki, repo, paper, dataset, vendor, review), languages, licence, how it is read, how often it is due (for `0.2.0`) |
+| `sources.toml` | every source a sign cites: id, URL, kind (wiki, repo, paper, dataset, vendor, review), languages, licence, how often it is due (for `0.2.0`); `feed`, how a script reads it (`{ api = "mediawiki", site, title }`, `{ api = "github", repo, paths }`, `{ api = "arxiv", query }`, `{ api = "hf", dataset }`, or `{ api = "none" }` for a page a person reads); `read_at`, the revision or commit last read and its date, written by `propose-signs` for every source it reads, one that yielded no sign included |
 | `signs/<language>.toml` | the signs of one language, `signs/any.toml` those of every language |
 
 A sign:
@@ -67,6 +67,7 @@ A sign:
 | `kinds` | the kinds of writing it applies to, or `any` |
 | `models` | `any`, or a list of `{ family, from, to }`; `to` left out is open, so a newer version is covered |
 | `what`, `instead` | what the text does, and what a person writes instead, in our own words |
+| `terms` | for a `word` or `phrase` sign: a list of `{ term, instead }`, so an era list (Wikipedia's GPT-4-era words) or a computed excess-word list is one sign with one id and one model scope; its `check` is built from the terms |
 | `strength` | `strong`, `usual` or `weak`: weak where people do it too (arXiv 2409.01754), so it is flagged only in a cluster |
 | `check` | optional: a regular expression `byhand check` runs; a structural sign without one is for the model's own read |
 | `flags`, `passes` | an invented text the sign flags and a human one it passes; both run as a test |
@@ -80,18 +81,24 @@ changes the signs (`zh-Hant`); a brief for `zh-Hant` falls back to `zh`.
 ### Light by design: what a draft loads
 
 The `write` skill pre-approves only `Read`, `Glob` and `Grep` (AGENTS.md, Never), so it runs no command: a command
-would ask the user on every draft. It reads files instead. `byhand render` writes the catalogue as Markdown into the
-plugin, one file per language and model family, signs sorted strongest first:
+would ask the user on every draft. It reads files instead. `byhand render` writes the catalogue as Markdown into one
+folder of the plugin that `write`, `check` and `learn` all read, through `${CLAUDE_PLUGIN_ROOT}/signs/`: one file per
+language and model family, signs sorted strongest first, and the layout signs of decks and sheets (category `layout`,
+or `kinds` of only `deck` or `sheet`) in a file of their own:
 
 ```
-plugin/skills/write/signs/any/any.md        every language, every model
-plugin/skills/write/signs/any/claude.md     every language, Claude's own
-plugin/skills/write/signs/hu/any.md         Hungarian, every model
-plugin/skills/write/signs/hu/claude.md      Hungarian, Claude's own, when there are any
+plugin/signs/any/any.md             every language, every model
+plugin/signs/any/claude.md          every language, Claude's own
+plugin/signs/hu/any.md              Hungarian, every model
+plugin/signs/hu/claude.md           Hungarian, Claude's own, when there are any
+plugin/signs/any/any.layout.md      decks and sheets, every language, every model
 ```
 
-The skill reads at most four: `any/any.md`, `any/<family>.md`, `<language>/any.md`, `<language>/<family>.md`, where
-they exist. A version range is printed beside each model sign; the model applies the signs of its version, or of the
+A prose draft reads at most four: `any/any.md`, `any/<family>.md`, `<language>/any.md`, `<language>/<family>.md`,
+where they exist; a deck or a sheet adds their `.layout.md` files, four more at most. A skill's `allowed-tools` grant
+lasts only the turn that invokes it (Claude Code's skills docs, Pre-approve tools for a skill), and the files sit
+outside the user's working directory, so `write`'s SKILL.md says to invoke `write` again for each new draft, and to
+read the files again after a compaction: a second mail in the same session then asks nothing either. A version range is printed beside each model sign; the model applies the signs of its version, or of the
 newest range below it. The family comes from the model's own id, which Claude Code puts in its system prompt; no id,
 or a family the catalogue lacks: the two `any.md` files alone. A test caps each file's size, and the gate holds the
 rendered files equal to the catalogue (Steps 3).
@@ -99,7 +106,11 @@ rendered files equal to the catalogue (Steps 3).
 ### Styles
 
 A style is Markdown with frontmatter: `name`, `kinds`, `language`, `register`, `default_for` (kinds), `updated`; the
-body holds its rules in prose and bullets, then `## Excerpts`, 3 to 5 short ones. robotics-personal's
+body holds its rules in prose and bullets, then `## Corrections`, then `## Excerpts`, 3 to 5 short ones.
+`## Corrections` is a dated running list of rules the user gave, each with its date and the kind of text it came from;
+`write` reads them as rules that beat the body. In `0.1.0` the user writes them by hand, or says "remember this";
+`0.5.0` learns them from edits into the same section. Readers keep frontmatter keys and sections they don't know, so a
+later release can add one without breaking a style. robotics-personal's
 `90-reference/soma-writing-style.md` is the model and the first real test, never committed here.
 
 - **Where:** the user's in `~/.byhand/styles/<name>.md`; a project's in `<project>/.byhand/styles/<name>.md`, which
@@ -115,8 +126,8 @@ body holds its rules in prose and bullets, then `## Excerpts`, 3 to 5 short ones
 | Skill | What | Runs |
 |---|---|---|
 | `write` | starts by itself on a request to write, draft, reply to or rewrite a message, mail, document, post or slide text, in any language; picks the kind, language and style, reads the signs, drafts, reads its draft against them, rewrites what it finds | nothing; reads only |
-| `check` | finds the signs in a text or a file the user gives, each with its line, the sign and what a person writes instead | `byhand check` |
-| `learn` | learns a style from material the user points at: asks the name, kinds, default and whether each sample is theirs and liked; runs `byhand check` on each sample and leaves out one that reads as AI-written unless the user says it is theirs; drafts the style, shows it, saves it on a yes | `byhand check`, `byhand styles save` |
+| `check` | finds the signs in a text or a file the user gives, each with its line, the sign and what a person writes instead: the mechanical ones through `byhand check`, the structural ones by reading the text against the rendered signs | `byhand check` |
+| `learn` | learns a style from material the user points at: asks the name, kinds, default and whether each sample is theirs and liked; checks each sample as `check` does, mechanical and structural, and leaves out one that reads as AI-written unless the user says it is theirs; drafts the style, shows it, saves it on a yes | `byhand check`, `byhand styles save` |
 | `styles` | lists the styles, shows one, sets or clears a default, removes one | `byhand styles` |
 
 The commands run as `uv run --with byhand==<version> byhand ...`, one pinned version as in simready-forge; each asks
@@ -129,7 +140,8 @@ that adds one line of context is the fallback, a plan of its own: plugin hooks a
 ### The CLI
 
 `byhand validate` (the catalogue: schema, unique ids, each check against its `flags` and `passes`, every source and
-language known), `byhand render` (the plugin's sign files), `byhand check <file|-> --lang <code> [--model <id>]
+language known, each source's `feed` and `read_at`, and an `any` sign refused when its sources together cover fewer
+than two languages), `byhand render` (the plugin's sign files), `byhand check <file|-> --lang <code> [--model <id>]
 [--kind <kind>]` (the mechanical signs, with line, id and `instead`; exit 1 on a strong one), `byhand styles
 list|show|default|save|remove|path`, `byhand models <id>` (the family and version the catalogue reads from an id).
 Standard library only for `0.1.0`.
@@ -159,7 +171,8 @@ id, the catalogue's schema, the language and model codes; the style's format and
 `.byhand/styles/`). AGENTS.md names them in Step 2's PR.
 
 The harness changes, each stricter, none looser: the gate's plugin check takes the rendered files under
-`plugin/skills/write/signs/` and fails when they differ from `byhand render`'s; it refuses a tracked file under
+`plugin/signs/` and fails when they differ from `byhand render`'s, and takes `plugin/evals/`, the eval suite's Markdown
+and YAML; it refuses a tracked file under
 `.byhand/`; `byhand validate` joins gate quick.
 
 ## Steps
@@ -171,9 +184,9 @@ Each step is a PR on its own branch from `main`, after this plan's PR; this plan
    `byhand validate`, `byhand models`. Proven by `tests/test_catalogue.py` (a bad sign of each kind fails, a good one
    passes) and `tests/test_models.py` (`claude-opus-5-5`, `claude-opus-9-1`, `gpt-5.6-sol`, `gpt-7`, an unknown
    family, an empty id).
-3. **Render and its gate check.** `byhand render`; the gate's plugin check extended to the rendered files and to
-   `.byhand/`. Proven by `tests/test_render.py` (files per language and family, size caps, a newer version's
-   fallback) and `tests/test_gate.py` (a stale render fails, a tracked `.byhand/` file fails).
+3. **Render and its gate check.** `byhand render`; the gate's plugin check extended to `plugin/signs/`,
+   `plugin/evals/` and `.byhand/`. Proven by `tests/test_render.py` (files per language and family, the layout
+   files apart, size caps, a newer version's fallback) and `tests/test_gate.py` (a stale render fails, a tracked `.byhand/` file fails).
 4. **`propose-signs` and the seed.** The skill, `sources.toml` from the research, then the signs: `any` first, then
    en, then one PR per language. Proven by `byhand validate` in the gate, each sign's `flags` and `passes`.
 5. **`check`.** `byhand check` and the `check` skill. Proven by `tests/test_check.py` (findings in en, hu, zh and
@@ -181,8 +194,10 @@ Each step is a PR on its own branch from `main`, after this plan's PR; this plan
 6. **Styles, `learn` and `write`.** The style format, `byhand styles`, the three skills. Proven by
    `tests/test_styles.py` (parse, defaults per kind, the project over the user, a style without frontmatter refused,
    `.gitignore` written) and the plugin check.
-7. **Tried in real sessions.** `tools/triggers.py` runs `claude -p` on 20 writing requests (en, hu, de, zh, fr; mail,
-   Slack, document, deck) and 10 others, and reads whether `write` loaded. The bar: 18 of 20, and 1 of 10 at most.
+7. **Tried in real sessions.** A `claude plugin eval` suite in `plugin/evals/`: 20 writing requests (en, hu, de, zh,
+   fr; mail, Slack, document, deck), each graded `tool_used: Skill` on `write`; 10 others graded `min: 0, max: 0, arm:
+   both`; a case with a history file for a second draft in another language, which must ask no permission; three runs
+   a case, against the no-plugin baseline. The bar: 18 of 20, and 1 of 10 at most.
    Then the maintainer's own style learned from the material behind `soma-writing-style.md`, and drafts read by them
    in English and Hungarian. Recorded in `docs/reviews/`.
 8. **Release `0.1.0`.** `release.yml` and `docs/releasing.md` from simready-forge, PyPI's trusted publishing,
@@ -194,7 +209,7 @@ GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refres
 ## Tests
 
 - **Unit (CI):** the catalogue, models, render, check, styles, the gate; invented text in every seeded language.
-- **By hand:** `tools/triggers.py` and the drafts read in real sessions (Step 7), on the Claude Code version and models
+- **By hand:** the `claude plugin eval` suite and the drafts read in real sessions (Step 7), on the Claude Code version and models
   of the day, recorded with what they could not show.
 - **What none can show:** whether a reader takes a draft as the user's. The maintainer's read in Step 7 is the only
   evidence, for two languages; the others rest on their sources and native contributors.
@@ -221,4 +236,26 @@ this plan rests on.
 
 ## Plan review
 
-None yet.
+### Fit
+
+The plan at `232347f`, by a fresh agent on Claude Opus 5.5 (`claude-opus-5-5`), 2026-11-06. Answers by the
+maintainer, 2026-11-06. The change's own question: does the design stay open to the refresh, more languages, decks
+and sheets at a human skill level and learning from edits, and is the light loading the right mechanism. Its answer:
+mostly yes; I1 to I6 are where it was not open enough.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I1 | Light by design, Step 7: `allowed-tools` grants `Read` only for the turn that invokes the skill, and the files sit outside the working directory, so a second draft would ask; `write` invokes itself again per draft and re-reads after a compaction, and Step 7 checks a second draft | taken |
+| I2 | Light by design, skills: render to one shared `plugin/signs/`, read through `${CLAUDE_PLUGIN_ROOT}` by `write`, `check` and `learn`; otherwise `check` and learn's screen see only the mechanical signs, and most are structural | taken |
+| I3 | Light by design: layout signs of decks and sheets in `.layout.md` files of their own, so a message never loads them and `0.4.0` doesn't overrun `any/any.md`'s cap | taken |
+| I4 | The catalogue: `sources.toml` gets a machine-readable `feed` and `read_at`, written for every source read, so `0.2.0`'s model-free diff has a baseline; `validate` checks both | taken |
+| I5 | The catalogue: a `word` or `phrase` sign holds `terms`, so an era list or a computed list is one sign, not hundreds of permanent ids | taken |
+| I6 | Styles: a dated `## Corrections` section that beats the body, as half of the maintainer's own style file is; readers keep unknown keys and sections | taken |
+| I7 | The CLI: `validate` refuses an `any` sign whose sources cover fewer than two languages, a rule only a reviewer kept | taken |
+| I8 | Step 7, Tests: `claude plugin eval` in place of a new `tools/triggers.py`: repeated runs, a no-plugin baseline, one command to measure again | taken |
+
+Noticed on the way, for Round 1: a structural sign without `check` has nothing its `flags` and `passes` test can run
+(The catalogue); "the newest range below it" contradicts a closed `to` (Light by design); the size cap has no number
+(Light by design, Risks); nothing says the user's style beats a sign they said yes to (Styles); `write` starts on
+"post" but `kinds` has no `post` (The plugin's skills); Claude Code drops the descriptions of the least-used skills when
+the listing overflows its budget, which a clean Step 7 session can't show (Risks, Step 7).

@@ -215,8 +215,7 @@ tools/gate.py full`, `review-code` until clean, the PR. This plan's progress log
    `byhand validate`, `byhand models`. Proven by `tests/test_catalogue.py` (a bad sign of each kind fails, a good one
    passes) and `tests/test_models.py` (`claude-opus-5-5`, `claude-opus-9-1`, `gpt-5.6-sol`, `gpt-7`, dated and
    provider-prefixed ids such as `claude-sonnet-4-5-20250929`, `us.anthropic.claude-opus-4-6-v1:0` and
-   `claude-opus-4-6@20250514`, an unknown family, an empty id). The maintainer uploads a `0.0.0` placeholder to PyPI
-   by hand at its merge, to hold the name (Round 1, Q3).
+   `claude-opus-4-6@20250514`, an unknown family, an empty id).
 3. **Render and its gate check.** `byhand render`; the gate's plugin check extended to `plugin/signs/`,
    `plugin/evals/` and `.byhand/`. Proven by `tests/test_render.py` (files per language and family, the layout
    files apart, the budget, a newer version inside an open range, none past a closed `to`) and `tests/test_gate.py`
@@ -302,7 +301,7 @@ this plan rests on, and `write-skill` (the `plugin/signs/` and `plugin/evals/` r
 | Thin sources for most languages, Hungarian included | The `any` signs carry them; native review as a source; `0.3.0` measures excess words from datasets. Accepted |
 | Rendered files grow with the catalogue | Two budgets, tested: 16 KB for the prose files one draft reads, 48 KB for a text of unknown author read in every family; over either fails the build. Resolved |
 | A user's real writing in a project's `.byhand/` gets committed | learn writes the `.gitignore` line and says so. Accepted: a user can still force-add it |
-| The PyPI name is free today and open to a squatter until `0.1.0` (omniverse-mcp's R9) | A `0.0.0` placeholder uploaded by hand at Step 2's merge, never `0.1.0`, which PyPI would hold for good. Resolved at Step 2 |
+| The PyPI name is free today and open to a squatter until `0.1.0` (omniverse-mcp's R9) | Nothing is uploaded before Step 8, which publishes `0.1.0` itself: the maintainer's call on 2026-11-07, in place of Q3's placeholder. Accepted |
 
 ## Plan review
 
@@ -379,7 +378,7 @@ Refuted:
 |---|---|---|---|
 | Q1 | A default per kind and language, so `message` can have a Hungarian and an English default? | yes | yes, the maintainer, 2026-11-06 |
 | Q2 | Is a social post its own kind? | map it to `message` or `document` | a kind of its own, `post`: the maintainer, 2026-11-06 |
-| Q3 | How is the PyPI name held before `0.1.0`? | a `0.0.0` placeholder by hand at Step 2's merge | the placeholder, the maintainer, 2026-11-06 |
+| Q3 | How is the PyPI name held before `0.1.0`? | a `0.0.0` placeholder by hand at Step 2's merge | the placeholder, the maintainer, 2026-11-06; changed on 2026-11-07: nothing until Step 8 publishes `0.1.0`, the risk accepted |
 | Q4 | Below Step 7's bar in a crowded session, does the hook come before `0.1.0`? | before | before, the maintainer, 2026-11-06 |
 
 | # | Improvement | Answer |

@@ -55,7 +55,8 @@ calls, not in prose the agent has to get right.
 - **Side files:** Markdown the skill reads sits beside `SKILL.md` in its folder, linked relatively
   (`[the spec](spec.md)`). No other file goes under `plugin/`: anything there could run.
 - **Links** to the rest of the repo are full GitHub URLs: Claude Code installs `plugin/` without it.
-- **A version** is written as the skills pin it, `uv run --with byhand==<version> byhand ...`; the gate
+- **A version** is written as the skills pin it, `uv run --no-project --with byhand==<version> byhand ...`, so uv
+  leaves the user's own project alone; the gate refuses an unpinned `byhand` and
   holds every pin under `plugin/` equal to `pyproject.toml`'s and `plugin.json`'s, and a release bumps them together.
 - **No link and no AGENTS.md line:** list it as `/byhand:<name>` in `plugin/README.md`'s table instead.
 

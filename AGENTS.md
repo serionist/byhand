@@ -18,10 +18,10 @@ It is for the user's own writing: mail, messages, documents, decks and sheets th
   found, in our own words.
 - **Light by design:** a skill loads only what one draft needs: the signs for its language and the model writing it,
   the `any` signs, and one style. Never the whole catalogue; a hundred languages cost a draft no more than one.
-- **The refresh:** a scheduled workflow reads the sources the catalogue lists, in each language, and proposes new or
-  changed signs as a PR. A person merges it; nothing lands in the catalogue unread.
+- **The refresh:** a scheduled workflow fetches and diffs the sources the catalogue lists, with no model and no key,
+  and opens an issue; a maintainers' skill drafts the changed signs as a PR a person merges. Nothing lands unread.
 - **The styles:** the user's ways of writing, learned from their own samples, each with its language and register, and
-  assigned to kinds of writing (messages, mail, documents, decks, sheets), with a default per kind. They stay on the
+  assigned to kinds of writing (messages, mail, documents, decks, sheets), with a default per kind and language. They stay on the
   user's machine.
 - **The plugin** (`plugin/`): skills that write and check text against the catalogue and a style, and that start
   without being asked when the user writes mail, a message, a document or a deck.
@@ -35,11 +35,11 @@ It is for the user's own writing: mail, messages, documents, decks and sheets th
 | `src/byhand/` | the package; its modules come with the bootstrap plan |
 | `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
-| `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills), standard library only |
+| `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), standard library only |
 | `docs/` | `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
 | `.claude/` | `CLAUDE.md` (imports this file), `settings.json` (no attribution; allows the repo's own checks and read-only git and gh, each named whole but the git ones `tests/test_gate.py` sweeps and gh's reads), `skills/` (below) |
 | `.agents/` | `skills/`: links to `.claude/skills/<name>` for Codex, written into git's index by `uv run tools/setup.py link` |
-| `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and macOS 3.14; the package built; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
+| `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and 3.14, macOS 3.14; the package built; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
 | `.githooks/` | `commit-msg` refuses attribution, `pre-push` runs gate quick on what the push sends, `post-checkout` and `post-merge` name changed AI setup files |
 | `AGENTS.md`, `REVIEW.md` | this file; what a review finding is, and the questions every review answers |
 | `.mcp.json` | Context7 over HTTP; `.claude/settings.local.json.example` turns it on |

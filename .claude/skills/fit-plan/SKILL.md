@@ -12,7 +12,7 @@ description: >-
 
 `review-plan` hunts defects in a plan as written; the fit asks first whether it is the right plan, and proposes a
 better one. It runs once per plan, between its first commit and its first review round, so the review reads the
-improved plan once: on #7 it changed the design before any review read it. Improvements only (`REVIEW.md`,
+improved plan once: on the bootstrap plan it changed eight things before any review read it. Improvements only (`REVIEW.md`,
 Improvements): no severities, never counted. Every plan gets one, and `review-plan` runs this skill on a plan without.
 
 ## Steps

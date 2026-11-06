@@ -54,3 +54,10 @@ body:
     attributes:
       label: Operating system
       placeholder: Windows 11, Ubuntu 24.04, macOS 26
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: Nothing above holds a key, a token, a password, or anyone's real mail or messages.
+          required: true

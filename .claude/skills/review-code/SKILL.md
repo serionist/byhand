@@ -41,7 +41,7 @@ no build, no tests, no `claude --plugin-dir` on its plugin. It would run with ev
    into this session yourself.
    - Each confirmed blocker or major, and each finding on the plugin contract or the harness, goes to its own fresh
      refuter agent, in parallel. On your own branch a refuter may reproduce it with a test or a short script, never
-     the live tests. One that can't settle it leaves the finding open.
+     against the live sources or someone's real writing. One that can't settle it leaves the finding open.
    - Over about 30 files or 1,500 changed lines: split the lenses across several reviewers, then merge and refute.
    - No agents in your tool: apply every lens yourself, then refute each finding, and say in the record that the
      author reviewed their own change.

@@ -254,7 +254,9 @@ tools/gate.py full`, `review-code` until clean, the PR. This plan's progress log
    - The record in `docs/reviews/` holds the cases, counts, versions, the OS and the maintainer's verdict per draft,
      never a draft, an excerpt or the style.
 8. **Release `0.1.0`.** `release.yml` and `docs/releasing.md` from simready-forge, PyPI's trusted publishing,
-   CHANGELOG dated, the plugin's pin. Proven by CI's package job and `uvx --from byhand==0.1.0 byhand validate`.
+   CHANGELOG dated, the version moved from `0.0.0` to `0.1.0` in `pyproject.toml`, `plugin.json` and every pin (the
+   maintainer's call in the review of #9: an install before the release must not already read `0.1.0`), and the
+   first upload to PyPI. Proven by CI's package job and `uvx --from byhand==0.1.0 byhand validate`.
 
 If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 8 (Round 1, Q4).
 
@@ -262,7 +264,7 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 | Step | Issue | PR | State |
 |---|---|---|---|
-| 1. The harness and this plan | #1 | this branch's | plan approved 2026-11-06 |
+| 1. The harness and this plan | #1 | #9 | plan approved 2026-11-06 |
 | 2. The catalogue's schema | #2 | | |
 | 3. Render and its gate check | #3 | | |
 | 4. `propose-signs` and the seed | #4 | | |

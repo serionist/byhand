@@ -118,9 +118,7 @@ Applies when: the scope touches paths, files, processes, encodings, or the Pytho
 
 Applies when: the scope touches a harness file (`REVIEW.md`, The harness).
 
-Anything that loosens a check: a gate step dropped or made a warning, a lint rule or a test skipped, an ignore added,
-a question or a lens removed, attribution let through, a permission widened, a key or a file let into `plugin/`
-without its check. A blocker unless the maintainer agrees in the PR.
+Anything `REVIEW.md`, The harness, counts as loosening a check: a blocker unless the maintainer agrees in the PR.
 
 ## Refuting
 

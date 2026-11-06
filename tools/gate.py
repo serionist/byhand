@@ -108,9 +108,14 @@ _ALLOWED_ENTRY = re.compile(r"[^\s,(]+(?:\([^)]*\))?")
 # Every version the plugin names: `byhand==X.Y.Z`, the package its skills run. A placeholder such as <version>
 # starts no digit.
 _PIN = re.compile(r"byhand==([0-9](?:[0-9A-Za-z.+!-]*[0-9A-Za-z])?)")
+# A byhand the plugin runs without a pin: `--with byhand`, `--from byhand>=0.1`, `uvx byhand`. Each would run whatever
+# PyPI serves that day, not the release's version (REVIEW.md, blocker).
+_LOOSE = re.compile(r"(?:--with|--from)[ =]['\"]?byhand(?!==)(?![\w-])|\buvx\s+['\"]?byhand(?![\w-])")
 # A Markdown link's target: Claude Code installs plugin/ alone, so a relative one leads somewhere only when it names a
 # file under plugin/, such as a skill's side file.
 _LINK = re.compile(r"\]\(([^)\s]+)")
+# A reference-style link's definition, `[name]: target`, which leads somewhere as an inline link does.
+_REF_LINK = re.compile(r"^ {0,3}\[[^\]]+\]:\s*<?([^\s>]+)", re.MULTILINE)
 # A release's heading in CHANGELOG.md, `## X.Y.Z (YYYY-MM-DD)`: the release PR dates the version it sets.
 _RELEASE_HEADING = re.compile(r"^## (\d+\.\d+\.\d+(?:-[\w.]+)?) \(\d{4}-\d{2}-\d{2}\)$", re.MULTILINE)
 GITLEAKS_IGNORE = ".gitleaksignore"
@@ -157,7 +162,7 @@ _BARE_ISSUE_REF = re.compile(r"^[^\w]*(?:refs|closes|fixes)\s+#\s*$", re.IGNOREC
 _TOOL_NAME = re.compile(
     r"^(?:claude(?:\s+code)?|anthropic|(?:openai\s+)?codex|chatgpt|gpt-?\d[\w.]*|(?:github\s+)?copilot"
     r"|gemini(?:\s+code\s+assist)?|cursor(?:\s+agent)?|devin(?:\s+ai)?|aider|windsurf)"
-    r"(?:\s+(?:opus|sonnet|haiku|code|cli|pro|flash|ultra|nano|mini|turbo|max|agent|ai|assist|preview|latest"
+    r"(?:\s+(?:opus|sonnet|haiku|fable|code|cli|pro|flash|ultra|nano|mini|turbo|max|agent|ai|assist|preview|latest"
     r"|thinking|v?\d[\w.]*|\([^()]*\)))*$",
     re.IGNORECASE,
 )
@@ -897,9 +902,20 @@ def plugin_versions(root: Path, plugin: dict[str, Any]) -> dict[str, str | None]
     return versions
 
 
+def loose_pin_problems(root: Path) -> list[str]:
+    """Each place under plugin/ that runs byhand without `byhand==<version>`."""
+    return [
+        f"{path.relative_to(root).as_posix()}: {match.group(0)!r} runs byhand unpinned; write byhand==<version>"
+        for path in sorted((root / PLUGIN_DIR).rglob("*"))
+        if path.is_file() and path.suffix in (".json", ".md")
+        for match in _LOOSE.finditer(path.read_text(encoding="utf-8"))
+    ]
+
+
 def plugin_file_problems(root: Path) -> list[str]:
     """Only the files the gate checks are under plugin/: the manifest, the README, each skill's SKILL.md and the
-    Markdown beside it, each agent's file. A Markdown link in it is a URL, an anchor, or a file under plugin/."""
+    Markdown beside it, each agent's file. A Markdown link in it, inline or a reference's definition, is a URL, a
+    mailto: address, an anchor, or a file under plugin/."""
     problems: list[str] = []
     base = root / PLUGIN_DIR
     inside = base.resolve()
@@ -912,8 +928,9 @@ def plugin_file_problems(root: Path) -> list[str]:
         if rel not in PLUGIN_FILES and not skill_file and not agent_file:
             problems.append(f"{PLUGIN_DIR}/{rel}: a file the gate doesn't check; give it a check first (write-skill)")
         if markdown:
-            for target in _LINK.findall(path.read_text(encoding="utf-8")):
-                if target.startswith(("https://", "http://", "#")):
+            text = path.read_text(encoding="utf-8")
+            for target in _LINK.findall(text) + _REF_LINK.findall(text):
+                if target.startswith(("https://", "http://", "mailto:", "#")):
                     continue
                 resolved = (path.parent / target.split("#", 1)[0]).resolve()
                 if not (resolved.is_file() and resolved.is_relative_to(inside)):
@@ -943,6 +960,7 @@ def check_plugin(scope: Scope, root: Path = ROOT) -> Result:
     problems += plugin_file_problems(root)
     versions = plugin_versions(root, plugin)
     problems += version_problems(versions)
+    problems += loose_pin_problems(root)
     skills = sorted((root / PLUGIN_SKILLS_DIR).glob("*/SKILL.md"))
     readme = root / PLUGIN_DIR / "README.md"
     listed = readme.read_text(encoding="utf-8") if readme.is_file() else ""

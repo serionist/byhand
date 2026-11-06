@@ -4,7 +4,7 @@ Write like a person, in your own voice and language: mail, messages, documents a
 writing.
 
 Not released yet. The skills come with the first version, `0.1.0`; the
-[bootstrap plan](https://github.com/serionist/byhand/issues/1) designs them.
+[bootstrap plan](https://github.com/serionist/byhand/blob/main/docs/plans/2026-11-06-bootstrap.md) designs them.
 
 ## Install
 

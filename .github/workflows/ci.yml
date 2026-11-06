@@ -1,7 +1,7 @@
 # The gate on every pull request, every push to main and once a day on main. Checks (Linux) runs the gate's quick lane
 # (lock, lint, format, types, the import contracts and the coverage floor, the version, the harness, the plugin
 # validated by Claude Code, no tool attribution in the commits, gitleaks over them); the tests run on Linux on Python
-# 3.12 to 3.14, on Windows on 3.12 and on macOS on 3.14, and the Linux 3.12 leg measures coverage against its floor;
+# 3.12 to 3.14, on Windows on 3.12 and 3.14 and on macOS on 3.14, and the Linux 3.12 leg measures coverage against its floor;
 # Package (Linux) builds and checks what a release would publish. CI needs all three; it and pr-text.yml's PR text are
 # the two checks the ruleset on main requires. Hosted CI never runs a Claude session or reads the live sources, so a
 # PR that touches the plugin or the refresh says what ran by hand.
@@ -82,6 +82,7 @@ jobs:
           - { os: ubuntu-latest, name: Linux, python: "3.13" }
           - { os: ubuntu-latest, name: Linux, python: "3.14" }
           - { os: windows-latest, name: Windows, python: "3.12" }
+          - { os: windows-latest, name: Windows, python: "3.14" }
           - { os: macos-latest, name: macOS, python: "3.14" }
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

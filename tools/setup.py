@@ -5,6 +5,8 @@ Usage:
                                         links as symlinks where this machine can make them, and check the tools
   uv run tools/setup.py link [skill]    write .agents/skills/<skill> into git's index as a link to
                                         .claude/skills/<skill>; every skill when none is named
+  uv run tools/setup.py settings        compare the GitHub repo's settings and main's ruleset with the house's
+                                        (SETTINGS below), through gh; reads only
 
 Every setting is this repo's own (`git config --local`), shared by its worktrees; nothing global changes.
 """
@@ -12,13 +14,16 @@ Every setting is this repo's own (`git config --local`), shared by its worktrees
 from __future__ import annotations
 
 import argparse
+import json
 import os
+import re
 import shutil
 import stat
 import sys
 import tempfile
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from pathlib import Path
+from typing import cast
 
 import gate
 from gate import LINK_MODE, ROOT, SKILL_LINKS_DIR, SKILLS_DIR
@@ -174,15 +179,101 @@ def run(
     return 1 if todo else 0
 
 
+# The GitHub settings the house's repos run with (omniverse-mcp's, 2026-11-07), which no file in the repo can hold:
+# (what, the API path, the key in its answer, the value). A key of None reads only whether the path answers, as
+# vulnerability-alerts does: 204 when on, 404 when off.
+SETTINGS = (
+    ("squash merges only", "", "allow_squash_merge", True),
+    ("no merge commits", "", "allow_merge_commit", False),
+    ("no rebase merges", "", "allow_rebase_merge", False),
+    ("a squash commit's subject is the PR's title", "", "squash_merge_commit_title", "PR_TITLE"),
+    (
+        "a squash commit's body is the PR's description, which pr-text.yml checks",
+        "",
+        "squash_merge_commit_message",
+        "PR_BODY",
+    ),
+    ("auto-merge, which dependabot-auto-merge.yml turns on", "", "allow_auto_merge", True),
+    ("a merged branch is deleted", "", "delete_branch_on_merge", True),
+    (
+        "private vulnerability reporting, where SECURITY.md sends reporters",
+        "/private-vulnerability-reporting",
+        "enabled",
+        True,
+    ),
+    ("Dependabot's security updates", "/automated-security-fixes", "enabled", True),
+    ("Dependabot alerts", "/vulnerability-alerts", None, True),
+)
+RULESET_CHECKS = ("CI", "PR text")
+
+
+def settings_problems(answers: Mapping[str, object], rules: list[dict[str, object]]) -> list[str]:
+    """What differs from SETTINGS, given each setting's answer by its what, and main's rules from
+    `repos/<repo>/rules/branches/main`: main takes squash-merged PRs only, and requires RULESET_CHECKS."""
+    problems = [
+        f"{what}: expected {want!r}, GitHub says {answers.get(what)!r}"
+        for what, _, _, want in SETTINGS
+        if answers.get(what) != want
+    ]
+    pr = next((rule for rule in rules if rule.get("type") == "pull_request"), None)
+    params = cast(dict[str, object], (pr or {}).get("parameters") or {})
+    if pr is None or params.get("allowed_merge_methods") != ["squash"]:
+        problems.append("main's ruleset: a PR is required, squash-merged only")
+    checks = next((rule for rule in rules if rule.get("type") == "required_status_checks"), None)
+    found = cast(
+        list[dict[str, object]],
+        cast(dict[str, object], (checks or {}).get("parameters") or {}).get("required_status_checks") or [],
+    )
+    contexts = {str(check.get("context")) for check in found}
+    problems += [
+        f"main's ruleset: the check {name!r} is not required" for name in RULESET_CHECKS if name not in contexts
+    ]
+    return problems
+
+
+def gh_api(path: str) -> tuple[int, object]:
+    """GET path through gh: (0, the parsed answer), or gh's exit code and None. Reads only."""
+    exe = shutil.which("gh") or "gh"
+    done = gate.run([exe, "api", path])
+    if done.returncode != 0:
+        return done.returncode, None
+    return 0, json.loads(done.stdout) if done.stdout.strip() else None
+
+
+def check_settings(root: Path = ROOT, api: Callable[[str], tuple[int, object]] = gh_api) -> int:
+    """Read the repo's GitHub settings with gh and print what differs from SETTINGS; 1 when anything does."""
+    remote = gate.git("remote", "get-url", "origin", cwd=root).stdout.strip()
+    match = re.search(r"github\.com[:/]([^/]+/[^/]+?)(?:\.git)?/?$", remote)
+    if not match:
+        print(f"origin is not a GitHub repository: {remote or 'none'}")
+        return 1
+    repo = f"repos/{match.group(1)}"
+    answers: dict[str, object] = {}
+    for what, path, key, _ in SETTINGS:
+        status, answer = api(repo + path)
+        if key is None:
+            answers[what] = status == 0
+        elif isinstance(answer, dict):
+            answers[what] = cast(dict[str, object], answer).get(key)
+    status, rules = api(f"{repo}/rules/branches/main")
+    problems = settings_problems(answers, cast(list[dict[str, object]], rules if isinstance(rules, list) else []))
+    for line in problems or ["every setting is as the house's repos have it"]:
+        print(f"  {line}")
+    return 1 if problems else 0
+
+
 def main(argv: list[str] | None = None) -> int:
     gate.utf8_streams()
     parser = argparse.ArgumentParser(description="Set up this clone: hooks, git blame, skill links, tools.")
     commands = parser.add_subparsers(dest="command")
     link_parser = commands.add_parser("link", help=f"link {SKILLS_DIR}/<skill> into {SKILL_LINKS_DIR} for Codex")
     link_parser.add_argument("skill", nargs="*", help="the skills to link; every skill when none is named")
+    commands.add_parser("settings", help="compare the GitHub repo's settings with the house's, through gh; reads only")
     args = parser.parse_args(argv)
     if args.command == "link":
         return link_all(ROOT, args.skill)
+    if args.command == "settings":
+        return check_settings()
     return run(ROOT)
 
 

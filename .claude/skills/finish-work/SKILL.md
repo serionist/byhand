@@ -51,7 +51,7 @@ feels complete. `main` takes PRs only, and the maintainer squash-merges them (`A
 ## Done means
 
 - `gate full` passed on the head commit, `review-code` is clean for exactly this code, and the PR says whether the
-  live tests ran and how the plugin was tried.
+  refresh ran against the live sources and how the plugin was tried.
 - The PR is ready for the maintainer, merged on their word, or left a draft by their choice.
 
 ## Never

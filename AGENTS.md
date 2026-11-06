@@ -25,8 +25,8 @@ It is for the user's own writing: mail, messages, documents, decks and sheets th
   user's machine.
 - **The plugin** (`plugin/`): skills that write and check text against the catalogue and a style, and that start
   without being asked when the user writes mail, a message, a document or a deck.
-- **Where the work stands:** the harness only. The bootstrap plan (#1) designs the package, the catalogue, the
-  refresh and the plugin; read its progress log first once it is in `docs/plans/`.
+- **Where the work stands:** the harness only. `docs/plans/2026-11-06-bootstrap.md` (#1) designs `0.1.0` and the
+  milestones after it; read it first.
 
 ## Where things are
 
@@ -36,7 +36,7 @@ It is for the user's own writing: mail, messages, documents, decks and sheets th
 | `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
 | `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills), standard library only |
-| `docs/` | `plans/`, `reviews/`: plans of non-trivial changes, with the template, and review records. Dated records, never current truth |
+| `docs/` | `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
 | `.claude/` | `CLAUDE.md` (imports this file), `settings.json` (no attribution; allows the repo's own checks and read-only git and gh, each named whole but the git ones `tests/test_gate.py` sweeps and gh's reads), `skills/` (below) |
 | `.agents/` | `skills/`: links to `.claude/skills/<name>` for Codex, written into git's index by `uv run tools/setup.py link` |
 | `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and macOS 3.14; the package built; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |

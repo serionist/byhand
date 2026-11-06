@@ -1,8 +1,8 @@
 ---
 name: start-work
 description: >-
-  Use when someone wants to work on something in byhand ("let's do #12", "pick up the drawer issue", "add a
-  mode to make", "fix Y"), before any code or docs change. Finds or creates the issue, starts the branch from
+  Use when someone wants to work on something in byhand ("let's do #12", "pick up the Hungarian signs issue",
+  "add a sign for X", "fix Y"), before any code or docs change. Finds or creates the issue, starts the branch from
   origin/main, reads the code and the APIs it touches, decides whether it needs a plan, writes the plan as the
   branch's first commit, and reviews it with review-plan, which fits it first with fit-plan, until it is approved.
 ---

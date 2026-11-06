@@ -95,7 +95,8 @@ plugin/signs/any/any.layout.md      decks and sheets, every language, every mode
 ```
 
 A prose draft reads at most four: `any/any.md`, `any/<family>.md`, `<language>/any.md`, `<language>/<family>.md`,
-where they exist; a deck or a sheet adds their `.layout.md` files, four more at most. A skill's `allowed-tools` grant
+where they exist, six for a `zh-Hant` draft (its own and `zh`'s); a deck or a sheet adds their `.layout.md` files,
+four more at most, six for `zh-Hant`. A skill's `allowed-tools` grant
 lasts only the turn that invokes it (Claude Code's skills docs, Pre-approve tools for a skill), and the files sit
 outside the user's working directory, so `write`'s SKILL.md says to invoke `write` again for each new draft, and to
 read the files again after a compaction: a second mail in the same session then asks nothing either.
@@ -109,8 +110,10 @@ A text the user already has (`check`, learn's screen) has no known author: with 
 file of the text's language and of `any`, still one language, and `byhand check` without `--model` applies every
 family's signs and names the family on each finding.
 
-The budget, one constant that `render`'s test and `docs/USAGE.md` name: the four prose files any draft reads come to
-16 KB at most together, about 4,000 tokens, and no file reaches 2,000 lines, Claude Code's `Read` default. The gate
+The budget, one constant that `render`'s test and `docs/USAGE.md` name: the prose files any one draft reads, six for
+`zh-Hant`, come to 16 KB at most together, about 4,000 tokens in English, and no file reaches 2,000 lines, Claude
+Code's `Read` default. A second constant holds the read of a text of unknown author, `any` and one language in every
+family: 48 KB at most, tested the same way. The gate
 holds the rendered files equal to the catalogue (Step 3).
 
 ### Styles
@@ -142,7 +145,7 @@ later release can add one without breaking a style. robotics-personal's
 | Skill | What | Runs |
 |---|---|---|
 | `write` | starts by itself on a request to write, draft, reply to or rewrite a message, mail, post, document or slide text, in any language; never on code-adjacent writing (a docstring, a commit message, a README, a PR description, a code comment); picks the kind, language and style, reads the signs, drafts, reads its draft against them, rewrites what it finds | nothing; reads only |
-| `check` | starts on a question whether a text reads as AI-written; finds the signs in a text or a file the user gives, each with its line, the sign and what a person writes instead: the mechanical ones through `byhand check`, the structural ones by reading the text against the rendered signs. A request to rewrite such a text is `write`'s | `byhand check` |
+| `check` | starts on a question whether a text reads as AI-written; finds the signs in a text or a file the user gives, each with its line, the sign and what a person writes instead: the mechanical ones through `byhand check`, the structural ones by reading the text against the rendered signs. A text that is a draft in one of the user's styles is checked with that style: `--style`, and its corrections honoured in the model's read, since a correction is prose, not an id. A request to rewrite such a text is `write`'s | `byhand check` |
 | `learn` | learns a style from material the user points at: asks the name, kinds, default and whether each sample is theirs and liked; checks each sample as `check` does, mechanical and structural, and leaves out one that reads as AI-written unless the user says it is theirs; drafts the style, shows it, saves it on a yes | `byhand check`, `byhand styles save` |
 | `styles` | lists the styles, shows one, sets or clears a default, removes one | `byhand styles` |
 
@@ -163,7 +166,8 @@ today. `plugin/README.md` says how a user keeps the description in a crowded lis
 `byhand validate` (the catalogue: schema, unique ids, each check against its `flags` and `passes`, every source and
 language known, each source's `feed` and `read_at`, and an `any` sign refused when its sources together cover fewer
 than two languages), `byhand render` (the plugin's sign files), `byhand check <file|-> --lang <code> [--model <id>]
-[--kind <kind>]` (the mechanical signs, with line, id and `instead`; exit 1 on a strong one), `byhand styles
+[--kind <kind>] [--style <name>]` (the mechanical signs, with line, id and `instead`; exit 1 on a strong one;
+`--style` drops the signs that style `keeps`), `byhand styles
 list|show|default|save|remove|path`, `byhand models <id>` (the family and version the catalogue reads from an id).
 Standard library only for `0.1.0`. The CLI reads and writes UTF-8 whatever the platform: standard input from
 `sys.stdin.buffer`, standard output reconfigured, files opened with `encoding="utf-8"`, as `tools/gate.py` does; on
@@ -226,19 +230,26 @@ tools/gate.py full`, `review-code` until clean, the PR. This plan's progress log
 6. **Styles, `learn` and `write`.** The style format, `byhand styles`, the three skills. Proven by
    `tests/test_styles.py` (parse, a default per kind and language with a hu and an en default for `message`, the
    project over the user, a sign a style `keeps` left out, unknown keys and sections kept, a style without frontmatter
-   refused, `.gitignore` written), a subprocess test of `byhand styles save` with Hungarian text on stdin, and the
-   plugin check. Tried by hand: `/byhand:check` run from inside a Python project leaves it untouched.
+   refused, `.gitignore` written), `tests/test_check.py`'s case of `--style` leaving out a kept sign, a subprocess
+   test of `byhand styles save` with Hungarian text on stdin, and the plugin check. Tried by hand: `/byhand:check` run
+   from inside a Python project leaves it untouched.
+   - The tries by hand, here and in Step 7, run before `byhand==0.1.0` is on PyPI: they resolve the pin from a wheel
+     of the clone, `uv build`, then `UV_FIND_LINKS=<clone>/dist` in the session's environment (`--refresh-package
+     byhand` after a rebuild). The pin's text stays as it is, so no pin runs another package. `docs/USAGE.md` and
+     finish-work's try step (through `write-skill`) say so.
 7. **Tried in real sessions.**
    - A `claude plugin eval` suite in `plugin/evals/`, run with `--ablation none` and `--threshold 1.0`, three runs a
      case: 23 writing requests (en, hu, de, zh, fr, and one each in ja, ko and ru; mail, Slack, post, document, deck),
      each graded `tool_used: Skill` on `write`; 10 others graded `min: 0, max: 0`, code-adjacent writing among them
-     (a docstring, a commit message, a README); about 5 `check` cases and 2 where `check` and `write` meet; a case with
+     (a docstring, a commit message, a README); 5 `check` cases graded `tool_used: Skill` on `check`, and 2 where
+     `check` and `write` meet, graded on the skill each should start; a case with
      a history file of invented turns for a second draft in another language, graded `tool_order` (`write` invoked
      again before the `Read` of `signs/`); `check` run on a sample of the signs without a `check`, their `passes`
-     texts above all. The bar: 21 of 23 writing requests, 1 of 10 others at most.
+     texts above all. The bar: 21 of 23 writing requests, 1 of 10 others at most, 6 of the 7 `check` and boundary
+     cases; a `passes` text a sign flags is a finding, fixed before Step 8.
    - By hand, on Windows at least: a session started outside the clone, two drafts in a row and one after `/compact`,
      counting permission prompts (none is the bar); the maintainer's own crowded session, with their usual plugins,
-     counting how often `write` starts; `~/.byhand/styles/` found without a command; the CLI's streams.
+     10 writing requests, `write` starting on 9 at least; `~/.byhand/styles/` found without a command; the CLI's streams.
    - The maintainer's own style learned from the material behind `soma-writing-style.md`, and drafts read by them in
      English and Hungarian.
    - The record in `docs/reviews/` holds the cases, counts, versions, the OS and the maintainer's verdict per draft,
@@ -276,7 +287,7 @@ this plan rests on, and `write-skill` (the `plugin/signs/` and `plugin/evals/` r
 | A source's licence: Wikipedia's CC BY-SA, lieflat's CC BY-NC, vendors' all rights reserved | Our words and a citation; non-commercial and vendor sources as facts only; review lens `catalogue-contract`. Resolved by rule |
 | No model id in the session, or a subagent on another model | The two `any.md` files alone; the skill names the model that writes the draft. Accepted |
 | Thin sources for most languages, Hungarian included | The `any` signs carry them; native review as a source; `0.3.0` measures excess words from datasets. Accepted |
-| Rendered files grow with the catalogue | The budget, 16 KB for a draft's four prose files, tested; over it fails the build. Resolved |
+| Rendered files grow with the catalogue | Two budgets, tested: 16 KB for the prose files one draft reads, 48 KB for a text of unknown author read in every family; over either fails the build. Resolved |
 | A user's real writing in a project's `.byhand/` gets committed | learn writes the `.gitignore` line and says so. Accepted: a user can still force-add it |
 | The PyPI name is free today and open to a squatter until `0.1.0` (omniverse-mcp's R9) | A `0.0.0` placeholder uploaded by hand at Step 2's merge, never `0.1.0`, which PyPI would hold for good. Resolved at Step 2 |
 
@@ -367,3 +378,25 @@ Refuted:
 | I13 | `check` compares text and terms in NFC, with a test on an NFD Hungarian text | taken |
 | I14 | A model-scoped sign retires by its range's `to`; `until` only for signs whose `models` is `any` | taken |
 | I15 | Step 7's by-hand try names its OS, Windows at least: plugin paths, styles found without a command, the CLI's streams | taken |
+
+### Round 2
+
+**How:** a fresh agent on Claude Opus 5.5 (`claude-opus-5-5`), 2026-11-06, on the edits from `5c7f576` to `c6307a3`
+and round 1's open findings. **Verdict:** approved: P1 to P20 hold, no blocker or major open, every owner call
+answered. **Now:** the four minors below edited into the plan.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P21 | minor | The budget and "at most four" left out a `zh-Hant` draft's six files and the read of a text of unknown author in every family | fixed: six for `zh-Hant` in both rules; a second budget, 48 KB, for the every-family read; the Risks row |
+| P22 | minor | `byhand check` took no style, so `check` flagged a sign a style keeps | fixed: `--style`, the `check` skill passes it, corrections honoured in the model's read; a test in Step 6 |
+| P23 | minor | The tries by hand in Steps 6 and 7 run the pinned command before `byhand==0.1.0` is on PyPI | fixed: a wheel of the clone through `UV_FIND_LINKS`; `docs/USAGE.md` and finish-work say so |
+| P24 | minor | The crowded session, the `check` cases and the `passes` sample had no bar, so Q4's rule couldn't be applied | fixed: 9 of 10 in the crowded session, 6 of 7 `check` and boundary cases, a flagged `passes` text fixed before Step 8 |
+
+Refuted: a leftover "no-plugin baseline" (the Fit is a dated record, I10 supersedes it); 23 against 20 (I12 added
+three); `until` against `to` (consistent since I14); `keeps` against the call on learn's yes (`keeps` is filled by that
+yes); `post` missing from AGENTS.md (Step 2's PR names the kinds); the token gloss for CJK (the constant is in bytes);
+the `0.0.0` placeholder against the one-version rule (never committed); start-work's changed examples.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I16 | Step 7's history case grades `tool_order` with an `input_match` on the second draft's language path, accepting either separator (`signs[\\/]hu[\\/]`): a path the invented history never reads, and a Windows `Read` path has backslashes | open |

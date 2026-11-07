@@ -20,6 +20,7 @@ from byhand.models import Family, ModelRange, parse_version
 CATALOGUE = Path(__file__).parent / "catalogue"
 ANY = "any"
 LANGUAGE_COUNT = 100
+WEAK_CLUSTER = 3  # a weak sign counts only with this many in one paragraph: people do them too
 KINDS = ("message", "email", "post", "document", "deck", "sheet")
 LAYOUT_KINDS = ("deck", "sheet")
 CATEGORIES = ("word", "phrase", "structure", "formatting", "layout", "artefact")
@@ -60,6 +61,12 @@ class Source:
 
 
 @dataclass(frozen=True)
+class Term:
+    term: str
+    instead: str
+
+
+@dataclass(frozen=True)
 class Sign:
     id: str
     language: str
@@ -72,6 +79,8 @@ class Sign:
     flags: str
     passes: str
     pattern: re.Pattern[str] | None  # None for a sign only the model's own read can find
+    terms: tuple[Term, ...] = ()
+    until: datetime.date | None = None  # set, the sign is retired: it keeps its id and renders nowhere
 
 
 @dataclass
@@ -423,6 +432,17 @@ def _dates(where: str, row: Table) -> list[str]:
     return problems
 
 
+def _term_list(row: Table) -> tuple[Term, ...]:
+    terms = row.get("terms")
+    if not isinstance(terms, list):
+        return ()
+    return tuple(
+        Term(term["term"], term["instead"])
+        for term in terms
+        if isinstance(term, dict) and isinstance(term.get("term"), str) and isinstance(term.get("instead"), str)
+    )
+
+
 def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
     problems: list[str] = []
     sign = _id(f"signs/{language}.toml", row, problems)
@@ -456,6 +476,8 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
         str(row.get("flags", "")),
         str(row.get("passes", "")),
         pattern,
+        _term_list(row),
+        row.get("until") if _is_date(row.get("until")) else None,
     )
     return problems
 

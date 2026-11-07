@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
-from byhand import models, signs
+from byhand import models, render, signs
 
 
 def _utf8() -> None:
@@ -47,6 +48,25 @@ def read_model(model_id: str) -> int:
     return 0
 
 
+def render_signs(out: Path, check: bool) -> int:
+    """Write the plugin's sign files, or with `check` only say what differs. A catalogue with a problem, or files over
+    the budget, write nothing."""
+    catalogue, problems = signs.load()
+    files = render.render(catalogue) if not problems else {}
+    problems += render.budget_problems(files, catalogue)
+    if not problems and check:
+        problems = render.stale(files, out)
+    for problem in problems:
+        print(problem)
+    if problems:
+        print(f"the sign files have {len(problems)} problem(s)")
+        return 1
+    if not check:
+        render.write(files, out)
+    print(f"{len(files)} sign files {'match the catalogue' if check else f'written to {out.as_posix()}'}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     _utf8()
     parser = argparse.ArgumentParser(prog="byhand", description="Write like a person, in your own voice and language.")
@@ -54,7 +74,12 @@ def main(argv: list[str] | None = None) -> int:
     commands.add_parser("validate", help="check the catalogue: its schema, every sign's examples, its sources")
     model = commands.add_parser("models", help="the family and version the catalogue reads from a model's id")
     model.add_argument("id", help="a model's id, such as claude-opus-5-5")
+    write = commands.add_parser("render", help="write the catalogue as the plugin's sign files")
+    write.add_argument("--check", action="store_true", help="write nothing; exit 1 when the files differ")
+    write.add_argument("--out", type=Path, default=render.OUT, help=f"the folder (default {render.OUT.as_posix()})")
     args = parser.parse_args(argv)
+    if args.command == "render":
+        return render_signs(args.out, args.check)
     return validate() if args.command == "validate" else read_model(args.id)
 
 

@@ -32,11 +32,11 @@ It is for the user's own writing: mail, messages, documents, decks and sheets th
 
 | Path | What |
 |---|---|
-| `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (the family and version in a model's id), `cli.py` (`byhand validate`, `byhand models <id>`) |
-| `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md`, `plugin/README.md` |
+| `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (the family and version in a model's id), `render.py` (the plugin's sign files, the budgets), `cli.py` (`byhand validate`, `byhand models <id>`, `byhand render`) |
+| `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md`, `plugin/signs/` (rendered: never edited by hand), `plugin/evals/`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
 | `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), standard library only |
-| `docs/` | `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
+| `docs/` | `USAGE.md` (the commands, the budgets); `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
 | `.claude/` | `CLAUDE.md` (imports this file), `settings.json` (no attribution; allows the repo's own checks and read-only git and gh, each named whole but the git ones `tests/test_gate.py` sweeps and gh's reads), `skills/` (below) |
 | `.agents/` | `skills/`: links to `.claude/skills/<name>` for Codex, written into git's index by `uv run tools/setup.py link` |
 | `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and 3.14, macOS 3.14; the package built; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
@@ -60,8 +60,8 @@ PowerShell unless a PowerShell form stands beside it.
 | once per clone | `uv sync`, then `uv run tools/setup.py` (hooks, `git blame`, skill links) |
 | tests | `uv run pytest`, on every core (`-n 0` for one process); with coverage, `uv run coverage erase`, `uv run coverage run -m pytest`, `uv run coverage combine`, then `uv run coverage report` |
 | lint, format, types, imports | `uv run ruff check .`, `uv run ruff format --check .`, `uv run basedpyright`, `uv run lint-imports` |
-| the gate | `uv run tools/gate.py quick` (lock, lint, format, types, imports, the catalogue, sign ids, the coverage floor, the version, AGENTS.md, skills, plans, the plugin, the variables the docs name, hooks, attribution, secrets); `full` adds pytest under coverage, and the floor; `text --file -` checks a PR's title and description: no attribution, and the issue named |
-| the plugin from this clone | `claude --plugin-dir plugin` |
+| the gate | `uv run tools/gate.py quick` (lock, lint, format, types, imports, the catalogue, sign ids, sign files, private files, the coverage floor, the version, AGENTS.md, skills, plans, the plugin, the variables the docs name, hooks, attribution, secrets); `full` adds pytest under coverage, and the floor; `text --file -` checks a PR's title and description: no attribution, and the issue named |
+| the plugin from this clone | `claude --plugin-dir plugin`; after a change to a sign, `uv run byhand render` |
 
 - **Hosted CI never runs a Claude session or reads the live sources:** a change to the plugin or the refresh says in
   its PR what ran by hand, on which versions, and what it could not show.

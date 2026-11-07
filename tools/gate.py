@@ -5,17 +5,17 @@ Usage: uv run tools/gate.py quick|full [--base <ref>] [--head <ref>]
 
 Two kinds of check:
 - the working tree's: the lock file, ruff check, ruff format, basedpyright, import-linter's contracts, `byhand
-  validate` on the catalogue, run as a tool so the gate never imports the package, every sign id a base has still
-  in the tree, a coverage floor no lower than at
-  the start of each range checked, the version's CHANGELOG section once a release is dated, AGENTS.md within 150
-  lines, each skill's frontmatter and its Codex link, the plans (each refuses a review round with no Fit above it or
-  with a Fit row unanswered, an improvement id twice in its review, and a plan with no `## Plan review`; a file in
-  docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable, the plugin (its manifests,
-  one version everywhere, its skills pre-approving read-only tools only, its agents' frontmatter, and Claude Code's
-  own `claude plugin validate --strict`), and each BYHAND_ variable the docs and the repo's skills name being one the
-  plugin or the package reads, with AGENTS.md naming each the plugin reads; full adds pytest under coverage on every
-  core, then the workers' data combined and the report against the floor. They run when the head is the checked-out
-  commit, and are skipped, with the reason, when the tree is not what is checked;
+  validate` on the catalogue and `byhand render --check` on the plugin's sign files, each run as a tool so the gate
+  never imports the package, every sign id a base has still in the tree, no file tracked under .byhand/, a coverage
+  floor no lower than at the start of each range checked, the version's CHANGELOG section once a release is dated,
+  AGENTS.md within 150 lines, each skill's frontmatter and its Codex link, the plans (each refuses a review round with
+  no Fit above it or with a Fit row unanswered, an improvement id twice in its review, and a plan with no `## Plan
+  review`; a file in docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable, the plugin
+  (its manifests, one version everywhere, its skills pre-approving read-only tools only, its agents' frontmatter, and
+  Claude Code's own `claude plugin validate --strict`), and each BYHAND_ variable the docs and the repo's skills name
+  being one the plugin or the package reads, with AGENTS.md naming each the plugin reads; full adds pytest under
+  coverage on every core, then the workers' data combined and the report against the floor. They run when the head is
+  the checked-out commit, and are skipped, with the reason, when the tree is not what is checked;
 - the commits': no tool attribution in any message, and no tool as any commit's author or committer, and gitleaks,
   on base..head (merges included). gitleaks exits 0 when it could not read the commits, so a run that logged an
   error fails too.
@@ -79,6 +79,7 @@ DESCRIPTION_MAX = 1024
 # every improvement the fit raised has its answer (REVIEW.md, Improvements).
 PLANS_DIR = "docs/plans"
 SIGNS_DIR = "src/byhand/catalogue/signs"
+PRIVATE_DIR = ".byhand"
 PLAN_FILE = re.compile(r"^\d{4}-\d{2}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 PLAN_REVIEW = "## Plan review"
 PLAN_ANSWERS = ("taken", "left", "later")
@@ -99,6 +100,12 @@ PLUGIN_READS = frozenset({"Read", "Glob", "Grep"})
 # something the gate doesn't check, as would a file under plugin/ other than these and the skills' and agents'.
 PLUGIN_KEYS = ("name", "version", "description", "author", "homepage", "repository", "license", "keywords")
 PLUGIN_FILES = (".claude-plugin/plugin.json", "README.md")
+# The rendered signs, which `byhand render --check` holds equal to the catalogue, and the eval suite: what a case is
+# written in, never a script. Every eval run writes its results beside the suite, which git ignores and no check reads.
+PLUGIN_SIGNS = "signs"
+PLUGIN_EVALS = "evals"
+EVAL_SUFFIXES = (".md", ".yaml", ".jsonl")
+EVAL_RESULTS = "evals/results/"
 # The marketplace's entry may add commands, agents, hooks or servers to the plugin's own, so it holds only these.
 MARKET_ENTRY_KEYS = ("name", "source", "description")
 # What an agent's frontmatter may hold. Claude Code ignores hooks, mcpServers and permissionMode in a plugin's agent,
@@ -891,14 +898,21 @@ def _json(path: Path) -> dict[str, Any]:
     return cast(dict[str, Any], data)
 
 
+def plugin_paths(root: Path) -> list[Path]:
+    """Every file under plugin/, less what an eval run leaves there."""
+    base = root / PLUGIN_DIR
+    files = (path for path in sorted(base.rglob("*")) if path.is_file())
+    return [path for path in files if not path.relative_to(base).as_posix().startswith(EVAL_RESULTS)]
+
+
 def plugin_versions(root: Path, plugin: dict[str, Any]) -> dict[str, str | None]:
     """The version in each place that carries one: pyproject.toml, plugin.json, and each `byhand==` pin under
     plugin/."""
     with (root / "pyproject.toml").open("rb") as f:
         versions: dict[str, str | None] = {"pyproject.toml": tomllib.load(f).get("project", {}).get("version")}
     versions[PLUGIN_MANIFEST] = plugin.get("version")
-    for path in sorted((root / PLUGIN_DIR).rglob("*")):
-        if path.is_file() and path.suffix in (".json", ".md"):
+    for path in plugin_paths(root):
+        if path.suffix in (".json", ".md"):
             for n, pin in enumerate(_PIN.findall(path.read_text(encoding="utf-8")), 1):
                 versions[f"{path.relative_to(root).as_posix()} (pin {n})"] = pin
     return versions
@@ -908,26 +922,28 @@ def loose_pin_problems(root: Path) -> list[str]:
     """Each place under plugin/ that runs byhand without `byhand==<version>`."""
     return [
         f"{path.relative_to(root).as_posix()}: {match.group(0)!r} runs byhand unpinned; write byhand==<version>"
-        for path in sorted((root / PLUGIN_DIR).rglob("*"))
-        if path.is_file() and path.suffix in (".json", ".md")
+        for path in plugin_paths(root)
+        if path.suffix in (".json", ".md")
         for match in _LOOSE.finditer(path.read_text(encoding="utf-8"))
     ]
 
 
 def plugin_file_problems(root: Path) -> list[str]:
     """Only the files the gate checks are under plugin/: the manifest, the README, each skill's SKILL.md and the
-    Markdown beside it, each agent's file. A Markdown link in it, inline or a reference's definition, is a URL, a
-    mailto: address, an anchor, or a file under plugin/."""
+    Markdown beside it, each agent's file, the rendered signs, the eval suite. A Markdown link in it, inline or a
+    reference's definition, is a URL, a mailto: address, an anchor, or a file under plugin/."""
     problems: list[str] = []
     base = root / PLUGIN_DIR
     inside = base.resolve()
-    for path in sorted(p for p in base.rglob("*") if p.is_file()):
+    for path in plugin_paths(root):
         rel = path.relative_to(base).as_posix()
         parts = rel.split("/")
         markdown = path.suffix == ".md"
         skill_file = len(parts) == 3 and parts[0] == "skills" and markdown and (path.parent / "SKILL.md").is_file()
         agent_file = len(parts) == 2 and parts[0] == "agents" and markdown
-        if rel not in PLUGIN_FILES and not skill_file and not agent_file:
+        sign_file = parts[0] == PLUGIN_SIGNS and markdown
+        eval_file = parts[0] == PLUGIN_EVALS and path.suffix in EVAL_SUFFIXES
+        if rel not in PLUGIN_FILES and not (skill_file or agent_file or sign_file or eval_file):
             problems.append(f"{PLUGIN_DIR}/{rel}: a file the gate doesn't check; give it a check first (write-skill)")
         if markdown:
             text = path.read_text(encoding="utf-8")
@@ -988,6 +1004,16 @@ def check_plugin(scope: Scope, root: Path = ROOT) -> Result:
             output = (done.stdout + done.stderr).strip()
             return Result("plugin", "FAIL", f"claude plugin validate --strict {target} failed", output=output)
     return Result("plugin", "pass", f"{detail}, validated by Claude Code")
+
+
+def check_private(_scope: Scope, root: Path = ROOT) -> Result:
+    """A project's styles hold real writing, so they stay out of git: `.byhand/` is ignored, and the gate refuses a file
+    forced past that (AGENTS.md, Never)."""
+    listed = git("ls-files", "--", PRIVATE_DIR, cwd=root)
+    if listed.returncode != 0:
+        return Result("private", "FAIL", "git ls-files failed", output=listed.stderr)
+    tracked = listed.stdout.splitlines()
+    return outcome("private", [f"{path} is tracked: a style holds real writing" for path in tracked], "none tracked")
 
 
 def sign_ids(text: str) -> set[str]:
@@ -1096,6 +1122,8 @@ TREE: list[tuple[str, Check]] = [
     ("imports", tool("imports", ["lint-imports"])),
     ("catalogue", tool("catalogue", ["byhand", "validate"])),
     ("sign ids", check_sign_ids),
+    ("sign files", tool("sign files", ["byhand", "render", "--check"])),
+    ("private", check_private),
     ("coverage floor", check_coverage_floor),
     ("version", check_version),
     ("AGENTS.md", check_agents_md),

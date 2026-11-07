@@ -53,7 +53,9 @@ calls, not in prose the agent has to get right.
   each time it runs, the `byhand` command line included, and writing a file or running a build always does.
   Never `Bash(...)`, `Write`, `Edit`, `WebFetch` or another plugin's tool.
 - **Side files:** Markdown the skill reads sits beside `SKILL.md` in its folder, linked relatively
-  (`[the spec](spec.md)`). No other file goes under `plugin/`: anything there could run.
+  (`[the spec](spec.md)`). Under `plugin/` beside these go only `signs/`, which `byhand render` writes and the gate
+  holds equal to the catalogue, and `evals/`, a suite's `.md`, `.yaml` and `.jsonl`, never a script: anything else
+  there could run.
 - **Links** to the rest of the repo are full GitHub URLs: Claude Code installs `plugin/` without it.
 - **A version** is written as the skills pin it, `uv run --no-project --with byhand==<version> byhand ...`, so uv
   leaves the user's own project alone; the gate refuses an unpinned `byhand` and

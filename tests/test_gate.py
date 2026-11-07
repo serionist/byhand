@@ -1017,6 +1017,9 @@ PLUGIN_BREAKS = [
     (gate.PLUGIN_MANIFEST, '"name"', '"agents": "./agents", "name"', "the key 'agents' isn't checked"),
     (gate.MARKETPLACE, None, "{not json", "can't be read"),
     (gate.MARKETPLACE, '"source"', '"hooks": {}, "source"', "the plugin's key 'hooks' isn't checked"),
+    ("plugin/signs/en/run.py", None, "print(1)\n", "plugin/signs/en/run.py: a file the gate doesn't check"),
+    ("plugin/evals/setup.sh", None, "echo 1\n", "plugin/evals/setup.sh: a file the gate doesn't check"),
+    ("plugin/signs/en/any.md", None, "Run `uvx byhand check`.\n", "runs byhand unpinned"),
 ]
 
 
@@ -1044,6 +1047,9 @@ PLUGIN_BREAKS = [
         "a manifest key",
         "unreadable",
         "a marketplace key",
+        "a script among the signs",
+        "a script among the evals",
+        "an unpinned byhand in a sign file",
     ],
 )
 def test_the_plugin_check_finds(case, tmp_path, monkeypatch):
@@ -1585,3 +1591,41 @@ def test_an_unreadable_base_fails_the_id_check(tmp_path):
 )
 def test_sign_ids_reads_a_file(text, expected):
     assert gate.sign_ids(text) == expected
+
+
+def test_the_rendered_signs_and_the_eval_suite_pass_and_an_eval_run_is_skipped(tmp_path, monkeypatch):
+    root = plugin_tree(tmp_path)
+    for rel, text in {
+        "plugin/signs/en/any.md": "# Signs\n",
+        "plugin/signs/zh-Hant/claude.layout.md": "# Signs\n",
+        "plugin/evals/write/prompt.md": "Write a mail.\n",
+        "plugin/evals/write/case.yaml": "graders: []\n",
+        "plugin/evals/write/history.jsonl": "{}\n",
+        "plugin/evals/results/2026-11-07/report.html": "<html></html>\n",
+        "plugin/evals/results/2026-11-07/aggregate-result.json": '"uvx byhand check"\n',
+    }.items():
+        (root / rel).parent.mkdir(parents=True, exist_ok=True)
+        (root / rel).write_text(text, encoding="utf-8")
+    monkeypatch.setattr(gate.shutil, "which", lambda name: None)
+    monkeypatch.delenv("GATE_REQUIRE_CLAUDE", raising=False)
+    result = gate.check_plugin(gate.Scope([]), root=root)
+    assert result.status == "warn", result.output
+
+
+def test_a_tracked_file_under_byhand_is_refused(tmp_path):
+    run = new_repo(tmp_path)
+    (tmp_path / "file").write_text("x\n", encoding="utf-8")
+    run("add", "file")
+    assert gate.check_private(gate.Scope([]), tmp_path).status == "pass"
+    style = tmp_path / ".byhand" / "styles" / "work.md"
+    style.parent.mkdir(parents=True)
+    style.write_text("# My style\n", encoding="utf-8")
+    assert gate.check_private(gate.Scope([]), tmp_path).status == "pass"  # on disk, ignored: it stays out of git
+    run("add", "-f", ".byhand/styles/work.md")
+    result = gate.check_private(gate.Scope([]), tmp_path)
+    assert result.status == "FAIL"
+    assert ".byhand/styles/work.md is tracked" in result.detail
+
+
+def test_private_fails_where_git_cant_list(tmp_path):
+    assert gate.check_private(gate.Scope([]), tmp_path).status == "FAIL"

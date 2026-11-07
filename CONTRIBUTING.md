@@ -41,6 +41,9 @@ uv run tools/gate.py full
   the harness checks, the plugin check, the attribution check and gitleaks, then the tests under coverage, which must
   reach the floor. Without gitleaks it skips the secret scan with a warning; CI runs it.
 
+After a change to a sign in a PR of your own, run `uv run byhand render`: the gate fails when `plugin/signs/` differs
+from the catalogue.
+
 ### The plugin from your clone
 
 `claude --plugin-dir plugin` starts Claude Code with the clone's plugin in place of an installed one. Turn the

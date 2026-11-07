@@ -265,7 +265,7 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 | Step | Issue | PR | State |
 |---|---|---|---|
 | 1. The harness and this plan | #1 | #9 | plan approved 2026-11-06 |
-| 2. The catalogue's schema | #2 | | |
+| 2. The catalogue's schema | #2 | #12 | merged 2026-11-07 |
 | 3. Render and its gate check | #3 | | |
 | 4. `propose-signs` and the seed | #4 | | |
 | 5. `check` | #5 | | |
@@ -275,6 +275,10 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 Decisions on the way:
 
+- **Step 3, a retired sign (2026-11-07):** a sign with an `until` renders nowhere, whatever the date: rendering by the
+  clock would turn a file stale overnight and fail the gate on no change.
+- **Step 3, the rendered files hold no citation and no example:** what a draft loads is what the model acts on; the
+  sources stay in the catalogue.
 - **Step 2, the languages' source (2026-11-07):** the Wikipedia list The catalogue names holds only 38 languages, so it
   can't give 100, and language codes are a one-way door, not to be filled in from memory. `languages.toml` comes from
   Unicode CLDR 49 instead: each territory's population times CLDR's percentage of speakers, script variants merged into

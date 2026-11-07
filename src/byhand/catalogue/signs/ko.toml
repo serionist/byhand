@@ -111,10 +111,11 @@ what = "Waves off a small version of the thing before naming it (단순한 A를 
 instead = "Say what it is; if both halves matter, give each plainly."
 strength = "usual"
 # X is one word, or two when the first doesn't end like a clause (-서, -고, -지만, a subject particle): "단순한 오타라서
-# 예산을 넘어선" is a person's two clauses, not the frame. 넘어서는, 넘어서면 and 넘어가 are a person going past a
-# limit ("단순한 질문을 넘어서면 별도 견적"), and so is X ending in 수준 or 정도. A negated frame ("넘어선 문제가 아닙니다")
-# still fires.
-check = '''단순한 (?:[^\s.,!?]*[^\s.,!?서고며데요다니면지게만라도는은이가] )?[^\s.,!?]*[^\s.,!?준도][을를] 넘어(?:서?(?:[\s,]|$)|선 )'''
+# 예산을 넘어선" is a person's two clauses, not the frame. 넘어서는, 넘어서면 and 넘어가 are left alone: most are a
+# person going past a limit ("단순한 질문을 넘어서면 별도 견적"), though the frame can take 넘어서는 too ("단순한 도구를
+# 넘어서는 가치"), a miss accepted for the plain mail it spares. An X ending in 수준, 정도 or 범위 is a limit as well. A
+# negated frame ("넘어선 문제가 아닙니다") still fires.
+check = '''단순한 (?:[^\s.,!?]*[^\s.,!?서고며데요다니면지게만라도는은이가] )?[^\s.,!?]*(?:[^\s.,!?준도위]|[^\s.,!?범]위)[을를] 넘어(?:서?(?:[\s,]|$)|선 )'''
 flags = "이번 워크숍은 단순한 교육을 넘어 팀 문화를 바꾸는 계기가 될 것입니다."
 passes = "이번 워크숍은 교육 위주예요. 끝나고 팀별로 저녁도 같이 먹어요."
 sources = [
@@ -163,7 +164,7 @@ models = "any"
 what = "Labels a conclusion before giving it, or ends on an academic hedge that it can be called so."
 instead = "Drop the label and the hedge; give the conclusion."
 strength = "weak"
-check = '''\b(?:결론적으로|요약하(?:면|자면)|종합하(?:면|자면|건대))\b|라고 (?:할|볼) 수 있(?:다|습니다)|[음함]을 알 수 있(?:다|습니다)'''
+check = '''\b(?:결론적으로|요약하(?:면|자면)|종합하(?:면|자면|건대))\b|[라다]고 (?:할|볼) 수 있(?:다|습니다|을 것)|[음함]을 알 수 있(?:다|습니다)'''
 flags = "결론적으로 이번 이전은 비용과 일정 모두에서 합리적인 선택이라고 할 수 있다."
 passes = "그래서 이전은 다음 달로 하기로 했어요. 비용은 지난번 견적 그대로예요."
 sources = [

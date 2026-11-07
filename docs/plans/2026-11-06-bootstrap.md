@@ -68,7 +68,7 @@ A sign:
 | `models` | `any`, or a list of `{ family, from, to }`; `to` left out is open, so a newer version is covered |
 | `what`, `instead` | what the text does, and what a person writes instead, in our own words |
 | `terms` | for a `word` or `phrase` sign: a list of `{ term, instead }`, so an era list (Wikipedia's GPT-4-era words) or a computed excess-word list is one sign with one id and one model scope; its `check` is built from the terms. A term is a regular-expression fragment, a stem and its endings where the language inflects (`kulcsfontosság\w*`, `ключев\w+`), or the sign carries its own `check`; text and terms are compared in Unicode NFC |
-| `strength` | `strong`, `usual` or `weak`: weak where people do it too (arXiv 2409.01754), so it is flagged only in a cluster: three weak signs or more in one paragraph, a constant `check` uses and the rendered files' header prints |
+| `strength` | `strong`, `usual` or `weak`: weak where people do it too (arXiv 2409.01754), so it is flagged only in a cluster: three hits or more of weak signs in a paragraph or section, each a different word or phrase, a constant `check` uses and the rendered files' header prints |
 | `check` | optional: a regular expression `byhand check` runs; a structural sign without one is for the model's own read |
 | `flags`, `passes` | an invented text the sign flags and a human one it passes. With a `check`, both run in CI. Without one, `validate` holds both present and different, and Step 7's suite runs `check` on a sample of them, the `passes` texts above all; CI can't prove a sign without a `check` |
 | `sources` | `{ source, where, seen }`: the source id, the section, revision or commit, the date |
@@ -275,6 +275,11 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 Decisions on the way:
 
+- **A weak cluster needs three different words or phrases (the maintainer, 2026-11-07, from the review of #18):** 3
+  hits of weak signs in a paragraph or section, each a different word or phrase; the same one repeated, or one phrase
+  two signs find, counts once. One habit repeated is a person's: a Japanese mail that says に関する three times, an
+  essay with its dashes. A list of different AI words still makes one: "delve into the pivotal, multifaceted" is 3. The
+  first wording, two different signs, missed that, as #21's review found. The rendered files print the rule. #20.
 - **Step 4, the seed's second round (the maintainer, 2026-11-07):**
   - One phrase counts once toward the weak rule: `serves as a testament to` hits three weak signs, and alone it is no
     cluster. The rendered header says so.
@@ -296,7 +301,7 @@ Decisions on the way:
   - `read_at` is what a source is pinned at, not proof it was read: `validate` needs it for every source.
   - `any-invented-sources` stays strong for `write`. Step 5's `check` can't open a source, so it says "unverified", not
     "AI".
-  - `any-bold-lead-in-list` is weak: one bold label is normal, and three hits make the cluster.
+  - `any-bold-lead-in-list` is weak: one bold label is normal, and its labels count as one habit toward a cluster.
   - The cut list: 67 signs to 55, merging signs that said one thing at two strengths. A regular expression merged in
     only where it stayed silent on plain mail; the others are for the model's read. `tests/test_office.py` holds that
     no strong or usual sign fires on plain office text.

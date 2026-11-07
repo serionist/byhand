@@ -131,7 +131,7 @@ def test_a_rendered_file_says_it_is_generated():
 def test_the_cluster_rule_prints_only_where_a_weak_sign_is():
     weak = render.render(catalogue(sign(strength="weak")))["en/any.signs.md"]
     assert f"with {signs.WEAK_CLUSTER} or more hits of weak signs in a paragraph or section" in weak
-    assert "one phrase counts once" in weak
+    assert "each a different word or phrase: the same one repeated, or one phrase two signs find, counts once" in weak
     assert "or section" not in render.render(catalogue(sign()))["en/any.signs.md"]
 
 

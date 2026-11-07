@@ -13,8 +13,8 @@ Not released yet. The skills come with the first version, `0.1.0`; the
 /plugin install byhand@byhand
 ```
 
-You need [uv](https://docs.astral.sh/uv/), which fetches Python and the package.
+That's all: no Python, nothing else to install. Its skills read Markdown and run no commands.
 
 ## Updating
 
-`/plugin marketplace update byhand`; the plugin pins the package's version, so both move together.
+`/plugin marketplace update byhand`.

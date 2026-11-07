@@ -1,10 +1,11 @@
 """The catalogue: what ships is valid, and each kind of bad sign, source or language is refused with its reason."""
 
+import datetime
 import shutil
 
 import pytest
 
-from byhand import signs
+from byhand import render, signs
 
 SOURCES = """
 [[source]]
@@ -423,3 +424,13 @@ def test_a_table_where_a_list_of_tables_belongs_is_refused(root):
 def test_a_row_that_is_no_table_is_refused(root):
     (root / "models.toml").write_text('family = ["x"]\n', encoding="utf-8")
     assert "models.toml: every `family` must be a table" in signs.load(root)[1]
+
+
+def test_terms_and_until_reach_the_rendered_files(root):
+    found, problems = signs.load(root)
+    assert problems == []
+    files = render.render(found)
+    assert sorted(files) == ["en/gpt.md", "zh/any.md"]  # any-rule-of-three has an `until`, so it is retired
+    assert "Terms: `delv(?:e|es|ing)`: look at" in files["en/gpt.md"]
+    assert found.signs["any-rule-of-three"].until == datetime.date(2030, 1, 1)
+    assert found.signs["en-delve"].until is None

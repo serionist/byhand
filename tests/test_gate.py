@@ -1020,6 +1020,14 @@ PLUGIN_BREAKS = [
     ("plugin/signs/en/run.py", None, "print(1)\n", "plugin/signs/en/run.py: a file the gate doesn't check"),
     ("plugin/evals/setup.sh", None, "echo 1\n", "plugin/evals/setup.sh: a file the gate doesn't check"),
     ("plugin/signs/en/any.md", None, "Run `uvx byhand check`.\n", "runs byhand unpinned"),
+    ("plugin/evals/case.yaml", None, "context:\n  scaffold_script: setup.md\n", "a scaffold_script runs a script"),
+    (
+        "plugin/signs/en/any.md",
+        None,
+        "A real [link](nowhere.md) outside code.\n",
+        "the link 'nowhere.md' leads to no file",
+    ),
+    ("plugin/README.md", "\n|", "\n`[x](nowhere.md)`\n|", "the link 'nowhere.md' leads to no file"),
 ]
 
 
@@ -1050,6 +1058,9 @@ PLUGIN_BREAKS = [
         "a script among the signs",
         "a script among the evals",
         "an unpinned byhand in a sign file",
+        "a scaffold script",
+        "a real link in a sign file",
+        "a link in a code span outside the signs",
     ],
 )
 def test_the_plugin_check_finds(case, tmp_path, monkeypatch):
@@ -1596,13 +1607,13 @@ def test_sign_ids_reads_a_file(text, expected):
 def test_the_rendered_signs_and_the_eval_suite_pass_and_an_eval_run_is_skipped(tmp_path, monkeypatch):
     root = plugin_tree(tmp_path)
     for rel, text in {
-        "plugin/signs/en/any.md": "# Signs\n",
+        "plugin/signs/en/any.md": "# Signs\n\n- a term: `kulcsfontossag[ua](?:ak)?` and `[1](turn0search0)`\n",
         "plugin/signs/zh-Hant/claude.layout.md": "# Signs\n",
         "plugin/evals/write/prompt.md": "Write a mail.\n",
         "plugin/evals/write/case.yaml": "graders: []\n",
         "plugin/evals/write/history.jsonl": "{}\n",
         "plugin/evals/results/2026-11-07/report.html": "<html></html>\n",
-        "plugin/evals/results/2026-11-07/aggregate-result.json": '"uvx byhand check"\n',
+        "plugin/evals/results/2026-11-07/aggregate-result.json": '"uvx byhand check, byhand==9.9.9"\n',
     }.items():
         (root / rel).parent.mkdir(parents=True, exist_ok=True)
         (root / rel).write_text(text, encoding="utf-8")
@@ -1625,6 +1636,41 @@ def test_a_tracked_file_under_byhand_is_refused(tmp_path):
     result = gate.check_private(gate.Scope([]), tmp_path)
     assert result.status == "FAIL"
     assert ".byhand/styles/work.md is tracked" in result.detail
+
+
+@pytest.mark.parametrize("rel", ["docs/.byhand/styles/me.md", "plugin/evals/results/run.sh"])
+def test_private_refuses_a_nested_style_and_a_tracked_eval_result(tmp_path, rel):
+    run = new_repo(tmp_path)
+    (tmp_path / rel).parent.mkdir(parents=True)
+    (tmp_path / rel).write_text("x\n", encoding="utf-8")
+    run("add", "-f", rel)
+    result = gate.check_private(gate.Scope([]), tmp_path)
+    assert (result.status, result.detail) == ("FAIL", f"{rel} is tracked: it must stay out of git")
+
+
+@pytest.mark.parametrize(
+    ("name", "args"), [("sign files", ["byhand", "render", "--check"]), ("catalogue", ["byhand", "validate"])]
+)
+def test_the_quick_lane_runs_the_package_as_a_tool_and_fails_with_it(monkeypatch, name, args):
+    check = {row[0]: row[1] for row in gate.lane_checks("quick")}[name]
+    calls: list[list[str]] = []
+
+    def run(cmd: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+        calls.append(cmd)
+        return subprocess.CompletedProcess(cmd, 1 if cmd[-len(args) :] == args else 0, "stale", "")
+
+    monkeypatch.setattr(gate, "run", run)
+    monkeypatch.setattr(gate.shutil, "which", lambda tool: tool)
+    assert check(gate.Scope([])).status == "FAIL"
+    assert calls[-1][-len(args) :] == args
+
+
+def test_the_quick_lane_holds_private_and_sign_ids():
+    names = [row[0] for row in gate.lane_checks("quick")]
+    assert {"private", "sign ids"} <= set(names)
+    checks = {row[0]: row[1] for row in gate.lane_checks("quick")}
+    assert checks["private"] is gate.check_private
+    assert checks["sign ids"] is gate.check_sign_ids
 
 
 def test_private_fails_where_git_cant_list(tmp_path):

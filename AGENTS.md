@@ -5,8 +5,8 @@ Codex reads it directly; the gate caps it at 150 lines. What the plugin does for
 
 ## What this is
 
-A Claude Code plugin that writes the way a person does, in the user's own voice, and the Python package behind it.
-It is for the user's own writing: mail, messages, documents, decks and sheets they send under their name.
+A Claude Code plugin that writes the way a person does, in the user's own voice: two sets of Markdown files, signs and
+styles, and the skills that read them. It is for the user's own writing, sent under their name. Keep it that simple.
 
 - **Languages:** the 100 most spoken, English, Mandarin, Hindi, Spanish, French, German and Hungarian among them. The
   bootstrap plan names the list and where it comes from. Each language is a first-class one, not a translation of
@@ -23,10 +23,10 @@ It is for the user's own writing: mail, messages, documents, decks and sheets th
 - **The styles:** the user's ways of writing, learned from their own samples, each with its language and register, and
   assigned to kinds of writing (messages, mail, documents, decks, sheets), with a default per kind and language. They stay on the
   user's machine.
-- **The plugin** (`plugin/`): skills that write and check text against the catalogue and a style, and that start
-  without being asked when the user writes mail, a message, a document or a deck.
-- **Where the work stands:** the harness and the catalogue's schema. `docs/plans/2026-11-06-bootstrap.md` (#1) designs
-  `0.1.0` and the milestones after it; read its progress log first.
+- **The plugin** (`plugin/`): skills that write and check text against the signs and a style, starting by themselves
+  when the user writes mail, a message, a document or a deck. They run no command: nothing but the plugin to install.
+- **Where the work stands:** the harness, the catalogue's schema and its rendering. `docs/plans/2026-11-06-bootstrap.md`
+  (#1) designs `0.1.0` and after; read its progress log first. The package in `src/` is the repo's own tool, never a user's.
 
 ## Where things are
 
@@ -113,7 +113,7 @@ This repo's own text is held to its catalogue: write it as a person would.
 Users will depend on these from `0.1.0`. Change one only in a PR that names it in its title, after the maintainer
 agrees in its issue; in `0.x` a minor may break one, under CHANGELOG's Breaking.
 
-- the names: `byhand` for the repo, the PyPI distribution, the CLI, the plugin and the import;
+- the name `byhand`, for the repo, the plugin and its marketplace;
 - the plugin's skills' names, `write`, `check`, `learn` and `styles`, and its agents';
 - a sign's id, the catalogue's schema, its language and model codes, the kinds of writing (`message`, `email`, `post`,
   `document`, `deck`, `sheet`; a later kind is added, never renamed);

@@ -275,6 +275,21 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 Decisions on the way:
 
+- **Simple, and no command on a user's machine (the maintainer, 2026-11-07):** byhand is two sets of Markdown files,
+  signs and styles, and the skills that read them. Install is `/plugin install`, with no uv, no Python and no PyPI.
+  This replaces what the plan says of the CLI for users, and changes three steps:
+  - Step 5: `check` reads a text against the rendered signs, and uses `Grep` on a file for their terms and checks,
+    which `render` prints. `byhand check` isn't built.
+  - Step 6: a style is a Markdown file, listed with `Glob`, read with `Read`, saved with `Write`. `byhand styles` isn't
+    built. `.gitignore` for a project's styles is written the same way.
+  - Step 8: a release is a tag and `plugin.json`'s version; nothing goes to PyPI. Round 1's P4 and P5 no longer apply to
+    a user, and the pin checks in the gate and the lenses go when the first skill lands.
+
+  The package stays, as the repo's own tool: `byhand validate`, `byhand render`, and the refresh in `0.2.0`.
+- **Step 3, its review (the maintainer, 2026-11-07):** `render` removes a leftover only when it carries render's line,
+  and names what it left alone. A third budget, 16 KB, holds a deck's or a sheet's layout files. The gate's link scan
+  skips code spans in `plugin/signs/` alone, where a term is a regular expression. A future `until` retires a sign
+  today, and every reader of the signs treats it so.
 - **Step 3, a retired sign (2026-11-07):** a sign with an `until` renders nowhere, whatever the date: rendering by the
   clock would turn a file stale overnight and fail the gate on no change.
 - **Step 3, the rendered files hold no citation and no example:** what a draft loads is what the model acts on; the

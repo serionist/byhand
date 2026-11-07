@@ -124,6 +124,7 @@ _LOOSE = re.compile(r"(?:--with|--from)[ =]['\"]?byhand(?!==)(?![\w-])|\buvx\s+[
 # file under plugin/, such as a skill's side file.
 _LINK = re.compile(r"\]\(([^)\s]+)")
 # A reference-style link's definition, `[name]: target`, which leads somewhere as an inline link does.
+_CODE_SPAN = re.compile(r"`[^`\n]*`")
 _REF_LINK = re.compile(r"^ {0,3}\[[^\]]+\]:\s*<?([^\s>]+)", re.MULTILINE)
 # A release's heading in CHANGELOG.md, `## X.Y.Z (YYYY-MM-DD)`: the release PR dates the version it sets.
 _RELEASE_HEADING = re.compile(r"^## (\d+\.\d+\.\d+(?:-[\w.]+)?) \(\d{4}-\d{2}-\d{2}\)$", re.MULTILINE)
@@ -945,8 +946,12 @@ def plugin_file_problems(root: Path) -> list[str]:
         eval_file = parts[0] == PLUGIN_EVALS and path.suffix in EVAL_SUFFIXES
         if rel not in PLUGIN_FILES and not (skill_file or agent_file or sign_file or eval_file):
             problems.append(f"{PLUGIN_DIR}/{rel}: a file the gate doesn't check; give it a check first (write-skill)")
+        if eval_file and path.suffix == ".yaml" and "scaffold_script" in path.read_text(encoding="utf-8"):
+            problems.append(f"{PLUGIN_DIR}/{rel}: a scaffold_script runs a script; a suite in plugin/ holds none")
         if markdown:
             text = path.read_text(encoding="utf-8")
+            # A rendered term is a regular expression in backticks, where `](` is no link (the maintainer's call, #14).
+            text = _CODE_SPAN.sub("", text) if sign_file else text
             for target in _LINK.findall(text) + _REF_LINK.findall(text):
                 if target.startswith(("https://", "http://", "mailto:", "#")):
                     continue
@@ -1007,13 +1012,14 @@ def check_plugin(scope: Scope, root: Path = ROOT) -> Result:
 
 
 def check_private(_scope: Scope, root: Path = ROOT) -> Result:
-    """A project's styles hold real writing, so they stay out of git: `.byhand/` is ignored, and the gate refuses a file
-    forced past that (AGENTS.md, Never)."""
-    listed = git("ls-files", "--", PRIVATE_DIR, cwd=root)
+    """What git ignores because no one should ship it, and the gate refuses when it is forced past that: a project's
+    styles hold real writing, at any depth (AGENTS.md, Never), and an eval run's results sit in the plugin, whose other
+    checks skip them on the promise git ignores them."""
+    listed = git("ls-files", "--", f":(glob)**/{PRIVATE_DIR}/**", f"{PLUGIN_DIR}/{EVAL_RESULTS}", cwd=root)
     if listed.returncode != 0:
         return Result("private", "FAIL", "git ls-files failed", output=listed.stderr)
     tracked = listed.stdout.splitlines()
-    return outcome("private", [f"{path} is tracked: a style holds real writing" for path in tracked], "none tracked")
+    return outcome("private", [f"{path} is tracked: it must stay out of git" for path in tracked], "none tracked")
 
 
 def sign_ids(text: str) -> set[str]:

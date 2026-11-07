@@ -62,7 +62,8 @@ def render_signs(out: Path, check: bool) -> int:
         print(f"the sign files have {len(problems)} problem(s)")
         return 1
     if not check:
-        render.write(files, out)
+        for path in render.write(files, out):
+            print(f"{path}: not render's, so left alone")
     print(f"{len(files)} sign files {'match the catalogue' if check else f'written to {out.as_posix()}'}")
     return 0
 

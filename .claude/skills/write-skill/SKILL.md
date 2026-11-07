@@ -57,9 +57,8 @@ calls, not in prose the agent has to get right.
   holds equal to the catalogue, and `evals/`, a suite's `.md`, `.yaml` and `.jsonl`, never a script: anything else
   there could run.
 - **Links** to the rest of the repo are full GitHub URLs: Claude Code installs `plugin/` without it.
-- **A version** is written as the skills pin it, `uv run --no-project --with byhand==<version> byhand ...`, so uv
-  leaves the user's own project alone; the gate refuses an unpinned `byhand` and
-  holds every pin under `plugin/` equal to `pyproject.toml`'s and `plugin.json`'s, and a release bumps them together.
+- **No command:** a plugin skill runs no command, `byhand` included: it needs nothing but the plugin. It reads with
+  `Read`, `Glob` and `Grep`, and saves with `Write`, which asks the user.
 - **No link and no AGENTS.md line:** list it as `/byhand:<name>` in `plugin/README.md`'s table instead.
 
 ## Plugin agents

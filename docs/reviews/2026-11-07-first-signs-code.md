@@ -5,7 +5,7 @@ head: b71d02b
 date: 2026-11-07
 round: 1
 tier: standard (a fresh reviewer per round on Claude Opus 5.5, every lens; fixes verified by the main session, with mutants)
-verdict: clean
+verdict: needs-fixes
 ---
 
 # Review: Bootstrap step 4, propose-signs, the sources and the first signs (PR #15)
@@ -72,6 +72,18 @@ kind, as a sign's `kinds` doesn't narrow the test today and that is the stricter
 
 Refuted in round 2: `any` on de or ru (the maintainer's call); dropped ids (none reached main); en-copula-avoidance
 losing Claude (the source names GPT and Gemini); "It's worth noting" accusing mail (no hit in 828K words).
+
+## Round 3
+
+**Where:** the delta `4e29dce..f765c63`, read by a fresh reviewer, mutants on a scratch copy. **Verdict:** needs-fixes.
+F1's last field holds: copycheck finds no run of 6, and at 5 only ordinary English and the checks' own strings. F22 to
+F30 hold, each with its test.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F21 | major | `any-assistant-preamble` | Still open: any eager yes ending on a colon fired strong. "Sure! Here's the email from the landlord:", "Natürlich! Hier ist der Link:", "Конечно! Вот ссылка:", "当然可以！链接在这里：". The noun list named what a person hands over too | fixed in the main session: each language's branch needs a thing a chatbot makes (a version, a draft, a rewrite), or in English "a ... email you can send"; the seven plain replies in `OFFICE`; both mutants killed; ripgrep agrees |
+| N1 | minor | the same check | `absolutely` had no test | fixed: a line in `MACHINE`, its mutant killed |
+| N3 | minor | this record | Round 1's verdict read `clean` | fixed: `needs-fixes` |
 
 ## Checks
 

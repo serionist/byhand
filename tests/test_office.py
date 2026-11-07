@@ -77,6 +77,14 @@ OFFICE = [
     # asides people write
     "The audit is worth noting in the minutes.",
     "The credit is important to note on the invoice.",
+    # an eager yes handing over what a person has, a colon before the link or the text (round 3 of #15)
+    "Sure! Here's the email from the landlord:",
+    "Sure! Here's the summary of Monday's call:",
+    "Of course! Here's the message I sent her:",
+    "Sure! Here's your invoice:",
+    "Natürlich! Hier ist der Link:",
+    "Конечно! Вот ссылка:",
+    "当然可以\\uff01链接在这里\\uff1a",
     # a bold list a person writes: weak, so it may fire, but it must not count alone
     "- **Mon:** stand-up at ten\n- **Tue:** client call\n- **Wed:** off",
 ]
@@ -104,7 +112,8 @@ MACHINE = [
     ("any-assistant-closing-offer", "Is there anything else you'd like me to add?"),
     ("any-assistant-closing-offer", "Gibt es noch etwas, bei dem ich helfen kann?"),
     ("any-assistant-closing-offer", "Сообщите мне, если хотите, чтобы я сократил текст."),
-    ("any-assistant-preamble", "Certainly! Here is your announcement:"),
+    ("any-assistant-preamble", "Certainly! Here is a revised draft of your announcement:"),
+    ("any-assistant-preamble", "Absolutely! Here's a rewrite:"),
     ("any-assistant-preamble", "Sure! Here's a professional email you can send to your client:"),
     ("any-assistant-preamble", "Of course! Here is a shorter version of the post:"),
     ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung:"),

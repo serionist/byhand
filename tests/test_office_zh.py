@@ -72,6 +72,10 @@ OFFICE = [
     # reports and news that point at a fact, as people write them (round 3 of the review of #16, N1)
     "值得注意的是\uff0c三季度应收账款比上月多了一百万\uff0c两家大客户还没回款\u3002",
     "需要指出的是\uff0c本次调查样本只有二十人\u3002",
+    "作为AI助手\uff0c我行推出的智能客服全天在线\u3002",
+    "作为AI助手\uff0c我校的选课系统能自动排课\u3002",
+    "作为新人\uff0c我可以先从整理文档做起\u3002",
+    "作为AI助手的产品经理\uff0c我会先看用户反馈\u3002",
     # notes
     "周三\uff1a跟供应商对账\u3001催发票\u3001订下周的会议室\u3002",
     "待办\uff1a续签房租合同\uff0c问物业能不能便宜点\u3002",
@@ -121,6 +125,16 @@ MACHINE = [
 ]
 
 
+MACHINE += [  # round 4 of the review of #16: a model's own disclaimers
+    ("any-ai-self-reference", "作为一个AI语言模型\uff0c我不具备个人情感\u3002"),
+    ("any-ai-self-reference", "作为AI语言模型\uff0c我的知识截止到2023年\u3002"),
+    ("any-ai-self-reference", "作为一个AI语言模型\uff0c我并没有自己的立场\u3002"),
+    ("any-ai-self-reference", "作为一个AI语言模型\uff0c我只能提供一般性信息\u3002"),
+    ("any-ai-self-reference", "作为AI助手\uff0c我建议您咨询专业律师\u3002"),
+    ("any-ai-self-reference", "作为AI助手\uff0c我需要提醒您注意风险\u3002"),
+    ("any-ai-self-reference", "作为AI助手\uff0c我很乐意帮您修改\u3002"),
+    ("any-ai-self-reference", "作为人工智能助手\uff0c我理解您的担忧\u3002"),
+]
 MACHINE += [  # round 2 of the review of #16
     ("zh-holding-space", "我会一直在这里\uff0c稳稳接住你的情绪\u3002"),
     ("any-assistant-preamble", "当然可以\uff01下面是根据您的要求修改后的版本\uff1a"),
@@ -155,16 +169,25 @@ NOTICES = [
 
 
 def _weak_hits(paragraph: str, weak: list[signs.Sign]) -> int:
-    """Hits of weak signs in a paragraph, one phrase once: overlapping matches of several signs count as one."""
+    """Hits of weak signs in a paragraph as the rendered files count them, each a different word or phrase: one phrase
+    two signs find (overlapping matches) counts once, and so does the same phrase repeated."""
     spans = sorted(
         (match.start(), match.end()) for sign in weak if sign.pattern for match in sign.pattern.finditer(paragraph)
     )
-    count, end = 0, -1
+    phrases: list[list[int]] = []
     for start, stop in spans:
-        if start >= end:
-            count += 1
-        end = max(end, stop)
-    return count
+        if phrases and start < phrases[-1][1]:
+            phrases[-1][1] = max(phrases[-1][1], stop)
+        else:
+            phrases.append([start, stop])
+    return len({paragraph[start:stop].casefold() for start, stop in phrases})
+
+
+def test_weak_hits_count_as_the_rendered_files_say():
+    catalogue, _ = signs.load()
+    weak = [sign for sign in catalogue.signs.values() if sign.strength == "weak" and sign.language in ("any", "zh")]
+    assert _weak_hits("总的来说还行\u3002总的来说还行\u3002总的来说还行\u3002", weak) == 1
+    assert _weak_hits("众所周知\uff0c总的来说\uff0c说到底\u3002", weak) == 3
 
 
 @pytest.mark.parametrize("notice", NOTICES)

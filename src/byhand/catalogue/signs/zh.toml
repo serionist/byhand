@@ -48,6 +48,7 @@ terms = [
   { term = '接下来我将为[你您]|接下來我將為[你您]|让我们一起来看看|讓我們一起來看看', instead = "start with it" },
   { term = '不言而喻|毋庸置疑', instead = "cut" },
   { term = '不[难難][发發][现現]|不可否[认認]的是', instead = "cut" },
+  { term = '值得注意的是|需要指出的是', instead = "cut; state the point" },
 ]
 flags = "众所周知，物流一直是短板。不难发现，三月的退货少了。"
 passes = "三月退货少了一半，主要是换了快递公司。"

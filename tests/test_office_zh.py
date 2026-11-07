@@ -68,6 +68,10 @@ OFFICE = [
     "作為AI助理\uff0c我們的系統會先整理紀要\u3002",
     "作为AI助手\uff0c我司产品可以自动整理会议纪要\u3002",
     "作為AI助理\uff0c我方系統支援繁體中文\u3002",
+    "作为AI助手\uff0c我公司推出的产品可以自动排班\u3002",
+    # reports and news that point at a fact, as people write them (round 3 of the review of #16, N1)
+    "值得注意的是\uff0c三季度应收账款比上月多了一百万\uff0c两家大客户还没回款\u3002",
+    "需要指出的是\uff0c本次调查样本只有二十人\u3002",
     # notes
     "周三\uff1a跟供应商对账\u3001催发票\u3001订下周的会议室\u3002",
     "待办\uff1a续签房租合同\uff0c问物业能不能便宜点\u3002",
@@ -121,8 +125,6 @@ MACHINE += [  # round 2 of the review of #16
     ("zh-holding-space", "我会一直在这里\uff0c稳稳接住你的情绪\u3002"),
     ("any-assistant-preamble", "当然可以\uff01下面是根据您的要求修改后的版本\uff1a"),
     ("any-assistant-preamble", "当然\uff01以下是优化后的文本\uff1a"),
-    ("any-didactic-aside", "值得注意的是\uff0c这一趋势仍在持续\u3002"),
-    ("any-didactic-aside", "需要指出的是\uff0c样本量较小\u3002"),
 ]
 
 
@@ -210,3 +212,13 @@ def test_a_plain_report_paragraph_makes_no_cluster(report):
 def test_a_report_s_own_wording_is_no_sign(wording):
     catalogue, _ = signs.load()
     assert [sign.id for sign in catalogue.signs.values() if sign.pattern and sign.pattern.search(wording)] == []
+
+
+@pytest.mark.parametrize("text", ["值得注意的是\uff0c合同下月到期\u3002", "需要指出的是\uff0c预算还没批\u3002"])
+def test_a_signpost_that_people_write_too_is_weak(text):
+    """People write these in reports and news, so they count only in a cluster (round 3 of the review of #16, N1)."""
+    catalogue, _ = signs.load()
+    openers = catalogue.signs["zh-stock-openers"]
+    assert openers.strength == "weak"
+    assert openers.pattern is not None
+    assert openers.pattern.search(text)

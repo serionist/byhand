@@ -162,10 +162,15 @@ def test_colon_replies_and_short_chat_meet_only_weak_signs():
 
 
 def _weak_hits(catalogue: signs.Catalogue, text: str) -> int:
-    return sum(
-        len(list(sign.pattern.finditer(text)))
-        for sign in catalogue.signs.values()
-        if sign.pattern and sign.strength == "weak"
+    """Hits of weak signs as the cluster rule counts them: each a different word or phrase, so the same one repeated,
+    or one phrase two signs find, counts once."""
+    return len(
+        {
+            found.group(0)
+            for sign in catalogue.signs.values()
+            if sign.pattern and sign.strength == "weak"
+            for found in sign.pattern.finditer(text)
+        }
     )
 
 
@@ -173,6 +178,12 @@ def _weak_hits(catalogue: signs.Catalogue, text: str) -> int:
 def test_plain_mail_and_an_essay_are_no_weak_cluster(text):
     catalogue, _ = signs.load()
     assert _weak_hits(catalogue, text) < signs.WEAK_CLUSTER
+
+
+def test_the_function_words_are_for_the_models_read():
+    # the study counted rates over whole texts: as terms, one に関する in a mail was a hit (#18's review, F1)
+    catalogue, _ = signs.load()
+    assert catalogue.signs["ja-llm-function-words"].pattern is None
 
 
 def test_a_pair_of_dashes_around_an_aside_is_one_hit():

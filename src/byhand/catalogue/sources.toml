@@ -168,7 +168,7 @@ kind = "repo"
 languages = ["en"]
 licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "tbhb/vale-ai-tells", paths = ["."] }
+feed = { api = "github", repo = "tbhb/vale-ai-tells", paths = ["styles/ai-tells"] }
 read_at = { commit = "51f646e366ba", date = 2026-11-07 }
 
 [[source]]
@@ -178,7 +178,7 @@ kind = "repo"
 languages = ["en"]
 licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "sam-paech/slop-forensics", paths = ["results/slop_lists", "results/analysis"] }
+feed = { api = "github", repo = "sam-paech/slop-forensics", paths = ["results_by_domain/essays", "data"] }
 read_at = { commit = "c313f042620f", date = 2026-11-07 }
 
 [[source]]

@@ -1,5 +1,6 @@
-# The signs of every language. A sign here needs sources in at least two languages. Step 4 of
-# docs/plans/2026-11-06-bootstrap.md seeds this, and `signs/<language>.toml` for each language.
+# The signs of every language. A sign here needs sources in at least two languages, a translated page counting as its
+# language; an artefact with a `check` needs one, as a tool's string looks the same in every language. An `any` sign has
+# no `terms`: a word's edge differs between languages, so it writes a `check`.
 #
 # [[sign]]
 # id = "any-rule-of-three"
@@ -22,7 +23,7 @@ id = "any-generic-over-specific"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Swaps the odd, exact fact for a flattering general statement that would fit many subjects."
+what = "Trades a telling detail for praise that would suit anyone."
 instead = "Keep the detail that fits only this subject: the name, number, date or event."
 strength = "usual"
 flags = "Maria was a visionary leader whose dedication transformed the local business community."
@@ -38,7 +39,7 @@ id = "any-significance-inflation"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Claims an ordinary fact marks a turning point, a legacy or a wider trend."
+what = "Claims an ordinary fact marks a turning point, a legacy or a wider trend, even one it admits is minor."
 instead = "State the fact; say what changed only if you can name the change."
 strength = "usual"
 flags = "The new bus timetable marks a pivotal moment in the town's evolving story of mobility."
@@ -51,22 +52,6 @@ sources = [
 ]
 
 [[sign]]
-id = "any-minor-but-significant"
-category = "structure"
-kinds = ["any"]
-models = "any"
-what = "Admits a detail is minor, then argues it matters anyway."
-instead = "Leave the detail out, or give it without the defence."
-strength = "usual"
-flags = "Although only a small footnote in the town's history, the mill reflects a broader spirit of local enterprise."
-passes = "The mill closed in 1962 and is now flats."
-sources = [
-  { source = "wikipedia-en", where = "Undue emphasis on significance, legacy, and broader trends, revision 1384165696", seen = 2026-11-07 },
-  { source = "wikipedia-ru", where = "Чрезмерный акцент на символизме и важности, revision 156024043", seen = 2026-11-07 },
-  { source = "wikipedia-zh", where = "過度強調重要性、歷史影響、宏觀趨勢, revision 95337857", seen = 2026-11-07 },
-]
-
-[[sign]]
 id = "any-coverage-name-drop"
 category = "structure"
 kinds = ["any"]
@@ -74,7 +59,7 @@ models = "any"
 what = "Proves importance by listing who covered the subject, not what they said."
 instead = "Report what a source says; name it where that helps the reader."
 strength = "usual"
-flags = "Her work has been featured in Wired, Vogue and other leading outlets, reflecting her growing profile."
+flags = "Profiles in several national papers and trade magazines attest to the studio's rising reputation."
 passes = "Wired ran a piece in May on her battery work, and two labs have since repeated the test."
 sources = [
   { source = "wikipedia-en", where = "Canned emphasis on notability, attribution, and media coverage, revision 1384165696", seen = 2026-11-07 },
@@ -85,13 +70,13 @@ sources = [
 [[sign]]
 id = "any-over-attribution"
 category = "structure"
-kinds = ["any"]
+kinds = ["document"]
 models = "any"
-what = "Credits an undisputed everyday fact to a source in the prose, or narrates what a record lists."
-instead = "State plain facts directly; attribute only what someone could dispute."
-strength = "usual"
-flags = "According to the company's website, Anna Lind is listed as the chief executive."
-passes = "Anna Lind runs the company."
+what = "Narrates what a record lists or identifies where the fact could stand alone."
+instead = "State the fact; attribute only what someone could dispute."
+strength = "weak"
+flags = "Companies House lists Anna Lind as a director of the firm, and the register identifies her as its founder."
+passes = "Anna Lind founded the firm and is still a director; Companies House has her date of birth wrong."
 sources = [
   { source = "wikipedia-en", where = "Undue emphasis on identification by primary or tertiary sources, revision 1384165696", seen = 2026-11-07 },
   { source = "wikipedia-fr", where = "Contenu, revision 240703969", seen = 2026-11-07 },
@@ -107,12 +92,13 @@ what = "Ends a fact on a clause saying what it shows, or has the fact itself hig
 instead = "End on the fact; if a reading matters, give it a sentence and say whose it is."
 strength = "usual"
 flags = "The team won the cup in 1998, reflecting the club's enduring commitment to youth."
-passes = "The team won the cup in 1998 with six players from its own youth side."
+passes = "Sales fell 8% in the third quarter, reflecting the weaker dollar."
 sources = [
   { source = "wikipedia-en", where = "Superficial analyses, revision 1384165696", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Oberflächliche Analysen, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Поверхностный анализ, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "分析流於表面, revision 95337857", seen = 2026-11-07 },
+  { source = "reinhart-2025-pnas", where = "arXiv v2: present participial clauses 2 to 5 times the human rate in instruction-tuned models", seen = 2026-11-07 },
 ]
 
 [[sign]]
@@ -148,6 +134,7 @@ sources = [
   { source = "wikipedia-ru", where = "Выводы о проблемах и перспективах на будущее, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "過於簡略的前景, revision 95337857", seen = 2026-11-07 },
   { source = "russell-2025-detectors", where = "arXiv v2, section on expert clues: vague upbeat conclusions", seen = 2026-11-07 },
+  { source = "vale-ai-tells", where = "styles/ai-tells/DespiteChallenges.yml, commit 51f646e366ba", seen = 2026-11-07 },
 ]
 
 [[sign]]
@@ -155,7 +142,7 @@ id = "any-negative-parallelism"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Raises a claim nobody made in order to correct it: not X but Y, not only X but also Y."
+what = "Raises a claim nobody made in order to correct it: not this but that, or not just this."
 instead = "Say Y directly; keep the negation when someone really believes X."
 strength = "usual"
 flags = "This is not just a software update. It is a new way of working."
@@ -165,6 +152,8 @@ sources = [
   { source = "wikipedia-de", where = "Negative Parallelismen, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Параллелизмы с уточнениями, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "否定平行結構, revision 95337857", seen = 2026-11-07 },
+  { source = "russell-2025-detectors", where = "arXiv v2, Table 3, sentence structure", seen = 2026-11-07 },
+  { source = "vale-ai-tells", where = "styles/ai-tells/ContrastiveNegation.yml, commit 51f646e366ba", seen = 2026-11-07 },
 ]
 
 [[sign]]
@@ -190,9 +179,9 @@ category = "structure"
 kinds = ["any"]
 models = "any"
 what = "Writes 'from X to Y' with two things that sit on no real scale."
-instead = "List the things plainly, or pick the one that matters."
+instead = "Name the items, or keep only the one you mean."
 strength = "weak"
-flags = "Our journey runs from the birth of the stars to the quiet rituals of daily life."
+flags = "The exhibition spans everything from ancient pottery to the hopes of tomorrow."
 passes = "The bus runs from Leeds to York every hour."
 sources = [
   { source = "wikipedia-de", where = "Falsche Erweiterung, revision 271721424", seen = 2026-11-07 },
@@ -223,7 +212,7 @@ id = "any-circular-argument"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Repeats one claim in new words, so paragraphs could swap with nothing lost."
+what = "Says the same point again in other words, adding nothing new."
 instead = "Let each paragraph add a fact or a step; cut the ones that do not."
 strength = "usual"
 flags = "The reform matters greatly. It has had a significant effect. Its importance is widely felt across the sector."
@@ -256,7 +245,7 @@ models = "any"
 what = "Reads like a brochure about a place, firm or person."
 instead = "Describe what is there in neutral words."
 strength = "usual"
-flags = "Nestled in the heart of the valley, this vibrant town boasts a rich cultural heritage."
+flags = "Tucked among green hills, this charming village delights visitors with its timeless character."
 passes = "The town sits in the valley, 20 km from the coast, and has a Saturday market."
 sources = [
   { source = "wikipedia-en", where = "Promotional and advertisement-like language (2023 to 2025), revision 1384165696", seen = 2026-11-07 },
@@ -271,15 +260,17 @@ id = "any-didactic-aside"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Tells the reader what is important to note or remember."
+what = "Tells an imagined reader what is important to note or remember."
 instead = "State the point; the reader decides what to note."
 strength = "usual"
+check = '''it(?:['’]s| is) (?:essential|crucial|important|worth) (?:noting|to note)'''
 flags = "It is important to note that results may vary by region."
-passes = "Results vary by region: the north came in 4% lower."
+passes = "It's important to call them before noon: results vary by region."
 sources = [
   { source = "wikipedia-en", where = "Hedging disclaimers, 2023-24, revision 1384165696", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Redaktionelle Kommentare, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Дидактические и редакционные оговорки, revision 156024043", seen = 2026-11-07 },
+  { source = "slop-gate", where = "rules/vocabulary.json, commit f78d5cbee0dc", seen = 2026-11-07 },
 ]
 
 [[sign]]
@@ -287,10 +278,10 @@ id = "any-defensive-qualification"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Adds unasked caveats on what a source does not prove, aimed at no claim anyone made."
-instead = "Qualify a claim someone could overread, and say what the evidence does show."
+what = "Adds caveats nobody asked for about how far a source goes, aimed at a claim no one made."
+instead = "Limit a claim only where a reader could overreach, and give the finding."
 strength = "usual"
-flags = "The report explains the delay. It does not establish that the supplier was at fault, and should be read as context rather than as a finding."
+flags = "The minutes record a delay in March. They should be read as background, not as a verdict on the contractor."
 passes = "The report blames the delay on the port strike; it doesn't cover the earlier staff shortage."
 sources = [
   { source = "wikipedia-en", where = "Hedging disclaimers, Mid-2026-present, revision 1384165696", seen = 2026-11-07 },
@@ -305,8 +296,8 @@ models = "any"
 what = "Says details are scarce in the sources, then writes on as if they were not."
 instead = "Say plainly what you could not find, and write only what you know."
 strength = "usual"
-check = 'specific details (?:are|remain) (?:limited|scarce)|in the (?:provided|available) (?:sources|search results)|in den (?:bereitgestellten|verfügbaren) (?:quellen|suchergebnissen)|в предоставленных (?:источниках|результатах)'
-flags = "While specific details are limited, the firm likely played an important role in the region."
+check = 'specific details (?:are|remain) (?:limited|scarce)|in the provided (?:sources|search results)|in den bereitgestellten (?:quellen|suchergebnissen)|в предоставленных (?:источниках|результатах)'
+flags = "Specific details remain scarce, yet the firm probably shaped trade in the region."
 passes = "I couldn't find the 2019 accounts, so I've left that year out."
 sources = [
   { source = "wikipedia-en", where = "Hedging disclaimers about source availability and recommended usage, revision 1384165696", seen = 2026-11-07 },
@@ -350,11 +341,11 @@ sources = [
 ]
 
 [[sign]]
-id = "any-overstructured-short-text"
+id = "any-overstructured-note"
 category = "structure"
 kinds = ["message", "email"]
 models = "any"
-what = "Breaks a short note into titled sections, as if it were a report."
+what = "Breaks a note or a reply into titled sections, as if it were a report."
 instead = "Write a few plain sentences; use a list only for a real list."
 strength = "usual"
 flags = "Summary\nThe meeting moved.\n\nKey Details\nIt is now at 3pm.\n\nNext Steps\nPlease confirm."
@@ -391,7 +382,7 @@ what = "Opens with a stock wish that the message finds the reader well."
 instead = "Start with the reason you are writing."
 strength = "weak"
 check = '(?:this|the) (?:message|email|mail|letter) finds you well|diese nachricht erreicht sie wohlauf|это сообщение застанет вас'
-flags = "I hope this message finds you well. I am writing to ask about the invoice."
+flags = "Hope this email finds you well. Quick question on the March invoice."
 passes = "Hi Sam, quick one about the March invoice: it's missing the PO number."
 sources = [
   { source = "wikipedia-en", where = "Comment-specific indicators, revision 1384165696", seen = 2026-11-07 },
@@ -424,9 +415,9 @@ id = "any-bold-lead-in-list"
 category = "formatting"
 kinds = ["any"]
 models = "any"
-what = "Starts every list item with a bold label and a colon, or numbers bold paragraph titles."
+what = "Starts item after item in a list with a bold label and a colon, or numbers bold paragraph titles."
 instead = "Write plain items or a sentence; keep labels where a reader scans for them."
-strength = "usual"
+strength = "weak"
 check = '^\s*(?:[-*•–]|\d+[.)])\s+\*\*[^*\n]+(?::\*\*|\*\*\s*[:：])|^\*\*\d+[.、]'
 flags = "- **Speed:** Pages load faster.\n- **Cost:** Hosting is cheaper."
 passes = "- Pages load faster\n- Hosting is cheaper"
@@ -461,9 +452,9 @@ models = "any"
 what = "Puts an emoji in front of headings or list items."
 instead = "Drop it; a heading needs no decoration."
 strength = "usual"
-check = '^\s*(?:#{1,6}\s+|[-*•]\s+)?[\U0001F300-\U0001FAFF☀-➿]'
+check = '^\s*(?:#{1,6}\s+|[-*•]\s+)[\U0001F300-\U0001FAFF✅❌]'
 flags = "## 🚀 Next steps\n- ✅ Book the room"
-passes = "Thanks for the cake yesterday 🎂\n\nNext steps: book the room."
+passes = "- ✓ Book the room\n- Thanks for the cake 🎂"
 sources = [
   { source = "wikipedia-en-style", where = "Emoji as formatting, revision 1382924605", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Emojis, revision 271721424", seen = 2026-11-07 },
@@ -471,30 +462,14 @@ sources = [
 ]
 
 [[sign]]
-id = "any-title-case-headings"
-category = "formatting"
-kinds = ["any"]
-models = "any"
-what = "Capitalises every main word of a heading where the language's own usage does not."
-instead = "Follow the language's normal heading case."
-strength = "weak"
-flags = "Early Life And Education"
-passes = "Early life and education"
-sources = [
-  { source = "wikipedia-en-style", where = "Title case, revision 1382924605", seen = 2026-11-07 },
-  { source = "wikipedia-ru", where = "Заглавная буква, revision 156024043", seen = 2026-11-07 },
-  { source = "wikipedia-fr", where = "Mise en page, typographie, revision 240703969", seen = 2026-11-07 },
-]
-
-[[sign]]
 id = "any-raw-markdown"
 category = "formatting"
 kinds = ["email", "post", "document"]
 models = "any"
-what = "Leaves Markdown symbols such as ** or ## where they will not render."
+what = "Leaves Markdown symbols such as **, ## or --- rules where they will not render."
 instead = "Format for where the text lands; in mail and plain text, drop the symbols."
 strength = "weak"
-check = '\*\*[^*\n]+\*\*|^#{2,4} \S'
+check = '\*\*[^*\n]+\*\*|^#{2,4} \S|^(?:-{3,4}|\*{3}|_{3})\s*$'
 flags = "Thanks for the update. **Two things** to fix.\n\n## Next"
 passes = "Thanks for the update. Two things to fix.\n\nNext: the invoice."
 sources = [
@@ -503,38 +478,7 @@ sources = [
   { source = "wikipedia-ru", where = "Использование Markdown, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "Markdown, revision 95337857", seen = 2026-11-07 },
   { source = "wikipedia-fr", where = "Mise en page, typographie, revision 240703969", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "any-divider-lines"
-category = "formatting"
-kinds = ["any"]
-models = "any"
-what = "Puts a horizontal rule between every section."
-instead = "Let headings or a blank line do that."
-strength = "weak"
-check = '^(?:-{3,4}|\*{3}|_{3})\s*$'
-flags = "The hall is booked.\n\n---\n\nThe caterer is confirmed.\n\n---\n\nInvites go out on Monday."
-passes = "The hall is booked.\n\nThe caterer is confirmed.\n\nInvites go out on Monday."
-sources = [
   { source = "wikipedia-en-markup", where = "Thematic breaks between sections, revision 1383317735", seen = 2026-11-07 },
-  { source = "wikipedia-de", where = "Weichere, uneindeutige Anzeichen, revision 271721424", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "any-mixed-apostrophes"
-category = "formatting"
-kinds = ["any"]
-models = "any"
-what = "Mixes straight and curly apostrophes in one text."
-instead = "Use one kind throughout."
-strength = "weak"
-check = '''\w'\w.*\w’\w|\w’\w.*\w'\w'''
-flags = "We can't go, so it’s on Sam."
-passes = "We can't go, so it's on Sam."
-sources = [
-  { source = "wikipedia-en-style", where = "Curly quotation marks and apostrophes, revision 1382924605", seen = 2026-11-07 },
-  { source = "wikipedia-fr", where = "Mise en page, typographie, revision 240703969", seen = 2026-11-07 },
 ]
 
 # Artefacts: strings a chatbot leaves behind. Each has a `check`, and most alone settle the question.
@@ -544,29 +488,15 @@ id = "any-chatgpt-citation-markup"
 category = "artefact"
 kinds = ["any"]
 models = [{ family = "gpt", from = "4" }]
-what = "Leaves ChatGPT's internal citation tokens in the text."
+what = "Leaves ChatGPT's internal citation tokens or search placeholders in the text."
 instead = "Delete the token and cite the source, or cut the claim."
 strength = "strong"
-check = 'contentReference\[oaicite|oaicite:\d|oai_citation|attributableIndex'
+check = 'contentReference\[oaicite|oaicite:\d|oai_citation|attributableIndex|turn\d+(?:search|image|news|file)\d+|gehe zu suche nr'
 flags = "The bridge opened in 1932. :contentReference[oaicite:3]{index=3}"
 passes = "The bridge opened in 1932 (county archive, box 12)."
 sources = [
   { source = "wikipedia-en-markup", where = "ChatGPT: contentReference, oaicite, revision 1383317735", seen = 2026-11-07 },
   { source = "wikipedia-fr", where = "Sources, revision 240703969", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "any-chatgpt-search-token"
-category = "artefact"
-kinds = ["any"]
-models = [{ family = "gpt", from = "4" }]
-what = "Leaves ChatGPT's search placeholders, such as turn0search0, where a link stood."
-instead = "Delete the token and link the source, or cut the claim."
-strength = "strong"
-check = 'turn\d+(?:search|image|news|file)\d+|gehe zu suche nr'
-flags = "The school opened in 1994. citeturn0search1"
-passes = "The school opened in 1994. Turn left at the gate."
-sources = [
   { source = "wikipedia-en-markup", where = "ChatGPT: turn0search0, revision 1383317735", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Gehe zu Suche Nr., revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "turn0search0, revision 95337857", seen = 2026-11-07 },
@@ -601,7 +531,7 @@ what = "Says in the text that a language model or a named chatbot wrote it."
 instead = "Delete it and write as the author."
 strength = "strong"
 check = 'as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包'
-flags = "As an AI language model, I can't give legal advice, but here are some options."
+flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [
   { source = "wikipedia-en", where = "Prompt refusal, revision 1384165696", seen = 2026-11-07 },
@@ -628,14 +558,14 @@ sources = [
 [[sign]]
 id = "any-assistant-preamble"
 category = "artefact"
-kinds = ["document", "post"]
+kinds = ["email", "document", "post"]
 models = "any"
 what = "Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'."
 instead = "Delete the line; start with the text itself."
 strength = "strong"
-check = '''^\W*(?:certainly|of course|sure)[!,.]* here(?:['’]s| is| are)\b|^\W*(?:natürlich|sicherlich)[!,.]* hier ist|^\W*(?:конечно|безусловно)[!,.]* вот|^\W*(?:当然可以|當然可以)[!！,，。:：]'''
+check = '''^\W*(?:certainly[!,.]*|(?:of course|sure)!+) here(?:['’]s| is| are)\b|^\W*(?:natürlich|sicherlich)! hier ist|^\W*(?:конечно|безусловно)! вот|^\W*(?:当然可以|當然可以)[!！]'''
 flags = "Certainly! Here is a polished version of your announcement:"
-passes = "Here is what changed in the rota this month."
+passes = "Of course, here is where it gets harder."
 sources = [
   { source = "wikipedia-en", where = "Collaborative communication, revision 1384165696", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Kollaborative Kommunikation, revision 271721424", seen = 2026-11-07 },
@@ -648,12 +578,12 @@ id = "any-assistant-closing-offer"
 category = "artefact"
 kinds = ["document"]
 models = "any"
-what = "Keeps the chatbot's closing line under a document: a hope that it helped, or an offer of more."
+what = "Keeps the chatbot's closing line under a document: an offer to do more."
 instead = "Delete the line; end with the document."
 strength = "strong"
-check = '''would you like me to|let me know if you(?:['’]d| would) like|is there anything else|i hope this helps|ich hoffe, das hilft|gibt es noch etwas|надеюсь, это помогло|сообщите мне, если хотите|希望(?:这|這)(?:对|對)你有(?:帮助|幫助)'''
-flags = "The committee meets each spring.\n\nWould you like me to turn this into a one-page summary?"
-passes = "The committee meets each spring.\n\nQuestions go to the secretary."
+check = '''^\W*(?:would you like me to (?:expand|convert|reformat|turn) this|let me know if you(?:['’]d| would) like me to (?:tweak|adjust|expand|refine|revise)|is there anything else you(?:['’]d| would) like me to|gibt es noch etwas, (?:bei dem|das) ich|сообщите мне, если хотите)'''
+flags = "The committee meets each spring.\n\nWould you like me to expand this into a one-page handout?"
+passes = "The committee meets each spring.\n\nWould you like me to bring the projector, or will Sam?"
 sources = [
   { source = "wikipedia-en", where = "Collaborative communication, revision 1384165696", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Kollaborative Kommunikation, revision 271721424", seen = 2026-11-07 },
@@ -677,4 +607,64 @@ sources = [
   { source = "wikipedia-de", where = "Platzhaltertext, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "В обсуждениях, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "短語模板與占位符文字, revision 95337857", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "any-gemini-citation-markup"
+category = "artefact"
+kinds = ["any"]
+models = [{ family = "gemini", from = "1" }]
+what = "Leaves Gemini's citation markers in the text."
+instead = "Delete the marker and cite the source, or cut the claim."
+strength = "strong"
+check = '\[span_\d+\]\((?:start|end)_span\)|\[cite: ?\d+(?:, ?\d+)*\]'
+flags = "The bakery moved to Bath in 1998[cite: 4]."
+passes = "The bakery moved to Bath in 1998 [4]."
+sources = [
+  { source = "wikipedia-en-markup", where = "Gemini, revision 1383317735", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "any-grok-citation-markup"
+category = "artefact"
+kinds = ["any"]
+models = [{ family = "grok", from = "1" }]
+what = "Leaves Grok's citation-card markup in the text."
+instead = "Delete the markup and cite the source, or cut the claim."
+strength = "strong"
+check = 'grok_render_citation_card_json|grok_card|<grok-card\b'
+flags = "The ferry sails at dawn. [](grok_render_citation_card_json={\"cardIds\":[\"a1f07c\"]})"
+passes = "The ferry sails at dawn from the north quay."
+sources = [
+  { source = "wikipedia-en-markup", where = "Grok, revision 1383317735", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "any-deepseek-citation-markup"
+category = "artefact"
+kinds = ["any"]
+models = [{ family = "deepseek", from = "1" }]
+what = "Leaves DeepSeek's lenticular citation marks in the text."
+instead = "Delete the mark and cite the source, or cut the claim."
+strength = "strong"
+check = '【\d+†'
+flags = "The ferry started in 1987【12†L40-44】."
+passes = "The ferry started in 1987."
+sources = [
+  { source = "wikipedia-en-markup", where = "DeepSeek, revision 1383317735", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "any-chat-tool-markup"
+category = "artefact"
+kinds = ["any"]
+models = "any"
+what = "Leaves a chat tool's file or document tags in the text."
+instead = "Delete the tag."
+strength = "strong"
+check = '\[attached_file:\d+\]|\[web:\d+\]|ppl-ai-file-upload|:::writing\{variant='
+flags = "The board approved the plan.[attached_file:1]"
+passes = "The board approved the plan (see attached file)."
+sources = [
+  { source = "wikipedia-en-markup", where = "Perplexity; Unclassified, revision 1383317735", seen = 2026-11-07 },
 ]

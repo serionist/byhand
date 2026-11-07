@@ -381,6 +381,29 @@ def test_a_broken_catalogue_says_why(root, case):
     assert any(expected in problem for problem in problems), problems
 
 
+def test_an_artefact_with_a_check_is_any_on_one_source(root):
+    artefact = """
+[[sign]]
+id = "any-tool-token"
+category = "artefact"
+kinds = ["any"]
+models = "any"
+what = "Leaves a tool's token in the text."
+instead = "Delete it."
+strength = "strong"
+check = 'tool-token-\\d'
+flags = "See tool-token-4."
+passes = "See page 4."
+sources = [{ source = "wiki-en", where = "Markup", seen = 2026-11-07 }]
+"""
+    (root / "signs" / "any.toml").write_text(STRUCTURE + artefact, encoding="utf-8")
+    assert signs.load(root)[1] == []
+    (root / "signs" / "any.toml").write_text(
+        STRUCTURE + artefact.replace('category = "artefact"', 'category = "formatting"'), encoding="utf-8"
+    )
+    assert any("any-tool-token: an any sign needs sources in at least two languages" in p for p in signs.load(root)[1])
+
+
 def test_a_sign_id_used_twice_is_refused(root):
     german = SIGN.replace("en-delve", "de-delve").replace('source = "wiki-en"', 'source = "wiki-de"')
     (root / "signs" / "de.toml").write_text(german, encoding="utf-8")

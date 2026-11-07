@@ -20,7 +20,7 @@ from byhand.models import Family, ModelRange, parse_version
 CATALOGUE = Path(__file__).parent / "catalogue"
 ANY = "any"
 LANGUAGE_COUNT = 100
-WEAK_CLUSTER = 3  # a weak sign counts only with this many in one paragraph: people do them too
+WEAK_CLUSTER = 3  # hits of weak signs that count, together in a paragraph or section: people do each of them too
 KINDS = ("message", "email", "post", "document", "deck", "sheet")
 LAYOUT_KINDS = ("deck", "sheet")
 CATEGORIES = ("word", "phrase", "structure", "formatting", "layout", "artefact")
@@ -398,7 +398,8 @@ def _citation(where: str, entry: object, catalogue: Catalogue) -> list[str]:
 
 def _sign_sources(where: str, row: Table, language: str, catalogue: Catalogue) -> list[str]:
     """Each citation, and what the citations cover: a sign comes from sources in its own language, so English's signs
-    aren't carried over into another, and an `any` sign from at least two (AGENTS.md, Traps)."""
+    aren't carried over into another, and an `any` sign from at least two (AGENTS.md, Traps). An artefact with a `check`
+    needs one: a tool's string looks the same in every language."""
     cited = row.get("sources")
     if not isinstance(cited, list) or not cited:
         return [f"{where}: `sources` must cite at least one"]
@@ -407,7 +408,7 @@ def _sign_sources(where: str, row: Table, language: str, catalogue: Catalogue) -
         return problems
     covered = {code for entry in cited for code in catalogue.sources[entry["source"]].languages}
     if language == ANY:
-        if len(covered) < 2:
+        if len(covered) < 2 and not (row.get("category") == "artefact" and "check" in row):
             problems.append(f"{where}: an {ANY} sign needs sources in at least two languages (AGENTS.md, Traps)")
         return problems
     entry = catalogue.languages.get(language)

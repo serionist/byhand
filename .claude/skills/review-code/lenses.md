@@ -43,7 +43,8 @@ Applies when: the scope touches the catalogue, its schema, the code that reads i
   person writes instead, and cite its source?
 - Does each sign have an invented example it flags and a human one it passes, and a test that runs both? A sign that
   flags plain human writing in normal use is a major.
-- A sign marked `any`: do its sources show it in more than one language? One English tell marked `any` is a finding.
+- A sign marked `any`: do its sources show it in more than one language, a translated page counting? One English tell
+  marked `any` is a finding. An `artefact` with a `check` needs one source.
 - Is a sign's text our own words? A sentence copied from a source is a blocker when the source's licence forbids it
   (Wikipedia: CC BY-SA).
 - Does a model the catalogue has never seen (a newer Claude, a new version of any family) still get its family's

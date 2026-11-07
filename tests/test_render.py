@@ -130,8 +130,8 @@ def test_a_rendered_file_says_it_is_generated():
 
 def test_the_cluster_rule_prints_only_where_a_weak_sign_is():
     weak = render.render(catalogue(sign(strength="weak")))["en/any.signs.md"]
-    assert f"with {signs.WEAK_CLUSTER} or more in one paragraph" in weak
-    assert "paragraph" not in render.render(catalogue(sign()))["en/any.signs.md"]
+    assert f"with {signs.WEAK_CLUSTER} or more hits of weak signs in a paragraph or section" in weak
+    assert "or section" not in render.render(catalogue(sign()))["en/any.signs.md"]
 
 
 def test_a_retired_sign_renders_nowhere_whatever_the_date():

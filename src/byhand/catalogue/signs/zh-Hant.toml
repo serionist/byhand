@@ -1,0 +1,44 @@
+# Traditional Chinese as written in Taiwan: what a model trained mostly on Simplified text carries over. A `zh-Hant`
+# draft reads `zh.toml` too, so a sign here is only what Taiwan's usage adds. Both are weak: people in Hong Kong, and in
+# Taiwan who work with mainland colleagues, write some of these themselves.
+
+[[sign]]
+id = "zh-Hant-mainland-terms"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Uses mainland words in Traditional script where Taiwan has its own, as a model trained on Simplified text does."
+instead = "Use Taiwan's word."
+strength = "weak"
+terms = [
+  { term = '視頻', instead = "影片" },
+  { term = '服務器', instead = "伺服器" },
+  { term = '數據庫', instead = "資料庫" },
+  { term = '屏幕', instead = "螢幕" },
+  { term = '鼠標', instead = "滑鼠" },
+  { term = '[軟硬]件', instead = "軟體, 硬體" },
+  { term = '默認', instead = "預設" },
+  { term = '兼容', instead = "相容" },
+  { term = '網絡', instead = "網路" },
+  { term = '運營', instead = "營運" },
+]
+flags = "請先在服務器上更新數據庫，再把默認設定的視頻上傳。"
+passes = "請先在伺服器上更新資料庫，再把預設設定的影片上傳。"
+sources = [
+  { source = "speak-human-tw", where = "references/taiwan-localization.md, 中國用語替換表, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-Hant-curly-quotes"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Quotes with the curly marks of Simplified text where Taiwan uses corner brackets."
+instead = "Use 「」, and 『』 inside them."
+strength = "weak"
+check = '[“”]'
+flags = "主管說“下週再談”，所以先別寄報價單。"
+passes = "主管說「下週再談」，所以先別寄報價單。"
+sources = [
+  { source = "speak-human-tw", where = "references/taiwan-localization.md, 引號規則, commit 89b96e24fcfd", seen = 2026-11-07 },
+]

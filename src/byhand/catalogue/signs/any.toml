@@ -530,12 +530,13 @@ models = "any"
 what = "Says in the text that a language model or a named chatbot wrote it."
 instead = "Delete it and write as the author."
 strength = "strong"
-check = 'as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包'
+check = 'as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智能|人工智慧)\s?(?:语言模型|語言模型|助手|助理)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)'
 flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [
   { source = "wikipedia-en", where = "Prompt refusal, revision 1384165696", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "資訊時效或來源限制相關的免責聲明, revision 95337857", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 34 知識截止免責聲明, commit 89b96e24fcfd", seen = 2026-11-07 },
 ]
 
 [[sign]]
@@ -563,7 +564,7 @@ models = "any"
 what = "Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'."
 instead = "Delete the line; start with the text itself."
 strength = "strong"
-check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|gerne)! hier ist (?:eine?|ihre?) [^.!?\n]*(?:überarbeitete|verbesserte|kürzere|längere|förmlichere|umformulierte|geglättete)[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:\w+ )?(?:исправленный|переработанный|улучшенный|отредактированный|более \w+|сокращённый|сокращенный)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以)[!！][^。！？\n]*(?:修改后|修改後|改写后|改寫後|润色后|潤色後|优化后|優化後)[^。！？\n]*[:：]\s*$'''
+check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|gerne)! hier ist (?:eine?|ihre?) [^.!?\n]*(?:überarbeitete|verbesserte|kürzere|längere|förmlichere|umformulierte|geglättete)[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:\w+ )?(?:исправленный|переработанный|улучшенный|отредактированный|более \w+|сокращённый|сокращенный)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$'''
 flags = "Certainly! Here is a polished version of your announcement:"
 passes = "Sure! Here's the link to the slides from yesterday."
 sources = [
@@ -571,6 +572,7 @@ sources = [
   { source = "wikipedia-de", where = "Kollaborative Kommunikation, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Имитация диалога, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "協作式溝通訊息, revision 95337857", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 30 協作交流殘留, commit 89b96e24fcfd", seen = 2026-11-07 },
 ]
 
 [[sign]]

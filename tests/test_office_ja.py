@@ -6,6 +6,7 @@ only in a cluster.
 The full-width exclamation and question marks, colon, brackets, wave dash and ideographic zero are written as escapes,
 as ruff refuses them in source; the first test holds that they are the real marks."""
 
+import re
 import unicodedata
 
 import pytest
@@ -19,6 +20,14 @@ MINUTES_MAIL = (
     "予算に関する資料も添付します。\nよろしくお願いいたします。"
 )
 ESSAY = "母は――少なくとも私にはそう見えた――何も言わなかった。窓の外では雪が降っていて、そして――。"
+ASIDES = "会議は――予定より長引いた――が、結論は――少なくとも私には――見えず、帰りは――雨だった――傘もなかった。"
+# Business chat in everyday office words, which the vogue-word and filler signs once counted (#18's review, N1).
+CHAT = [
+    "先方の温度感どうでした\uff1fこっちの肌感だと、年明けかなと思ってます。正直に言うと、今期はもう厳しいかも。",
+    "結論から言うと、ケースバイケースです。経理の温度感にもよるので、一度聞いてみます。",
+    "その方針でアグリーです。プライオリティは先方とアラインしておきます。",
+    "了解。助かる。感謝。ログインを押した瞬間に落ちる件、昨日は時間を溶かしたけど、安全側に倒して止めときます。",
+]
 
 OFFICE = [
     # mail, with its set openers and closers
@@ -157,27 +166,65 @@ def test_colon_replies_and_short_chat_meet_only_weak_signs():
         assert found.strength == "weak"
         assert found.pattern is not None
         assert found.pattern.search(text)  # it fires, and counts only in a cluster
-    # and a colon before a pasted draft is a person's in mail and chat: the sign reads only posts and documents
-    assert set(catalogue.signs["ja-trailing-colon"].kinds) == {"post", "document"}
+    # a colon before a pasted draft, or a clipped reply, is a person's in mail and chat: both read posts and documents
+    for sign in ("ja-trailing-colon", "ja-copy-fragments"):
+        assert set(catalogue.signs[sign].kinds) == {"post", "document"}
 
 
-def _weak_hits(catalogue: signs.Catalogue, text: str) -> int:
-    """Hits of weak signs as the cluster rule counts them: each a different word or phrase, so the same one repeated,
-    or one phrase two signs find, counts once."""
-    return len(
-        {
-            found.group(0)
-            for sign in catalogue.signs.values()
-            if sign.pattern and sign.strength == "weak"
-            for found in sign.pattern.finditer(text)
-        }
-    )
+def _reads(sign: signs.Sign, kind: str) -> bool:
+    return bool({"any", kind} & set(sign.kinds))
 
 
-@pytest.mark.parametrize("text", [MINUTES_MAIL, ESSAY])
-def test_plain_mail_and_an_essay_are_no_weak_cluster(text):
+def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
+    """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
+    A term is one phrase however its endings vary, and a check one habit however often it fires; one phrase two signs
+    find counts once."""
+    counted: set[str] = set()
+    spans: list[tuple[int, int]] = []
+    for sign in catalogue.signs.values():
+        if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
+            continue
+        phrases = [(term.term, re.compile(term.term, re.IGNORECASE | re.MULTILINE)) for term in sign.terms]
+        for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
+            for found in pattern.finditer(text):
+                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
+                    continue
+                counted.add(phrase)
+                spans.append(found.span())
+    return len(counted)
+
+
+WEAK_CASES = [
+    (MINUTES_MAIL, "email"),
+    (ESSAY, "post"),
+    (ASIDES, "post"),
+    *((line, "message") for line in CHAT),
+]
+
+
+@pytest.mark.parametrize(("text", "kind"), WEAK_CASES)
+def test_plain_mail_chat_and_essays_are_no_weak_cluster(text, kind):
     catalogue, _ = signs.load()
-    assert _weak_hits(catalogue, text) < signs.WEAK_CLUSTER
+    assert _weak_hits(catalogue, text, kind) < signs.WEAK_CLUSTER
+
+
+@pytest.mark.parametrize("text", CHAT)
+def test_no_weak_sign_that_reads_chat_fires_on_business_chat(text):
+    catalogue, _ = signs.load()
+    fired = [
+        sign.id
+        for sign in catalogue.signs.values()
+        if sign.pattern and sign.strength == "weak" and _reads(sign, "message") and sign.pattern.search(text)
+    ]
+    assert fired == []
+
+
+def test_one_habit_repeated_counts_once():
+    catalogue, _ = signs.load()
+    dash = catalogue.signs["ja-em-dash"].pattern
+    assert dash is not None
+    assert len(list(dash.finditer(ASIDES))) == 3  # three asides, one habit
+    assert _weak_hits(catalogue, ASIDES, "post") == 1
 
 
 def test_the_function_words_are_for_the_models_read():

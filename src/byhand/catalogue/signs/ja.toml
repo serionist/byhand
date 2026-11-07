@@ -77,7 +77,8 @@ sources = [
 [[sign]]
 id = "ja-copy-fragments"
 category = "structure"
-kinds = ["any"]
+# Not mail or chat, where short replies (了解。助かる。) are a person's.
+kinds = ["post", "document"]
 models = "any"
 what = "Writes prose like ad copy: clipped sentences stacked for effect, a noun after a lone comma, a list with no verb."
 instead = "Write the sentence out, with its verb."
@@ -168,7 +169,8 @@ sources = [
 [[sign]]
 id = "ja-texture-words"
 category = "word"
-kinds = ["any"]
+# Not mail or chat: 温度感 and 肌感 are everyday business talk there (#18's review, N1).
+kinds = ["post", "document"]
 models = "any"
 what = "Uses vogue words that sound concrete or perceptive but say nothing anyone can check."
 instead = "Say the fact behind the word: who, what, how much."
@@ -221,7 +223,8 @@ sources = [
 [[sign]]
 id = "ja-stock-metaphors"
 category = "word"
-kinds = ["any"]
+# Not mail or chat, where engineers say 安全側に倒す and 時間を溶かした themselves.
+kinds = ["post", "document"]
 models = "any"
 what = "Explains with stock metaphors and metaphor verbs: a compass, a catalyst, crushing bugs, melting time."
 instead = "Say what the thing does, or what happened, in plain words."
@@ -252,7 +255,8 @@ sources = [
 [[sign]]
 id = "ja-stiff-wording"
 category = "phrase"
-kinds = ["any"]
+# Not mail or chat: アグリー and アライン are how many offices talk (#18's review, N1).
+kinds = ["post", "document"]
 models = "any"
 what = "Swaps a plain word for consultants' katakana, or a short verb for a stiff Sino-Japanese phrase that says the same."
 instead = "Use the plain Japanese word, or the short verb."
@@ -280,7 +284,8 @@ sources = [
 [[sign]]
 id = "ja-calques"
 category = "phrase"
-kinds = ["any"]
+# Not mail or chat, where 押した瞬間に落ちる is how a person reports a bug.
+kinds = ["post", "document"]
 models = "any"
 what = "Carries English idiom over word for word: the moment, on the table, project-level, a single source of truth."
 instead = "Say it the Japanese way: すぐに, 未定, この案件だけの."
@@ -321,7 +326,8 @@ sources = [
 [[sign]]
 id = "ja-preface-filler"
 category = "phrase"
-kinds = ["any"]
+# Not mail or chat: 正直に言うと and 結論から言うと are how people talk there (#18's review, N1).
+kinds = ["post", "document"]
 models = "any"
 what = "Opens a sentence by clearing its throat: what matters is, to be honest, the conclusion first."
 instead = "Start with the point."
@@ -428,7 +434,8 @@ sources = [
 [[sign]]
 id = "ja-noncommittal"
 category = "phrase"
-kinds = ["any"]
+# Not mail or chat, where ケースバイケース is a plain answer (#18's review, N1).
+kinds = ["post", "document"]
 models = "any"
 what = "Takes no side: it depends, there are pros and cons, opinions differ."
 instead = "Say which you chose and why, or what it depends on."

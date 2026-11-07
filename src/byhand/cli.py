@@ -32,8 +32,9 @@ def validate() -> int:
 
 
 def read_model(model_id: str) -> int:
-    catalogue, problems = signs.load()
-    if any(problem.startswith("models.toml") for problem in problems):
+    catalogue = signs.Catalogue()
+    problems = signs.load_families(signs.CATALOGUE, catalogue)
+    if problems:
         print(*problems, sep="\n")
         return 1
     found = models.read_id(model_id, catalogue.families.values())

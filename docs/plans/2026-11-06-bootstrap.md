@@ -281,9 +281,19 @@ Decisions on the way:
   their base code, with CLDR's BCP 47 codes and its name of each language in itself. All eight seed languages are in
   the hundred, Hungarian at rank 90. `zh-Hant` is a variant of `zh`, outside the hundred. The list treats Chinese and
   Arabic varieties as CLDR does, each its own code (`yue`, `arz`).
-- **Step 2, retiring by version:** `holds()`, whether a range holds a version, comes with Step 3, its first caller.
+- **Step 2, version ranges (the maintainer, 2026-11-07):** `to = "5"` holds the whole 5 series; `to = "5.0"` stops at
+  5.0. `ModelRange.holds` comes here, not in Step 3, as `validate` needs it to compare `from` and `to`.
+- **Step 2, a check's flags (the maintainer, 2026-11-07):** a `check` runs case-insensitive and line by line, so `^`
+  and `$` match at each line.
+- **Step 2, the schema's stricter rules, from its review:** an `any` sign has no `terms`, as a word's edge differs
+  between languages; a language sign cites a source in its language; a `word` or `phrase` sign needs `terms` or a
+  `check`, an `artefact` a `check`; a `layout` sign is only for `deck` and `sheet`; a sign id at a base stays in the
+  tree (the gate's `sign ids`).
 - **Step 2, the model families:** a family is one the research names signs for: claude, gpt, gemini, grok, llama,
-  deepseek, qwen, kimi, mistral and doubao. `gpt-4o` reads as gpt 4, and the o-series names no family yet.
+  deepseek, qwen, kimi, mistral and doubao. `gpt-4o` reads as gpt 4 and `deepseek-r1` as deepseek 1, kept by the
+  maintainer on 2026-11-07: a range can't split them from their base version, and few write with them now. The
+  o-series names no family yet. Two ids read wrongly and are kept: `gpt-35-turbo`, Azure's name for 3.5, reads 35, and
+  `grok-code-fast-1` reads 1. `lah` stays beside `pa`, as CLDR counts it, so `aeb` falls to rank 101.
 
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
 `0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.

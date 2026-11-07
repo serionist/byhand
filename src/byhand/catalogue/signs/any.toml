@@ -5,10 +5,12 @@
 # id = "any-rule-of-three"
 # category = "structure"        # word, phrase, structure, formatting, layout or artefact
 # kinds = ["any"]               # message, email, post, document, deck, sheet, or any
-# models = "any"                # or [{ family = "claude", from = "3", to = "4.6" }]; no `to` holds every later version
+# models = "any"                # or [{ family = "claude", from = "3", to = "4.6" }]: versions in quotes. No `to` holds
+#                               # every later version; `to = "5"` holds the whole 5 series, `to = "5.0"` stops at 5.0
 # what = "What the text does, in our own words."
 # instead = "What a person writes instead."
 # strength = "usual"            # strong, usual or weak
+# check = "^- \\*\\*"           # optional: a regular expression, case-insensitive, `^` and `$` at each line
 # flags = "An invented text the sign flags."
 # passes = "A human text it passes."
 # sources = [{ source = "wikipedia-en", where = "section, revision 1234567890", seen = 2026-11-07 }]

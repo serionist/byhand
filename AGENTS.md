@@ -25,8 +25,8 @@ It is for the user's own writing: mail, messages, documents, decks and sheets th
   user's machine.
 - **The plugin** (`plugin/`): skills that write and check text against the catalogue and a style, and that start
   without being asked when the user writes mail, a message, a document or a deck.
-- **Where the work stands:** the harness only. `docs/plans/2026-11-06-bootstrap.md` (#1) designs `0.1.0` and the
-  milestones after it; read it first.
+- **Where the work stands:** the harness and the catalogue's schema. `docs/plans/2026-11-06-bootstrap.md` (#1) designs
+  `0.1.0` and the milestones after it; read its progress log first.
 
 ## Where things are
 
@@ -60,7 +60,7 @@ PowerShell unless a PowerShell form stands beside it.
 | once per clone | `uv sync`, then `uv run tools/setup.py` (hooks, `git blame`, skill links) |
 | tests | `uv run pytest`, on every core (`-n 0` for one process); with coverage, `uv run coverage erase`, `uv run coverage run -m pytest`, `uv run coverage combine`, then `uv run coverage report` |
 | lint, format, types, imports | `uv run ruff check .`, `uv run ruff format --check .`, `uv run basedpyright`, `uv run lint-imports` |
-| the gate | `uv run tools/gate.py quick` (lock, lint, format, types, imports, the catalogue, the coverage floor, the version, AGENTS.md, skills, plans, the plugin, the variables the docs name, hooks, attribution, secrets); `full` adds pytest under coverage, and the floor; `text --file -` checks a PR's title and description: no attribution, and the issue named |
+| the gate | `uv run tools/gate.py quick` (lock, lint, format, types, imports, the catalogue, sign ids, the coverage floor, the version, AGENTS.md, skills, plans, the plugin, the variables the docs name, hooks, attribution, secrets); `full` adds pytest under coverage, and the floor; `text --file -` checks a PR's title and description: no attribution, and the issue named |
 | the plugin from this clone | `claude --plugin-dir plugin` |
 
 - **Hosted CI never runs a Claude session or reads the live sources:** a change to the plugin or the refresh says in

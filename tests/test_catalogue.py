@@ -28,6 +28,16 @@ feed = { api = "mediawiki", site = "de.wikipedia.org", title = "Beispiel" }
 read_at = { revision = "456", date = 2026-11-07 }
 
 [[source]]
+id = "wiki-zh"
+url = "https://zh.wikipedia.org/wiki/Example"
+kind = "wiki"
+languages = ["zh"]
+licence = "CC BY-SA 4.0"
+due = "weekly"
+feed = { api = "mediawiki", site = "zh.wikipedia.org", title = "Example" }
+read_at = { revision = "789", date = 2026-11-07 }
+
+[[source]]
 id = "maintainer"
 url = "https://github.com/serionist/byhand/issues/4"
 kind = "review"
@@ -81,7 +91,7 @@ strength = "usual"
 terms = [{ term = "不是.{1,10}而是", instead = "the point itself" }]
 flags = "这不是工具而是伙伴。"
 passes = "这是工具。"
-sources = [{ source = "wiki-en", where = "Style", seen = 2026-11-07 }]
+sources = [{ source = "wiki-zh", where = "Style", seen = 2026-11-07 }]
 """
 
 
@@ -112,6 +122,8 @@ def test_what_ships_is_valid():
     assert sum(1 for language in catalogue.languages.values() if language.rank) == signs.LANGUAGE_COUNT
     assert {"en", "zh", "de", "fr", "hu", "ko", "ja", "ru", "zh-Hant"} <= catalogue.languages.keys()
     assert catalogue.languages["zh-Hant"].of == "zh"
+    assert not catalogue.languages["zh-Hant"].spaces
+    assert not catalogue.languages["tts"].spaces
     assert not catalogue.languages["ja"].spaces
     assert catalogue.languages["hu"].spaces
     assert catalogue.languages["hu"].native == "magyar"
@@ -135,6 +147,8 @@ def test_a_term_stands_as_a_word_only_in_a_language_written_with_spaces(root):
     delve, cjk = catalogue.signs["en-delve"], catalogue.signs["zh-not-but"]
     assert delve.pattern is not None
     assert not delve.pattern.search("undelvedly")
+    assert not delve.pattern.search("undelve")
+    assert not delve.pattern.search("delveful")
     assert cjk.pattern is not None
     assert cjk.pattern.search("这不是工具而是伙伴")
 
@@ -150,6 +164,31 @@ def test_a_signs_own_check_wins_over_its_terms(root):
     pattern = signs.load(root)[0].signs["en-delve"].pattern
     assert pattern is not None
     assert pattern.pattern == "numbers"
+
+
+def test_a_check_runs_line_by_line(root):
+    new = 'strength = "usual"\ncheck = "^- bold"\n'
+    problems_after(root, "signs/en.toml", 'strength = "usual"\n', new)
+    problems_after(root, "signs/en.toml", '"Let us delve into the numbers."', '"""Two lines:\n- bold lead-in"""')
+    assert signs.load(root)[1] == []
+
+
+def test_a_check_compares_in_nfc(root):
+    decomposed = "fontossa\u0301g"
+    new = f'strength = "usual"\ncheck = "{decomposed}"\n'
+    problems_after(root, "signs/en.toml", 'strength = "usual"\n', new)
+    assert problems_after(root, "signs/en.toml", '"Let us delve into the numbers."', '"Ez fontosság."') == []
+
+
+def test_a_sign_from_a_source_in_its_base_language_passes(root):
+    sign = CJK.replace("zh-not-but", "zh-Hant-not-but")
+    (root / "signs" / "zh-Hant.toml").write_text(sign, encoding="utf-8")
+    assert signs.load(root)[1] == []
+
+
+def test_a_model_scoped_range_may_end_in_a_major_below_its_minor(root):
+    # `to = "4"` holds the whole 4 series, so it can follow `from = "4.5"`.
+    assert problems_after(root, "signs/en.toml", 'from = "4", to = "4.5"', 'from = "4.5", to = "4"') == []
 
 
 def test_text_compares_in_nfc(root):
@@ -269,6 +308,66 @@ BREAKS = [
     ("languages.toml", 'code = "de"', 'code = "en"', "en: repeated"),
     ("languages.toml", 'of = "zh"', 'of = "klingon"', "`of` names no language"),
     ("languages.toml", "rank = 1\n", "rank = 200\n", "the ranks must run from 1"),
+    ("languages.toml", "rank = 1\n", 'rank = "one"\n', "the ranks must run from 1"),
+    ("languages.toml", 'code = "zh-Hant"', 'code = "ja"', "ja: repeated"),
+    ("languages.toml", "1325\nspaces = false", '1325\nspaces = "false"', "`spaces` must be true or false"),
+    ("languages.toml", 'code = "en"', "code = 3", "`code` must be text"),
+    ("languages.toml", "[[language]]", "[[lang]]", "unknown key `lang`"),
+    ("models.toml", 'patterns = ["claude"]', "patterns = []", "`patterns` must list text"),
+    ("sources.toml", "[[source]]", "[[sources]]", "unknown key `sources`"),
+    ("sources.toml", 'languages = ["en"]', "languages = []", "`languages` must list"),
+    (
+        "sources.toml",
+        'feed = { api = "mediawiki", site = "en.wikipedia.org", title = "Example" }',
+        'feed = { api = ["x"] }',
+        "`feed.api` is",
+    ),
+    ("signs/en.toml", "[[sign]]", "[[signs]]", "unknown key `signs`"),
+    ("signs/en.toml", "[[sign]]", "[sign]", "`sign` must be [[sign]]"),
+    ("signs/en.toml", 'id = "en-delve"', "id = 3", "`id` must be text"),
+    ("signs/en.toml", 'kinds = ["any"]', 'kinds = ["any", "deck"]', "`kinds` is any or a list of kinds"),
+    ("signs/en.toml", 'kinds = ["any"]', 'kinds = ["email", "email"]', "`kinds` repeats a kind"),
+    (
+        "signs/en.toml",
+        'models = [{ family = "gpt", from = "4", to = "4.5" }]',
+        'models = ["gpt"]',
+        "a `models` range must be a table",
+    ),
+    ("signs/en.toml", 'family = "gpt"', 'family = ["gpt"]', "names no family"),
+    ("signs/en.toml", 'from = "4"', "from = 4.10", "`from` must be a version in quotes"),
+    (
+        "signs/en.toml",
+        'terms = [{ term = "delv(?:e|es|ing)", instead = "look at" }]\n',
+        "",
+        "a word sign needs `terms` or a `check`",
+    ),
+    (
+        "signs/en.toml",
+        'terms = [{ term = "delv(?:e|es|ing)", instead = "look at" }]',
+        'terms = ["delve"]',
+        "every term must be a table",
+    ),
+    ("signs/en.toml", 'term = "delv(?:e|es|ing)"', "term = 3", "`term` must be text"),
+    ("signs/en.toml", 'instead = "look at"', 'instead = ""', "terms: `instead` must be text"),
+    ("signs/en.toml", 'category = "word"', 'category = "artefact"', "only a word or phrase sign holds `terms`"),
+    (
+        "signs/en.toml",
+        'sources = [{ source = "wiki-en", where = "Language, revision 123", seen = 2026-11-07 }]',
+        'sources = ["wiki-en"]',
+        "every entry of `sources` must be a table",
+    ),
+    ("signs/en.toml", 'where = "Language, revision 123"', 'where = ""', "`where` must be text"),
+    ("signs/en.toml", 'source = "wiki-en"', 'source = ["wiki-en"]', "cites no source"),
+    ("signs/en.toml", 'source = "wiki-en"', 'source = "wiki-de"', "no source it cites covers en"),
+    ("signs/any.toml", 'category = "structure"', 'category = "artefact"', "an artefact sign needs a `check`"),
+    ("signs/any.toml", 'category = "structure"', 'category = "layout"', "a layout sign is for deck and sheet"),
+    (
+        "signs/any.toml",
+        'category = "structure"',
+        'category = "word"\nterms = [{ term = "x", instead = "y" }]',
+        "an any sign writes its `check`",
+    ),
+    ("signs/any.toml", "since = 2023-01-01", "since = 2023-01-01T10:00:00", "`since` must be a date"),
 ]
 
 
@@ -280,7 +379,8 @@ def test_a_broken_catalogue_says_why(root, case):
 
 
 def test_a_sign_id_used_twice_is_refused(root):
-    (root / "signs" / "de.toml").write_text(SIGN.replace("en-delve", "de-delve"), encoding="utf-8")
+    german = SIGN.replace("en-delve", "de-delve").replace('source = "wiki-en"', 'source = "wiki-de"')
+    (root / "signs" / "de.toml").write_text(german, encoding="utf-8")
     assert signs.load(root)[1] == []
     (root / "signs" / "en.toml").write_text(SIGN + SIGN, encoding="utf-8")
     assert any("en-delve: repeated" in problem for problem in signs.load(root)[1])
@@ -301,3 +401,25 @@ def test_a_catalogue_short_of_a_hundred_languages_is_refused(root):
 def test_a_missing_file_is_a_problem_not_a_crash(root):
     (root / "sources.toml").unlink()
     assert any(problem.startswith("sources.toml: ") for problem in signs.load(root)[1])
+
+
+def test_a_file_not_in_utf8_is_a_problem_not_a_crash(root):
+    (root / "signs" / "hu.toml").write_bytes("# kulcsfontosságú\n".encode("cp1250"))
+    assert any(problem == "hu.toml: not UTF-8; save it as UTF-8" for problem in signs.load(root)[1])
+
+
+def test_a_sign_in_a_language_of_no_catalogue_has_no_edge_to_read(root):
+    (root / "signs" / "klingon.toml").write_text(SIGN.replace("en-delve", "klingon-delve"), encoding="utf-8")
+    problems = signs.load(root)[1]
+    assert "signs/klingon.toml: the file's name is no language" in problems
+    assert any("no source it cites covers klingon" in problem for problem in problems)
+
+
+def test_a_table_where_a_list_of_tables_belongs_is_refused(root):
+    (root / "models.toml").write_text('[family]\nid = "x"\n', encoding="utf-8")
+    assert "models.toml: `family` must be [[family]], a list of tables" in signs.load(root)[1]
+
+
+def test_a_row_that_is_no_table_is_refused(root):
+    (root / "models.toml").write_text('family = ["x"]\n', encoding="utf-8")
+    assert "models.toml: every `family` must be a table" in signs.load(root)[1]

@@ -1535,3 +1535,53 @@ def test_check_settings_reads_through_gh_and_names_what_differs(tmp_path, capsys
     assert setup.check_settings(tmp_path, api) == 1
     assert "Dependabot alerts: expected True" in capsys.readouterr().out
     assert all(path.startswith("repos/example/repo") for path in calls)
+
+
+def signs_repo(path: Path) -> tuple[Callable[..., str], Path]:
+    run = new_repo(path)
+    folder = path / gate.SIGNS_DIR
+    folder.mkdir(parents=True)
+    return run, folder
+
+
+def test_a_sign_id_on_the_base_stays(tmp_path):
+    run, folder = signs_repo(tmp_path)
+    (folder / "en.toml").write_text('[[sign]]\nid = "en-delve"\n', encoding="utf-8")
+    run("add", "-A")
+    run("commit", "-qm", "Add a sign")
+    base = run("rev-parse", "HEAD")
+    scope = gate.Scope([f"{base}..HEAD"])
+    assert gate.check_sign_ids(scope, tmp_path).status == "pass"
+    (folder / "en.toml").write_text('[[sign]]\nid = "en-delve"\nuntil = 2030-01-01\n', encoding="utf-8")
+    assert gate.check_sign_ids(scope, tmp_path).status == "pass"
+    (folder / "en.toml").write_text('[[sign]]\nid = "en-dive"\n', encoding="utf-8")
+    result = gate.check_sign_ids(scope, tmp_path)
+    assert result.status == "FAIL"
+    assert "en-delve is at" in result.output or "en-delve is at" in result.detail
+
+
+def test_a_base_with_no_signs_holds_no_ids(tmp_path):
+    run, folder = signs_repo(tmp_path)
+    (tmp_path / "file").write_text("x\n", encoding="utf-8")
+    run("add", "-A")
+    run("commit", "-qm", "Start")
+    (folder / "en.toml").write_text('[[sign]]\nid = "en-delve"\n', encoding="utf-8")
+    result = gate.check_sign_ids(gate.Scope([f"{run('rev-parse', 'HEAD')}..HEAD"]), tmp_path)
+    assert (result.status, result.detail) == ("pass", "1 signs")
+
+
+def test_an_unreadable_base_fails_the_id_check(tmp_path):
+    run, _ = signs_repo(tmp_path)
+    (tmp_path / "file").write_text("x\n", encoding="utf-8")
+    run("add", "-A")
+    run("commit", "-qm", "Start")
+    assert gate.check_sign_ids(gate.Scope(["nothing..HEAD"]), tmp_path).status == "FAIL"
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [("", set()), ("sign = 3", set()), ('[[sign]]\nid = 3\n[[sign]]\nid = "en-x"\n', {"en-x"})],
+    ids=["empty", "not a list", "an id that isn't text"],
+)
+def test_sign_ids_reads_a_file(text, expected):
+    assert gate.sign_ids(text) == expected

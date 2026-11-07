@@ -1,7 +1,8 @@
 """The catalogue: read it from TOML, and say what is wrong with it.
 
 `load` reads every file and collects each problem rather than stopping at the first, so `byhand validate` shows a
-contributor all of theirs at once. An unknown key is a problem too: a misspelt `untill` would otherwise retire nothing.
+contributor all of theirs at once, and a bad value is a problem, never a traceback. An unknown key is a problem too: a
+misspelt `untill` would otherwise retire nothing, and a misspelt `[[signs]]` would drop a whole file.
 """
 
 from __future__ import annotations
@@ -14,12 +15,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from byhand.models import Version, parse_version
+from byhand.models import Family, ModelRange, parse_version
 
 CATALOGUE = Path(__file__).parent / "catalogue"
 ANY = "any"
 LANGUAGE_COUNT = 100
 KINDS = ("message", "email", "post", "document", "deck", "sheet")
+LAYOUT_KINDS = ("deck", "sheet")
 CATEGORIES = ("word", "phrase", "structure", "formatting", "layout", "artefact")
 TERM_CATEGORIES = ("word", "phrase")
 STRENGTHS = ("strong", "usual", "weak")
@@ -34,7 +36,9 @@ FEEDS = {
     "none": (),
 }
 _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-_FLAGS = re.IGNORECASE
+# Most signs are about a line in a draft, so `^` and `$` match at each line. Part of the schema: a check is written
+# against these flags.
+_FLAGS = re.IGNORECASE | re.MULTILINE
 
 Table = dict[str, Any]
 
@@ -50,23 +54,9 @@ class Language:
 
 
 @dataclass(frozen=True)
-class Family:
-    id: str
-    name: str
-    patterns: tuple[str, ...]
-
-
-@dataclass(frozen=True)
 class Source:
     id: str
     languages: tuple[str, ...]
-
-
-@dataclass(frozen=True)
-class ModelRange:
-    family: str
-    since: Version
-    to: Version | None = None  # None holds every later version, so a newer model is covered
 
 
 @dataclass(frozen=True)
@@ -102,6 +92,8 @@ def _read(path: Path, problems: list[str]) -> Table:
             return tomllib.load(f)
     except OSError as exc:
         problems.append(f"{path.name}: {exc.strerror or exc}")
+    except UnicodeDecodeError:
+        problems.append(f"{path.name}: not UTF-8; save it as UTF-8")
     except tomllib.TOMLDecodeError as exc:
         problems.append(f"{path.name}: not valid TOML: {exc}")
     return {}
@@ -113,6 +105,26 @@ def _keys(where: str, table: Table, required: tuple[str, ...], optional: tuple[s
     return missing + unknown
 
 
+def _rows(file: str, data: Table, key: str, problems: list[str]) -> list[Table]:
+    """The tables of `[[key]]`. A `[key]` is a table, not a list of them, and a row that isn't a table is no row."""
+    rows = data.get(key, [])
+    if not isinstance(rows, list):
+        problems.append(f"{file}: `{key}` must be [[{key}]], a list of tables")
+        return []
+    tables = [row for row in rows if isinstance(row, dict)]
+    if len(tables) != len(rows):
+        problems.append(f"{file}: every `{key}` must be a table")
+    return tables
+
+
+def _id(file: str, row: Table, problems: list[str], key: str = "id") -> str:
+    value = row.get(key, "?")
+    if isinstance(value, str):
+        return value
+    problems.append(f"{file}: `{key}` must be text, not {value!r}")
+    return "?"
+
+
 def _text(where: str, table: Table, key: str) -> list[str]:
     value = table.get(key)
     return [] if isinstance(value, str) and value.strip() else [f"{where}: `{key}` must be text"]
@@ -120,6 +132,11 @@ def _text(where: str, table: Table, key: str) -> list[str]:
 
 def _one_of(where: str, value: object, allowed: tuple[str, ...], key: str) -> list[str]:
     return [] if value in allowed else [f"{where}: `{key}` is {value!r}; it must be one of {', '.join(allowed)}"]
+
+
+def _is_date(value: object) -> bool:
+    """A date and only a date: TOML's datetime is a subclass, and comparing the two raises."""
+    return isinstance(value, datetime.date) and not isinstance(value, datetime.datetime)
 
 
 def _compile(where: str, pattern: str) -> tuple[re.Pattern[str] | None, list[str]]:
@@ -131,44 +148,69 @@ def _compile(where: str, pattern: str) -> tuple[re.Pattern[str] | None, list[str
 
 def load_languages(root: Path, catalogue: Catalogue) -> list[str]:
     problems: list[str] = []
-    data = _read(root / "languages.toml", problems)
-    bases = data.get("language", [])
+    file = "languages.toml"
+    data = _read(root / file, problems)
+    problems += _keys(file, data, (), ("language", "variant"))
+    bases = _rows(file, data, "language", problems)
     for row in bases:
-        code = row.get("code", "?")
-        where = f"languages.toml: {code}"
+        code = _id(file, row, problems, "code")
+        where = f"{file}: {code}"
         problems += _keys(where, row, ("code", "name", "rank"), ("native", "speakers_millions", "spaces"))
-        if code in catalogue.languages:
-            problems.append(f"{where}: repeated")
+        problems += _language_problems(where, row, catalogue)
+        native = row.get("native", "")
         catalogue.languages[code] = Language(
-            code, row.get("name", ""), row.get("native", ""), row.get("rank", 0), spaces=row.get("spaces", True)
+            code, str(row.get("name", "")), str(native), _rank(row), spaces=row.get("spaces") is not False
         )
     if len(bases) != LANGUAGE_COUNT:
-        problems.append(f"languages.toml: {len(bases)} languages; the catalogue holds {LANGUAGE_COUNT}")
-    if sorted(row.get("rank", 0) for row in bases) != list(range(1, len(bases) + 1)):
-        problems.append("languages.toml: the ranks must run from 1 with no gap")
-    for row in data.get("variant", []):
-        code = row.get("code", "?")
-        where = f"languages.toml: {code}"
+        problems.append(f"{file}: {len(bases)} languages; the catalogue holds {LANGUAGE_COUNT}")
+    if sorted(_rank(row) for row in bases) != list(range(1, len(bases) + 1)):
+        problems.append(f"{file}: the ranks must run from 1 with no gap")
+    for row in _rows(file, data, "variant", problems):
+        code = _id(file, row, problems, "code")
+        where = f"{file}: {code}"
         problems += _keys(where, row, ("code", "name", "of"), ("spaces",))
-        if row.get("of") not in catalogue.languages:
+        problems += _language_problems(where, row, catalogue)
+        of = row.get("of")
+        if not isinstance(of, str) or of not in catalogue.languages:
             problems.append(f"{where}: `of` names no language")
         catalogue.languages[code] = Language(
-            code, row.get("name", ""), of=row.get("of", ""), spaces=row.get("spaces", True)
+            code, str(row.get("name", "")), of=str(of), spaces=row.get("spaces") is not False
         )
+    return problems
+
+
+def _rank(row: Table) -> int:
+    rank = row.get("rank")
+    return rank if isinstance(rank, int) else 0
+
+
+def _language_problems(where: str, row: Table, catalogue: Catalogue) -> list[str]:
+    problems = _text(where, row, "name")
+    if row.get("code") in catalogue.languages:
+        problems.append(f"{where}: repeated")
+    if "spaces" in row and not isinstance(row["spaces"], bool):
+        problems.append(f"{where}: `spaces` must be true or false")
     return problems
 
 
 def load_families(root: Path, catalogue: Catalogue) -> list[str]:
     problems: list[str] = []
-    for row in _read(root / "models.toml", problems).get("family", []):
-        family = row.get("id", "?")
-        where = f"models.toml: {family}"
-        problems += _keys(where, row, ("id", "name", "patterns"))
+    file = "models.toml"
+    data = _read(root / file, problems)
+    problems += _keys(file, data, (), ("family",))
+    for row in _rows(file, data, "family", problems):
+        family = _id(file, row, problems)
+        where = f"{file}: {family}"
+        problems += _keys(where, row, ("id", "name", "patterns")) + _text(where, row, "name")
         if family in catalogue.families:
             problems.append(f"{where}: repeated")
         if not _SLUG.match(family):
             problems.append(f"{where}: an id takes lowercase letters, digits and hyphens: it names a file")
-        catalogue.families[family] = Family(family, row.get("name", ""), tuple(row.get("patterns", ())))
+        patterns = row.get("patterns")
+        if not isinstance(patterns, list) or not patterns or not all(isinstance(p, str) and p for p in patterns):
+            problems.append(f"{where}: `patterns` must list text")
+            patterns = []
+        catalogue.families[family] = Family(family, str(row.get("name", "")), tuple(patterns))
     return problems
 
 
@@ -176,9 +218,8 @@ def _feed_problems(where: str, feed: object) -> list[str]:
     if not isinstance(feed, dict):
         return [f"{where}: `feed` must be a table"]
     api = feed.get("api")
-    if api not in FEEDS:
-        return [f"{where}: `feed.api` is {api!r}; it must be one of {', '.join(FEEDS)}"]
-    return _keys(f"{where}: feed", feed, ("api", *FEEDS[api]))
+    wrong = _one_of(where, api, tuple(FEEDS), "feed.api")
+    return wrong or _keys(f"{where}: feed", feed, ("api", *FEEDS[str(api)]))
 
 
 def _read_at_problems(where: str, read_at: object, api: object) -> list[str]:
@@ -187,7 +228,7 @@ def _read_at_problems(where: str, read_at: object, api: object) -> list[str]:
     if not isinstance(read_at, dict):
         return [f"{where}: `read_at` must be a table"]
     problems = _keys(f"{where}: read_at", read_at, ("date",), ("revision", "commit"))
-    if not isinstance(read_at.get("date"), datetime.date):
+    if not _is_date(read_at.get("date")):
         problems.append(f"{where}: `read_at.date` must be a date")
     if api != "none" and not ({"revision", "commit"} & read_at.keys()):
         problems.append(f"{where}: `read_at` needs the `revision` or `commit` last read")
@@ -196,44 +237,69 @@ def _read_at_problems(where: str, read_at: object, api: object) -> list[str]:
 
 def load_sources(root: Path, catalogue: Catalogue) -> list[str]:
     problems: list[str] = []
-    for row in _read(root / "sources.toml", problems).get("source", []):
-        source = row.get("id", "?")
-        where = f"sources.toml: {source}"
+    file = "sources.toml"
+    data = _read(root / file, problems)
+    problems += _keys(file, data, (), ("source",))
+    for row in _rows(file, data, "source", problems):
+        source = _id(file, row, problems)
+        where = f"{file}: {source}"
         problems += _keys(where, row, ("id", "url", "kind", "languages", "licence", "due", "feed", "read_at"))
         if source in catalogue.sources:
             problems.append(f"{where}: repeated")
         problems += _one_of(where, row.get("kind"), SOURCE_KINDS, "kind")
         problems += _one_of(where, row.get("due"), DUE, "due")
         problems += _text(where, row, "url") + _text(where, row, "licence")
-        languages = tuple(row.get("languages", ()))
+        languages = row.get("languages", ())
+        if not isinstance(languages, list) or not languages:
+            problems.append(f"{where}: `languages` must list the languages it covers")
+            languages = []
         problems += [f"{where}: the language {c!r} isn't one" for c in languages if c not in catalogue.languages]
         if "feed" in row and "read_at" in row:
-            problems += _feed_problems(where, row["feed"])
             feed = row["feed"]
+            problems += _feed_problems(where, feed)
             problems += _read_at_problems(where, row["read_at"], feed.get("api") if isinstance(feed, dict) else None)
-        catalogue.sources[source] = Source(source, languages)
+        catalogue.sources[source] = Source(source, tuple(languages))
     return problems
 
 
-def _kinds_problems(where: str, kinds: object) -> list[str]:
+def _kinds_problems(where: str, row: Table) -> list[str]:
+    kinds = row.get("kinds")
     if not isinstance(kinds, list) or not kinds:
         return [f"{where}: `kinds` must list {ANY} or the kinds of writing"]
-    return [problem for kind in kinds for problem in _one_of(where, kind, (*KINDS, ANY), "kinds")]
+    problems = [problem for kind in kinds for problem in _one_of(where, kind, (*KINDS, ANY), "kinds")]
+    if problems:
+        return problems
+    if len(set(kinds)) != len(kinds):
+        problems.append(f"{where}: `kinds` repeats a kind")
+    if ANY in kinds and len(kinds) > 1:
+        problems.append(f"{where}: `kinds` is {ANY} or a list of kinds, not both")
+    if row.get("category") == "layout" and not set(kinds) <= set(LAYOUT_KINDS):
+        problems.append(f"{where}: a layout sign is for {' and '.join(LAYOUT_KINDS)}: only they read the layout files")
+    return problems
 
 
-def _range(where: str, row: Table, catalogue: Catalogue) -> tuple[ModelRange | None, list[str]]:
+def _range(where: str, row: object, catalogue: Catalogue) -> tuple[ModelRange | None, list[str]]:
+    if not isinstance(row, dict):
+        return None, [f"{where}: a `models` range must be a table"]
     problems = _keys(f"{where}: models", row, ("family", "from"), ("to",))
-    if row.get("family") not in catalogue.families:
-        problems.append(f"{where}: `models` names no family {row.get('family')!r}")
-    since = parse_version(str(row.get("from", "")))
-    to = parse_version(str(row["to"])) if "to" in row else None
-    if since is None:
-        problems.append(f'{where}: `from` must be a version, such as "4.6"')
-    if "to" in row and to is None:
-        problems.append(f'{where}: `to` must be a version, such as "4.6"')
-    if since and to and to < since:
-        problems.append(f"{where}: `to` {to} comes before `from` {since}")
-    return (ModelRange(row.get("family", ""), since, to) if since and not problems else None), problems
+    family = row.get("family")
+    if not isinstance(family, str) or family not in catalogue.families:
+        problems.append(f"{where}: `models` names no family {family!r}")
+    # Written as text: TOML reads a bare 4.10 as the number 4.1.
+    written = {key: row[key] for key in ("from", "to") if key in row}
+    versions = {key: parse_version(value) if isinstance(value, str) else None for key, value in written.items()}
+    problems += [
+        f'{where}: `{key}` must be a version in quotes, such as "4.6"'
+        for key, value in versions.items()
+        if value is None
+    ]
+    since = versions.get("from")
+    if problems or since is None:
+        return None, problems
+    span = ModelRange(str(family), since, versions.get("to"))
+    if not span.holds(since):
+        return None, [f"{where}: `to` {span.to} comes before `from` {since}"]
+    return span, []
 
 
 def _models(where: str, models: object, catalogue: Catalogue) -> tuple[tuple[ModelRange, ...], list[str]]:
@@ -250,54 +316,45 @@ def _models(where: str, models: object, catalogue: Catalogue) -> tuple[tuple[Mod
     return tuple(ranges), problems
 
 
-def _terms(where: str, row: Table, spaces: bool) -> tuple[re.Pattern[str] | None, list[str]]:
+def _terms(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Pattern[str] | None, list[str]]:
     """The one pattern a sign's terms make. In a language written with spaces a term stands as a word of its own, so
-    `delve` doesn't match inside another word; in one written without, there is no such edge to look for."""
+    `delve` doesn't match inside another word; in one written without, there is no such edge to look for. An `any` sign
+    has no one edge, so it writes its own `check`."""
     terms = row.get("terms")
     if terms is None:
         return None, []
     if row.get("category") not in TERM_CATEGORIES:
         return None, [f"{where}: only a {' or '.join(TERM_CATEGORIES)} sign holds `terms`"]
+    if language == ANY:
+        return None, [f"{where}: an {ANY} sign writes its `check`: a word's edge differs between languages"]
     if not isinstance(terms, list) or not terms:
         return None, [f"{where}: `terms` must list {{ term, instead }}"]
-    problems = [problem for term in terms for problem in _keys(f"{where}: terms", term, ("term", "instead"))]
+    if not all(isinstance(term, dict) for term in terms):
+        return None, [f"{where}: every term must be a table"]
+    problems = []
+    for term in terms:
+        problems += _keys(f"{where}: terms", term, ("term", "instead"))
+        problems += _text(f"{where}: terms", term, "term") + _text(f"{where}: terms", term, "instead")
     if problems:
-        return None, problems
-    body = "|".join(f"(?:{_nfc(term['term'])})" for term in terms)
+        return None, sorted(set(problems))
+    body = "|".join(f"(?:{term['term']})" for term in terms)
     return _compile(where, rf"(?<!\w)(?:{body})(?!\w)" if spaces else body)
 
 
-def _sign_sources(where: str, row: Table, language: str, catalogue: Catalogue) -> list[str]:
-    cited = row.get("sources")
-    if not isinstance(cited, list) or not cited:
-        return [f"{where}: `sources` must cite at least one"]
-    problems = []
-    for entry in cited:
-        problems += _keys(f"{where}: sources", entry, ("source", "where", "seen"))
-        if entry.get("source") not in catalogue.sources:
-            problems.append(f"{where}: cites no source {entry.get('source')!r}")
-        if not isinstance(entry.get("seen"), datetime.date):
-            problems.append(f"{where}: `seen` must be a date")
-    known = (catalogue.sources[e["source"]] for e in cited if e.get("source") in catalogue.sources)
-    if language == ANY and len({code for source in known for code in source.languages}) < 2:
-        problems.append(f"{where}: an {ANY} sign needs sources in at least two languages (AGENTS.md, Traps)")
-    return problems
-
-
-def _dates(where: str, row: Table) -> list[str]:
-    since, until = row.get("since"), row.get("until")
-    if since is None and until is None:
-        return []
-    if row.get("models") != ANY:
-        return [f"{where}: a model-scoped sign retires by its range's `to`, not by a date"]
-    problems = [
-        f"{where}: `{key}` must be a date"
-        for key, value in (("since", since), ("until", until))
-        if value is not None and not isinstance(value, datetime.date)
-    ]
-    if not problems and since and until and until < since:
-        problems.append(f"{where}: `until` comes before `since`")
-    return problems
+def _pattern(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Pattern[str] | None, list[str]]:
+    """A sign's own `check`, which wins over its terms: it is how a term that can't stand alone is matched."""
+    built, problems = _terms(where, row, language, spaces)
+    category = row.get("category")
+    if "check" not in row:
+        if category in TERM_CATEGORIES and "terms" not in row:
+            problems = [*problems, f"{where}: a {category} sign needs `terms` or a `check`"]
+        if category == "artefact":
+            problems = [*problems, f"{where}: an artefact sign needs a `check`: it is a string a script can find"]
+        return built, problems
+    if not isinstance(row["check"], str):
+        return None, [*problems, f"{where}: `check` must be text"]
+    own, wrong = _compile(where, row["check"])
+    return own, problems + wrong
 
 
 def _examples(where: str, row: Table, pattern: re.Pattern[str] | None) -> list[str]:
@@ -318,22 +375,60 @@ def _examples(where: str, row: Table, pattern: re.Pattern[str] | None) -> list[s
     return problems
 
 
-def _pattern(where: str, row: Table, spaces: bool) -> tuple[re.Pattern[str] | None, list[str]]:
-    """A sign's own `check`, which wins over its terms: it is how a term that can't stand alone is matched."""
-    built, problems = _terms(where, row, spaces)
-    if "check" not in row:
-        return built, problems
-    if not isinstance(row["check"], str):
-        return None, [*problems, f"{where}: `check` must be text"]
-    own, wrong = _compile(where, row["check"])
-    return own, problems + wrong
+def _citation(where: str, entry: object, catalogue: Catalogue) -> list[str]:
+    if not isinstance(entry, dict):
+        return [f"{where}: every entry of `sources` must be a table"]
+    problems = _keys(f"{where}: sources", entry, ("source", "where", "seen")) + _text(where, entry, "where")
+    source = entry.get("source")
+    if not isinstance(source, str) or source not in catalogue.sources:
+        problems.append(f"{where}: cites no source {source!r}")
+    if not _is_date(entry.get("seen")):
+        problems.append(f"{where}: `seen` must be a date")
+    return problems
+
+
+def _sign_sources(where: str, row: Table, language: str, catalogue: Catalogue) -> list[str]:
+    """Each citation, and what the citations cover: a sign comes from sources in its own language, so English's signs
+    aren't carried over into another, and an `any` sign from at least two (AGENTS.md, Traps)."""
+    cited = row.get("sources")
+    if not isinstance(cited, list) or not cited:
+        return [f"{where}: `sources` must cite at least one"]
+    problems = [problem for entry in cited for problem in _citation(where, entry, catalogue)]
+    if problems:
+        return problems
+    covered = {code for entry in cited for code in catalogue.sources[entry["source"]].languages}
+    if language == ANY:
+        if len(covered) < 2:
+            problems.append(f"{where}: an {ANY} sign needs sources in at least two languages (AGENTS.md, Traps)")
+        return problems
+    entry = catalogue.languages.get(language)
+    if not ({language, entry.of if entry else ""} & covered):
+        problems.append(f"{where}: no source it cites covers {language} (AGENTS.md, Traps)")
+    return problems
+
+
+def _dates(where: str, row: Table) -> list[str]:
+    since, until = row.get("since"), row.get("until")
+    if since is None and until is None:
+        return []
+    if row.get("models") != ANY:
+        return [f"{where}: a model-scoped sign retires by its range's `to`, not by a date"]
+    problems = [
+        f"{where}: `{key}` must be a date"
+        for key, value in (("since", since), ("until", until))
+        if value is not None and not _is_date(value)
+    ]
+    if not problems and since and until and until < since:
+        problems.append(f"{where}: `until` comes before `since`")
+    return problems
 
 
 def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
-    sign = row.get("id", "?")
+    problems: list[str] = []
+    sign = _id(f"signs/{language}.toml", row, problems)
     where = f"signs/{language}.toml: {sign}"
     required = ("id", "category", "kinds", "models", "what", "instead", "strength", "flags", "passes", "sources")
-    problems = _keys(where, row, required, ("terms", "check", "since", "until"))
+    problems += _keys(where, row, required, ("terms", "check", "since", "until"))
     slug = sign.removeprefix(f"{language}-")
     if slug == sign or not _SLUG.match(slug):
         problems.append(f"{where}: an id is {language}-<slug>, in lowercase letters, digits and hyphens")
@@ -341,24 +436,25 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
         problems.append(f"{where}: repeated")
     problems += _one_of(where, row.get("category"), CATEGORIES, "category")
     problems += _one_of(where, row.get("strength"), STRENGTHS, "strength")
-    problems += _kinds_problems(where, row.get("kinds"))
+    problems += _kinds_problems(where, row)
     problems += _text(where, row, "what") + _text(where, row, "instead")
     models, wrong = _models(where, row.get("models"), catalogue)
     entry = catalogue.languages.get(language)
-    pattern, wrong_pattern = _pattern(where, row, entry.spaces if entry else True)
+    pattern, wrong_pattern = _pattern(where, row, language, entry.spaces if entry else True)
     problems += wrong + wrong_pattern + _examples(where, row, pattern)
     problems += _sign_sources(where, row, language, catalogue) + _dates(where, row)
+    kinds = row.get("kinds")
     catalogue.signs[sign] = Sign(
         sign,
         language,
-        row.get("category", ""),
-        tuple(row.get("kinds") or ()),
+        str(row.get("category", "")),
+        tuple(kinds) if isinstance(kinds, list) else (),
         models,
-        row.get("what", ""),
-        row.get("instead", ""),
-        row.get("strength", ""),
-        row.get("flags", ""),
-        row.get("passes", ""),
+        str(row.get("what", "")),
+        str(row.get("instead", "")),
+        str(row.get("strength", "")),
+        str(row.get("flags", "")),
+        str(row.get("passes", "")),
         pattern,
     )
     return problems
@@ -368,9 +464,12 @@ def load_signs(root: Path, catalogue: Catalogue) -> list[str]:
     problems: list[str] = []
     for path in sorted((root / "signs").glob("*.toml")):
         language = path.stem
+        file = f"signs/{path.name}"
         if language != ANY and language not in catalogue.languages:
-            problems.append(f"signs/{path.name}: the file's name is no language")
-        for row in _read(path, problems).get("sign", []):
+            problems.append(f"{file}: the file's name is no language")
+        data = _read(path, problems)
+        problems += _keys(file, data, (), ("sign",))
+        for row in _rows(file, data, "sign", problems):
             problems += _sign(language, row, catalogue)
     return problems
 

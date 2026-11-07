@@ -35,10 +35,18 @@ def test_models_reads_an_id(capsys, model_id, expected):
     assert capsys.readouterr().out == expected
 
 
-def test_models_fails_on_a_broken_models_file(capsys, monkeypatch):
-    monkeypatch.setattr(signs, "load", lambda: (signs.Catalogue(), ["models.toml: bad"]))
+def test_models_fails_on_a_broken_models_file(capsys, monkeypatch, tmp_path):
+    (tmp_path / "models.toml").write_text("[[family", encoding="utf-8")
+    monkeypatch.setattr(signs, "CATALOGUE", tmp_path)
     assert cli.main(["models", "claude-opus-5-5"]) == 1
-    assert "models.toml: bad" in capsys.readouterr().out
+    assert "models.toml: not valid TOML" in capsys.readouterr().out
+
+
+def test_models_reads_only_the_families(capsys, monkeypatch):
+    # A bad sign is validate's to report: it doesn't stop `byhand models`.
+    monkeypatch.setattr(signs, "load", lambda: pytest.fail("models loads the whole catalogue"))
+    assert cli.main(["models", "gpt-7"]) == 0
+    assert capsys.readouterr().out == "gpt 7\n"
 
 
 def test_a_command_is_required():
@@ -48,7 +56,10 @@ def test_a_command_is_required():
 
 def test_the_command_writes_utf8_through_a_pipe():
     # On Windows a pipe is cp1252 unless the command says otherwise, and these characters can't be written in it.
-    code = "from byhand import cli; cli._utf8(); print('不是而是 ő')"
+    code = (
+        "import sys; from byhand import cli, signs; "
+        "signs.load = lambda: (signs.Catalogue(), ['不是而是 ő']); sys.exit(cli.main(['validate']))"
+    )
     done = gate.run([sys.executable, "-c", code])
-    assert done.returncode == 0, done.stderr
-    assert done.stdout.strip() == "不是而是 ő"
+    assert done.returncode == 1, done.stderr
+    assert "不是而是 ő" in done.stdout

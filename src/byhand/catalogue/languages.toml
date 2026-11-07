@@ -527,6 +527,7 @@ code = "tts"
 name = "Northeastern Thai"
 rank = 76
 speakers_millions = 17
+spaces = false
 
 [[language]]
 code = "fuv"

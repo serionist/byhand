@@ -1,0 +1,374 @@
+# Russian's signs. A sign here cites a source that covers Russian; the shape of a sign is in `any.toml`. A term is a
+# stem and its endings, wrapped in `\b`: Russian inflects, so each term is written to find its case and verb forms, and
+# [её] stands where people write either letter.
+#
+# Russian typography is no sign: the тире is standard punctuation (between subject and predicate, in dialogue) and
+# «ёлочки» are the normal quotes. No sign here or in `any.toml` reads either, and `tests/test_office_ru.py` holds it.
+# Office register (канцелярит) is how many people write mail, minutes, reports and official letters: no sign that a
+# script counts reads it, and the one that names it is for the model's read of a post or an article.
+
+# Formatting.
+
+[[sign]]
+id = "ru-title-case-headings"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Capitalises every word of a heading, an English habit; Russian capitalises the first word and names only."
+instead = "Capitalise the first word and proper names; leave и, в, на and the rest small."
+strength = "usual"
+# Case matters here alone, so the part that reads capitals turns case-insensitivity off. It needs a heading or a whole
+# bold line, and a capitalised preposition or conjunction inside it, which no name or signature line has.
+check = '''^(?:#{1,6} +|\*\*)(?-i:[А-ЯЁ][А-ЯЁа-яё-]*(?: [А-ЯЁ][А-ЯЁа-яё-]*)* (?:И|Или|В|Во|На|С|Со|По|Для|От|До|Из|О|Об|К|За|Без|При|Через)(?: [А-ЯЁ][А-ЯЁа-яё-]*)+)(?:\*\*)?\s*$'''
+flags = "## Сроки И Бюджет Проекта"
+passes = "## Сроки и бюджет проекта"
+sources = [
+  { source = "wikipedia-ru", where = "Заглавная буква, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 21; SKILL.md, Стиль, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-math-signs"
+category = "formatting"
+# Not mail or chat, where a quick «A > B» or «vs» is a person's shorthand.
+kinds = ["post", "document"]
+models = "any"
+what = "Puts =, >, < or vs between words in running prose."
+instead = "Write the relation out in words."
+strength = "weak"
+check = '''[а-яё]+ (?:[=><≈]|vs\.?) [а-яё]+'''
+flags = "Для нас удобство > цена, поэтому берём второй тариф."
+passes = "Для нас удобство важнее цены, поэтому берём второй тариф."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 23, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+# Structure: how the text is built. Most have no `check`, as only the model's own read can find them.
+
+[[sign]]
+id = "ru-office-register"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Writes a post or an article in office register: осуществлять, является, данный, в целях, strings of genitives. Letters, minutes, contracts and reports use it by custom; leave them."
+instead = "Use the plain verb and этот, and say who does what."
+strength = "weak"
+flags = "В целях осуществления контроля качества данной продукции нами было принято решение о проведении проверки."
+passes = "Мы решили проверить эту партию."
+sources = [
+  { source = "slop-gate", where = "rules/russian.json, commit f78d5cbee0dc", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 1 to 3; SKILL.md, description: legal and academic text exempt, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-dangling-participle"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Starts on a деепричастие whose doer never turns up as the subject."
+instead = "Name the doer as the subject."
+strength = "weak"
+flags = "Проверив накладные, недостача оказалась меньше."
+passes = "Проверив накладные, Света нашла недостачу поменьше."
+sources = [
+  { source = "wikipedia-ru", where = "Бесконечные (и часто нелогичные) деепричастные обороты, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 35, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-verb-echo"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Reuses the last sentence's verb for the next sentence's new subject."
+instead = "Give each subject the verb that fits it; repeat one only for emphasis."
+strength = "weak"
+flags = "Первый тариф даёт скидку на связь. Второй тариф даёт бесплатный роуминг."
+passes = "Первый тариф даёт скидку на связь, а на втором роуминг бесплатный."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 33, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-paragraph-stack"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Links paragraphs only with кроме того or также, so none grows out of the one before."
+instead = "Let each paragraph answer, extend or turn on the one before it."
+strength = "weak"
+flags = "Отдел кадров переехал на третий этаж.\n\nТакже с понедельника меняется график обеда.\n\nКроме того, пропуска теперь продлевают онлайн."
+passes = "Отдел кадров переехал на третий этаж.\n\nТам же теперь продлевают пропуска, так что в бюро пропусков ходить не нужно."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 34, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-chopped-fragments"
+category = "structure"
+# Not mail or chat, where «Без сахара. Без молока.» is an order for coffee.
+kinds = ["post", "document"]
+models = "any"
+what = "Breaks a point into a run of verbless scraps for effect."
+instead = "Write one full sentence with its verb."
+strength = "weak"
+check = '''(?:^|[.!?]\s+)(?:без|ни|никаких|ноль)\s[^.!?\n]{1,30}[.!]\s+(?:без|ни|никаких|ноль)\s[^.!?\n]{1,30}[.!]'''
+flags = "Перешли на электронные пропуска. Без бумажек. Без очереди у охраны."
+passes = "Перешли на электронные пропуска, и у охраны больше не стоят с бумажками."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 27; SKILL.md, Жёсткие запреты, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-poster-maxim"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Puts a claim as a two-noun maxim; the dash in it is plain Russian, the maxim is the sign."
+instead = "Say what actually happened, with a number if there is one."
+strength = "weak"
+flags = "Отзывы — это новая реклама для маленькой пекарни."
+passes = "Половина новых покупателей пришла в пекарню по отзывам на картах."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 28, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+# Words and phrases of every model. Each term counts as one phrase toward the weak rule, however its endings vary.
+
+[[sign]]
+id = "ru-significance-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Hangs symbolism and turning points on ordinary facts with set phrases."
+instead = "Say what happened; name the change only if you can."
+strength = "weak"
+terms = [
+  { term = 'поворотн\w+ (?:момент|пункт|этап)\w*', instead = "give the date and the change" },
+  { term = 'знамен(?:у|ова)\w*', instead = "начинается, or give the date" },
+  { term = 'символизиру\w*', instead = "say who reads it so" },
+  { term = '(?:служ|выступа|явля)\w* (?:ярким |живым )?(?:напоминанием|символом)', instead = "say what it shows" },
+  { term = 'неизгладим\w+ след\w*', instead = "say what changed" },
+  { term = 'непоколебим\w*', instead = "cut" },
+]
+flags = "Открытие новой проходной знаменует поворотный момент для всего завода."
+passes = "С понедельника открывается новая проходная, и утренняя очередь на заводе станет короче."
+sources = [
+  { source = "wikipedia-ru", where = "Чрезмерный акцент на символизме и важности, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 6 and 7, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-tacked-on-participles"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Ends a sentence on a participle clause that draws a moral from the fact."
+instead = "Stop at the fact, or give the cause in a sentence of its own."
+strength = "weak"
+terms = [
+  { term = 'подч[её]ркивая', instead = "cut, or say who stresses it" },
+  { term = 'демонстрируя', instead = "cut" },
+  { term = 'свидетельствуя', instead = "say what it proves, and to whom" },
+  { term = 'способствуя', instead = "say what it changed" },
+  { term = 'укрепляя', instead = "say what grew" },
+  { term = 'отражая', instead = "name the cause" },
+]
+flags = "Выручка магазина выросла на 4%, подчёркивая верность покупателей и укрепляя позиции сети."
+passes = "Выручка магазина выросла на 4%: в октябре открыли вторую кассу."
+sources = [
+  { source = "wikipedia-ru", where = "Поверхностный анализ, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 8, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-didactic-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+# Not «следует отметить», the stock opener of a person's report.
+what = "Tells the reader what is worth noting before saying it."
+instead = "Say it; the reader decides what matters."
+strength = "weak"
+terms = [
+  { term = '(?:крайне |критически )?важно (?:отметить|подч[её]ркнуть)', instead = "cut" },
+  { term = 'стоит (?:отметить|подч[её]ркнуть)', instead = "cut" },
+  { term = 'нельзя не (?:отметить|упомянуть)', instead = "cut" },
+  { term = 'стоит обратить внимание на то', instead = "cut" },
+]
+flags = "Важно отметить, что парковка закрыта. Стоит подчеркнуть, что пропуска выдаёт охрана."
+passes = "Парковку закрыли до среды, пропуск возьмите у охраны."
+sources = [
+  { source = "wikipedia-ru", where = "Дидактические и редакционные оговорки, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 11, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-vague-authority"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Leans on unnamed experts and analysts."
+instead = "Name the person or the study, or drop the claim."
+strength = "weak"
+terms = [
+  { term = '(?:по мнению|по словам) (?:многих )?экспертов', instead = "name them" },
+  { term = '(?:эксперты|аналитики) (?:отмечают|считают|утверждают|подч[её]ркивают)', instead = "name them" },
+  { term = 'некоторые критики', instead = "name them" },
+  { term = 'ряд (?:экспертов|источников|исследований)', instead = "cite them" },
+]
+flags = "По мнению экспертов, новый тариф выгоден всем, а аналитики отмечают его популярность."
+passes = "Ирина из бухгалтерии посчитала: на новом тарифе мы экономим 3 000 рублей в месяц."
+sources = [
+  { source = "wikipedia-ru", where = "Обтекаемые формулировки, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 10, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-challenges-formula"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Ends on a stock pair: difficulties named in general, then a bright future."
+instead = "Name the problem and what is being done about it, or stop."
+strength = "weak"
+terms = [
+  { term = 'сталкива\w+ с (?:рядом |целым рядом |новыми |серь[её]зными )?вызов\w*', instead = "name the problem" },
+  { term = 'несмотря на (?:эти|все|существующие) (?:вызовы|трудности)', instead = "cut" },
+  { term = 'будущее выглядит (?:ярким|светлым|многообещающим)', instead = "give the next step" },
+  { term = 'продолжа\w+ процветать', instead = "give a number" },
+]
+flags = "Типография сталкивается с рядом вызовов, но будущее выглядит многообещающим."
+passes = "Кафе пережило ремонт дороги; выручка в октябре вернулась к прошлогодней."
+sources = [
+  { source = "wikipedia-ru", where = "Выводы о проблемах и перспективах на будущее, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 12 and 20, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-stock-openers"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+# Not «на сегодняшний день» or «в настоящее время», which people write in plain mail.
+what = "Opens with a line about the modern world or what everyone knows."
+instead = "Start with the subject."
+strength = "weak"
+terms = [
+  { term = 'в современном мире', instead = "cut" },
+  { term = '(?:ни для кого )?не секрет, что', instead = "cut" },
+  { term = 'каждый из нас', instead = "say who" },
+]
+flags = "Не секрет, что очереди раздражают всех, а в современном мире время дороже денег."
+passes = "Очередь в столовой к часу дня доходит до двери, так что ходите к двенадцати."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 22, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-throat-clearing"
+category = "phrase"
+# Not mail or chat, where «давайте разберёмся» opens a plain call to sort something out.
+kinds = ["post", "document"]
+models = "any"
+what = "Spends a sentence on what it is about to say, or on how frank it is being."
+instead = "Start with the point."
+strength = "weak"
+terms = [
+  { term = 'давайте разбер[её]мся', instead = "cut" },
+  { term = 'погрузимся в', instead = "cut" },
+  { term = 'вот что (?:нужно|важно) знать', instead = "cut" },
+  { term = 'без лишних слов', instead = "cut" },
+  { term = 'если копнуть глубже', instead = "cut" },
+  { term = 'вот в ч[её]м (?:штука|фокус)', instead = "cut" },
+  { term = 'давайте начистоту', instead = "cut" },
+  { term = 'настоящий вопрос в том', instead = "ask it" },
+]
+flags = "Без лишних слов: вторая касса окупится за полгода. Если копнуть глубже, дело в очереди."
+passes = "Вторая касса нужна из-за очереди: в обед люди стоят по десять минут."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 25, 26 and 29, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-therapy-register"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Comforts the reader with stock lines of emotional support."
+instead = "Give the fact that would reassure, or cut."
+strength = "weak"
+terms = [
+  { term = 'и это (?:нормально|окей)', instead = "cut" },
+  { term = 'вы не одиноки', instead = "say who else has it" },
+  { term = 'позвольте себе', instead = "cut" },
+  { term = 'давайте признаем', instead = "cut" },
+]
+flags = "Первый месяц на новой работе всё валится из рук, и это нормально. Позвольте себе ошибаться."
+passes = "Первый месяц на новой работе у всех что-то валится из рук; Оля полгода путала склады."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 37, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-calques"
+category = "phrase"
+# Not mail or chat, where a team's own jargon is a person's.
+kinds = ["post", "document"]
+models = "any"
+what = "Pairs a Russian verb and noun the way English pairs them, not the way Russian does."
+instead = "Use the Russian pairing: решить проблему, успеть к сроку."
+strength = "weak"
+terms = [
+  { term = 'адрес(?:овать|ует|уют|овал\w*|уем) (?:эт\w+ |наш\w+ |ваш\w+ |главн\w+ )?(?:проблем|вопрос|задач|бол)\w*', instead = "решить, ответить на" },
+  { term = 'достав\w+ ценност\w*', instead = "say what the user gets" },
+  { term = 'встрет\w+ дедлайн\w*', instead = "успеть к сроку" },
+]
+flags = "Релизы раз в две недели помогут нам доставлять ценность чаще."
+passes = "Релизы раз в две недели, и клиенты быстрее получают исправления."
+sources = [
+  { source = "humanizer-ru", where = "references/patterns.md, 36, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-promotional-words"
+category = "word"
+kinds = ["post", "document"]
+models = "any"
+what = "Describes a place or a business in tourist-brochure words."
+instead = "Say where it is and what is there."
+strength = "weak"
+terms = [
+  { term = 'в самом сердце', instead = "в центре, or the address" },
+  { term = 'захватывающ\w* дух', instead = "describe it" },
+  { term = 'мо(?:жет|гут) похвастаться', instead = "есть" },
+  { term = 'богат\w* (?:культурн|историческ)\w+ (?:наследи|прошл)\w*', instead = "name what is there" },
+  { term = 'потрясающ\w+ (?:природн\w+ )?красот\w*', instead = "describe it" },
+]
+flags = "Гостиница в самом сердце старого города может похвастаться видом, захватывающим дух."
+passes = "Гостиница в старом городе, в пяти минутах от вокзала; из окон видно реку."
+sources = [
+  { source = "wikipedia-ru", where = "Рекламный и перегруженный позитивизмами язык, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 9, commit ff990df404f7", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "ru-chat-residue"
+category = "phrase"
+# Not mail or chat, where a person hopes their answer helped too.
+kinds = ["post", "document"]
+models = "any"
+what = "Leaves a chat assistant's sign-off in a post or a document: a hope that it helped, an offer of more."
+instead = "Delete it; end on the last useful fact."
+strength = "weak"
+terms = [
+  { term = 'надеюсь, (?:это|эта информация|мой ответ) (?:поможет|помог|помогла|помогло|было полезно|была полезна|был полезен)', instead = "cut" },
+  { term = 'буду рад\w* помочь', instead = "cut" },
+  { term = 'если (?:вы )?хотите (?:спросить|узнать) (?:что-то|что-нибудь) ещ[её]', instead = "cut" },
+]
+flags = "Вот и все шаги настройки принтера. Надеюсь, эта информация была полезна!"
+passes = "Вот и все шаги настройки принтера. Если застрянете, пишите Диме, он настраивал."
+sources = [
+  { source = "wikipedia-ru", where = "Имитация диалога, revision 156024043", seen = 2026-11-08 },
+  { source = "humanizer-ru", where = "references/patterns.md, 18, commit ff990df404f7", seen = 2026-11-08 },
+]

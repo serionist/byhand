@@ -44,6 +44,10 @@ OFFICE = [
     "단순한 오타라서 예산을 넘어선 건 아니에요.",
     "단순한 실수지만 기한을 넘어서 죄송해요.",
     "단순한 확인 요청이 오후를 넘어서까지 이어졌어요.",
+    "단순한 표기 오류를 넘어서는 문제는 없었습니다.",
+    "단순한 질문을 넘어서면 별도 견적이 필요합니다.",
+    "단순한 오타 수준을 넘어서는 오류는 발견되지 않았다.",
+    "단순한 계산을 넘어가는 문제라서 엑셀로는 어려워요.",
     "이번 결과가 시사하는 점이 있어서 회의 때 얘기해 봐요.",
     # notes and lists
     "회의 메모: 디자인 시안 B로 결정, 개발은 다음 주 월요일 착수.",
@@ -97,6 +101,8 @@ MACHINE = [
     ("ko-beyond-mere", "고객 응대는 단순한 업무를 넘어서 브랜드 경험이 되었다."),
     ("ko-beyond-mere", "이번 투자는 단순한 지원을 넘어선 약속입니다."),
     ("ko-beyond-mere", "단순한 기록을 넘어, 팀의 기억을 남기는 일입니다."),
+    # a line that ends on 넘어, as Grep reads it line by line
+    ("ko-beyond-mere", "이번 프로젝트는 단순한 개편을 넘어"),
 ]
 
 
@@ -109,3 +115,41 @@ def test_the_korean_signs_still_find_what_they_are_for(counted_alone, sign, text
 
 def test_every_korean_sign_that_counts_alone_has_its_machine_lines(counted_alone):
     assert {sign.id for sign in counted_alone if sign.language == "ko"} == {sign for sign, _ in MACHINE}
+
+
+# Korean inflects: the forms a weak check must still find, beyond its own `flags`, and what it must leave alone.
+FORMS = [
+    ("ko-wrap-up-words", "합리적인 선택이라고 할 수 있습니다."),
+    ("ko-wrap-up-words", "비용이 줄었음을 알 수 있습니다."),
+    ("ko-slogan-close", "이제 방향을 다시 정할 때다."),
+    ("ko-slogan-close", "이는 고객 이탈로 이어질 수 있다."),
+    ("ko-slogan-close", "결국 매출 감소로 이어질 것이다."),
+    ("ko-enumeration-preamble", "변화는 크게 세 가지로 나누어 볼 수 있다."),
+    ("ko-enumeration-preamble", "크게 두 가지로 나눠 설명하겠습니다."),
+    ("ko-heading-summary-line", "이번 장에서는 예산을 다룬다."),
+    ("ko-heading-summary-line", "이 절에서는 일정을 정리한다."),
+    ("ko-double-hedge", "지연될 가능성도 있을 수 있습니다."),
+    ("ko-comma-after-ending", "확인했지만, 답이 없었다."),
+    ("ko-comma-after-ending", "검토하지만, 결론은 다음 주에 낸다."),
+    ("ko-register-shift-vocabulary", "이 보고서는 현장의 변화를 조명한다."),
+]
+
+LEFT_ALONE = [
+    ("ko-comma-after-ending", "하지만, 일정은 그대로예요."),
+    ("ko-comma-after-ending", "그렇지만, 비용은 줄었어요."),
+    ("ko-comma-after-ending", "그러면서, 다음 회의를 잡았어요."),
+]
+
+
+@pytest.mark.parametrize(("sign", "text"), FORMS)
+def test_a_weak_korean_check_finds_its_inflected_forms(catalogue, sign, text):
+    pattern = catalogue.signs[sign].pattern
+    assert pattern is not None
+    assert pattern.search(text), sign
+
+
+@pytest.mark.parametrize(("sign", "text"), LEFT_ALONE)
+def test_a_weak_korean_check_leaves_plain_forms_alone(catalogue, sign, text):
+    pattern = catalogue.signs[sign].pattern
+    assert pattern is not None
+    assert not pattern.search(text), sign

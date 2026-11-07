@@ -1,0 +1,406 @@
+# Korean's signs. A sign here cites a Korean source; the shape of a sign is in `any.toml`. A term is a
+# regular-expression fragment, and `validate` wraps the list in `\b`, so a term starts and ends at a word's edge. Korean
+# writes a particle onto its noun, so a phrase that starts on a particle writes a `check` instead of `terms`. A stem
+# lists its contracted forms: 하 and 였 make 했, so `시사하\w*` alone would miss 시사했다.
+#
+# What these rest on: im-not-ai measured its patterns against 60 Korean texts written before 2022 and texts from three
+# models; Lee et al. 2026 measured the words that rose in 398,296 Korean abstracts and checked them against model
+# drafts. Neither is a measure of work mail, so all but one sign here are weak, and that one,
+# ko-paired-antithesis, has no check: the model reads for it. tests/test_office_ko.py reads plain Korean mail and chat
+# against every sign that counts alone, and against a weak cluster. Translationese (에 의해, 되어지다, 그녀) is left out: its marks
+# fell as the model words rose (Lee et al., Table 18).
+
+# Structure: how the text is built.
+
+[[sign]]
+id = "ko-paired-antithesis"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Builds paragraph after paragraph on set-up contrasts, X가 아니라 Y or twin questions X인가, Y인가. Correcting a fact (15일이 아니라 16일) is not one."
+instead = "Say what the thing is; set it against another only where a reader really holds that other view."
+strength = "usual"
+flags = "이번 개편은 비용의 문제가 아니라 신뢰의 문제다. 고객이 바라는 것은 할인이 아니라 응답이다. 남는 질문은 하나다. 빠름인가, 정확함인가."
+passes = "다음 주가 아니라 이번 주 목요일이에요. 장소는 그대로 3층 회의실입니다."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, C-8, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "im-not-ai", where = "empirical-validation.md, model check of 2026-08-29: above the human rate in all three models, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-abstract-subject"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Gives a will or a voice to something that has none: a market that has answered, a report card that points the way."
+instead = "Put the people who did it in the subject."
+strength = "weak"
+flags = "올해 실적표가 우리 팀이 갈 길을 말해 주고 있고, 시장은 이미 답을 내놓았다."
+passes = "지난달 주문이 18% 늘었어요. 영업팀이 새 거래처 두 곳을 잡았거든요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, D-5, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-sino-abstract-chain"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Strings Sino-Korean abstract nouns and -적, -성, -화 words together where a verb with a subject would do."
+instead = "Turn the noun back into a verb and say who does it."
+strength = "weak"
+flags = "본 과제는 전략적 관점에서 업무 프로세스의 체계적 고도화와 조직적 실행력 강화를 목표로 한다."
+passes = "이번 과제는 결재 단계를 다섯에서 셋으로 줄이는 게 목표예요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, F-4 and F-5, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "im-not-ai", where = "empirical-validation.md, model check: F-5 above the human rate in all three models, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-obligation-endings"
+category = "structure"
+kinds = ["document", "post"]
+models = "any"
+what = "Ends one paragraph after another on a duty: ~할 필요가 있다, or ~해야 한다."
+instead = "Keep the call to act where it matters; let the other paragraphs end on their facts."
+strength = "weak"
+flags = "현장의 목소리를 반영해야 한다.\n\n부서 간 정보 공유 체계를 갖춰야 한다.\n\n장기적인 인재 육성 계획도 마련할 필요가 있다."
+passes = "설문에 답한 40명 중 31명이 야간 근무를 줄이길 원했다.\n\n그래서 다음 달부터 야간 근무를 주 2회로 줄여야 한다."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, I-4, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "im-not-ai", where = "empirical-validation.md, model check: I-4 above the human rate in all three models, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-no-long-sentences"
+category = "structure"
+kinds = ["document", "post"]
+models = "any"
+what = "Writes only short one-clause sentences of even length, never a long one that carries an argument through."
+instead = "Where one thought runs into the next, let it run on in one sentence; save the short ones for a turn."
+strength = "weak"
+flags = "회의는 오전에 열렸다. 예산안이 검토되었다. 몇 가지 수정이 필요했다. 다음 주에 다시 논의한다."
+passes = "회의는 오전에 열렸는데 예산안에서 출장비가 작년보다 두 배로 잡혀 있어서 그 부분만 고쳐 다음 주에 다시 보기로 했다. 나머지는 통과."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, E-1 and E-4, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "im-not-ai", where = "empirical-validation.md, new candidates: sentences of 100 characters or more, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-heading-summary-line"
+category = "structure"
+kinds = ["document"]
+models = "any"
+what = "Opens a section by announcing what the section will cover."
+instead = "Start the section with its first fact."
+strength = "weak"
+check = '''^\W*(?:이|이번|본) (?:섹션|절|단락|장)에서는'''
+flags = "## 예산\n본 장에서는 내년도 예산 편성 방향을 살펴본다."
+passes = "## 예산\n내년 예산은 올해보다 5% 줄어든 12억 원이다."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, C-6, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+# Phrases: set pieces with a shape a check can find.
+
+[[sign]]
+id = "ko-beyond-mere"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Waves off a small version of the thing before naming it (단순한 A를 넘어), a frame rare in Korean before 2024."
+instead = "Say what it is; if both halves matter, give each plainly."
+strength = "weak"
+# Weak: people write the same words for going past a limit ("단순한 조회 권한을 넘어 수정 권한까지"), and the limit
+# nouns are an open set, so it counts only in a cluster (round 3 of #17). X is one word, or two when the first doesn't
+# end like a clause (-서, -고, -지만, a subject particle): "단순한 오타라서 예산을 넘어선" is two clauses. 넘어서면 and
+# 넘어가 are a condition and a verb of their own, and are left alone.
+check = '''단순한 (?:[^\s.,!?]*[^\s.,!?서고며데요다니면지게만라도는은이가] )?[^\s.,!?]+[을를] 넘어(?:서는|서|선)?(?:[\s,]|$)'''
+flags = "이번 워크숍은 단순한 교육을 넘어 팀 문화를 바꾸는 계기가 될 것입니다."
+passes = "이번 워크숍은 교육 위주예요. 끝나고 팀별로 저녁도 같이 먹어요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, A-21, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "lee-2026-korean", where = "arXiv 2609.07447v1, 5.4 Constructions and Table 5", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-cleft-emphasis"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Frames the point as what is needed or what matters, then names it."
+instead = "Make the thing itself the subject of a plain sentence."
+strength = "weak"
+terms = [
+  { term = '(?:필요한|중요한) 것은', instead = "~가 필요합니다" },
+  { term = '관건은', instead = "say what decides it" },
+]
+flags = "이번 분기에 중요한 것은 신규 고객보다 기존 고객의 이탈을 막는 일이다."
+passes = "중요한 건 금요일까지 견적서를 보내는 거예요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, D-8, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-slogan-close"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Ends a paragraph on a stock line: now is the time to, that is why, it all leads to."
+instead = "End on the last fact, or give the actual chain of cause."
+strength = "weak"
+check = '''\S+ (?:때|시점)(?:다|이다|입니다)[.!]?\s*$|[는은] 이유(?:다|이다|입니다)[.]?\s*$|(?:으로|로) 이어(?:진다|집니다|질 (?:수|것))|에 직결(?:된다|됩니다)'''
+flags = "작은 불편이 쌓이면 결국 고객 이탈로 이어집니다. 이제 서비스 전반을 다시 점검할 때입니다."
+passes = "작은 불편이 쌓여서 지난달에만 고객 12명이 해지했어요. 다음 회의에서 원인부터 같이 봐요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, D-6, D-9 and D-10, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-wrap-up-words"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Labels a conclusion before giving it, or ends on an academic hedge that it can be called so."
+instead = "Drop the label and the hedge; give the conclusion."
+strength = "weak"
+check = '''\b(?:결론적으로|요약하(?:면|자면)|종합하(?:면|자면|건대))\b|[라다]고 (?:할|볼) 수 있(?:다|습니다|을 것)|[음함]을 알 수 있(?:다|습니다)'''
+flags = "결론적으로 이번 이전은 비용과 일정 모두에서 합리적인 선택이라고 할 수 있다."
+passes = "그래서 이전은 다음 달로 하기로 했어요. 비용은 지난번 견적 그대로예요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, D-1, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "slop-gate", where = "rules/korean.json, commit f78d5cbee0dc", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-significance-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Props a point up with set phrases of weight and meaning."
+instead = "Say what follows from it, or cut the phrase."
+strength = "weak"
+terms = [
+  { term = '간과할 수 없\w*', instead = "cut" },
+  { term = '주목할 만(?:하|한|합)\w*', instead = "say why" },
+  { term = '방점을 찍\w*', instead = "say where the weight falls" },
+  { term = '의미가 적지 않\w*', instead = "say what it means" },
+  { term = '새로운 장을 (?:열|연|여|엽)\w*', instead = "say what starts" },
+]
+flags = "이번 협약은 지역 상생에 방점을 찍었다는 점에서 주목할 만하다."
+passes = "이번 협약으로 지역 업체 세 곳이 납품을 맡게 됐어요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, D-2 and D-4, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-enumeration-preamble"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Announces how many parts a list has before giving it."
+instead = "Give the items."
+strength = "weak"
+check = '''크게 (?:두|세|네|다섯|[2-5]) ?가지로 (?:나눌|나누|나눠|나뉩|나뉜|나뉘|구분|정리|요약)'''
+flags = "이번 조직 개편의 변화는 크게 세 가지로 나눌 수 있습니다."
+passes = "조직 개편으로 보고 라인과 좌석 배치가 바뀌어요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, D-3, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-double-hedge"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Stacks two hedges on one claim, so the possibility itself becomes possible."
+instead = "Keep one hedge at the strength you mean; in a negotiation, leave the writer's own care alone."
+strength = "weak"
+check = '''가능성(?:이|도) 있을 수(?: 있|도 있)|(?:보여질|여겨질) 수(?: 있|도 있)'''
+flags = "이번 일정 변경은 협력사 납품에 영향을 줄 가능성이 있을 수 있습니다."
+passes = "이번 일정 변경은 협력사 납품에 영향을 줄 수도 있어요. 내일 확인해 볼게요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, G-2, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+# Words.
+
+[[sign]]
+id = "ko-register-shift-vocabulary"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Uses the academic verbs that spread through Korean journal abstracts from late 2024; Claude Sonnet 5 wrote them above the human rate."
+instead = "Use the plain verb (보여 주다, 밝히다, 다루다) or state the finding."
+strength = "weak"
+terms = [
+  { term = '시사(?:하|한|할|함|합|해|했|점)\w*', instead = "보여 주다" },
+  { term = '규명\w*', instead = "밝히다" },
+  { term = '조명(?:하|한|할|함|합|해|했)\w*', instead = "다루다" },
+]
+flags = "본 연구는 조직 내 소통이 실제로 굴러가는 방식을 규명하고, 그 결과가 현장에 시사하는 바를 정리한다."
+passes = "이번 조사는 팀 간 메신저 사용 방식을 알아본 거예요. 답장이 평균 4시간 걸렸어요."
+sources = [
+  { source = "lee-2026-korean", where = "arXiv 2609.07447v1, 5.3 The dictionary, Table 3; 5.6 Positive control, Table 7", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-coined-metaphor"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Dresses a plain point in an image, a blueprint, a red light, a rival eating into a market, where the fact would do."
+instead = "Give the number or the event the image stands for."
+strength = "weak"
+terms = [
+  { term = '청사진\w*', instead = "계획" },
+  { term = '적신호\w*', instead = "say what is wrong" },
+  { term = '경고등\w*', instead = "say what is wrong" },
+  { term = '신호탄\w*', instead = "첫 사례" },
+  { term = '잠식\w*', instead = "give the share lost" },
+  { term = '짓(?:누르|누른|누를|눌러|눌렀|눌리|눌린|눌려)\w*', instead = "give the cost" },
+  { term = '뿌리(?:내리|내린|내릴|내려|내렸)\w*', instead = "자리 잡다" },
+  { term = '움켜(?:쥐|쥔|쥘|쥡|쥐어|쥐었|줬)\w*', instead = "say what is held" },
+]
+flags = "이번 분기 실적에 적신호가 켜지자 회사는 서둘러 새 청사진을 내놓았다."
+passes = "이번 분기 매출이 8% 줄어서 회사가 내년 사업 계획을 다시 짜기로 했어요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, D-14, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-policy-verbs"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Lets 구축, 강화 and 확대 stand in for every action, and has 설계 shape things nobody draws up, such as a relationship."
+instead = "Write what was done, by whom, in its own verb: 담당자를 한 명 늘렸다."
+strength = "weak"
+terms = [
+  { term = '(?:관계|경험|여정|일상|문화)[을를] (?:재)?설계\w*', instead = "say how, in a verb" },
+]
+flags = "고객과의 관계를 재설계하고 구성원의 경험을 설계하는 것이 이번 전략의 핵심이다."
+passes = "고객 응대 순서를 다시 짰고, 신입 교육 일정도 2주로 늘렸어요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, F-7, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+# Formatting.
+
+[[sign]]
+id = "ko-comma-after-ending"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "In sentence after sentence, a comma sits where -지만, -면서 or -는데 already joins two clauses."
+instead = "Delete the comma; the clauses stay joined without it."
+strength = "weak"
+# A stem before the ending: 하지만, 그렇지만 and 그러면서 open a sentence, and a comma after them is ordinary.
+check = '''(?:[^\s하렇]|\S하|[^\s그]렇)지만,|(?:[^\s러]|[^\s그]러)면서,|\S(?:는데|으며|하며),'''
+flags = "가격은 올랐지만, 수요는 그대로였고 재고가 줄어들면서, 납기가 길어졌다."
+passes = "가격은 올랐어요. 하지만, 주문은 그대로예요. 그러면서 납기만 일주일 늘었어요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, C-11 and C-12, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "im-not-ai", where = "baseline.json, essay, ending_comma_rate, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-scare-quotes"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Puts quotation marks round coined labels again and again, not round anything anyone said."
+instead = "Keep quotation marks for words someone actually used; write your own terms bare."
+strength = "weak"
+flags = "이번 개편의 키워드는 '연결'이다. '현장 중심'의 문화 속에서 '작은 성공'을 쌓아 '함께 성장'하는 것이 목표다."
+passes = "팀장님이 회의에서 \"이번 달은 무리하지 말자\"고 하셨어요. 그래서 마감은 다음 달로 미뤘어요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, J-2, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "im-not-ai", where = "empirical-validation.md, J-2: 0 per 1,000 words in the default model runs against 11.36 for people, 26.89 when the task asks for quotes, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-em-dash"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Sets off asides with em dashes, sentence after sentence."
+instead = "Use a comma, brackets or a new sentence."
+strength = "weak"
+check = '—'
+flags = "새 결재 시스템은 — 적어도 지금까지는 — 기대만큼 빠르지 않다."
+passes = "새 결재 시스템은 아직 기대만큼 빠르지 않아요(적어도 지금까지는요)."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, J-3, commit b37e0206d31f", seen = 2026-11-07 },
+  { source = "slop-gate", where = "rules/punctuation.json, commit f78d5cbee0dc", seen = 2026-11-07 },
+]
+
+# Tied to a model family.
+
+[[sign]]
+id = "ko-gpt-2024-vocabulary"
+category = "word"
+kinds = ["any"]
+# Lee et al. ran gpt-4o-mini and a Korean model of late 2024: both wrote these far above the human rate, while the 2026
+# models wrote them near it. 조명하다 is not here: gpt-5.6-luna and Claude Sonnet 5 still write it above people (Table 7),
+# so it is in ko-register-shift-vocabulary. Only GPT is a family here.
+models = [{ family = "gpt", from = "4", to = "4" }]
+what = "Uses the verbs of 2024 GPT models in Korean: contribute, explore, emphasise, an important role."
+instead = "Use the plain verb, or say what was done."
+strength = "weak"
+terms = [
+  { term = '기여(?:하|한|할|함|합|해|했)\w*', instead = "돕다" },
+  { term = '탐구(?:하|한|할|함|합|해|했)\w*', instead = "알아보다" },
+  { term = '강조(?:하|한|할|함|합|해|했)\w*', instead = "say it once" },
+  { term = '중요한 역할\w*', instead = "say what it does" },
+]
+flags = "이 연구는 지역 축제가 공동체 회복에 중요한 역할을 한다는 점을 강조하며, 그 요인을 탐구한다."
+passes = "이 연구는 지역 축제 다섯 곳을 다니며 주민 120명을 인터뷰했어요."
+sources = [
+  { source = "lee-2026-korean", where = "arXiv 2609.07447v1, 5.6 Positive control and Table 7: gpt-4o-mini drafts", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-gpt-meaning-wrap"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "gpt", from = "5" }]
+what = "Closes a summing-up sentence on 'which means that', ~다는 뜻이다."
+instead = "End on the claim itself, with -다."
+strength = "weak"
+check = '''다는 (?:뜻|의미)(?:이다|입니다)'''
+flags = "고객 문의의 절반이 배송 지연이라면, 물류 쪽 인원을 먼저 늘려야 한다는 뜻이다."
+passes = "고객 문의 절반이 배송 지연이라서 물류팀에 한 명 더 배치하기로 했어요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, I-3, the ChatGPT variant of v1.3, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-gemini-colon-headings"
+category = "formatting"
+kinds = ["document", "post"]
+models = [{ family = "gemini", from = "2.5" }]
+what = "Breaks heading after heading at a colon, a topic on the left and a catchline on the right."
+instead = "Write the heading as what the section tells the reader, with no colon."
+strength = "weak"
+check = '''^#{1,6}\s+[^\n:]+:\s*\S'''
+flags = "## 물류비: 오르는 운임, 흔들리는 마진"
+passes = "## 물류비가 오른 이유"
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, C-10, round 3 on Gemini 2.5 Pro, commit b37e0206d31f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ko-gemini-shift-slogan"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "gemini", from = "2.5" }]
+what = "Sums up a change as a slogan from one quoted label to another, 'X'에서 'Y'로."
+instead = "Say what changed, for whom, and when."
+strength = "weak"
+check = '''['‘"“][^'’"”\n]{1,20}['’"”](?:에서|[을를] 넘어) ['‘"“][^'’"”\n]{1,20}['’"”](?:으로|로)'''
+flags = "인사팀은 이제 '규정의 문지기'에서 '성장의 동반자'로 거듭나고 있다."
+passes = "인사팀은 올해부터 채용과 교육을 같이 맡아요."
+sources = [
+  { source = "im-not-ai", where = "ai-tell-taxonomy.md, D-7, round 3 on Gemini 2.5 Pro, commit b37e0206d31f", seen = 2026-11-07 },
+]

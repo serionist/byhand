@@ -239,7 +239,7 @@ languages = ["ko"]
 licence = "facts only, with a citation"
 due = "by-hand"
 feed = { api = "none" }
-read_at = { date = 2026-11-07 }
+read_at = { revision = "v1", date = 2026-11-07 }
 
 [[source]]
 id = "kiss-2026-hungarian"

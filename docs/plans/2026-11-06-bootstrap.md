@@ -267,7 +267,7 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 | 1. The harness and this plan | #1 | #9 | plan approved 2026-11-06 |
 | 2. The catalogue's schema | #2 | #12 | merged 2026-11-07 |
 | 3. Render and its gate check | #3 | #14 | merged 2026-11-07 |
-| 4. `propose-signs` and the seed | #4 | #15, `any` and `en`; `zh` and `zh-Hant` | |
+| 4. `propose-signs` and the seed | #4 | #15, `any` and `en`; #16, `zh` and `zh-Hant`; #17, `ko` | |
 | 5. `check` | #5 | | |
 | 6. Styles, `learn` and `write` | #6 | | |
 | 7. Tried in real sessions | #7 | | |
@@ -280,6 +280,14 @@ Decisions on the way:
   two signs find, counts once. One habit repeated is a person's: a Japanese mail that says に関する three times, an
   essay with its dashes. A list of different AI words still makes one: "delve into the pivotal, multifaceted" is 3. The
   first wording, two different signs, missed that, as #21's review found. The rendered files print the rule. #20.
+- **Step 4, the Korean seed (2026-11-07), for the maintainer's review:**
+  - Translationese (에 의해, 되어지다, 그녀, ~를 통해) gives no sign: in Lee et al. 2026 its marks fall as the model
+    words rise, and im-not-ai measured people using ~를 통해 and 그는 more than models do.
+  - No Korean sign with a check counts alone: `ko-beyond-mere` went from usual to weak in #17's third round, with the
+    maintainer's yes, as people write its words for going past a limit. Only `ko-paired-antithesis`, for the model's
+    read, is usual.
+    `tests/test_office_ko.py` holds plain Korean mail and chat against every sign that counts alone, and against a weak
+    cluster.
 - **Step 4, the seed's second round (the maintainer, 2026-11-07):**
   - One phrase counts once toward the weak rule: `serves as a testament to` hits three weak signs, and alone it is no
     cluster. The rendered header says so.

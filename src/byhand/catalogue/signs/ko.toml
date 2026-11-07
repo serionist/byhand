@@ -126,7 +126,7 @@ category = "phrase"
 kinds = ["any"]
 models = "any"
 what = "Frames the point as what is needed or what matters, then names it."
-instead = "Make the thing the subject and say it: 방향이 필요합니다."
+instead = "Make the thing itself the subject of a plain sentence."
 strength = "weak"
 terms = [
   { term = '(?:필요한|중요한) 것은', instead = "~가 필요합니다" },

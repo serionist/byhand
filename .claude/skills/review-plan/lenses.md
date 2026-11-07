@@ -48,12 +48,11 @@ they run? Is fetched text kept as data until a person merges it? Either one, as 
 
 ## plugin-contract
 
-Applies when: the plan touches `plugin/`, `.claude-plugin/`, a command a skill runs, or the version.
+Applies when: the plan touches `plugin/`, `.claude-plugin/`, or the version.
 
 Name what a user would lose or what would run without asking. Does each skill pre-approve only `Read`, `Glob` and
 `Grep`, so every write and command asks the user? Do the skills and agents keep their names, or does the plan name the
-change under Compatibility? Does every skill run the CLI as `byhand==<version>`, one version with
-`pyproject.toml` and `plugin.json`? Does each skill say where it starts by itself, and does the plan measure that it
+change under Compatibility? Does every skill run no command, so the plugin needs nothing else? Does each skill say where it starts by itself, and does the plan measure that it
 does, and not elsewhere? Does each agent see only what its role needs? A skill that pre-approves a write or a
 command is a blocker.
 

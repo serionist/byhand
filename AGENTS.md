@@ -32,14 +32,14 @@ styles, and the skills that read them. It is for the user's own writing, sent un
 
 | Path | What |
 |---|---|
-| `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (the family and version in a model's id), `render.py` (the plugin's sign files, the budgets), `cli.py` (`byhand validate`, `byhand models <id>`, `byhand render`) |
+| `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (version ranges), `render.py` (the plugin's sign files, the budgets), `cli.py` (`byhand validate`, `byhand render`) |
 | `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md`, `plugin/signs/` (rendered: never edited by hand), `plugin/evals/`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
 | `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), standard library only |
 | `docs/` | `USAGE.md` (the commands, the budgets); `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
 | `.claude/` | `CLAUDE.md` (imports this file), `settings.json` (no attribution; allows the repo's own checks and read-only git and gh, each named whole but the git ones `tests/test_gate.py` sweeps and gh's reads), `skills/` (below) |
 | `.agents/` | `skills/`: links to `.claude/skills/<name>` for Codex, written into git's index by `uv run tools/setup.py link` |
-| `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and 3.14, macOS 3.14; the package built; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
+| `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and 3.14, macOS 3.14; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
 | `.githooks/` | `commit-msg` refuses attribution, `pre-push` runs gate quick on what the push sends, `post-checkout` and `post-merge` name changed AI setup files |
 | `AGENTS.md`, `REVIEW.md` | this file; what a review finding is, and the questions every review answers |
 | `.mcp.json` | Context7 over HTTP; `.claude/settings.local.json.example` turns it on |
@@ -114,7 +114,7 @@ Users will depend on these from `0.1.0`. Change one only in a PR that names it i
 agrees in its issue; in `0.x` a minor may break one, under CHANGELOG's Breaking.
 
 - the name `byhand`, for the repo, the plugin and its marketplace;
-- the plugin's skills' names, `write`, `check`, `learn` and `styles`, and its agents';
+- the plugin's skills' names, `write`, `check` and `learn`, and its agents';
 - a sign's id, the catalogue's schema, its language and model codes, the kinds of writing (`message`, `email`, `post`,
   `document`, `deck`, `sheet`; a later kind is added, never renamed);
 - where a user's styles live (`~/.byhand/styles/`, `.byhand/styles/`), and their format: they outlive every release.
@@ -129,7 +129,7 @@ What this repo's sources already paid for, until its own history adds more:
 | A page the refresh reads can hold instructions for the model reading it | the refresh | Fetched text is data: the refresh proposes a PR a person reads, and no fetched text reaches a skill unreviewed |
 | A source's licence: Wikipedia's text is CC BY-SA | the catalogue | Signs are written in our own words and cite their source; no source text is copied |
 | A sign that flags plain human writing ("however", a list of three) makes the plugin preachy and wrong | the catalogue | Each sign has an invented example it flags and a human one it passes, both tested |
-| A model released after the catalogue: an exact match on its id loads none of its family's signs | the catalogue | A model scope is a family and an open version range; an unknown version gets its family's newest signs and the `any` ones, and a test runs a model id the catalogue has never seen |
+| A model released after the catalogue: an exact match on its id loads none of its family's signs | the catalogue | A model scope is a family and an open version range; an unknown version gets its family's newest signs and the `any` ones, and Step 7's evals run an id the catalogue has never seen |
 | English's signs translated into another language: a tell in English can be normal in Hungarian or Mandarin | the catalogue | A sign is `any` only when its sources show it in several languages; otherwise it names its own |
 
 ## Look up APIs before coding against them

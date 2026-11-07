@@ -1,11 +1,10 @@
 # The gate on every pull request, every push to main and once a day on main. Checks (Linux) runs the gate's quick lane
-# (lock, lint, format, types, the import contracts, the catalogue, its sign ids and sign files, no tracked .byhand/,
+# (lock, lint, format, types, the import contracts, the catalogue, its sign ids and sign files, no tracked .byhand/ or eval results,
 # the coverage floor, the version,
 # the harness, the plugin
 # validated by Claude Code, no tool attribution in the commits, gitleaks over them); the tests run on Linux on Python
-# 3.12 to 3.14, on Windows on 3.12 and 3.14 and on macOS on 3.14, and the Linux 3.12 leg measures coverage against its floor;
-# Package (Linux) builds and checks what a release would publish. CI needs all three; it and pr-text.yml's PR text are
-# the two checks the ruleset on main requires. Hosted CI never runs a Claude session or reads the live sources, so a
+# 3.12 to 3.14, on Windows on 3.12 and 3.14 and on macOS on 3.14, and the Linux 3.12 leg measures coverage against its floor.
+# CI needs both; it and pr-text.yml's PR text are the two checks the ruleset on main requires. Hosted CI never runs a Claude session or reads the live sources, so a
 # PR that touches the plugin or the refresh says what ran by hand.
 #
 # The daily run is for Dependabot's merges: dependabot-auto-merge.yml turns on auto-merge with the workflow's token,
@@ -107,37 +106,17 @@ jobs:
           uv run --locked --python ${{ matrix.python }} coverage combine --quiet
           uv run --locked --python ${{ matrix.python }} coverage report
 
-  # What a release would publish, built and checked on every pull request: PyPI's rules for the metadata, the wheel's
-  # contents and a README PyPI can show. The release workflow comes with its own plan.
-  package:
-    name: Package (Linux)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-        with:
-          enable-cache: true
-      - name: Build, and check what PyPI would get
-        run: |
-          uv build
-          uvx twine==7.0.0 check --strict dist/*
-          uvx check-wheel-contents==0.6.3 dist/*.whl
-
-  # The check the ruleset on main requires: the checks, every test leg and the package passed. It runs when one of them
+  # The check the ruleset on main requires: the checks and every test leg passed. It runs when one of them
   # failed too, since a skipped job would count as passed.
   ci:
     name: CI
-    needs: [checks, tests, package]
+    needs: [checks, tests]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: The checks, every test leg and the package passed
+      - name: The checks and every test leg passed
         env:
           CHECKS: ${{ needs.checks.result }}
           TESTS: ${{ needs.tests.result }}
-          PACKAGE: ${{ needs.package.result }}
-        run: test "$CHECKS" = success && test "$TESTS" = success && test "$PACKAGE" = success
+        run: test "$CHECKS" = success && test "$TESTS" = success

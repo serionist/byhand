@@ -14,7 +14,7 @@ why it matters to a user, the text they send or the next change.
 
 | Severity | What it is |
 |---|---|
-| blocker | a user's samples or styles written outside their data folder, logged, committed or sent anywhere; fetched text that reaches a skill or the catalogue without a person reading it; a plugin skill that pre-approves a write or a command; a pin that runs a package other than the release's; a source's text copied against its licence; a secret leaked; a one-way door broken; a check loosened |
+| blocker | a user's samples or styles written outside their data folder, logged, committed or sent anywhere; fetched text that reaches a skill or the catalogue without a person reading it; a plugin skill that pre-approves a write or a command; a plugin skill that runs a command; a source's text copied against its licence; a secret leaked; a one-way door broken; a check loosened |
 | major | a real user hits it in normal use: a sign that flags plain human writing, or misses the text it names; a skill that doesn't start where its description says, or writes in the wrong style or language; a skill that errors; a broken install on Windows, Linux or macOS; new behaviour without a test |
 | minor | everything else that is real: an edge case few meet, a missing doc line, a clumsy error message |
 
@@ -45,7 +45,7 @@ Each is a yes or no; a "no" is a finding.
    what a person writes instead, cite its source in our own words, and come with an invented example it flags and a
    human one it passes?
 6. The plugin contract: do the skills' and agents' names stay as they were, does each skill's `allowed-tools` name
-   only `Read`, `Glob` and `Grep`, and does every `byhand==X.Y.Z` pin equal `pyproject.toml`'s version?
+   only `Read`, `Glob` and `Grep`, and does every skill run no command, so the plugin needs nothing else?
 7. Do a user's samples and styles stay in their data folder, out of logs, reports, tests, commits and the PR? Is text
    fetched from a source treated as data, never as instructions? No key, token or password anywhere?
 8. Do paths, encodings, line endings and processes work on Windows, Linux and macOS, on every Python the package

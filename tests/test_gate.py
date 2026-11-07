@@ -704,7 +704,7 @@ MARKET = {
     "name": "byhand",
     "plugins": [{"name": "byhand", "source": "./plugin", "description": "Write like a person."}],
 }
-PLUGIN_SKILL = f"""---
+PLUGIN_SKILL = """---
 name: write
 description: >-
   Use when someone wants a mail or a message written in their own voice.
@@ -713,7 +713,7 @@ allowed-tools: Read Glob Grep
 
 # Write a mail
 
-Run `uv run --no-project --with byhand=={VERSION} byhand validate`, as [the spec](spec.md) says.
+Follow [the spec](spec.md).
 """
 AGENT = """---
 name: checker
@@ -727,9 +727,8 @@ model: opus
 
 
 def plugin_tree(root: Path) -> Path:
-    """An invented plugin, its marketplace and the pyproject.toml it is versioned by, under root."""
+    """An invented plugin and its marketplace, under root."""
     files = {
-        "pyproject.toml": f'[project]\nname = "byhand"\nversion = "{VERSION}"\n',
         gate.MARKETPLACE: json.dumps(MARKET),
         gate.PLUGIN_MANIFEST: json.dumps(PLUGIN),
         "plugin/README.md": "# byhand\n\n| `/byhand:write` | a mail in your own voice |\n",
@@ -817,12 +816,6 @@ def test_agent_problems(stem, text, expected):
     assert expected in problems[0]
 
 
-def test_versions_agree_with_pyproject():
-    assert gate.version_problems({"pyproject.toml": "0.2.0", "plugin/skills/write/SKILL.md (pin 1)": "0.2.0"}) == []
-    (problem,) = gate.version_problems({"pyproject.toml": "0.2.0", "plugin/skills/write/SKILL.md (pin 1)": "0.1.0"})
-    assert "plugin/skills/write/SKILL.md (pin 1) has version '0.1.0' and pyproject.toml '0.2.0'" in problem
-
-
 CHANGELOG = "# Changelog\n\n## Unreleased\n\n### Added\n\n- The write skill.\n"
 RELEASED = "# Changelog\n\n## Unreleased\n\n## 0.1.0 (2026-11-02)\n\n### Added\n\n- The write skill.\n"
 
@@ -835,7 +828,7 @@ RELEASED = "# Changelog\n\n## Unreleased\n\n## 0.1.0 (2026-11-02)\n\n### Added\n
         ("0.1.0", RELEASED, []),
         ("0.2.0", RELEASED, ["CHANGELOG.md has no '## 0.2.0 (YYYY-MM-DD)' section, and 0.1.0 is released"]),
         ("0.1.0", RELEASED.replace("(2026-11-02)", "(soon)"), []),
-        (None, CHANGELOG, ["pyproject.toml has no [project] version"]),
+        (None, CHANGELOG, [f"{gate.PLUGIN_MANIFEST} has no version"]),
     ],
     ids=["first, unreleased", "bumped before any release", "released", "bumped outside a release", "undated", "none"],
 )
@@ -846,7 +839,8 @@ def test_release_problems(version, changelog, expected):
 
 
 def test_check_version_says_whether_the_version_is_released(tmp_path):
-    (tmp_path / "pyproject.toml").write_text('[project]\nname = "x"\nversion = "0.1.0"\n', encoding="utf-8")
+    (tmp_path / gate.PLUGIN_MANIFEST).parent.mkdir(parents=True)
+    (tmp_path / gate.PLUGIN_MANIFEST).write_text('{"version": "0.1.0"}', encoding="utf-8")
     (tmp_path / "CHANGELOG.md").write_text(CHANGELOG, encoding="utf-8")
     assert gate.check_version(gate.Scope([]), root=tmp_path).detail == "0.1.0, not released yet"
     (tmp_path / "CHANGELOG.md").write_text(RELEASED, encoding="utf-8")
@@ -982,14 +976,6 @@ def test_a_failing_step_before_a_tool_fails_its_row_and_the_tool_never_runs(monk
 
 # Each case: the file, the text replaced in it (None writes a new file) and its replacement, what the check says.
 PLUGIN_BREAKS = [
-    (
-        "plugin/skills/write/SKILL.md",
-        f"byhand=={VERSION}",
-        "byhand==9.9.9",
-        "plugin/skills/write/SKILL.md (pin 1) has version '9.9.9'",
-    ),
-    (gate.PLUGIN_MANIFEST, f'"{VERSION}"', '"9.9.9"', f"{gate.PLUGIN_MANIFEST} has version '9.9.9'"),
-    ("pyproject.toml", f'"{VERSION}"', '"9.9.9"', "has version '0.1.0' and pyproject.toml '9.9.9'"),
     ("plugin/README.md", "`/byhand:write`", "`/byhand:build`", "does not list `/byhand:write`"),
     ("plugin/skills/write/SKILL.md", "Read Glob Grep", "Read Write", "allowed-tools 'Write'"),
     ("plugin/agents/checker.md", "model: opus", "model: gpt-5", "model is 'gpt-5'"),
@@ -1001,13 +987,10 @@ PLUGIN_BREAKS = [
         "\n[usage][u]\n\n[u]: ../docs/USAGE.md\n|",
         "the link '../docs/USAGE.md' leads to no file",
     ),
-    (
-        "plugin/skills/write/SKILL.md",
-        f"--with byhand=={VERSION}",
-        f"--with byhand>={VERSION}",
-        "runs byhand unpinned",
-    ),
-    ("plugin/skills/write/SKILL.md", "Run `uv run", "Run `uvx byhand check`, or `uv run", "'uvx byhand' runs byhand"),
+    ("plugin/skills/write/SKILL.md", "Follow", "Run `uv run byhand check`, then follow", "'uv run' runs a command"),
+    ("plugin/skills/write/SKILL.md", "Follow", "Run `uvx byhand check`, then follow", "'uvx' runs a command"),
+    ("plugin/skills/write/SKILL.md", "Follow", "Run `pip install x`, then follow", "'pip install' runs a command"),
+    ("plugin/skills/write/SKILL.md", "Follow", "Use byhand==1.0, then follow", "'byhand==' runs a command"),
     ("plugin/hooks/hooks.json", None, "{}", "plugin/hooks/hooks.json: a file the gate doesn't check"),
     ("plugin/.mcp.json", None, '{"mcpServers": {}}', "plugin/.mcp.json: a file the gate doesn't check"),
     ("plugin/skills/write/build.py", None, "print(1)\n", "plugin/skills/write/build.py: a file the gate doesn't"),
@@ -1019,7 +1002,8 @@ PLUGIN_BREAKS = [
     (gate.MARKETPLACE, '"source"', '"hooks": {}, "source"', "the plugin's key 'hooks' isn't checked"),
     ("plugin/signs/en/run.py", None, "print(1)\n", "plugin/signs/en/run.py: a file the gate doesn't check"),
     ("plugin/evals/setup.sh", None, "echo 1\n", "plugin/evals/setup.sh: a file the gate doesn't check"),
-    ("plugin/signs/en/any.md", None, "Run `uvx byhand check`.\n", "runs byhand unpinned"),
+    ("plugin/signs/en/any.md", None, "Run `uvx byhand check`.\n", "'uvx' runs a command"),
+    ("plugin/evals/case.yaml", None, "prompt: uv run byhand\n", "'uv run' runs a command"),
     ("plugin/evals/case.yaml", None, "context:\n  scaffold_script: setup.md\n", "a scaffold_script runs a script"),
     (
         "plugin/signs/en/any.md",
@@ -1035,17 +1019,16 @@ PLUGIN_BREAKS = [
     "case",
     PLUGIN_BREAKS,
     ids=[
-        "a skill's pin",
-        "plugin.json's version",
-        "pyproject's version",
         "README",
         "a write pre-approved",
         "an agent's model",
         "a link to nothing",
         "a link out of plugin/",
         "a reference link out of plugin/",
-        "a ranged spec",
-        "uvx unpinned",
+        "uv run",
+        "uvx",
+        "pip install",
+        "a pin",
         "a hooks file",
         "a server",
         "a script beside a skill",
@@ -1057,7 +1040,8 @@ PLUGIN_BREAKS = [
         "a marketplace key",
         "a script among the signs",
         "a script among the evals",
-        "an unpinned byhand in a sign file",
+        "a command in a sign file",
+        "a command in an eval",
         "a scaffold script",
         "a real link in a sign file",
         "a link in a code span outside the signs",

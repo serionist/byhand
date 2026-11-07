@@ -314,7 +314,6 @@ BREAKS = [
     ("languages.toml", "1325\nspaces = false", '1325\nspaces = "false"', "`spaces` must be true or false"),
     ("languages.toml", 'code = "en"', "code = 3", "`code` must be text"),
     ("languages.toml", "[[language]]", "[[lang]]", "unknown key `lang`"),
-    ("models.toml", 'patterns = ["claude"]', "patterns = []", "`patterns` must list text"),
     ("sources.toml", "[[source]]", "[[sources]]", "unknown key `sources`"),
     ("sources.toml", 'languages = ["en"]', "languages = []", "`languages` must list"),
     (
@@ -369,6 +368,10 @@ BREAKS = [
         "an any sign writes its `check`",
     ),
     ("signs/any.toml", "since = 2023-01-01", "since = 2023-01-01T10:00:00", "`since` must be a date"),
+    ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = '(?<!x)delve'", "Grep can't run"),
+    ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = 'delve(?=s)'", "Grep can't run"),
+    ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = '(d)elve\\1'", "Grep can't run"),
+    ("signs/en.toml", 'term = "delv(?:e|es|ing)"', "term = '(?<!un)delve'", "Grep can't run"),
 ]
 
 

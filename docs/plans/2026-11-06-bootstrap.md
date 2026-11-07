@@ -266,7 +266,7 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 |---|---|---|---|
 | 1. The harness and this plan | #1 | #9 | plan approved 2026-11-06 |
 | 2. The catalogue's schema | #2 | #12 | merged 2026-11-07 |
-| 3. Render and its gate check | #3 | | |
+| 3. Render and its gate check | #3 | #14 | |
 | 4. `propose-signs` and the seed | #4 | | |
 | 5. `check` | #5 | | |
 | 6. Styles, `learn` and `write` | #6 | | |
@@ -286,8 +286,18 @@ Decisions on the way:
     a user, and the pin checks in the gate and the lenses go when the first skill lands.
 
   The package stays, as the repo's own tool: `byhand validate`, `byhand render`, and the refresh in `0.2.0`.
-- **Step 3, its review (the maintainer, 2026-11-07):** `render` removes a leftover only when it carries render's line,
-  and names what it left alone. A third budget, 16 KB, holds a deck's or a sheet's layout files. The gate's link scan
+- **What that cuts (the maintainer, 2026-11-07):**
+  - Three skills, `write`, `check` and `learn`. `learn` lists a user's styles and sets a default; `styles` isn't built.
+  - `byhand models`, and reading a family from an id: the model reads its own id and picks the file, as a skill's prose
+    says, and Step 7's evals prove it on an id the catalogue has never seen.
+  - `render --out`: the folder is always `plugin/signs`, so `render` owns it, which replaces the Step 3 call below.
+  - The packaging: no CI job, no metadata; `Private :: Do Not Upload` keeps it off PyPI.
+  - One version, `plugin.json`'s. `pyproject.toml`'s stays fixed.
+  - The gate's pin checks: a ban on a command under `plugin/` takes their place, which is stricter.
+- **A check is what Grep can run (the maintainer, 2026-11-07):** no look-around and no backreference, held by
+  `validate`. A term's edge is `\b`. `render` prints a sign's `check` in Step 5, for `Grep`; where it goes, the draft's
+  files or a side file, is that step's call.
+- **Step 3, its review (the maintainer, 2026-11-07):** a third budget, 16 KB, holds a deck's or a sheet's layout files. The gate's link scan
   skips code spans in `plugin/signs/` alone, where a term is a regular expression. A future `until` retires a sign
   today, and every reader of the signs treats it so.
 - **Step 3, a retired sign (2026-11-07):** a sign with an `until` renders nowhere, whatever the date: rendering by the

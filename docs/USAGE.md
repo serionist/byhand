@@ -11,10 +11,8 @@ Users never run these. They build and check the catalogue in this repo.
 | Command | What |
 |---|---|
 | `byhand validate` | check the catalogue: its schema, every sign's examples, its sources; each problem, then a count; exit 1 on any |
-| `byhand models <id>` | the family and version the catalogue reads from a model's id |
 | `byhand render` | write the catalogue as the plugin's sign files |
 | `byhand render --check` | write nothing; exit 1 when the files differ from the catalogue |
-| `byhand render --out <folder>` | write elsewhere. It removes only files it wrote, and names any it left alone |
 
 ## What a draft loads
 
@@ -28,5 +26,5 @@ The budgets, in `src/byhand/render.py`; over any of them the render fails:
 |---|---|
 | the prose files one draft reads, together (`DRAFT_BUDGET`) | 16 KB |
 | the layout files a deck or a sheet adds, together (`LAYOUT_BUDGET`) | 16 KB |
-| a text of unknown author: `any` and one language, in every family (`UNKNOWN_BUDGET`) | 48 KB |
+| a text of unknown author: `any` and one language, in every family, prose and layout each (`UNKNOWN_BUDGET`) | 48 KB |
 | any one file (`MAX_LINES`) | under 2,000 lines, Claude Code's `Read` default |

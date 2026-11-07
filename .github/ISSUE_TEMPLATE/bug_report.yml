@@ -1,5 +1,5 @@
 name: Bug report
-description: Something a skill, the package or the catalogue does wrong.
+description: Something a skill or a sign does wrong.
 labels: [bug]
 body:
   - type: markdown

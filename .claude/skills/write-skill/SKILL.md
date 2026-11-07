@@ -50,7 +50,7 @@ calls, not in prose the agent has to get right.
 
 - **Frontmatter** holds `name`, `description` and, when the skill reads files, `allowed-tools`, nothing else.
 - **`allowed-tools`** pre-approves only `Read`, `Glob` and `Grep`, separated by spaces: every other tool asks the user
-  each time it runs, the `byhand` command line included, and writing a file or running a build always does.
+  each time it runs, and writing a file always does.
   Never `Bash(...)`, `Write`, `Edit`, `WebFetch` or another plugin's tool.
 - **Side files:** Markdown the skill reads sits beside `SKILL.md` in its folder, linked relatively
   (`[the spec](spec.md)`). Under `plugin/` beside these go only `signs/`, which `byhand render` writes and the gate

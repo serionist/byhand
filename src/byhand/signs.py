@@ -40,6 +40,8 @@ _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 # Most signs are about a line in a draft, so `^` and `$` match at each line. Part of the schema: a check is written
 # against these flags.
 _FLAGS = re.IGNORECASE | re.MULTILINE
+# A check also runs through Claude Code's Grep, which is ripgrep: no look-around, no backreference. Part of the schema.
+_NOT_GREP = re.compile(r"\(\?<?[=!]|\(\?P=|\\[1-9]")
 
 Table = dict[str, Any]
 
@@ -149,6 +151,8 @@ def _is_date(value: object) -> bool:
 
 
 def _compile(where: str, pattern: str) -> tuple[re.Pattern[str] | None, list[str]]:
+    if _NOT_GREP.search(pattern):
+        return None, [f"{where}: Grep can't run a look-around or a backreference: {pattern}"]
     try:
         return re.compile(_nfc(pattern), _FLAGS), []
     except re.error as exc:
@@ -210,16 +214,12 @@ def load_families(root: Path, catalogue: Catalogue) -> list[str]:
     for row in _rows(file, data, "family", problems):
         family = _id(file, row, problems)
         where = f"{file}: {family}"
-        problems += _keys(where, row, ("id", "name", "patterns")) + _text(where, row, "name")
+        problems += _keys(where, row, ("id", "name")) + _text(where, row, "name")
         if family in catalogue.families:
             problems.append(f"{where}: repeated")
         if not _SLUG.match(family):
             problems.append(f"{where}: an id takes lowercase letters, digits and hyphens: it names a file")
-        patterns = row.get("patterns")
-        if not isinstance(patterns, list) or not patterns or not all(isinstance(p, str) and p for p in patterns):
-            problems.append(f"{where}: `patterns` must list text")
-            patterns = []
-        catalogue.families[family] = Family(family, str(row.get("name", "")), tuple(patterns))
+        catalogue.families[family] = Family(family, str(row.get("name", "")))
     return problems
 
 
@@ -347,7 +347,7 @@ def _terms(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Patt
     if problems:
         return None, sorted(set(problems))
     body = "|".join(f"(?:{term['term']})" for term in terms)
-    return _compile(where, rf"(?<!\w)(?:{body})(?!\w)" if spaces else body)
+    return _compile(where, rf"\b(?:{body})\b" if spaces else body)
 
 
 def _pattern(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Pattern[str] | None, list[str]]:

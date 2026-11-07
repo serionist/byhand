@@ -20,7 +20,7 @@ from byhand.models import Family, ModelRange, parse_version
 CATALOGUE = Path(__file__).parent / "catalogue"
 ANY = "any"
 LANGUAGE_COUNT = 100
-WEAK_CLUSTER = 3  # hits of weak signs that count, together in a paragraph or section: people do each of them too
+WEAK_CLUSTER = 3  # hits of weak signs, in a paragraph or section, one phrase once: people do each of them too
 KINDS = ("message", "email", "post", "document", "deck", "sheet")
 LAYOUT_KINDS = ("deck", "sheet")
 CATEGORIES = ("word", "phrase", "structure", "formatting", "layout", "artefact")

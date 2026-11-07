@@ -65,6 +65,20 @@ OFFICE = [
     "As of my last check on Tuesday, the shipment was still in Rotterdam.",
     "Our rent went up 12% in June, so we need to talk about the second office.",
     "Can you review the attached draft before the client call?",
+    # a plain reply that opens on a yes, in each language the preamble reads
+    "Hi Anna,\n\nSure! Here's the link.\n\nTom",
+    "Sure! Here are the slides from yesterday.",
+    "Of course! Here's the invoice you asked for.",
+    "Certainly, here is the file you asked for.",
+    "Sure! Here's a draft of the letter.",
+    "Natürlich! Hier ist der Link.",
+    "Конечно! Вот ссылка.",
+    "当然可以\uff01我下午发给你。",  # full-width marks, as Chinese writes them
+    # asides people write
+    "The audit is worth noting in the minutes.",
+    "The credit is important to note on the invoice.",
+    # a bold list a person writes: weak, so it may fire, but it must not count alone
+    "- **Mon:** stand-up at ten\n- **Tue:** client call\n- **Wed:** off",
 ]
 
 
@@ -82,18 +96,42 @@ def test_no_sign_that_counts_alone_fires_on_plain_office_text(counted_alone, tex
     assert [sign.id for sign in counted_alone if sign.pattern and sign.pattern.search(text)] == []
 
 
-def test_the_signs_still_find_what_they_are_for(counted_alone):
-    # The same signs, on what they exist to catch: silence above must not come from signs that find nothing.
-    machine = {
-        "any-assistant-closing-offer": "Would you like me to convert this into a table?",
-        "any-assistant-preamble": "Certainly! Here is your announcement:",
-        "any-didactic-aside": "It's worth noting that results vary.",
-        "any-emoji-markers": "- 🚀 Launch day",
-        "any-source-gap-disclaimer": "No such figure appears in the provided sources.",
-        "en-stock-openers": "In today's digital age, firms must adapt.",
-    }
-    by_id = {sign.id: sign for sign in counted_alone}
-    for sign, text in machine.items():
-        pattern = by_id[sign].pattern
-        assert pattern is not None
-        assert pattern.search(text), sign
+# What each sign that counts alone exists to catch: a line per branch of its check, so silence above can't come from a
+# sign that finds nothing, or from a branch that stopped finding.
+MACHINE = [
+    ("any-assistant-closing-offer", "Would you like me to convert this into a table?"),
+    ("any-assistant-closing-offer", "Let me know if you'd like me to adjust the tone."),
+    ("any-assistant-closing-offer", "Is there anything else you'd like me to add?"),
+    ("any-assistant-closing-offer", "Gibt es noch etwas, bei dem ich helfen kann?"),
+    ("any-assistant-closing-offer", "Сообщите мне, если хотите, чтобы я сократил текст."),
+    ("any-assistant-preamble", "Certainly! Here is your announcement:"),
+    ("any-assistant-preamble", "Sure! Here's a professional email you can send to your client:"),
+    ("any-assistant-preamble", "Of course! Here is a shorter version of the post:"),
+    ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung:"),
+    ("any-assistant-preamble", "Конечно! Вот исправленный текст:"),
+    ("any-assistant-preamble", "当然可以\uff01以下是修改后的版本\uff1a"),
+    ("any-didactic-aside", "It's worth noting that results vary."),
+    ("any-didactic-aside", "It is crucial to note the deadline."),
+    ("any-emoji-markers", "- 🚀 Launch day"),
+    ("any-emoji-markers", "## 📊 Results"),
+    ("any-emoji-markers", "1. ✨ Faster pages"),
+    ("any-emoji-markers", "- ⭐ Top pick"),
+    ("any-source-gap-disclaimer", "No such figure appears in the provided sources."),
+    ("en-stock-openers", "In today's digital age, firms must adapt."),
+]
+
+
+@pytest.mark.parametrize(("sign", "text"), MACHINE)
+def test_the_signs_still_find_what_they_are_for(counted_alone, sign, text):
+    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+    assert pattern is not None
+    assert pattern.search(text), sign
+
+
+def test_a_bold_list_is_weak_and_the_preamble_reads_mail():
+    catalogue, _ = signs.load()
+    bold = catalogue.signs["any-bold-lead-in-list"]
+    assert bold.strength == "weak"
+    assert bold.pattern is not None
+    assert bold.pattern.search(OFFICE[-1])  # it fires, and counts only in a cluster
+    assert "email" in catalogue.signs["any-assistant-preamble"].kinds

@@ -4,9 +4,10 @@ Usage: uv run tools/copycheck.py [--sources <folder>] [--run <words>]
 
 A sign is our own words and a citation, never a source's text (AGENTS.md, Traps), and that holds whatever the source's
 licence. This searches each sign's `what`, `instead`, `flags`, `passes` and each term's `instead` for a run of 6 words
-or more shared with any file under the folder, which is `.local/sources` unless named. What a sign's own `check` or
-terms find is left out: a fixed string a check needs is the one thing a sign may share, and it has to appear in
-`flags`. Each hit prints both texts; a person reads them. Exit 1 on any hit.
+or more shared with any file under the folder, which is `.local/sources` unless named. A word is a word, and in Chinese,
+Japanese and Thai, written without spaces, a character. In `flags`, a fixed string the sign's own check or terms find is
+left out, the one thing a sign may share; a match longer than a run is no fixed string, and counts. Each hit prints both
+texts; a person reads them. Exit 1 on any hit.
 
 It reads downloads, which git ignores and CI doesn't have, so it isn't in the gate. Standard library only.
 """
@@ -31,7 +32,11 @@ FIELDS = ("what", "instead", "flags", "passes")
 TEXT = (".md", ".txt", ".json", ".yml", ".yaml", ".wikitext", ".toml", ".py", ".js", ".html", ".csv")
 MAX_BYTES = 30_000_000
 SKIP = ("human-baseline", ".git")  # the false-positive corpus is no source
-_WORD = re.compile(r"[^\W_]+(?:'[^\W_]+)?")
+# Han, Kana and Thai: a token a character, as these are written without spaces between words.
+_CHARACTERS = "\u0e00-\u0e7f\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff"
+# A combining mark belongs to its word: Python's \w leaves out a Devanagari vowel sign, which would split a word.
+_MARKS = "".join(re.escape(chr(c)) for c in range(0x300, 0x10000) if unicodedata.category(chr(c)) in ("Mn", "Mc"))
+_WORD = re.compile(rf"[{_CHARACTERS}]|(?:[^\W_{_CHARACTERS}]|[{_MARKS}])+(?:'(?:[^\W_{_CHARACTERS}]|[{_MARKS}])+)?")
 _FLAGS = re.IGNORECASE | re.MULTILINE
 
 
@@ -83,15 +88,21 @@ def pattern(row: dict[str, Any]) -> re.Pattern[str] | None:
         return None
 
 
-def fields(rows: Iterable[dict[str, Any]]) -> list[Field]:
+def fields(rows: Iterable[dict[str, Any]], run: int = RUN) -> list[Field]:
+    """Each text of each sign. In `flags`, what the sign's own pattern finds is taken out when it is a run long at
+    most: that is the fixed string a check needs. Elsewhere nothing is: `what` and `instead` hold no fixed string."""
     found = []
     for row in rows:
         own = pattern(row)
         texts = [(key, row[key]) for key in FIELDS if isinstance(row.get(key), str)]
         texts += [("terms", term["instead"]) for term in row.get("terms") or []]
         for key, text in texts:
-            pieces = own.sub("\0", text).split("\0") if own else [text]
-            found.append(Field(row["id"], key, text, tuple(pieces)))
+            if own is not None and key == "flags":
+                kept = own.sub(lambda match: "\0" if len(words(match.group())) <= run else match.group(), text)
+                pieces = tuple(kept.split("\0"))
+            else:
+                pieces = (text,)
+            found.append(Field(row["id"], key, text, pieces))
     return found
 
 
@@ -153,7 +164,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         for path in paths
     )
-    found = fields(load_signs())
+    found = fields(load_signs(), args.run)
     shared = hits(found, documents, args.run)
     for hit in shared:
         print(f"{hit.sign} {hit.key}: {hit.text!r}\n  {hit.path}: ...{hit.around}...\n  shared: {hit.shared}")

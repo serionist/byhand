@@ -135,7 +135,7 @@ id = "en-vague-connection"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Links two things with 'tied to' or 'linked with' and never says how."
+what = "Joins two things with a loose word of connection and never says how."
 instead = "Give the actual relation: who did what, and where."
 strength = "weak"
 flags = "Priya has been linked with the Harbour Trust for some years."
@@ -253,7 +253,7 @@ terms = [
   { term = 'independent coverage', instead = "name the report" },
   { term = 'trade publications', instead = "name them" },
   { term = '(?:local|regional|national) media outlets', instead = "name them" },
-  { term = '(?:maintains?|has) an? (?:active|strong) (?:social media|digital) presence', instead = "cut" },
+  { term = '(?:maintains?|has) an? (?:active|strong) (?:online|social media|digital) presence', instead = "cut" },
 ]
 flags = "The studio maintains an active social media presence and has drawn independent coverage."
 passes = "The studio posts on Instagram, and the Yorkshire Post wrote about it in May."
@@ -287,7 +287,7 @@ category = "structure"
 kinds = ["any"]
 models = [{ family = "gpt", from = "4", to = "4" }, { family = "llama", from = "3", to = "3" }]
 what = "Packs sentences with nouns made from verbs."
-instead = "Use the verb and say who acts."
+instead = "Turn the noun back into a verb, with a named subject."
 strength = "weak"
 flags = "The implementation of the reduction of costs requires the automation of invoice processing."
 passes = "We can cut costs by automating the invoices."

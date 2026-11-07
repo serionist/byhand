@@ -275,6 +275,13 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 Decisions on the way:
 
+- **Step 4, the seed's second round (the maintainer, 2026-11-07):**
+  - One phrase counts once toward the weak rule: `serves as a testament to` hits three weak signs, and alone it is no
+    cluster. The rendered header says so.
+  - The gate's `sign ids` holds each id on `main` where a range left it, not on the pushed branch: an id only an
+    unmerged branch held has reached no one, so a review may cut it. This loosens the check at pre-push, by the
+    maintainer's yes; on a PR and on `main` it holds as before.
+  - The closing offer stays a `document` sign: in mail, people write "let me know if you'd like" themselves.
 - **Step 4, the seed's review (the maintainer, 2026-11-07):**
   - A translated page counts as its language: Wikipedia's de, ru and others can make a sign `any`, though they adapt the
     English page. The review recommended the opposite, for what `any` pushes onto other languages; the maintainer kept

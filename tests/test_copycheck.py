@@ -47,14 +47,37 @@ def test_each_field_and_each_terms_instead_is_read():
         assert [hit.key for hit in shared(row)] == [key]
 
 
-def test_what_a_signs_check_finds_is_left_out():
+def test_a_fixed_string_a_check_needs_is_left_out_of_flags():
     # A fixed string a check needs has to sit in `flags`: only the words around it count.
-    row = sign(flags="We saw pale gulls circle the old harbour wall.", check="pale gulls circle the old harbour wall")
-    assert shared(row) == []
     terms = sign(
         flags="We saw pale gulls circle the old harbour wall.", terms=[{"term": "gulls circle", "instead": "x"}]
     )
     assert shared(terms) == []  # the run is broken where the term stood
+    six = sign(flags="We saw pale gulls circle the old harbour.", check="pale gulls circle the old harbour")
+    assert shared(six) == []  # a check's fixed string may be a run long
+
+
+def test_a_match_longer_than_a_run_is_no_fixed_string():
+    row = sign(flags="We saw pale gulls circle the old harbour wall.", check="pale gulls circle the old harbour wall")
+    assert [hit.key for hit in shared(row)] == ["flags"]
+
+
+def test_only_flags_lose_what_the_check_finds():
+    # A term in `what` doesn't break a copied run there: `what` holds no fixed string.
+    row = sign(what="Pale gulls circle the old harbour wall.", terms=[{"term": "gulls", "instead": "x"}])
+    assert [hit.key for hit in shared(row)] == ["what"]
+
+
+def test_a_copied_sentence_without_spaces_is_found():
+    source = "老港口的墙边\uff0c苍白的海鸥在黄昏时盘旋。"  # a full-width comma, as Chinese writes it
+    assert [hit.key for hit in shared(sign(flags="苍白的海鸥在黄昏时盘旋。"), source)] == ["flags"]
+    assert shared(sign(flags="海鸥盘旋。"), source) == []
+
+
+def test_a_word_keeps_its_combining_marks():
+    assert copycheck.words("महत्वाकांक्षी योजना") == ["महत्वाकांक्षी", "योजना"]
+    source = "नई योजना से शहर के लोगों को बहुत लाभ होगा और काम जल्दी पूरा होगा"
+    assert shared(sign(flags="योजना से शहर के लोगों को बहुत लाभ होगा"), source)
 
 
 def test_a_check_that_wont_compile_leaves_the_text_whole():

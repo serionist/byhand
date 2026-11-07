@@ -63,8 +63,8 @@ def _file(catalogue: Catalogue, language: str, family: str, layout: bool, found:
     ]
     if any(sign.strength == "weak" for sign in found):
         lines.append(
-            f"A weak sign counts only with {signs.WEAK_CLUSTER} or more hits of weak signs in a paragraph or section; "
-            "one phrase counts once."
+            f"A weak sign counts only with {signs.WEAK_CLUSTER} or more hits of weak signs in a paragraph or section, "
+            f"from {signs.WEAK_SIGNS} different signs at least; one phrase counts once."
         )
     if any(sign.models for sign in found):
         lines.append(

@@ -275,6 +275,10 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 Decisions on the way:
 
+- **A weak cluster needs two signs (the maintainer, 2026-11-07, from the review of #18):** 3 hits of weak signs in a
+  paragraph or section, from at least 2 different signs. One habit repeated is a person's: a Japanese mail that says
+  に関する three times, an essay with its dashes. `WEAK_SIGNS` holds it beside `WEAK_CLUSTER`, and the rendered files
+  print it. #20.
 - **Step 4, the seed's second round (the maintainer, 2026-11-07):**
   - One phrase counts once toward the weak rule: `serves as a testament to` hits three weak signs, and alone it is no
     cluster. The rendered header says so.

@@ -21,6 +21,7 @@ CATALOGUE = Path(__file__).parent / "catalogue"
 ANY = "any"
 LANGUAGE_COUNT = 100
 WEAK_CLUSTER = 3  # hits of weak signs, in a paragraph or section, one phrase once: people do each of them too
+WEAK_SIGNS = 2  # ...from this many different signs at least: one habit, however often, is a person's
 KINDS = ("message", "email", "post", "document", "deck", "sheet")
 LAYOUT_KINDS = ("deck", "sheet")
 CATEGORIES = ("word", "phrase", "structure", "formatting", "layout", "artefact")

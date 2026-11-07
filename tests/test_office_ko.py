@@ -88,39 +88,45 @@ def test_no_sign_that_counts_alone_fires_on_plain_korean_work_text(counted_alone
     assert [sign.id for sign in counted_alone if sign.pattern and sign.pattern.search(text)] == []
 
 
-@pytest.mark.parametrize("text", OFFICE)
-def test_plain_korean_work_text_makes_no_weak_cluster(catalogue, text):
-    weak = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength == "weak"]
-    for paragraph in text.split("\n\n"):
-        hits = [sign.id for sign in weak if sign.pattern and sign.pattern.search(paragraph)]
-        assert len(hits) < signs.WEAK_CLUSTER, hits
-
-
-# What each Korean sign that counts alone exists to catch: a line per branch of its check, so the silence above can't
-# come from a sign that finds nothing.
-MACHINE = [
-    ("ko-beyond-mere", "이번 행사는 단순한 친목 모임을 넘어 협업의 출발점이 됩니다."),
-    ("ko-beyond-mere", "고객 응대는 단순한 업무를 넘어서 브랜드 경험이 되었다."),
-    ("ko-beyond-mere", "이번 투자는 단순한 지원을 넘어선 약속입니다."),
-    ("ko-beyond-mere", "단순한 기록을 넘어, 팀의 기억을 남기는 일입니다."),
-    # a line that ends on 넘어, as Grep reads it line by line
-    ("ko-beyond-mere", "이번 프로젝트는 단순한 개편을 넘어"),
+# A person's 단순한 X를 넘어, in the sense of going past a limit (round 3 of #17). The limit nouns are an open set, so
+# ko-beyond-mere is weak: alone, these must not make a cluster.
+LIMIT = [
+    "단순한 실수의 선을 넘어선 일이라 공식적으로 보고하겠습니다.",
+    "단순한 조회 권한을 넘어 수정 권한까지 필요하시면 말씀해 주세요.",
+    "단순한 자문 역할을 넘어 실무까지 맡기는 건 계약상 어렵습니다.",
+    "단순한 문의 건수를 넘어서 민원으로 번지고 있어요.",
+    "단순한 견적 금액을 넘어 세금까지 포함하면 예산이 모자라요.",
+    "단순한 사내 공지를 넘어 외부 발표까지 하려면 홍보팀 확인이 필요합니다.",
 ]
 
 
-@pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_korean_signs_still_find_what_they_are_for(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
-    assert pattern is not None
-    assert pattern.search(text), sign
+def _weak_hits(catalogue: signs.Catalogue, paragraph: str) -> list[str]:
+    weak = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength == "weak"]
+    return [sign.id for sign in weak if sign.pattern and sign.pattern.search(paragraph)]
 
 
-def test_every_korean_sign_that_counts_alone_has_its_machine_lines(counted_alone):
-    assert {sign.id for sign in counted_alone if sign.language == "ko"} == {sign for sign, _ in MACHINE}
+@pytest.mark.parametrize("text", OFFICE + LIMIT)
+def test_plain_korean_work_text_makes_no_weak_cluster(catalogue, text):
+    for paragraph in text.split("\n\n"):
+        hits = _weak_hits(catalogue, paragraph)
+        assert len(hits) < signs.WEAK_CLUSTER, hits
+
+
+def test_no_korean_check_counts_alone(counted_alone):
+    # ko-beyond-mere was the last (round 3 of #17). A Korean sign with a pattern that counts alone needs a MACHINE list
+    # here, a line per branch of its check, as tests/test_office.py has for the others.
+    assert [sign.id for sign in counted_alone if sign.language == "ko"] == []
 
 
 # Korean inflects: the forms a weak check must still find, beyond its own `flags`, and what it must leave alone.
 FORMS = [
+    ("ko-beyond-mere", "이번 행사는 단순한 친목 모임을 넘어 협업의 출발점이 됩니다."),
+    ("ko-beyond-mere", "고객 응대는 단순한 업무를 넘어서 브랜드 경험이 되었다."),
+    ("ko-beyond-mere", "이번 투자는 단순한 지원을 넘어선 약속입니다."),
+    ("ko-beyond-mere", "단순한 기록을 넘어, 팀의 기억을 남기는 일입니다."),
+    ("ko-beyond-mere", "이번 프로젝트는 단순한 개편을 넘어"),  # a line ending on 넘어, as Grep reads it
+    ("ko-beyond-mere", "이 서비스는 단순한 도구를 넘어서는 가치를 제공합니다."),
+    ("ko-beyond-mere", "이 행사는 단순한 제도를 넘어 문화가 되었다."),
     ("ko-wrap-up-words", "합리적인 선택이라고 할 수 있습니다."),
     ("ko-wrap-up-words", "비용이 줄었음을 알 수 있습니다."),
     ("ko-wrap-up-words", "이번 결정은 매우 중요하다고 할 수 있습니다."),
@@ -139,6 +145,9 @@ FORMS = [
 ]
 
 LEFT_ALONE = [
+    ("ko-beyond-mere", "단순한 오타라서 예산을 넘어선 건 아니에요."),
+    ("ko-beyond-mere", "단순한 질문을 넘어서면 별도 견적이 필요합니다."),
+    ("ko-beyond-mere", "단순한 계산을 넘어가는 문제라서 엑셀로는 어려워요."),
     ("ko-comma-after-ending", "하지만, 일정은 그대로예요."),
     ("ko-comma-after-ending", "그렇지만, 비용은 줄었어요."),
     ("ko-comma-after-ending", "그러면서, 다음 회의를 잡았어요."),

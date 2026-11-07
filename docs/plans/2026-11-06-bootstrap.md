@@ -283,7 +283,9 @@ Decisions on the way:
 - **Step 4, the Korean seed (2026-11-07), for the maintainer's review:**
   - Translationese (에 의해, 되어지다, 그녀, ~를 통해) gives no sign: in Lee et al. 2026 its marks fall as the model
     words rise, and im-not-ai measured people using ~를 통해 and 그는 more than models do.
-  - One Korean sign with a check counts alone, `ko-beyond-mere`; the rest are weak or for the model's read.
+  - No Korean sign with a check counts alone: `ko-beyond-mere` went from usual to weak in #17's third round, with the
+    maintainer's yes, as people write its words for going past a limit. Only `ko-paired-antithesis`, for the model's
+    read, is usual.
     `tests/test_office_ko.py` holds plain Korean mail and chat against every sign that counts alone, and against a weak
     cluster.
 - **Step 4, the seed's second round (the maintainer, 2026-11-07):**

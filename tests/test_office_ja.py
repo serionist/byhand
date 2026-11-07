@@ -14,6 +14,11 @@ from byhand import signs
 
 COLON_REPLY = "了解です\uff01こちらが議事録の下書きです\uff1a"
 SHORT_CHAT = "了解。OK。助かる。"
+MINUTES_MAIL = (
+    "お世話になっております。\n先日の会議に関する議事録をお送りします。いくつかの点で修正が必要です。"
+    "予算に関する資料も添付します。\nよろしくお願いいたします。"
+)
+ESSAY = "母は――少なくとも私にはそう見えた――何も言わなかった。窓の外では雪が降っていて、そして――。"
 
 OFFICE = [
     # mail, with its set openers and closers
@@ -70,7 +75,16 @@ OFFICE = [
     "差出人欄が\uff3b氏名\uff3dのままなので、送る前に直してください。",
     "ポイントは3つあります。価格、納期、保証です。",
     "以上です。よろしくお願いします。",
+    # function words a chatbot favours, once each in plain mail (#18's review, F1)
+    MINUTES_MAIL,
+    # a writer's own scope note and offer to readers, and an essay's dashes (#18's review, F2 and F3)
+    "本稿では、個別の取引先の分析は扱わない。",
+    "需要があれば、続きを書きます。",
+    ESSAY,
 ]
+
+# Japanese that CommonMark won't bold, written by a person in a post (#18's review, F4).
+BOLD_IN_A_POST = "猫は**「のどか」**という。"
 
 
 @pytest.fixture(scope="module")
@@ -145,3 +159,42 @@ def test_colon_replies_and_short_chat_meet_only_weak_signs():
         assert found.pattern.search(text)  # it fires, and counts only in a cluster
     # and a colon before a pasted draft is a person's in mail and chat: the sign reads only posts and documents
     assert set(catalogue.signs["ja-trailing-colon"].kinds) == {"post", "document"}
+
+
+def _weak_hits(catalogue: signs.Catalogue, text: str) -> int:
+    return sum(
+        len(list(sign.pattern.finditer(text)))
+        for sign in catalogue.signs.values()
+        if sign.pattern and sign.strength == "weak"
+    )
+
+
+@pytest.mark.parametrize("text", [MINUTES_MAIL, ESSAY])
+def test_plain_mail_and_an_essay_are_no_weak_cluster(text):
+    catalogue, _ = signs.load()
+    assert _weak_hits(catalogue, text) < signs.WEAK_CLUSTER
+
+
+def test_a_pair_of_dashes_around_an_aside_is_one_hit():
+    catalogue, _ = signs.load()
+    dash = catalogue.signs["ja-em-dash"].pattern
+    assert dash is not None
+    assert len(list(dash.finditer(ESSAY.split("。", 1)[0]))) == 1
+    assert len(list(dash.finditer(ESSAY))) == 2  # the aside, and the trailing dash
+
+
+def test_bold_against_brackets_counts_alone_only_in_mail_and_chat():
+    catalogue, _ = signs.load()
+    bold = catalogue.signs["ja-bold-not-rendered"]
+    assert bold.pattern is not None
+    assert bold.pattern.search(BOLD_IN_A_POST)  # it is there, but a post isn't a kind the sign reads
+    assert set(bold.kinds) == {"email", "message"}
+    in_a_post = [
+        sign.id
+        for sign in catalogue.signs.values()
+        if sign.pattern
+        and sign.strength != "weak"
+        and {"any", "post"} & set(sign.kinds)
+        and sign.pattern.search(BOLD_IN_A_POST)
+    ]
+    assert in_a_post == []

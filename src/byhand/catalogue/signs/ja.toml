@@ -8,14 +8,16 @@
 [[sign]]
 id = "ja-bold-not-rendered"
 category = "formatting"
-kinds = ["any"]
+# Mail and chat only: a person writing a post or a document in Markdown can leave one too, as CommonMark's own
+# example (猫は**「のどか」**という。) shows; there it is the model's to read, not a sign that counts alone.
+kinds = ["email", "message"]
 models = "any"
 what = "Leaves Markdown bold against Japanese brackets, where it shows as bare asterisks."
 instead = "Drop the asterisks, or put them inside the brackets."
 strength = "usual"
 check = '''[」』）]\*\*[ぁ-んァ-ヶー一-龠々]|[ぁ-んァ-ヶー一-龠々]\*\*[「『（]'''
-flags = "設定画面の**「自動保存」**をオンにします。"
-passes = "設定画面の「自動保存」をオンにします。"
+flags = "明日の会議では**「見積書」**の件だけ話そう。"
+passes = "明日の会議では見積書の件だけ話そう。"
 sources = [
   { source = "yomiyasu", where = "references/gemini-syntax.md, 原則 14, commit 8394e099486a", seen = 2026-11-07 },
   { source = "stop-ai-slop-jp", where = "references/phrases.md, 8 機械的なアーティファクト, commit e09d32796f25", seen = 2026-11-07 },
@@ -26,12 +28,13 @@ id = "ja-em-dash"
 category = "formatting"
 kinds = ["any"]
 models = "any"
-what = "Sets off an aside or trails off with dashes, an English habit."
+what = "Sets off asides or trails off with dashes in plain prose, an English habit; in essays and fiction a dash is a person's."
 instead = "Use 、 and a particle, or end the sentence."
 strength = "weak"
-check = '''[ぁ-んァ-ヶー一-龠々」』）、]\s?(?:――|——|─{1,2}|―|—)\s?[ぁ-んァ-ヶー一-龠々「『（。]'''
-flags = "見積もりは――特に送料は――来週までに出ます。"
-passes = "見積もりは、特に送料は、来週までに出ます。"
+# A pair around one aside is one hit, not two: the first branch takes the pair whole.
+check = '''[ぁ-んァ-ヶー一-龠々」』）、]\s?(?:――|——|─{1,2}|―|—)[^―—─\n]{1,40}(?:――|——|─{1,2}|―|—)\s?[ぁ-んァ-ヶー一-龠々「『（。、]|[ぁ-んァ-ヶー一-龠々」』）、]\s?(?:――|——|─{1,2}|―|—)\s?[ぁ-んァ-ヶー一-龠々「『（。]'''
+flags = "新しい倉庫は――駅から少し遠いが――広くて安い。"
+passes = "新しい倉庫は、駅から少し遠いが、広くて安い。"
 sources = [
   { source = "yomiyasu", where = "references/slop-catalog.md, 2 英語を直訳したような構文; references/gemini-syntax.md, 原則 9 and 研究 6, commit 8394e099486a", seen = 2026-11-07 },
   { source = "stop-ai-slop-jp", where = "references/phrases.md, 8 機械的なアーティファクト, commit e09d32796f25", seen = 2026-11-07 },
@@ -64,8 +67,8 @@ models = "any"
 what = "Puts a comma straight after a short topic, subject or object, where no reader needs a pause."
 instead = "Drop it; keep commas after long phrases, conditions and contrasts."
 strength = "weak"
-flags = "新しい名簿は、金曜に、総務へ送ります。"
-passes = "新しい名簿は金曜に総務へ送ります。"
+flags = "担当者が、請求書を、月末に確認する。"
+passes = "担当者が請求書を月末に確認する。"
 sources = [
   { source = "yomiyasu", where = "references/slop-catalog.md, 9 間を作るだけの読点; CHANGELOG.md, 2.5.0 measurements, commit 8394e099486a", seen = 2026-11-07 },
   { source = "zaitsu-2025-japanese", where = "S1 Data, our count of the class means: the comma above the human rate in all seven models", seen = 2026-11-07 },
@@ -80,8 +83,8 @@ what = "Writes prose like ad copy: clipped sentences stacked for effect, a noun 
 instead = "Write the sentence out, with its verb."
 strength = "weak"
 check = '''(?:^|[。！？])(?:[^。！？、\s「」]{1,5}[。！]){3}'''
-flags = "軽い。速い。迷わない。それが今度の家計簿アプリ。"
-passes = "軽くて速く、操作に迷うことがない家計簿アプリです。"
+flags = "金曜締め。例外なし。全員厳守。"
+passes = "金曜が締めで、例外は認めないので、全員守ってほしい。"
 sources = [
   { source = "stop-ai-slop-jp", where = "references/structures.md, 2-3, commit e09d32796f25", seen = 2026-11-07 },
   { source = "yomiyasu", where = "references/slop-catalog.md, 2 (強調の分裂文) and 9, commit 8394e099486a", seen = 2026-11-07 },
@@ -92,11 +95,11 @@ id = "ja-chat-residue"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-what = "Keeps a chat reply's thanks for the question, or its offer to do more next, in a document."
+what = "Keeps a chat reply's framing in a document: answering the asker's question, offering the asker more; not an offer the writer makes to readers."
 instead = "Delete it; a document answers no one."
 strength = "usual"
-flags = "経費規程の改定で、日当と宿泊費の上限が上がる。\n\nもしよければ、記入例も続けて作ります。"
-passes = "経費規程の改定で、日当と宿泊費の上限が上がる。"
+flags = "ご質問の件、結論から書きます。経費規程の改定で、日当と宿泊費の上限が上がる。\n\nほかの規程も知りたいときは、続けて調べます。"
+passes = "経費規程の改定で、日当と宿泊費の上限が上がる。\n\n需要があれば、続きを書きます。"
 sources = [
   { source = "yomiyasu", where = "references/slop-catalog.md, 6 チャット応答の名残, commit 8394e099486a", seen = 2026-11-07 },
   { source = "stop-ai-slop-jp", where = "references/phrases.md, 1 表層の定型句, commit e09d32796f25", seen = 2026-11-07 },
@@ -107,11 +110,11 @@ id = "ja-instruction-residue"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-what = "Leaves the writer's prompt in the text: what it will leave out, or the tone it will take."
+what = "Leaves the writer's prompt in the text: the tone or style it was told to take; not a note on scope, readers or sources."
 instead = "Delete the line; keep what the reader gets."
 strength = "usual"
-flags = "難しい言葉は使わず、やわらかい口調で、四月からの勤怠ルールを紹介する。"
-passes = "四月からの勤怠ルールを紹介する。"
+flags = "親しみやすい文体を心がけて、四月からの勤怠ルールを紹介する。"
+passes = "本稿では、四月からの勤怠ルールを紹介する。個別の部署の運用は扱わない。"
 sources = [
   { source = "yomiyasu", where = "references/slop-catalog.md, 6 AIへの指示の残り, commit 8394e099486a", seen = 2026-11-07 },
 ]
@@ -136,13 +139,28 @@ id = "ja-thin-human-markers"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Gives reasons with ため and almost never ので, ながら or ば, and seldom quotes anyone."
+what = "Almost never uses ので, ながら or ば, and seldom quotes anyone."
 instead = "Use the connectives you would say aloud, and quote people in 「」."
 strength = "weak"
 flags = "雨天のため中止とする。参加者の安全確保のため、判断を早めた。"
 passes = "雨が強いので中止にしました。「危ないから早めに決めよう」と部長が言ったので。"
 sources = [
   { source = "zaitsu-2025-japanese", where = "S1 Data, our count of the class means: ので, ば and 「 well below the human rate in all seven models", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ja-llm-function-words"
+category = "structure"
+kinds = ["any"]
+models = "any"
+# No terms: the study measured rates over whole texts, and one いくつかの or に関する in a mail is nothing.
+what = "Leans, across a whole text, on function words chatbots use several times as often as people: いくつかの, という点, より before an adjective, に関する, かつ."
+instead = "Keep one where it carries meaning; give the number, or the plain verb."
+strength = "weak"
+flags = "いくつかの理由から、新様式はより効果的かつ簡潔だという点が評価された。"
+passes = "新様式は記入欄が二つ減り、前より短時間で記入できると好評だった。"
+sources = [
+  { source = "zaitsu-2025-japanese", where = "S1 Data, our count of the class means: いくつ, 点, より, やすい, に関する and かつ at 4 to 22 times the human rate, averaged over seven models", seen = 2026-11-07 },
 ]
 
 # Words and phrases of every model.
@@ -193,20 +211,20 @@ terms = [
   { term = '冷徹な', instead = "cold" },
   { term = '真理(?:が|を|に|だ|で|へ|。)', instead = "say what you found" },
 ]
-flags = "三年使った万年筆に、道具の美学と、ある種の境地を見た。"
-passes = "三年使った万年筆は、インクが途切れず、手にもなじむ。"
+flags = "週末の家庭菜園に、土と向き合う美学と、ある種の境地を見た。"
+passes = "週末の家庭菜園で、ミニトマトが二十個ほど採れた。"
 sources = [
   { source = "yomiyasu", where = "references/slop-catalog.md, 4 体験を大げさに見せる熟語, commit 8394e099486a", seen = 2026-11-07 },
   { source = "stop-ai-slop-jp", where = "references/phrases.md, 1 必殺技造語; references/structures.md, 1-2, commit e09d32796f25", seen = 2026-11-07 },
 ]
 
 [[sign]]
-id = "ja-template-metaphors"
+id = "ja-stock-metaphors"
 category = "word"
 kinds = ["any"]
 models = "any"
-what = "Explains with stock metaphors: a compass, a catalyst, two wheels, an operating system for thought."
-instead = "Say what the thing does, in plain words."
+what = "Explains with stock metaphors and metaphor verbs: a compass, a catalyst, crushing bugs, melting time."
+instead = "Say what the thing does, or what happened, in plain words."
 strength = "weak"
 terms = [
   { term = '起爆剤', instead = "say what it starts" },
@@ -216,23 +234,6 @@ terms = [
   { term = '勝ち筋', instead = "a plan that can work" },
   { term = '(?:思考|仕事|人生|意思決定)の?OS', instead = "way of thinking" },
   { term = '人生をハック', instead = "工夫する" },
-]
-flags = "この指針はチームの羅針盤であり、改善の起爆剤にもなる。"
-passes = "この指針があれば、優先順位で揉めずに済む。"
-sources = [
-  { source = "yomiyasu", where = "references/slop-catalog.md, 3 2026年急増語 and 5 未定義造語, commit 8394e099486a", seen = 2026-11-07 },
-  { source = "stop-ai-slop-jp", where = "references/phrases.md, 1 比喩のテンプレ語 and 3 横文字メタファー, commit e09d32796f25", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "ja-metaphor-verbs"
-category = "word"
-kinds = ["any"]
-models = "any"
-what = "Tells ordinary work with verbs used as metaphors: melting time, crushing bugs, data breaking quietly."
-instead = "Use the plain verb for what happened."
-strength = "weak"
-terms = [
   { term = '(?:一つ|1つ|ひとつ)ずつ潰し', instead = "say what was fixed" },
   { term = '側に倒(?:す|し)', instead = "say which you chose" },
   { term = '時間を溶かし', instead = "say how long it took" },
@@ -241,10 +242,39 @@ terms = [
   { term = '地味に効(?:く|き|いて)', instead = "say what it helps" },
   { term = '(?:ここ|そこ)で効いてくる', instead = "say what changes" },
 ]
-flags = "不具合を片端から潰し、迷ったら止める側に倒します。"
-passes = "不具合は見つけた順に修正し、判断に困ったらいったん止めます。"
+flags = "この指針はチームの羅針盤になる。迷ったら止める側に倒します。"
+passes = "この指針があれば、優先順位で揉めずに済む。迷ったら止めます。"
 sources = [
-  { source = "yomiyasu", where = "references/slop-catalog.md, 1 比喩的に使われる動詞 and 2, commit 8394e099486a", seen = 2026-11-07 },
+  { source = "yomiyasu", where = "references/slop-catalog.md, 1 比喩的に使われる動詞, 2, 3 2026年急増語 and 5 未定義造語, commit 8394e099486a", seen = 2026-11-07 },
+  { source = "stop-ai-slop-jp", where = "references/phrases.md, 1 比喩のテンプレ語 and 3 横文字メタファー, commit e09d32796f25", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "ja-stiff-wording"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Swaps a plain word for consultants' katakana, or a short verb for a stiff Sino-Japanese phrase that says the same."
+instead = "Use the plain Japanese word, or the short verb."
+strength = "weak"
+terms = [
+  { term = 'シナジー', instead = "say what each side gains" },
+  { term = 'プライオリティ', instead = "優先順位" },
+  { term = 'アライン(?:メント)?', instead = "すり合わせる" },
+  { term = 'アグリー', instead = "賛成です" },
+  { term = 'インテグリティ', instead = "say what honesty means here" },
+  { term = 'シームレス', instead = "say what no longer gets in the way" },
+  { term = 'を実現することができ', instead = "できる" },
+  { term = 'することが可能(?:です|となり|になり)', instead = "できます" },
+  { term = 'を活用することで', instead = "を使えば" },
+  { term = '多角的(?:な|に)', instead = "name the angles" },
+  { term = '包括的(?:な|に)', instead = "say what it covers" },
+]
+flags = "部署間のシナジーを生むため、多角的な視点で目標をアラインする。"
+passes = "部署どうしで手を組めるよう、営業と経理に聞いて目標をすり合わせる。"
+sources = [
+  { source = "stop-ai-slop-jp", where = "references/phrases.md, 3 過剰なカタカナ表記 and 7 ビジネスジャーゴン, commit e09d32796f25", seen = 2026-11-07 },
+  { source = "yomiyasu", where = "references/slop-catalog.md, 5 意味の薄いカタカナ語 and 7 硬い漢語と決まり文句, commit 8394e099486a", seen = 2026-11-07 },
 ]
 
 [[sign]]
@@ -261,8 +291,8 @@ terms = [
   { term = '(?:プロジェクト|リポジトリ|ワークスペース|組織)レベルの', instead = "say where it applies" },
   { term = 'を正本(?:と|に)|の正本として', instead = "原本, or the file to check against" },
 ]
-flags = "値上げ案はまだテーブルに載ったままで、承認された瞬間に全店へ知らせます。"
-passes = "値上げ案は未定で、承認されたらすぐ全店へ知らせます。"
+flags = "組織レベルの目標を見直した瞬間に、部署ごとの計画も動き出す。"
+passes = "会社全体の目標を見直すと、すぐに部署ごとの計画も変わる。"
 sources = [
   { source = "yomiyasu", where = "references/slop-catalog.md, 2 英語を直訳したような構文 and 10; docs/tools.md, calque, commit 8394e099486a", seen = 2026-11-07 },
 ]
@@ -415,72 +445,6 @@ sources = [
   { source = "stop-ai-slop-jp", where = "references/phrases.md, 4 結論回避フレーズ; references/structures.md, 6-1, commit e09d32796f25", seen = 2026-11-07 },
 ]
 
-[[sign]]
-id = "ja-katakana-jargon"
-category = "word"
-kinds = ["any"]
-models = "any"
-what = "Uses consultants' katakana where a plain Japanese word exists."
-instead = "Use the Japanese word."
-strength = "weak"
-terms = [
-  { term = 'シナジー', instead = "say what each side gains" },
-  { term = 'プライオリティ', instead = "優先順位" },
-  { term = 'アライン(?:メント)?', instead = "すり合わせる" },
-  { term = 'アグリー', instead = "賛成です" },
-  { term = 'インテグリティ', instead = "say what honesty means here" },
-  { term = 'シームレス', instead = "say what no longer gets in the way" },
-]
-flags = "部署間のシナジーを生むため、まず目標をアラインしましょう。"
-passes = "部署どうしで手を組めるよう、まず目標を揃えよう。"
-sources = [
-  { source = "stop-ai-slop-jp", where = "references/phrases.md, 3 過剰なカタカナ表記 and 7 ビジネスジャーゴン, commit e09d32796f25", seen = 2026-11-07 },
-  { source = "yomiyasu", where = "references/slop-catalog.md, 5 意味の薄いカタカナ語 and 7 決まり文句, commit 8394e099486a", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "ja-stiff-kango"
-category = "phrase"
-kinds = ["any"]
-models = "any"
-what = "Swaps a short verb for a stiff Sino-Japanese phrase that says the same."
-instead = "Use the short verb: できます, 使う."
-strength = "weak"
-terms = [
-  { term = 'を実現することができ', instead = "できる" },
-  { term = 'することが可能(?:です|となり|になり)', instead = "できます" },
-  { term = 'を活用することで', instead = "を使えば" },
-  { term = '多角的(?:な|に)', instead = "name the angles" },
-  { term = '包括的(?:な|に)', instead = "say what it covers" },
-]
-flags = "多角的な視点に立ち、包括的な検討を行う。"
-passes = "営業と経理の両方に聞いて、月末に決める。"
-sources = [
-  { source = "yomiyasu", where = "references/slop-catalog.md, 7 硬い漢語と決まり文句, commit 8394e099486a", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "ja-llm-function-words"
-category = "word"
-kinds = ["any"]
-models = "any"
-what = "Leans on the function words chatbots use several times as often as people do."
-instead = "Keep one where it carries meaning; give the number or the plain verb."
-strength = "weak"
-terms = [
-  { term = 'いくつかの', instead = "give the number" },
-  { term = 'という点', instead = "cut, or name the point" },
-  { term = 'より(?:良い|よい|高い|多く|深く|効果的)', instead = "say than what" },
-  { term = 'やすく(?:なり|なる|する)', instead = "say what gets easier" },
-  { term = 'に関する', instead = "の, or について" },
-  { term = 'かつ[一-龠]', instead = "で, or two sentences" },
-]
-flags = "いくつかの点で、新様式はより効果的かつ簡潔だという点が評価された。"
-passes = "新様式は記入欄が二つ減り、前より短時間で記入できると好評だった。"
-sources = [
-  { source = "zaitsu-2025-japanese", where = "S1 Data, our count of the class means: いくつ, 点, より, やすい, に関する and かつ at 4 to 22 times the human rate, averaged over seven models", seen = 2026-11-07 },
-]
-
 # Tied to a model family.
 
 [[sign]]
@@ -495,45 +459,8 @@ terms = [
   { term = '(?:短い|長い|別の|今回の|簡単な|丁寧な)版(?:で|を|は|に|の|が|も|と)', instead = "案, or バージョン" },
   { term = '向けの版', instead = "向けの案" },
 ]
-flags = "営業部向けの版と、もう少しくだけた版を用意した。"
-passes = "営業部向けの案と、もう少しくだけた案を用意した。"
+flags = "図を減らした簡単な版を、別に用意した。"
+passes = "図を減らした簡単な案を、別に用意した。"
 sources = [
   { source = "yomiyasu", where = "docs/tools.md, calque type 4: 4 in 48 Claude Opus and Sonnet 5.5 texts, 0 in about 9M characters of news; CHANGELOG.md, 2.4.0, commit 8394e099486a", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "ja-claude-3-connectives"
-category = "word"
-kinds = ["any"]
-models = [{ family = "claude", from = "3.5", to = "3" }]
-what = "Strings sentences with formal connectives, and counts points off one by one."
-instead = "Join with a plain word, or none; drop the numbering in prose."
-strength = "weak"
-terms = [
-  { term = '第[一二三]に', instead = "cut" },
-  { term = 'さらに', instead = "それに, or cut" },
-  { term = '単なる', instead = "cut" },
-  { term = 'における', instead = "の, or で" },
-]
-flags = "第一に、費用が下がる。さらに、現場における負担も減る。"
-passes = "費用が下がるし、現場の作業も楽になる。"
-sources = [
-  { source = "zaitsu-2025-japanese", where = "S1 Data, our count of the Claude 3.5 class means: さらに, における and 第 at 2 to 8 times the human rate; 単なる in 16 of 50 texts, 1 of 100 human", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "ja-gpt-4-ya-lists"
-category = "phrase"
-kinds = ["any"]
-models = [{ family = "gpt", from = "4", to = "4" }]
-what = "Chains items with や, sentence after sentence."
-instead = "Name the items that matter, joined with と, or make a list."
-strength = "weak"
-terms = [
-  { term = 'や[^。、\n]{1,10}や', instead = "と, or a list" },
-]
-flags = "書類や印鑑や身分証などを持ってきてください。"
-passes = "書類と印鑑を持ってきてください。"
-sources = [
-  { source = "zaitsu-2025-japanese", where = "S1 Data, our count of the GPT-4o class mean: や at nearly five times the human rate", seen = 2026-11-07 },
 ]

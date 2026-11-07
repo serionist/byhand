@@ -32,7 +32,7 @@ It is for the user's own writing: mail, messages, documents, decks and sheets th
 
 | Path | What |
 |---|---|
-| `src/byhand/` | the package; its modules come with the bootstrap plan |
+| `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (the family and version in a model's id), `cli.py` (`byhand validate`, `byhand models <id>`) |
 | `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
 | `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), standard library only |
@@ -60,7 +60,7 @@ PowerShell unless a PowerShell form stands beside it.
 | once per clone | `uv sync`, then `uv run tools/setup.py` (hooks, `git blame`, skill links) |
 | tests | `uv run pytest`, on every core (`-n 0` for one process); with coverage, `uv run coverage erase`, `uv run coverage run -m pytest`, `uv run coverage combine`, then `uv run coverage report` |
 | lint, format, types, imports | `uv run ruff check .`, `uv run ruff format --check .`, `uv run basedpyright`, `uv run lint-imports` |
-| the gate | `uv run tools/gate.py quick` (lock, lint, format, types, imports, the coverage floor, the version, AGENTS.md, skills, plans, the plugin, the variables the docs name, hooks, attribution, secrets); `full` adds pytest under coverage, and the floor; `text --file -` checks a PR's title and description: no attribution, and the issue named |
+| the gate | `uv run tools/gate.py quick` (lock, lint, format, types, imports, the catalogue, the coverage floor, the version, AGENTS.md, skills, plans, the plugin, the variables the docs name, hooks, attribution, secrets); `full` adds pytest under coverage, and the floor; `text --file -` checks a PR's title and description: no attribution, and the issue named |
 | the plugin from this clone | `claude --plugin-dir plugin` |
 
 - **Hosted CI never runs a Claude session or reads the live sources:** a change to the plugin or the refresh says in
@@ -114,9 +114,10 @@ Users will depend on these from `0.1.0`. Change one only in a PR that names it i
 agrees in its issue; in `0.x` a minor may break one, under CHANGELOG's Breaking.
 
 - the names: `byhand` for the repo, the PyPI distribution, the CLI, the plugin and the import;
-- the plugin's skills' and agents' names, once the bootstrap plan sets them;
-- a sign's id in the catalogue, the catalogue's schema, and the language and model codes it uses;
-- where a user's styles live and their format: a user's styles outlive every release.
+- the plugin's skills' names, `write`, `check`, `learn` and `styles`, and its agents';
+- a sign's id, the catalogue's schema, its language and model codes, the kinds of writing (`message`, `email`, `post`,
+  `document`, `deck`, `sheet`; a later kind is added, never renamed);
+- where a user's styles live (`~/.byhand/styles/`, `.byhand/styles/`), and their format: they outlive every release.
 
 ## Traps
 

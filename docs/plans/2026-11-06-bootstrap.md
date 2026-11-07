@@ -273,6 +273,18 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 | 7. Tried in real sessions | #7 | | |
 | 8. Release `0.1.0` | #8 | | |
 
+Decisions on the way:
+
+- **Step 2, the languages' source (2026-11-07):** the Wikipedia list The catalogue names holds only 38 languages, so it
+  can't give 100, and language codes are a one-way door, not to be filled in from memory. `languages.toml` comes from
+  Unicode CLDR 49 instead: each territory's population times CLDR's percentage of speakers, script variants merged into
+  their base code, with CLDR's BCP 47 codes and its name of each language in itself. All eight seed languages are in
+  the hundred, Hungarian at rank 90. `zh-Hant` is a variant of `zh`, outside the hundred. The list treats Chinese and
+  Arabic varieties as CLDR does, each its own code (`yue`, `arz`).
+- **Step 2, retiring by version:** `holds()`, whether a range holds a version, comes with Step 3, its first caller.
+- **Step 2, the model families:** a family is one the research names signs for: claude, gpt, gemini, grok, llama,
+  deepseek, qwen, kimi, mistral and doubao. `gpt-4o` reads as gpt 4, and the o-series names no family yet.
+
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
 `0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.
 

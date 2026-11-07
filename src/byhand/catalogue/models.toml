@@ -1,0 +1,54 @@
+# The model families a sign can be scoped to. `id` names the family's rendered files, `plugin/signs/<language>/<id>.md`,
+# so it is a one-way door (AGENTS.md). `patterns` are matched against a model's id in lower case, not inside a longer
+# word: `gpt` doesn't match `yandexgpt`. A version is the first number after the pattern (byhand.models). A family
+# here is one the sources name signs for; a model of any other family reads the `any` signs alone.
+
+[[family]]
+id = "claude"
+name = "Claude"
+patterns = ["claude"]
+
+[[family]]
+id = "gpt"
+name = "GPT"
+patterns = ["chatgpt", "gpt"]
+
+[[family]]
+id = "gemini"
+name = "Gemini"
+patterns = ["gemini"]
+
+[[family]]
+id = "grok"
+name = "Grok"
+patterns = ["grok"]
+
+[[family]]
+id = "llama"
+name = "Llama"
+patterns = ["llama"]
+
+[[family]]
+id = "deepseek"
+name = "DeepSeek"
+patterns = ["deepseek"]
+
+[[family]]
+id = "qwen"
+name = "Qwen"
+patterns = ["qwen"]
+
+[[family]]
+id = "kimi"
+name = "Kimi"
+patterns = ["kimi"]
+
+[[family]]
+id = "mistral"
+name = "Mistral"
+patterns = ["mistral"]
+
+[[family]]
+id = "doubao"
+name = "Doubao"
+patterns = ["doubao"]

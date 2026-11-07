@@ -1,0 +1,11 @@
+# Every source a sign cites. Step 4 of docs/plans/2026-11-06-bootstrap.md fills this from the research.
+#
+# [[source]]
+# id = "wikipedia-en"
+# url = "https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing"
+# kind = "wiki"                 # wiki, repo, paper, dataset, vendor or review
+# languages = ["en"]
+# licence = "CC BY-SA 4.0"
+# due = "daily"                 # daily, weekly, monthly, quarterly or by-hand
+# feed = { api = "mediawiki", site = "en.wikipedia.org", title = "Wikipedia:Signs_of_AI_writing" }
+# read_at = { revision = "1234567890", date = 2026-11-07 }

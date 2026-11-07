@@ -4,17 +4,17 @@ Usage: uv run tools/gate.py quick|full [--base <ref>] [--head <ref>]
        uv run tools/gate.py text --file <path>|-
 
 Two kinds of check:
-- the working tree's: the lock file, ruff check, ruff format, basedpyright, import-linter's contracts, a coverage
-  floor no lower than at the start of each range checked, the version's CHANGELOG section once a release is dated,
-  AGENTS.md within 150 lines, each skill's frontmatter and its Codex link, the plans (each refuses a review round
-  with no Fit above it or with a Fit row unanswered, an improvement id twice in its review, and a plan with no
-  `## Plan review`; a file in docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable,
-  the plugin (its manifests, one version everywhere, its skills pre-approving read-only tools only, its agents'
-  frontmatter, and Claude Code's own `claude plugin validate --strict`), and each BYHAND_ variable the docs
-  and the repo's skills name being one the plugin or the package reads, with AGENTS.md naming each the plugin reads;
-  full adds pytest under coverage on every core, then the workers' data combined and the report against the floor.
-  They run when the head is the checked-out commit, and are skipped, with the reason, when the tree is not what is
-  checked;
+- the working tree's: the lock file, ruff check, ruff format, basedpyright, import-linter's contracts, `byhand
+  validate` on the catalogue, run as a tool so the gate never imports the package, a coverage floor no lower than at
+  the start of each range checked, the version's CHANGELOG section once a release is dated, AGENTS.md within 150
+  lines, each skill's frontmatter and its Codex link, the plans (each refuses a review round with no Fit above it or
+  with a Fit row unanswered, an improvement id twice in its review, and a plan with no `## Plan review`; a file in
+  docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable, the plugin (its manifests,
+  one version everywhere, its skills pre-approving read-only tools only, its agents' frontmatter, and Claude Code's
+  own `claude plugin validate --strict`), and each BYHAND_ variable the docs and the repo's skills name being one the
+  plugin or the package reads, with AGENTS.md naming each the plugin reads; full adds pytest under coverage on every
+  core, then the workers' data combined and the report against the floor. They run when the head is the checked-out
+  commit, and are skipped, with the reason, when the tree is not what is checked;
 - the commits': no tool attribution in any message, and no tool as any commit's author or committer, and gitleaks,
   on base..head (merges included). gitleaks exits 0 when it could not read the commits, so a run that logged an
   error fails too.
@@ -1068,6 +1068,7 @@ TREE: list[tuple[str, Check]] = [
     ("ruff format", tool("ruff format", ["ruff", "format", "--check", "."])),
     ("basedpyright", tool("basedpyright", ["basedpyright"])),
     ("imports", tool("imports", ["lint-imports"])),
+    ("catalogue", tool("catalogue", ["byhand", "validate"])),
     ("coverage floor", check_coverage_floor),
     ("version", check_version),
     ("AGENTS.md", check_agents_md),

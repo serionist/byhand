@@ -125,7 +125,8 @@ MACHINE = [
     ("any-assistant-closing-offer", "Would you like me to convert this into a table?"),
     ("any-assistant-closing-offer", "Let me know if you'd like me to adjust the tone."),
     ("any-assistant-closing-offer", "Is there anything else you'd like me to add?"),
-    ("any-assistant-closing-offer", "Gibt es noch etwas, bei dem ich helfen kann?"),
+    # the offer to rework the text; "Gibt es noch etwas, bei dem ich helfen kann?" is a service desk's too (#4)
+    ("any-assistant-closing-offer", "Möchten Sie, dass ich dies in eine Tabelle umwandle?"),
     ("any-assistant-closing-offer", "Сообщите мне, если хотите, чтобы я сократил текст."),
     ("any-assistant-preamble", "Certainly! Here is a revised draft of your announcement:"),
     ("any-assistant-preamble", "Absolutely! Here's a rewrite:"),

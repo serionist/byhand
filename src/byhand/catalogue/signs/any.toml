@@ -296,7 +296,7 @@ models = "any"
 what = "Says details are scarce in the sources, then writes on as if they were not."
 instead = "Say plainly what you could not find, and write only what you know."
 strength = "usual"
-check = 'specific details (?:are|remain) (?:limited|scarce)|in the provided (?:sources|search results)|in den bereitgestellten (?:quellen|suchergebnissen)|в предоставленных (?:источниках|результатах)'
+check = 'specific details (?:are|remain) (?:limited|scarce)|in the provided (?:sources|search results)|in den bereitgestellten (?:quellen|suchergebnissen)|spezifische details (?:sind|bleiben) (?:begrenzt|rar|spärlich)|в предоставленных (?:источниках|результатах)'
 flags = "Specific details remain scarce, yet the firm probably shaped trade in the region."
 passes = "I couldn't find the 2019 accounts, so I've left that year out."
 sources = [
@@ -331,11 +331,12 @@ models = "any"
 what = "Opens by praising the reader or agreeing with them before it answers."
 instead = "Answer; disagree where the facts do."
 strength = "weak"
-check = '''you(?:['’]re| are) absolutely right|вы абсолютно правы|這是很好的觀察|这是很好的观察'''
+check = '''you(?:['’]re| are) absolutely right|вы абсолютно правы|這是很好的觀察|这是很好的观察|ha(?:ben sie|st du|bt ihr) absolut recht|(?:großartige|ausgezeichnete|hervorragende) frage!'''
 flags = "You're absolutely right, and that is such an important point to raise."
 passes = "You're right, I missed the date. I'll resend it today."
 sources = [
   { source = "wikipedia-en", where = "Collaborative communication, revision 1384165696", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 34 Sykophantischer Ton, commit 4e5aa4c51230", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Имитация диалога, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "過度認同與附和使用者, revision 95337857", seen = 2026-11-07 },
 ]
@@ -381,7 +382,7 @@ models = "any"
 what = "Opens with a stock wish that the message finds the reader well."
 instead = "Start with the reason you are writing."
 strength = "weak"
-check = '(?:this|the) (?:message|email|mail|letter) finds you well|diese nachricht erreicht sie wohlauf|это сообщение застанет вас'
+check = '(?:this|the) (?:message|email|mail|letter) finds you well|(?:diese|meine) (?:nachricht|e-mail|mail) erreicht (?:sie|dich|euch) (?:wohlauf|bei bester gesundheit)|это сообщение застанет вас'
 flags = "Hope this email finds you well. Quick question on the March invoice."
 passes = "Hi Sam, quick one about the March invoice: it's missing the PO number."
 sources = [
@@ -530,11 +531,12 @@ models = "any"
 what = "Says in the text that a language model or a named chatbot wrote it."
 instead = "Delete it and write as the author."
 strength = "strong"
-check = 'as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智能|人工智慧)\s?(?:语言模型|語言模型|助手|助理)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)'
+check = 'as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智能|人工智慧)\s?(?:语言模型|語言模型|助手|助理)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:ki-sprachmodell|ki-assistent|großes sprachmodell|künstliche intelligenz),? (?:(?:habe|besitze) ich keine|(?:kann|darf) ich (?:keine|nicht)|bin ich nicht)'
 flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [
   { source = "wikipedia-en", where = "Prompt refusal, revision 1384165696", seen = 2026-11-07 },
+  { source = "wikipedia-de", where = "Eindeutige Anzeichen, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "資訊時效或來源限制相關的免責聲明, revision 95337857", seen = 2026-11-07 },
   { source = "speak-human-tw", where = "references/patterns.md, 34 知識截止免責聲明, commit 89b96e24fcfd", seen = 2026-11-07 },
 ]
@@ -547,7 +549,7 @@ models = [{ family = "gpt", from = "3.5", to = "4" }]
 what = "Warns that its knowledge stops at a training date."
 instead = "Check the current fact, or give the date of your source."
 strength = "strong"
-check = '(?:as of|up to) my last (?:knowledge|training) update|stand meines letzten wissensupdates|на момент моего обучения|обновления моей базы данных'
+check = '(?:as of|up to) my last (?:knowledge|training) update|stand meines letzten wissensupdates|bis zu meinem letzten (?:wissens|trainings)-?update|на момент моего обучения|обновления моей базы данных'
 flags = "As of my last knowledge update, the company had not announced a merger."
 passes = "As of my last update on Tuesday, the shipment was still in Rotterdam."
 sources = [
@@ -564,7 +566,7 @@ models = "any"
 what = "Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'."
 instead = "Delete the line; start with the text itself."
 strength = "strong"
-check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|gerne)! hier ist (?:eine?|ihre?) [^.!?\n]*(?:überarbeitete|verbesserte|kürzere|längere|förmlichere|umformulierte|geglättete)[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:\w+ )?(?:исправленный|переработанный|улучшенный|отредактированный|более \w+|сокращённый|сокращенный)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$'''
+check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|gerne)! hier ist (?:eine?|ihre?) (?:\w+ )?(?:überarbeitete|verbesserte|kürzere|längere|förmlichere|umformulierte|geglättete)r? (?:version|fassung|entwurf|text)\b[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:\w+ )?(?:исправленный|переработанный|улучшенный|отредактированный|более \w+|сокращённый|сокращенный)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$'''
 flags = "Certainly! Here is a polished version of your announcement:"
 passes = "Sure! Here's the link to the slides from yesterday."
 sources = [
@@ -583,7 +585,7 @@ models = "any"
 what = "Keeps the chatbot's sign-off under a document: a hope that it helped, or an offer to do more."
 instead = "Delete the line; end with the document."
 strength = "strong"
-check = '''^\W*(?:would you like me to (?:expand|convert|reformat|turn) this|let me know if you(?:['’]d| would) like me to (?:tweak|adjust|expand|refine|revise)|is there anything else you(?:['’]d| would) like me to|gibt es noch etwas, (?:bei dem|das) ich|сообщите мне, если хотите)'''
+check = '''^\W*(?:would you like me to (?:expand|convert|reformat|turn) this|let me know if you(?:['’]d| would) like me to (?:tweak|adjust|expand|refine|revise)|is there anything else you(?:['’]d| would) like me to|(?:möchten sie|möchtest du),? dass ich (?:dies|diesen text|diesen entwurf) (?:noch )?(?:\w+ ){0,4}(?:umwandle|umformatiere|erweitere|ausbaue|kürze|überarbeite|anpasse)\b|сообщите мне, если хотите)'''
 flags = "The committee meets each spring.\n\nWould you like me to expand this into a one-page handout?"
 passes = "The committee meets each spring.\n\nWould you like me to bring the projector, or will Sam?"
 sources = [
@@ -601,7 +603,7 @@ models = "any"
 what = "Leaves a fill-in slot in the text: a bracketed name, a URL stub, a date of XX."
 instead = "Fill it in or cut it before you send."
 strength = "usual"
-check = '\[(?:your|insert|add|describe|company|recipient|имя|опишите|укажите)\b[^\]\n]*\]|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】]'
+check = '\[(?:your|insert|add|describe|company|recipient|имя|опишите|укажите|ihre?n?|dein(?:e|en)?)\b[^\]\n]*\]|\[[^\[\]\n]{1,30} einfügen\]|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】]'
 flags = "Thanks again, and see you on Friday.\n\n[Your Name]"
 passes = "Thanks again, and see you on Friday.\n\nMarta"
 sources = [

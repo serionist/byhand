@@ -146,10 +146,21 @@ id = "avoid-ai-writing-multilingual"
 url = "https://github.com/jurigis/avoid-ai-writing-multilingual"
 kind = "repo"
 languages = ["de", "fr", "it", "ro", "sv"]
-licence = "not stated; facts only, with a citation"
+# GitHub's API reads NOASSERTION; the LICENSE file at 4e5aa4c51230 is MIT, adapted from avoid-ai-writing.
+licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "jurigis/avoid-ai-writing-multilingual", paths = ["sources"] }
+feed = { api = "github", repo = "jurigis/avoid-ai-writing-multilingual", paths = ["SKILL-DE.md", "sources"] }
 read_at = { commit = "4e5aa4c51230", date = 2026-11-07 }
+
+[[source]]
+id = "stroeer-2023"
+url = "https://www.stroeer-direkt.de/blog/2023/an-diesen-5-merkmalen-erkennen-sie-texte-von-chatgpt/"
+kind = "vendor"
+languages = ["de"]
+licence = "all rights reserved; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-07 }
 
 [[source]]
 id = "slop-gate"

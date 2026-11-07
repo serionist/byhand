@@ -6,6 +6,8 @@ Full-width marks are written as escapes, as ruff refuses them in a string: \\uff
 \\uff01 the exclamation mark, \\uff1f the question mark, \\uff1a the colon, \\u3001 the enumeration comma.
 """
 
+import re
+
 import pytest
 
 from byhand import signs
@@ -51,6 +53,19 @@ OFFICE = [
     "當然可以\uff01這是我修改後的版本\uff1a",
     "我把初稿放在共享文件夹了\uff0c你看一下哪里要改\u3002",
     "这是我写的周报初稿\uff0c帮忙看看数字对不对\uff1a",
+    # a person returning their own revision, which only 以下是 turns into a chatbot's line (review of #16, F1)
+    "当然可以\uff01这是修改后的版本\uff1a",
+    "当然可以\uff01附件是修改后的版本\uff1a",
+    "當然可以\uff01這是修改後的版本\uff1a",
+    "当然可以\uff01优化后的版本见附件\uff1a",
+    "当然可以\uff01按您的意见改好了\uff0c修改后的文本如下\uff1a",
+    # 接住 with a thing, not a person, as its object (F3)
+    "服务器稳稳接住大家的访问\u3002",
+    "系统稳稳接住这份流量\u3002",
+    "门将稳稳接住你的传球\u3002",
+    # a product or a team speaking as an AI assistant, not a model about itself (F4)
+    "作为AI助手\uff0c我们的产品能自动排会\u3002",
+    "作為AI助理\uff0c我們的系統會先整理紀要\u3002",
     # notes
     "周三\uff1a跟供应商对账\u3001催发票\u3001订下周的会议室\u3002",
     "待办\uff1a续签房租合同\uff0c问物业能不能便宜点\u3002",
@@ -113,3 +128,49 @@ def test_chinese_word_signs_are_weak():
     lists = [sign for sign in catalogue.signs.values() if sign.language in ("zh", "zh-Hant") and sign.terms]
     assert lists
     assert {sign.strength for sign in lists} == {"weak"}
+
+
+# Plain official notices, invented, in the fixed wording people use for them: 按照规定, 进行审核, 予以, 相关部门,
+# 起到\u2026\u2026作用. shuorenhua's rule 21 leaves such wording alone, so the weak signs
+# must not make a cluster of it (review of #16, F2).
+NOTICES = [
+    "关于春节放假的通知\n\n各部门\uff1a按照规定\uff0c春节假期为二月十日至十七日\uff0c共八天\u3002请各部门在放假前对办公区进行安全检查\uff0c关好门窗电源\u3002假期如有急事\uff0c请联系值班人员\u3002\n\n行政部\n二月三日",
+    "关于报销材料提交的通知\n\n各位同事\uff1a本月报销材料请于二十五日前交到财务部\uff0c财务部将对单据进行审核\uff0c不符合要求的予以退回\uff0c审核结果对下月付款起到参考作用\u3002如有疑问\uff0c请联系财务部小刘\u3002",
+    "停水通知\n\n各位住户\uff1a因管道维修\uff0c本楼将于周六上午九点至下午三点停水\u3002物业已提前通知相关部门\uff0c维修完成后会在群里告知\uff0c请提前储水\u3002",
+    "关于消防培训的通知\n\n全体员工\uff1a公司定于本周四下午两点在一楼大厅开展消防培训\uff0c培训对日常防火起到重要作用\uff0c请各部门安排人员准时参加\uff0c无故缺席者由人事部进行处理并予以通报\u3002",
+]
+
+
+def _weak_hits(paragraph: str, weak: list[signs.Sign]) -> int:
+    """Hits of weak signs in a paragraph, one phrase once: overlapping matches of several signs count as one."""
+    spans = sorted(
+        (match.start(), match.end()) for sign in weak if sign.pattern for match in sign.pattern.finditer(paragraph)
+    )
+    count, end = 0, -1
+    for start, stop in spans:
+        if start >= end:
+            count += 1
+        end = max(end, stop)
+    return count
+
+
+@pytest.mark.parametrize("notice", NOTICES)
+def test_a_plain_official_notice_makes_no_cluster(notice):
+    catalogue, _ = signs.load()
+    weak = [sign for sign in catalogue.signs.values() if sign.strength == "weak" and sign.language in ("any", "zh")]
+    for paragraph in notice.split("\n\n"):
+        assert _weak_hits(paragraph, weak) < signs.WEAK_CLUSTER, paragraph
+
+
+@pytest.mark.parametrize("wording", ["对单据进行审核", "由人事部进行处理", "予以退回", "对付款起到参考作用"])
+def test_officialese_leaves_fixed_official_wording(wording):
+    catalogue, _ = signs.load()
+    pattern = catalogue.signs["zh-officialese"].pattern
+    assert pattern is not None
+    assert not pattern.search(wording)
+
+
+def test_the_notices_hold_the_official_wording():
+    """Each notice holds wording zh-officialese or slop-gate once found, so the test above has something to hold."""
+    official = re.compile(r"[进進]行[审審]核|予以|起到[^\u3002\uff0c\n]{1,10}作用|按照规定|相关部门")
+    assert all(official.search(notice) for notice in NOTICES)

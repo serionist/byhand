@@ -81,9 +81,22 @@ F30 hold, each with its test.
 
 | # | Sev | Where | Finding | Status |
 |---|---|---|---|---|
-| F21 | major | `any-assistant-preamble` | Still open: any eager yes ending on a colon fired strong. "Sure! Here's the email from the landlord:", "Natürlich! Hier ist der Link:", "Конечно! Вот ссылка:", "当然可以！链接在这里：". The noun list named what a person hands over too | fixed in the main session: each language's branch needs a thing a chatbot makes (a version, a draft, a rewrite), or in English "a ... email you can send"; the seven plain replies in `OFFICE`; both mutants killed; ripgrep agrees |
+| F21 | major | `any-assistant-preamble` | Still open: any eager yes ending on a colon fired strong. "Sure! Here's the email from the landlord:", "Natürlich! Hier ist der Link:", "Конечно! Вот ссылка:", "当然可以！链接在这里：" | narrowed in the main session to a thing a chatbot makes; still open, see round 4 |
 | N1 | minor | the same check | `absolutely` had no test | fixed: a line in `MACHINE`, its mutant killed |
 | N3 | minor | this record | Round 1's verdict read `clean` | fixed: `needs-fixes` |
+
+## Round 4
+
+**Where:** the delta `f765c63..0223b25`, read by a fresh reviewer, 46 probe lines and mutants on a scratch copy.
+**Verdict:** needs-fixes, on F21 alone.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F21 | major | `any-assistant-preamble` | Round 3's fix still fired on a person handing over their own draft: 20 of 30 plain replies, in all four languages ("Sure! Here's a draft of the agenda for Monday:", "Конечно! Вот черновик договора:", "当然可以！这是合同的草稿："). A word for any draft can't tell a colleague from a chatbot | fixed: each branch needs reworked text, a revised, polished or shorter version, "a rewrite", or "an email you can send", as the reviewer's scratch variant showed; fourteen of the person's drafts join `OFFICE`, and four chatbot lines `MACHINE`. A bare "here's a draft:" would belong in a weak sign; none is added |
+| N4 | minor | this record | Round 3 marked F21 fixed though it wasn't, counted a line that kills no mutant, and missed that at `640cae2` the Chinese line was an escaped backslash that could not fail | fixed: round 3's row says what was done; `0223b25` holds the full-width marks |
+
+Refuted: N5, a stale `round: 1` and `head` in the frontmatter. `docs/reviews/README.md` says the frontmatter describes
+the first round, and later rounds are sections.
 
 ## Checks
 

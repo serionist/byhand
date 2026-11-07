@@ -69,7 +69,17 @@ languages = ["fr"]
 licence = "CC BY-SA 4.0"
 due = "weekly"
 feed = { api = "mediawiki", site = "fr.wikipedia.org", title = "Aide:Identifier_l'usage_d'une_IA_générative" }
-read_at = { revision = "240703969", date = 2026-11-07 }
+read_at = { revision = "240703969", date = 2026-11-08 }
+
+[[source]]
+id = "wikipedia-fr-sources"
+url = "https://fr.wikipedia.org/wiki/Aide:Identifier_une_source_g%C3%A9n%C3%A9r%C3%A9e_par_IA"
+kind = "wiki"
+languages = ["fr"]
+licence = "CC BY-SA 4.0"
+due = "weekly"
+feed = { api = "mediawiki", site = "fr.wikipedia.org", title = "Aide:Identifier_une_source_générée_par_IA" }
+read_at = { revision = "239452520", date = 2026-11-08 }
 
 [[source]]
 id = "wikipedia-hu"
@@ -146,10 +156,31 @@ id = "avoid-ai-writing-multilingual"
 url = "https://github.com/jurigis/avoid-ai-writing-multilingual"
 kind = "repo"
 languages = ["de", "fr", "it", "ro", "sv"]
-licence = "not stated; facts only, with a citation"
+# MIT in its LICENSE file, which names the English original and the adaptation, so GitHub's API reports no licence.
+licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "jurigis/avoid-ai-writing-multilingual", paths = ["sources"] }
-read_at = { commit = "4e5aa4c51230", date = 2026-11-07 }
+feed = { api = "github", repo = "jurigis/avoid-ai-writing-multilingual", paths = ["sources", "SKILL-FR.md"] }
+read_at = { commit = "4e5aa4c51230", date = 2026-11-08 }
+
+[[source]]
+id = "slopcheck-fr"
+url = "https://github.com/tns-research/slopcheck-fr"
+kind = "repo"
+languages = ["fr"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "tns-research/slopcheck-fr", paths = ["src/slopcheck/packs", "docs/CALIBRAGE.md", "bench/genere-2026-10"] }
+read_at = { commit = "74c6b9685694", date = 2026-11-08 }
+
+[[source]]
+id = "boileau"
+url = "https://github.com/alxbd/boileau"
+kind = "repo"
+languages = ["fr"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "alxbd/boileau", paths = ["SKILL.md"] }
+read_at = { commit = "5b272a70b1d5", date = 2026-11-08 }
 
 [[source]]
 id = "slop-gate"

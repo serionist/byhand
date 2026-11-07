@@ -1,0 +1,42 @@
+name: Feature request
+description: Something byhand should do, or a sign it should know.
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where
+      multiple: true
+      options:
+        - A sign (a word, phrase, structure or layout that reads as AI-written)
+        - A language
+        - Writing (mail, messages, documents)
+        - Decks and sheets
+        - Styles
+        - The command line
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: For a sign, what the text does, its language and, if you know it, the model that writes it. For anything else, what you'd like and when you'd use it.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: An invented example, and what a person writes instead
+      description: Short and made up, never someone's real text.
+      render: text
+  - type: input
+    id: source
+    attributes:
+      label: Where you saw it named
+      description: A link to the page, paper or list that names the sign, if there is one.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Workarounds you use now, or other designs you considered.

@@ -1,0 +1,17 @@
+{
+  "name": "byhand",
+  "owner": {
+    "name": "Soma Osvay",
+    "url": "https://github.com/serionist"
+  },
+  "metadata": {
+    "description": "The byhand plugin for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "byhand",
+      "source": "./plugin",
+      "description": "Write like a person, in your own voice and language: mail, messages, documents and decks without the signs of AI writing."
+    }
+  ]
+}

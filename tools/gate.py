@@ -4,17 +4,18 @@ Usage: uv run tools/gate.py quick|full [--base <ref>] [--head <ref>]
        uv run tools/gate.py text --file <path>|-
 
 Two kinds of check:
-- the working tree's: the lock file, ruff check, ruff format, basedpyright, import-linter's contracts, a coverage
-  floor no lower than at the start of each range checked, the version's CHANGELOG section once a release is dated,
-  AGENTS.md within 150 lines, each skill's frontmatter and its Codex link, the plans (each refuses a review round
-  with no Fit above it or with a Fit row unanswered, an improvement id twice in its review, and a plan with no
-  `## Plan review`; a file in docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable,
-  the plugin (its manifests, one version everywhere, its skills pre-approving read-only tools only, its agents'
-  frontmatter, and Claude Code's own `claude plugin validate --strict`), and each BYHAND_ variable the docs
-  and the repo's skills name being one the plugin or the package reads, with AGENTS.md naming each the plugin reads;
-  full adds pytest under coverage on every core, then the workers' data combined and the report against the floor.
-  They run when the head is the checked-out commit, and are skipped, with the reason, when the tree is not what is
-  checked;
+- the working tree's: the lock file, ruff check, ruff format, basedpyright, import-linter's contracts, `byhand
+  validate` on the catalogue, run as a tool so the gate never imports the package, every sign id a base has still
+  in the tree, a coverage floor no lower than at
+  the start of each range checked, the version's CHANGELOG section once a release is dated, AGENTS.md within 150
+  lines, each skill's frontmatter and its Codex link, the plans (each refuses a review round with no Fit above it or
+  with a Fit row unanswered, an improvement id twice in its review, and a plan with no `## Plan review`; a file in
+  docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable, the plugin (its manifests,
+  one version everywhere, its skills pre-approving read-only tools only, its agents' frontmatter, and Claude Code's
+  own `claude plugin validate --strict`), and each BYHAND_ variable the docs and the repo's skills name being one the
+  plugin or the package reads, with AGENTS.md naming each the plugin reads; full adds pytest under coverage on every
+  core, then the workers' data combined and the report against the floor. They run when the head is the checked-out
+  commit, and are skipped, with the reason, when the tree is not what is checked;
 - the commits': no tool attribution in any message, and no tool as any commit's author or committer, and gitleaks,
   on base..head (merges included). gitleaks exits 0 when it could not read the commits, so a run that logged an
   error fails too.
@@ -77,6 +78,7 @@ DESCRIPTION_MAX = 1024
 # Plans: fit-plan writes `### Fit` at the top of a plan's review section, and review-plan's rounds follow it, once
 # every improvement the fit raised has its answer (REVIEW.md, Improvements).
 PLANS_DIR = "docs/plans"
+SIGNS_DIR = "src/byhand/catalogue/signs"
 PLAN_FILE = re.compile(r"^\d{4}-\d{2}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 PLAN_REVIEW = "## Plan review"
 PLAN_ANSWERS = ("taken", "left", "later")
@@ -988,6 +990,30 @@ def check_plugin(scope: Scope, root: Path = ROOT) -> Result:
     return Result("plugin", "pass", f"{detail}, validated by Claude Code")
 
 
+def sign_ids(text: str) -> set[str]:
+    """The ids in one signs file's TOML. Read here, not through the package: the gate is standard library only."""
+    rows = tomllib.loads(text).get("sign", [])
+    if not isinstance(rows, list):
+        return set()
+    return {row["id"] for row in rows if isinstance(row, dict) and isinstance(row.get("id"), str)}
+
+
+def check_sign_ids(scope: Scope, root: Path = ROOT) -> Result:
+    """A sign's id is a one-way door, and a retired sign keeps it: each id a range's base has is still in the tree."""
+    here: set[str] = set()
+    for path in sorted((root / SIGNS_DIR).glob("*.toml")):
+        here |= sign_ids(path.read_text(encoding="utf-8"))
+    gone: list[str] = []
+    for ref, label in fork_points(scope.ranges, root):
+        listed = git("ls-tree", "--name-only", ref, "--", f"{SIGNS_DIR}/", cwd=root)
+        if listed.returncode != 0:
+            return Result("sign ids", "FAIL", f"cannot read the tree at {ref}", output=listed.stderr)
+        for path in listed.stdout.splitlines():
+            base = sign_ids(git("show", f"{ref}:{path}", cwd=root).stdout)
+            gone += [f"{sign} is at {label} and gone here; a retired sign keeps its id" for sign in sorted(base - here)]
+    return outcome("sign ids", gone, f"{len(here)} signs")
+
+
 def check_hooks(_scope: Scope) -> Result:
     entries = [(mode, path) for mode, _, path in index_entries(HOOKS_DIR)]
     if not entries:
@@ -1068,6 +1094,8 @@ TREE: list[tuple[str, Check]] = [
     ("ruff format", tool("ruff format", ["ruff", "format", "--check", "."])),
     ("basedpyright", tool("basedpyright", ["basedpyright"])),
     ("imports", tool("imports", ["lint-imports"])),
+    ("catalogue", tool("catalogue", ["byhand", "validate"])),
+    ("sign ids", check_sign_ids),
     ("coverage floor", check_coverage_floor),
     ("version", check_version),
     ("AGENTS.md", check_agents_md),

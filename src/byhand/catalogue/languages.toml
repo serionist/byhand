@@ -1,0 +1,701 @@
+# The 100 most spoken languages, the set the catalogue's language codes come from: a one-way door (AGENTS.md).
+#
+# Source: Unicode CLDR 49 (cldr-core and cldr-localenames-full 49.0.0, Unicode licence), read on 2026-11-07. A rank
+# sums each territory's population times CLDR's percentage of speakers of the language there, first and second
+# language together, with a code's script variants merged into its base code (pa_Arab into pa). Names are CLDR's
+# English name, or ISO 639-3's where CLDR has none; `native` is CLDR's name of the language in itself, left out where
+# CLDR has no locale for it. `spaces = false` marks a language written without spaces between words.
+
+[[language]]
+code = "en"
+name = "English"
+native = "English"
+rank = 1
+speakers_millions = 1733
+
+[[language]]
+code = "zh"
+name = "Chinese"
+native = "中文"
+rank = 2
+speakers_millions = 1325
+spaces = false
+
+[[language]]
+code = "hi"
+name = "Hindi"
+native = "हिन्दी"
+rank = 3
+speakers_millions = 582
+
+[[language]]
+code = "es"
+name = "Spanish"
+native = "español"
+rank = 4
+speakers_millions = 512
+
+[[language]]
+code = "ar"
+name = "Arabic"
+native = "العربية"
+rank = 5
+speakers_millions = 379
+
+[[language]]
+code = "fr"
+name = "French"
+native = "français"
+rank = 6
+speakers_millions = 333
+
+[[language]]
+code = "ur"
+name = "Urdu"
+native = "اردو"
+rank = 7
+speakers_millions = 313
+
+[[language]]
+code = "bn"
+name = "Bangla"
+native = "বাংলা"
+rank = 8
+speakers_millions = 280
+
+[[language]]
+code = "pt"
+name = "Portuguese"
+native = "português"
+rank = 9
+speakers_millions = 249
+
+[[language]]
+code = "pa"
+name = "Punjabi"
+native = "ਪੰਜਾਬੀ"
+rank = 10
+speakers_millions = 220
+
+[[language]]
+code = "ru"
+name = "Russian"
+native = "русский"
+rank = 11
+speakers_millions = 208
+
+[[language]]
+code = "sw"
+name = "Swahili"
+native = "Kiswahili"
+rank = 12
+speakers_millions = 194
+
+[[language]]
+code = "id"
+name = "Indonesian"
+native = "Indonesia"
+rank = 13
+speakers_millions = 181
+
+[[language]]
+code = "yue"
+name = "Cantonese"
+native = "粵語"
+rank = 14
+speakers_millions = 155
+spaces = false
+
+[[language]]
+code = "de"
+name = "German"
+native = "Deutsch"
+rank = 15
+speakers_millions = 143
+
+[[language]]
+code = "ja"
+name = "Japanese"
+native = "日本語"
+rank = 16
+speakers_millions = 118
+spaces = false
+
+[[language]]
+code = "te"
+name = "Telugu"
+native = "తెలుగు"
+rank = 17
+speakers_millions = 101
+
+[[language]]
+code = "lah"
+name = "Western Panjabi"
+rank = 18
+speakers_millions = 101
+
+[[language]]
+code = "mr"
+name = "Marathi"
+native = "मराठी"
+rank = 19
+speakers_millions = 99
+
+[[language]]
+code = "jv"
+name = "Javanese"
+native = "Jawa"
+rank = 20
+speakers_millions = 96
+
+[[language]]
+code = "vi"
+name = "Vietnamese"
+native = "Tiếng Việt"
+rank = 21
+speakers_millions = 92
+
+[[language]]
+code = "ta"
+name = "Tamil"
+native = "தமிழ்"
+rank = 22
+speakers_millions = 91
+
+[[language]]
+code = "fa"
+name = "Persian"
+native = "فارسی"
+rank = 23
+speakers_millions = 89
+
+[[language]]
+code = "wuu"
+name = "Wu Chinese"
+rank = 24
+speakers_millions = 85
+spaces = false
+
+[[language]]
+code = "tr"
+name = "Turkish"
+native = "Türkçe"
+rank = 25
+speakers_millions = 82
+
+[[language]]
+code = "ko"
+name = "Korean"
+native = "한국어"
+rank = 26
+speakers_millions = 79
+
+[[language]]
+code = "fil"
+name = "Filipino"
+native = "Filipino"
+rank = 27
+speakers_millions = 73
+
+[[language]]
+code = "arz"
+name = "Egyptian Arabic"
+rank = 28
+speakers_millions = 71
+
+[[language]]
+code = "it"
+name = "Italian"
+native = "italiano"
+rank = 29
+speakers_millions = 70
+
+[[language]]
+code = "gu"
+name = "Gujarati"
+native = "ગુજરાતી"
+rank = 30
+speakers_millions = 66
+
+[[language]]
+code = "ps"
+name = "Pashto"
+native = "پښتو"
+rank = 31
+speakers_millions = 58
+
+[[language]]
+code = "th"
+name = "Thai"
+native = "ไทย"
+rank = 32
+speakers_millions = 56
+spaces = false
+
+[[language]]
+code = "kn"
+name = "Kannada"
+native = "ಕನ್ನಡ"
+rank = 33
+speakers_millions = 52
+
+[[language]]
+code = "pcm"
+name = "Nigerian Pidgin"
+native = "Naijíriá Píjin"
+rank = 34
+speakers_millions = 50
+
+[[language]]
+code = "ml"
+name = "Malayalam"
+native = "മലയാളം"
+rank = 35
+speakers_millions = 46
+
+[[language]]
+code = "ha"
+name = "Hausa"
+native = "Hausa"
+rank = 36
+speakers_millions = 45
+
+[[language]]
+code = "or"
+name = "Odia"
+native = "ଓଡ଼ିଆ"
+rank = 37
+speakers_millions = 45
+
+[[language]]
+code = "apc"
+name = "Levantine Arabic"
+rank = 38
+speakers_millions = 44
+
+[[language]]
+code = "sd"
+name = "Sindhi"
+native = "سنڌي"
+rank = 39
+speakers_millions = 43
+
+[[language]]
+code = "pl"
+name = "Polish"
+native = "polski"
+rank = 40
+speakers_millions = 42
+
+[[language]]
+code = "hsn"
+name = "Xiang Chinese"
+rank = 41
+speakers_millions = 41
+spaces = false
+
+[[language]]
+code = "nan"
+name = "Min Nan Chinese"
+rank = 42
+speakers_millions = 41
+spaces = false
+
+[[language]]
+code = "ms"
+name = "Malay"
+native = "Melayu"
+rank = 43
+speakers_millions = 41
+
+[[language]]
+code = "am"
+name = "Amharic"
+native = "አማርኛ"
+rank = 44
+speakers_millions = 39
+
+[[language]]
+code = "uz"
+name = "Uzbek"
+native = "o‘zbek"
+rank = 45
+speakers_millions = 39
+
+[[language]]
+code = "arq"
+name = "Algerian Arabic"
+rank = 46
+speakers_millions = 39
+
+[[language]]
+code = "om"
+name = "Oromo"
+native = "Oromoo"
+rank = 47
+speakers_millions = 38
+
+[[language]]
+code = "my"
+name = "Burmese"
+native = "မြန်မာ"
+rank = 48
+speakers_millions = 37
+spaces = false
+
+[[language]]
+code = "hak"
+name = "Hakka Chinese"
+rank = 49
+speakers_millions = 35
+spaces = false
+
+[[language]]
+code = "bho"
+name = "Bhojpuri"
+native = "भोजपुरी"
+rank = 50
+speakers_millions = 35
+
+[[language]]
+code = "az"
+name = "Azerbaijani"
+native = "azərbaycan"
+rank = 51
+speakers_millions = 34
+
+[[language]]
+code = "su"
+name = "Sundanese"
+native = "Basa Sunda"
+rank = 52
+speakers_millions = 34
+
+[[language]]
+code = "nl"
+name = "Dutch"
+native = "Nederlands"
+rank = 53
+speakers_millions = 33
+
+[[language]]
+code = "ary"
+name = "Moroccan Arabic"
+rank = 54
+speakers_millions = 33
+
+[[language]]
+code = "yo"
+name = "Yoruba"
+native = "Èdè Yorùbá"
+rank = 55
+speakers_millions = 32
+
+[[language]]
+code = "apd"
+name = "Sudanese Arabic"
+rank = 56
+speakers_millions = 31
+
+[[language]]
+code = "ig"
+name = "Igbo"
+native = "Asụsụ Igbo"
+rank = 57
+speakers_millions = 31
+
+[[language]]
+code = "skr"
+name = "Saraiki"
+rank = 58
+speakers_millions = 30
+
+[[language]]
+code = "ceb"
+name = "Cebuano"
+native = "Cebuano"
+rank = 59
+speakers_millions = 28
+
+[[language]]
+code = "awa"
+name = "Awadhi"
+rank = 60
+speakers_millions = 27
+
+[[language]]
+code = "mg"
+name = "Malagasy"
+native = "Malagasy"
+rank = 61
+speakers_millions = 27
+
+[[language]]
+code = "uk"
+name = "Ukrainian"
+native = "українська"
+rank = 62
+speakers_millions = 25
+
+[[language]]
+code = "gan"
+name = "Gan Chinese"
+rank = 63
+speakers_millions = 24
+spaces = false
+
+[[language]]
+code = "bar"
+name = "Bavarian"
+rank = 64
+speakers_millions = 23
+
+[[language]]
+code = "ne"
+name = "Nepali"
+native = "नेपाली"
+rank = 65
+speakers_millions = 22
+
+[[language]]
+code = "mai"
+name = "Maithili"
+native = "मैथिली"
+rank = 66
+speakers_millions = 20
+
+[[language]]
+code = "ro"
+name = "Romanian"
+native = "română"
+rank = 67
+speakers_millions = 20
+
+[[language]]
+code = "ny"
+name = "Nyanja"
+rank = 68
+speakers_millions = 19
+
+[[language]]
+code = "so"
+name = "Somali"
+native = "Soomaali"
+rank = 69
+speakers_millions = 19
+
+[[language]]
+code = "as"
+name = "Assamese"
+native = "অসমীয়া"
+rank = 70
+speakers_millions = 18
+
+[[language]]
+code = "mad"
+name = "Madurese"
+rank = 71
+speakers_millions = 18
+
+[[language]]
+code = "rkt"
+name = "Rangpuri"
+rank = 72
+speakers_millions = 17
+
+[[language]]
+code = "bgc"
+name = "Haryanvi"
+native = "हरियाणवी"
+rank = 73
+speakers_millions = 17
+
+[[language]]
+code = "mag"
+name = "Magahi"
+rank = 74
+speakers_millions = 17
+
+[[language]]
+code = "mwr"
+name = "Marwari"
+rank = 75
+speakers_millions = 17
+
+[[language]]
+code = "tts"
+name = "Northeastern Thai"
+rank = 76
+speakers_millions = 17
+spaces = false
+
+[[language]]
+code = "fuv"
+name = "Nigerian Fulfulde"
+rank = 77
+speakers_millions = 16
+
+[[language]]
+code = "hne"
+name = "Chhattisgarhi"
+rank = 78
+speakers_millions = 16
+
+[[language]]
+code = "km"
+name = "Khmer"
+native = "ខ្មែរ"
+rank = 79
+speakers_millions = 15
+spaces = false
+
+[[language]]
+code = "zu"
+name = "Zulu"
+native = "isiZulu"
+rank = 80
+speakers_millions = 15
+
+[[language]]
+code = "si"
+name = "Sinhala"
+native = "සිංහල"
+rank = 81
+speakers_millions = 15
+
+[[language]]
+code = "sr"
+name = "Serbian"
+native = "српски"
+rank = 82
+speakers_millions = 15
+
+[[language]]
+code = "kk"
+name = "Kazakh"
+native = "қазақ тілі"
+rank = 83
+speakers_millions = 15
+
+[[language]]
+code = "dcc"
+name = "Deccan"
+rank = 84
+speakers_millions = 14
+
+[[language]]
+code = "sn"
+name = "Shona"
+native = "chiShona"
+rank = 85
+speakers_millions = 14
+
+[[language]]
+code = "ak"
+name = "Akan"
+native = "Akan"
+rank = 86
+speakers_millions = 13
+
+[[language]]
+code = "sv"
+name = "Swedish"
+native = "svenska"
+rank = 87
+speakers_millions = 13
+
+[[language]]
+code = "cs"
+name = "Czech"
+native = "čeština"
+rank = 88
+speakers_millions = 13
+
+[[language]]
+code = "wo"
+name = "Wolof"
+native = "Wolof"
+rank = 89
+speakers_millions = 13
+
+[[language]]
+code = "hu"
+name = "Hungarian"
+native = "magyar"
+rank = 90
+speakers_millions = 12
+
+[[language]]
+code = "el"
+name = "Greek"
+native = "Ελληνικά"
+rank = 91
+speakers_millions = 12
+
+[[language]]
+code = "ku"
+name = "Kurdish"
+native = "kurdî (kurmancî)"
+rank = 92
+speakers_millions = 12
+
+[[language]]
+code = "nds"
+name = "Low German"
+native = "Neddersass’sch"
+rank = 93
+speakers_millions = 12
+
+[[language]]
+code = "rw"
+name = "Kinyarwanda"
+native = "Ikinyarwanda"
+rank = 94
+speakers_millions = 12
+
+[[language]]
+code = "qu"
+name = "Quechua"
+native = "Runasimi"
+rank = 95
+speakers_millions = 12
+
+[[language]]
+code = "tg"
+name = "Tajik"
+native = "тоҷикӣ"
+rank = 96
+speakers_millions = 11
+
+[[language]]
+code = "ilo"
+name = "Iloko"
+rank = 97
+speakers_millions = 11
+
+[[language]]
+code = "lua"
+name = "Luba-Lulua"
+rank = 98
+speakers_millions = 11
+
+[[language]]
+code = "ti"
+name = "Tigrinya"
+native = "ትግርኛ"
+rank = 99
+speakers_millions = 11
+
+[[language]]
+code = "xh"
+name = "Xhosa"
+native = "IsiXhosa"
+rank = 100
+speakers_millions = 11
+
+# A script variant has signs of its own, and a draft in it reads its base language's too.
+[[variant]]
+code = "zh-Hant"
+name = "Chinese, Traditional"
+of = "zh"
+spaces = false

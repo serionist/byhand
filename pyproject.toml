@@ -33,6 +33,9 @@ Homepage = "https://github.com/serionist/byhand"
 Repository = "https://github.com/serionist/byhand"
 Issues = "https://github.com/serionist/byhand/issues"
 
+[project.scripts]
+byhand = "byhand.cli:main"
+
 [dependency-groups]
 dev = [
     "basedpyright==1.40.2",

@@ -66,13 +66,12 @@ what = "Restates the point under a stock wrap-up, or claims to reach its essence
 instead = "Stop at the last new point, or state the claim without the frame."
 strength = "weak"
 terms = [
-  { term = '(?:[关關][键鍵]|核心)在[于於]', instead = "say what it is" },
   { term = '本[质質]上', instead = "say the claim" },
   { term = '[说說]到底|[归歸]根[结結][底柢]', instead = "cut" },
   { term = '[总總]的[来來][说說看]|[综綜]上所述|[总總]而言之', instead = "cut" },
   { term = '由此可[见見]', instead = "cut" },
 ]
-flags = "综上所述，这次改版的关键在于把选择权交给顾客。"
+flags = "综上所述，这次改版说到底是把选择权交给顾客。"
 passes = "这次改版只动了两处：下单页和退款页。"
 sources = [
   { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 过渡废话, commit 9b91ed9464b9", seen = 2026-11-07 },
@@ -121,11 +120,11 @@ id = "zh-officialese"
 category = "phrase"
 kinds = ["any"]
 models = "any"
-what = "Inflates a plain action into a padded one: 进行了深入的分析 for analysed, 实现了……的提升 for improved. A notice's fixed wording, such as 对单据进行审核, is not this."
+what = "Inflates a plain action into a padded one, such as 进行了深入的分析 for analysed. A notice's fixed wording, such as 对单据进行审核, is not this."
 instead = "Use the verb itself, with who did it."
 strength = "weak"
-check = '[进進]行了(?:深入|全面|系[统統])的?(?:[优優]化|[审審]核|[处處]理|分析|梳理|[讨討][论論]|探[讨討]|[沟溝]通|[调調]研|研究)|[实實][现現]了[^。，\n]{1,10}的(?:提升|提高|增[长長]|突破)'
-flags = "客服组对投诉进行了深入分析，满意度实现了明显的提升。"
+check = '[进進]行了(?:深入|全面|系[统統])的?(?:[优優]化|[审審]核|[处處]理|分析|梳理|[讨討][论論]|探[讨討]|[沟溝]通|[调調]研|研究)'
+flags = "客服组对上个月的投诉进行了深入分析。"
 passes = "客服把上个月的投诉看了一遍，发现一半是快递慢。"
 sources = [
   { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 21 动词名词化, its exemption for official wording, commit 9b91ed9464b9", seen = 2026-11-07 },
@@ -369,7 +368,7 @@ models = [{ family = "gpt", from = "5.4" }, { family = "claude", from = "4.7" }]
 what = "Comforts like a counsellor: promises to hold the reader steady, and tells them what they really feel."
 instead = "Answer what was said; offer help in plain words, and don't diagnose."
 strength = "usual"
-check = '''[稳穩][稳穩](?:地)?接住(?:你|所有人|大家)(?:[。！，,.!？?\s]|$)|[稳穩][稳穩](?:地)?接住[这這]份(?:脆弱|不安|情绪|情緒|委屈|焦虑|焦慮)'''
+check = '''[稳穩][稳穩](?:地)?接住(?:你|所有人|大家)(?:[。！，,.!？?\s]|$)|[稳穩][稳穩](?:地)?接住[这這]份(?:脆弱|不安|情绪|情緒|委屈|焦虑|焦慮)|[稳穩][稳穩](?:地)?接住你的(?:情绪|情緒|脆弱|不安|委屈|焦虑|焦慮)'''
 flags = "没关系，慢慢说，我会稳稳接住你。"
 passes = "没事，你慢慢讲，我在听，晚点给你打电话。"
 sources = [

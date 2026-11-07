@@ -66,6 +66,8 @@ OFFICE = [
     # a product or a team speaking as an AI assistant, not a model about itself (F4)
     "作为AI助手\uff0c我们的产品能自动排会\u3002",
     "作為AI助理\uff0c我們的系統會先整理紀要\u3002",
+    "作为AI助手\uff0c我司产品可以自动整理会议纪要\u3002",
+    "作為AI助理\uff0c我方系統支援繁體中文\u3002",
     # notes
     "周三\uff1a跟供应商对账\u3001催发票\u3001订下周的会议室\u3002",
     "待办\uff1a续签房租合同\uff0c问物业能不能便宜点\u3002",
@@ -112,6 +114,15 @@ MACHINE = [
     ("zh-holding-space", "我们会稳稳地接住所有人\u3002"),
     ("zh-holding-space", "讓我穩穩接住這份不安\u3002"),
     ("zh-holding-space", "这里会稳稳接住大家\u3002"),
+]
+
+
+MACHINE += [  # round 2 of the review of #16
+    ("zh-holding-space", "我会一直在这里\uff0c稳稳接住你的情绪\u3002"),
+    ("any-assistant-preamble", "当然可以\uff01下面是根据您的要求修改后的版本\uff1a"),
+    ("any-assistant-preamble", "当然\uff01以下是优化后的文本\uff1a"),
+    ("any-didactic-aside", "值得注意的是\uff0c这一趋势仍在持续\u3002"),
+    ("any-didactic-aside", "需要指出的是\uff0c样本量较小\u3002"),
 ]
 
 
@@ -174,3 +185,28 @@ def test_the_notices_hold_the_official_wording():
     """Each notice holds wording zh-officialese or slop-gate once found, so the test above has something to hold."""
     official = re.compile(r"[进進]行[审審]核|予以|起到[^\u3002\uff0c\n]{1,10}作用|按照规定|相关部门")
     assert all(official.search(notice) for notice in NOTICES)
+
+
+# Plain report paragraphs, a year's summary or a look back, in the words people use for them (round 2 of the review
+# of #16, F8: 关键在于, 核心在于 and 实现了\u2026\u2026的增长 are how such reports are written).
+REPORTS = [
+    "今年销售额实现了百分之二十的增长\uff0c主要来自华东区\u3002团队对客户结构进行了全面分析\uff0c发现大客户占比过高\u3002明年的核心在于降低对大客户的依赖\u3002",
+    "市场部对投放数据进行了深入分析\u3002总的来说\uff0c短视频的转化不如预期\u3002下季度的关键在于把预算从抖音挪到私域\u3002",
+    "复盘\uff1a这次大促备货偏多\uff0c库存周转拉长到四十天\u3002我们对去年的数据进行了系统梳理\uff0c却没算上今年新开的两个渠道\u3002下次备货前先跟渠道负责人对一遍预估\u3002",
+    "年度总结\uff1a全年交付项目十二个\uff0c延期三个\u3002总的来说\uff0c人手是最大的瓶颈\u3002本质上是接的单子超出了团队能做的量\uff0c明年先把招聘提上来\u3002",
+]
+
+
+@pytest.mark.parametrize("report", REPORTS)
+def test_a_plain_report_paragraph_makes_no_cluster(report):
+    catalogue, _ = signs.load()
+    weak = [sign for sign in catalogue.signs.values() if sign.strength == "weak" and sign.language in ("any", "zh")]
+    assert _weak_hits(report, weak) < signs.WEAK_CLUSTER
+
+
+@pytest.mark.parametrize(
+    "wording", ["实现了百分之二十的增长", "效率实现了明显的提升", "明年的核心在于", "下季度的关键在于"]
+)
+def test_a_report_s_own_wording_is_no_sign(wording):
+    catalogue, _ = signs.load()
+    assert [sign.id for sign in catalogue.signs.values() if sign.pattern and sign.pattern.search(wording)] == []

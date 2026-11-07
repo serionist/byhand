@@ -1,0 +1,397 @@
+# Chinese signs. A sign here cites a Chinese source; the shape of a sign is in `any.toml`. Chinese is written without
+# spaces, so `validate` joins a sign's terms with no word edge. A `zh-Hant` draft reads this file too, so a term covers
+# both scripts where they differ ([综綜]).
+#
+# Most of these are weak: Chinese office writing uses many of the same phrases, and shuorenhua retired its own word
+# lists in 2.5.0 for that reason. A weak sign counts only in a cluster.
+
+# Words and phrases of every model.
+
+[[sign]]
+id = "zh-significance-words"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Props up a plain fact with set words of significance, legacy and role."
+instead = "Say what happened, to whom and when; drop the word if no fact stands behind it."
+strength = "weak"
+terms = [
+  { term = '标志着|標誌著', instead = "say what changed" },
+  { term = '见证了|見證了', instead = "say what happened" },
+  { term = '奠定了?(?:坚实的?|堅實的?)?基[础礎]', instead = "say what it made possible" },
+  { term = '不可磨[灭滅]', instead = "say what remains" },
+  { term = '根植[于於]', instead = "comes from" },
+  { term = '意[义義](?:重大|非凡)', instead = "say what it means" },
+  { term = '至[关關]重要|[举舉]足[轻輕]重', instead = "say why it matters" },
+  { term = '深[远遠]的?影[响響]', instead = "name the effect" },
+  { term = '扮演[着著了]?[^。，\n]{0,10}角色', instead = "say what it does" },
+  { term = '不[断斷](?:变化|演变|變化|演變)的格局', instead = "name the market" },
+]
+flags = "新仓库启用标志着物流部迈入新阶段，也为明年扩张奠定了基础。"
+passes = "新仓库周一启用，比老仓库多放三千箱货，明年看情况再扩。"
+sources = [
+  { source = "wikipedia-zh", where = "語言、語法, revision 95337857", seen = 2026-11-07 },
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 渲染性强调, commit 9b91ed9464b9", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-stock-openers"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Opens with a stock signpost that a point matters, or announces what comes next, instead of saying it."
+instead = "Cut the signpost and start with the point."
+strength = "weak"
+terms = [
+  { term = '值得(?:注意|一提|关注|關注)的是', instead = "cut" },
+  { term = '需要指出的是|不可否[认認]的是|不[难難][发發][现現]', instead = "cut" },
+  { term = '[众眾]所周知', instead = "cut, or name the source" },
+  { term = '毋庸置疑|不言而喻', instead = "cut" },
+  { term = '让我们一起来看看|讓我們一起來看看|接下来我将为[你您]|接下來我將為[你您]', instead = "start with it" },
+  { term = '[废廢][话話]不多[说說]', instead = "cut" },
+]
+flags = "众所周知，物流一直是短板。不难发现，三月的退货少了。"
+passes = "三月退货少了一半，主要是换了快递公司。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 开场套话, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "slop-gate", where = "rules/chinese.json, zh-empty-opener, commit f78d5cbee0dc", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 36 預告式導言, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-wrap-up-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Restates the point under a stock wrap-up, or claims to reach its essence, adding nothing."
+instead = "Stop at the last new point, or state the claim without the frame."
+strength = "weak"
+terms = [
+  { term = '[综綜]上所述|[总總]而言之|[总總]的[来來][说說看]', instead = "cut" },
+  { term = '由此可[见見]', instead = "cut" },
+  { term = '[归歸]根[结結][底柢]|[说說]到底', instead = "cut" },
+  { term = '本[质質]上', instead = "say the claim" },
+  { term = '(?:核心|[关關][键鍵])在[于於]', instead = "say what it is" },
+]
+flags = "综上所述，这次改版的关键在于把选择权交给顾客。"
+passes = "这次改版只动了两处：下单页和退款页。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 过渡废话, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 10 总结式收尾, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 17 說教式深度腔; 32 通用積極結論, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-era-opener"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Opens on a hat about the times, such as how fast some field is developing, before reaching the subject."
+instead = "Start with the case itself: a date, a number, a person."
+strength = "weak"
+check = '''^\W*(?:在[当當]今|在[这這][个個][^。，\n]{1,12}的[时時]代|[随隨][着著][^。，\n]{1,16}的(?:不[断斷]|快速|[飞飛]速|迅速|蓬勃)?(?:发展|發展))'''
+flags = "随着跨境电商的快速发展，仓储行业正在经历深刻变革。"
+passes = "上个月客服电话多了四成，我们打算先招两个人顶上。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 开场套话, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 21 公式化開場, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-uplift-ending"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Closes on an upbeat line about the future, or a call to embrace change together."
+instead = "End on the last concrete point, or the next step and its date."
+strength = "weak"
+terms = [
+  { term = '拭目以待', instead = "cut" },
+  { term = '未[来來]可期', instead = "cut" },
+  { term = '[让讓]我[们們]一起(?:拥抱|擁抱|迎接|期待|携手|攜手)', instead = "name the next step" },
+]
+flags = "新系统上线只是起点，后面的变化拭目以待，未来可期！"
+passes = "新系统下周一上线，遇到问题先找小周。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 正能量收尾模板; structures.md.txt, 15, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 32 通用積極結論, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-officialese"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Pads a verb into officialese: 进行 plus a noun, 实现了……的提升, 起到……作用, 予以."
+instead = "Use the verb itself, with who did it."
+strength = "weak"
+check = '[进進]行了?(?:一[次番轮輪])?(?:深入|全面|系[统統]|有效)?的?(?:[优優]化|[审審]核|[处處]理|分析|梳理|[讨討][论論]|探[讨討]|[沟溝]通)|[实實][现現]了[^。，\n]{1,10}的(?:提升|提高|增[长長]|突破)|起到了?[^。，\n]{1,10}作用|予以'
+flags = "客服组对投诉进行了深入分析，对下季度的排班起到了指导作用。"
+passes = "客服把上个月的投诉看了一遍，发现一半是快递慢。"
+sources = [
+  { source = "slop-gate", where = "rules/chinese.json, zh-jinxing, zh-yuyi, commit f78d5cbee0dc", seen = 2026-11-07 },
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 21 动词名词化, commit 9b91ed9464b9", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-lyrical-abstract"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Dresses abstract things, such as memory, growth or an answer, in lyrical words."
+instead = "Say the thing plainly; keep these words for real objects."
+strength = "weak"
+terms = [
+  { term = '安放', instead = "put, or cut" },
+  { term = '微光', instead = "say what it is" },
+  { term = '褶[皱皺]', instead = "say what it is" },
+  { term = '[丰豐]盈', instead = "full" },
+  { term = '[滚滾][烫燙]', instead = "say what it is" },
+]
+flags = "那些被岁月折起的褶皱里，安放着我们滚烫的青春。"
+passes = "毕业十年，我们班还剩六个人在北京。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 抒情词给抽象概念穿衣服, commit 9b91ed9464b9", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-social-media-register"
+category = "word"
+kinds = ["post"]
+models = "any"
+what = "Piles up social-media hype words, as a post written in bulk does."
+instead = "Keep one if it is how you talk; say what the post gives."
+strength = "weak"
+terms = [
+  { term = '保姆[级級]', instead = "detailed" },
+  { term = '建[议議]收藏', instead = "cut" },
+  { term = '一文[读讀]懂', instead = "cut" },
+  { term = '[划劃]重[点點]', instead = "cut" },
+  { term = '干[货貨]|乾貨', instead = "cut" },
+  { term = '[绝絕][绝絕]子|[谁誰]懂啊', instead = "cut" },
+  { term = '姐妹[们們]', instead = "cut" },
+]
+flags = "保姆级报销攻略来了！干货满满，建议收藏，姐妹们冲！"
+passes = "整理了一份报销流程，三步就能填完，截图放在下面。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 自媒体 / 小红书 AI 腔; structures.md.txt, 16, commit 9b91ed9464b9", seen = 2026-11-07 },
+]
+
+# Structure: how the text is built. Most have no `check`, as only the model's own read can find them.
+
+[[sign]]
+id = "zh-aphorism"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Ends a point on a coined maxim, X is the Y of Z or the real X is Y, that adds no fact."
+instead = "Say the plain claim behind it, or cut it."
+strength = "weak"
+flags = "会议纪要是团队的记忆，截止日期是执行力的试金石。"
+passes = "会议纪要周五前发到群里，截止日期定在月底。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 19 价值拔高骨架, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 18 金句／格言公式, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-translationese"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Reads like English carried into Chinese: long chains of 的, stacked 被 passives, and frames like 对于……而言 or 基于."
+instead = "Break the chain into short clauses with a subject, in the active voice."
+strength = "weak"
+flags = "这是一款被众多用户认为可以显著提高部门的沟通效率的软件。"
+passes = "这个工具大家都说好用，开会时少了很多来回。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 翻译腔; structures.md.txt, 6 被动语态堆砌, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "wikipedia-zh", where = "破折號, revision 95337857", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-connective-stacking"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Starts sentence after sentence with 此外, 然而, 与此同时 or 因此, where the order already links them."
+instead = "Drop most of them; keep one only where it carries a turn or a cause."
+strength = "weak"
+flags = "此外，团队规模扩大了。然而，成本随之上升。与此同时，交付周期变长。因此，策略需要调整。"
+passes = "团队扩了一倍，成本跟着涨，交付也慢了，得换个做法。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 23 连词过密, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "slop-gate", where = "rules/chinese.json, zh-raner, commit f78d5cbee0dc", seen = 2026-11-07 },
+  { source = "wikipedia-zh", where = "重複表述與論證缺乏推進, revision 95337857", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-first-next-last"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Lays any topic out in three even steps marked 首先, 其次 and 最后, whatever the logic."
+instead = "Follow the logic: two points if there are two, joined by what links them."
+strength = "weak"
+check = '首先[，,][^\n]*其次[，,][^\n]*最[后後][，,]'
+flags = "首先，盘点库存；其次，联系供应商；最后，更新报价单。"
+passes = "先盘一下库存，缺的找供应商补，报价单我晚点改。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 8 机械排列, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 26 編號切碎段落, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-staged-drama"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Stages drama: a run of one-phrase fragments, a teasing question before the point, or a canned pause before a reveal."
+instead = "Write ordinary sentences with a subject; keep one short line at most."
+strength = "weak"
+flags = "一个周末。两个人。一套方案。结果呢？客户当场签字。"
+passes = "我们俩花了一个周末改方案，周一客户就签了。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 3 戏剧化碎句; 4 反问式铺垫, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 20 人工戲劇, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-mixed-metaphors"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Mixes several metaphor sets in one paragraph: race tracks, moats, waves, engines, battles."
+instead = "Say it literally; keep one metaphor only if it explains something."
+strength = "weak"
+flags = "这块市场的门槛像沙堤一样被潮水冲平，我们得给团队换一台发动机，抢先冲过终点线。"
+passes = "这块市场门槛变低了，开源方案很多，我们得找别的卖点。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 25 借喻场混用, commit 9b91ed9464b9", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-decorative-detail"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Invents scene details, the hour, the weather, a cold drink, that change nothing that follows."
+instead = "Cut them; keep a detail only if it is true and changes what happens."
+strength = "weak"
+flags = "会议室的白板上还留着上周的草图，阳光斜斜照进来，老王清了清嗓子，宣布预算批下来了。"
+passes = "老王说预算批下来了，下周一开始招人。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 24 装饰性细节, commit 9b91ed9464b9", seen = 2026-11-07 },
+]
+
+# Formatting.
+
+[[sign]]
+id = "zh-dash-density"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Carries asides, turns and add-ons on dashes (——), several in one paragraph."
+instead = "Use a colon, a comma or a full stop; keep one dash where it really sets off an aside."
+strength = "weak"
+check = '—+[^—\n]+—+[^—\n]+—+'
+flags = "新版周报很省事——数据自动导入——而且图表也是现成的——只需点一下发送。"
+passes = "新版周报省事：数据自动导入——包括上周的——图表也是现成的。"
+sources = [
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/structures.md.txt, 20 标点腔; CHANGELOG.md, 1.9.2, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 23 破折號過度使用, commit 89b96e24fcfd", seen = 2026-11-07 },
+  { source = "wikipedia-zh", where = "破折號, revision 95337857", seen = 2026-11-07 },
+]
+
+# Chat left in the text.
+
+[[sign]]
+id = "zh-chat-residue"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Keeps chat lines meant for the person who asked: hope this helps, copy it as is, ask me anything else."
+instead = "Cut them; end with the text itself."
+strength = "weak"
+check = '希望(?:这|這|以上)(?:些)?(?:内容|內容|信息|資訊|回答)?(?:能)?(?:对|對)[你您]有所?(?:帮助|幫助)|直接(?:复制|複製)使用|如果[你您](?:还|還)有(?:其他|任何)(?:问题|問題)'
+flags = "改好的通知在上面，直接复制使用即可。希望以上内容对您有所帮助。"
+passes = "通知改好了，你看下有没有要补的。"
+sources = [
+  { source = "wikipedia-zh", where = "協作式溝通訊息, revision 95337857", seen = 2026-11-07 },
+  { source = "shuorenhua", where = "evals/legacy-v2.4.1/references/phrases-zh.md.txt, 谄媚/元评论, commit 9b91ed9464b9", seen = 2026-11-07 },
+  { source = "speak-human-tw", where = "references/patterns.md, 30 協作交流殘留, commit 89b96e24fcfd", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-leaked-request"
+category = "artefact"
+kinds = ["document"]
+models = "any"
+what = "Leaves the chatbot's request for input inside the text, such as asking for the passage to translate."
+instead = "Delete it, and check what the tool really returned there."
+strength = "weak"
+check = '[请請]提供(?:需要|[你您]需要)(?:翻[译譯]|[润潤]色|改[写寫]|[总總][结結])的(?:内容|內容|文本|文字)'
+flags = "《城市水务年鉴》第三卷。请提供您需要润色的文字。第45页。"
+passes = "请把合同发我，我找人翻译，周三给你。"
+sources = [
+  { source = "wikipedia-zh", where = "出現提示性文段, revision 95337857", seen = 2026-11-07 },
+]
+
+# Tied to a model family.
+
+[[sign]]
+id = "zh-gpt-5-register"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "gpt", from = "5" }]
+what = "Talks about ordinary work in debugging and combat verbs, and pushes offers to do more, as GPT-5 does in Chinese."
+instead = "Use the plain verb; offer more once, and say what."
+strength = "weak"
+terms = [
+  { term = '[稳穩][稳穩](?:地)?兜住', instead = "handle" },
+  { term = '收口', instead = "finish" },
+  { term = '坐[实實]', instead = "confirmed" },
+  { term = '[揪抠摳]出[来來]', instead = "found" },
+  { term = '不(?:靠|瞎)猜', instead = "say what you know" },
+  { term = '[补補]一刀', instead = "add" },
+  { term = '我立[马馬]开始|我立馬開始', instead = "cut" },
+  { term = '要不要我[顺順]手', instead = "offer once, plainly" },
+]
+flags = "这个报错我先收口，基本坐实是配置写错，我立马开始把旧日志揪出来。"
+passes = "报错查到了，是配置写错了。旧日志要不要我也找出来？"
+sources = [
+  { source = "shuorenhua", where = "CHANGELOG.md, 1.3.0 and 1.4.0 (GPT-5.x); evals/legacy-v2.4.1/references/phrases-zh.md.txt, 工程师腔, 庸医问诊腔, 暴力动作腔, AI 主动出击腔, commit 9b91ed9464b9", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-holding-space"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "gpt", from = "5.4" }, { family = "claude", from = "4.7" }]
+what = "Comforts like a counsellor: promises to hold the reader steady, and tells them what they really feel."
+instead = "Answer what was said; offer help in plain words, and don't diagnose."
+strength = "usual"
+check = '[稳穩][稳穩](?:地)?接住(?:你|所有人|大家|[这這]份)'
+flags = "没关系，慢慢说，我会稳稳接住你。"
+passes = "没关系，慢慢说，我听着。新网关周五也稳稳接住所有请求了。"
+sources = [
+  { source = "shuorenhua", where = "CHANGELOG.md, 1.7.3; evals/legacy-v2.4.1/references/operation-manual.md.txt, 5.2 过度接住, commit 9b91ed9464b9", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "zh-honesty-preface"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "claude", from = "5" }]
+what = "Announces that it is about to be honest or serious, to borrow trust for an ordinary line."
+instead = "Say the point; let the content carry it."
+strength = "weak"
+terms = [
+  { term = '我必[须須](?:很|要)?(?:[认認]真|[诚誠][实實])地[说說]', instead = "cut" },
+  { term = '[说說]句[实實][话話]|坦白[讲講]', instead = "cut" },
+]
+flags = "说句实话，这款耳机的降噪一般。"
+passes = "这款耳机降噪一般，地铁上还是吵。"
+sources = [
+  { source = "shuorenhua", where = "CHANGELOG.md, 1.9.2 (Claude 5); evals/legacy-v2.4.1/references/operation-manual.md.txt, 5.3 郑重预告, commit 9b91ed9464b9", seen = 2026-11-07 },
+]

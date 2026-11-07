@@ -98,7 +98,7 @@ kind = "repo"
 languages = ["zh"]
 licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "MrGeDiao/shuorenhua", paths = ["evals"] }
+feed = { api = "github", repo = "MrGeDiao/shuorenhua", paths = ["evals", "skills/shuorenhua", "CHANGELOG.md"] }
 read_at = { commit = "9b91ed9464b9", date = 2026-11-07 }
 
 [[source]]

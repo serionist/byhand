@@ -84,7 +84,7 @@ OFFICE = [
     "Sure! Here's your invoice:",
     "Natürlich! Hier ist der Link:",
     "Конечно! Вот ссылка:",
-    "当然可以\\uff01链接在这里\\uff1a",
+    "当然可以\uff01链接在这里\uff1a",
     # a bold list a person writes: weak, so it may fire, but it must not count alone
     "- **Mon:** stand-up at ten\n- **Tue:** client call\n- **Wed:** off",
 ]

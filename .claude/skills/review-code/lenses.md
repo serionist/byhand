@@ -65,17 +65,16 @@ reports.
 
 ## plugin-contract
 
-Applies when: the scope touches `plugin/`, `.claude-plugin/`, `cli.py`, or the version.
+Applies when: the scope touches `plugin/`, `.claude-plugin/`, or the version.
 
 Name what would run without asking, or what a user would lose.
 
 - Does each skill's `allowed-tools` name only `Read`, `Glob` and `Grep`? The gate checks it; a way around it (a hook,
   a key in `plugin.json`, a file under `plugin/` the gate doesn't read) is a blocker.
 - Do the skills' and agents' names stay as they were? A rename is a one-way door.
-- Does every `byhand==X.Y.Z` pin equal `pyproject.toml`'s and `plugin.json`'s version, and does the version
-  move only in a release PR?
-- Does a skill run commands and flags the CLI has, with the arguments it takes? A command it lacks is a skill that
-  errors: a major.
+- Does the version move only in a release PR?
+- Does each skill run no command, and need nothing but the plugin? The gate refuses the usual spellings; a way around
+  them is a blocker.
 - Does each skill's description still start it where it says (mail, messages, documents, decks) and not elsewhere?
 - Does each agent get only what its role needs: a checker never the writer's reasoning?
 - Links under `plugin/` are GitHub URLs or files under `plugin/`: Claude Code installs `plugin/` alone.

@@ -265,8 +265,8 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 | Step | Issue | PR | State |
 |---|---|---|---|
 | 1. The harness and this plan | #1 | #9 | plan approved 2026-11-06 |
-| 2. The catalogue's schema | #2 | | |
-| 3. Render and its gate check | #3 | | |
+| 2. The catalogue's schema | #2 | #12 | merged 2026-11-07 |
+| 3. Render and its gate check | #3 | #14 | |
 | 4. `propose-signs` and the seed | #4 | | |
 | 5. `check` | #5 | | |
 | 6. Styles, `learn` and `write` | #6 | | |
@@ -275,6 +275,35 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 Decisions on the way:
 
+- **Simple, and no command on a user's machine (the maintainer, 2026-11-07):** byhand is two sets of Markdown files,
+  signs and styles, and the skills that read them. Install is `/plugin install`, with no uv, no Python and no PyPI.
+  This replaces what the plan says of the CLI for users, and changes three steps:
+  - Step 5: `check` reads a text against the rendered signs, and uses `Grep` on a file for their terms and checks,
+    which `render` prints. `byhand check` isn't built.
+  - Step 6: a style is a Markdown file, listed with `Glob`, read with `Read`, saved with `Write`. `byhand styles` isn't
+    built. `.gitignore` for a project's styles is written the same way.
+  - Step 8: a release is a tag and `plugin.json`'s version; nothing goes to PyPI. Round 1's P4 and P5 no longer apply to
+    a user, and the pin checks in the gate and the lenses go when the first skill lands.
+
+  The package stays, as the repo's own tool: `byhand validate`, `byhand render`, and the refresh in `0.2.0`.
+- **What that cuts (the maintainer, 2026-11-07):**
+  - Three skills, `write`, `check` and `learn`. `learn` lists a user's styles and sets a default; `styles` isn't built.
+  - `byhand models`, and reading a family from an id: the model reads its own id and picks the file, as a skill's prose
+    says, and Step 7's evals prove it on an id the catalogue has never seen.
+  - `render --out`: the folder is always `plugin/signs`, so `render` owns it, which replaces the Step 3 call below.
+  - The packaging: no CI job, no metadata; `Private :: Do Not Upload` keeps it off PyPI.
+  - One version, `plugin.json`'s. `pyproject.toml`'s stays fixed.
+  - The gate's pin checks: a ban on a command under `plugin/` takes their place, which is stricter.
+- **A check is what Grep can run (the maintainer, 2026-11-07):** no look-around and no backreference, held by
+  `validate`. A term's edge is `\b`. `render` prints a sign's `check` in Step 5, for `Grep`; where it goes, the draft's
+  files or a side file, is that step's call.
+- **Step 3, its review (the maintainer, 2026-11-07):** a third budget, 16 KB, holds a deck's or a sheet's layout files. The gate's link scan
+  skips code spans in `plugin/signs/` alone, where a term is a regular expression. A future `until` retires a sign
+  today, and every reader of the signs treats it so.
+- **Step 3, a retired sign (2026-11-07):** a sign with an `until` renders nowhere, whatever the date: rendering by the
+  clock would turn a file stale overnight and fail the gate on no change.
+- **Step 3, the rendered files hold no citation and no example:** what a draft loads is what the model acts on; the
+  sources stay in the catalogue.
 - **Step 2, the languages' source (2026-11-07):** the Wikipedia list The catalogue names holds only 38 languages, so it
   can't give 100, and language codes are a one-way door, not to be filled in from memory. `languages.toml` comes from
   Unicode CLDR 49 instead: each territory's population times CLDR's percentage of speakers, script variants merged into

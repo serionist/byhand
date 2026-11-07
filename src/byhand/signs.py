@@ -20,6 +20,7 @@ from byhand.models import Family, ModelRange, parse_version
 CATALOGUE = Path(__file__).parent / "catalogue"
 ANY = "any"
 LANGUAGE_COUNT = 100
+WEAK_CLUSTER = 3  # a weak sign counts only with this many in one paragraph: people do them too
 KINDS = ("message", "email", "post", "document", "deck", "sheet")
 LAYOUT_KINDS = ("deck", "sheet")
 CATEGORIES = ("word", "phrase", "structure", "formatting", "layout", "artefact")
@@ -39,6 +40,8 @@ _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 # Most signs are about a line in a draft, so `^` and `$` match at each line. Part of the schema: a check is written
 # against these flags.
 _FLAGS = re.IGNORECASE | re.MULTILINE
+# A check also runs through Claude Code's Grep, which is ripgrep: no look-around, no backreference. Part of the schema.
+_NOT_GREP = re.compile(r"\(\?<?[=!]|\(\?P=|\\[1-9]")
 
 Table = dict[str, Any]
 
@@ -60,6 +63,12 @@ class Source:
 
 
 @dataclass(frozen=True)
+class Term:
+    term: str
+    instead: str
+
+
+@dataclass(frozen=True)
 class Sign:
     id: str
     language: str
@@ -72,6 +81,8 @@ class Sign:
     flags: str
     passes: str
     pattern: re.Pattern[str] | None  # None for a sign only the model's own read can find
+    terms: tuple[Term, ...] = ()
+    until: datetime.date | None = None  # set, the sign is retired: it keeps its id and renders nowhere
 
 
 @dataclass
@@ -140,6 +151,8 @@ def _is_date(value: object) -> bool:
 
 
 def _compile(where: str, pattern: str) -> tuple[re.Pattern[str] | None, list[str]]:
+    if _NOT_GREP.search(pattern):
+        return None, [f"{where}: Grep can't run a look-around or a backreference: {pattern}"]
     try:
         return re.compile(_nfc(pattern), _FLAGS), []
     except re.error as exc:
@@ -201,16 +214,12 @@ def load_families(root: Path, catalogue: Catalogue) -> list[str]:
     for row in _rows(file, data, "family", problems):
         family = _id(file, row, problems)
         where = f"{file}: {family}"
-        problems += _keys(where, row, ("id", "name", "patterns")) + _text(where, row, "name")
+        problems += _keys(where, row, ("id", "name")) + _text(where, row, "name")
         if family in catalogue.families:
             problems.append(f"{where}: repeated")
         if not _SLUG.match(family):
             problems.append(f"{where}: an id takes lowercase letters, digits and hyphens: it names a file")
-        patterns = row.get("patterns")
-        if not isinstance(patterns, list) or not patterns or not all(isinstance(p, str) and p for p in patterns):
-            problems.append(f"{where}: `patterns` must list text")
-            patterns = []
-        catalogue.families[family] = Family(family, str(row.get("name", "")), tuple(patterns))
+        catalogue.families[family] = Family(family, str(row.get("name", "")))
     return problems
 
 
@@ -338,7 +347,7 @@ def _terms(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Patt
     if problems:
         return None, sorted(set(problems))
     body = "|".join(f"(?:{term['term']})" for term in terms)
-    return _compile(where, rf"(?<!\w)(?:{body})(?!\w)" if spaces else body)
+    return _compile(where, rf"\b(?:{body})\b" if spaces else body)
 
 
 def _pattern(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Pattern[str] | None, list[str]]:
@@ -423,6 +432,17 @@ def _dates(where: str, row: Table) -> list[str]:
     return problems
 
 
+def _term_list(row: Table) -> tuple[Term, ...]:
+    terms = row.get("terms")
+    if not isinstance(terms, list):
+        return ()
+    return tuple(
+        Term(term["term"], term["instead"])
+        for term in terms
+        if isinstance(term, dict) and isinstance(term.get("term"), str) and isinstance(term.get("instead"), str)
+    )
+
+
 def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
     problems: list[str] = []
     sign = _id(f"signs/{language}.toml", row, problems)
@@ -456,6 +476,8 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
         str(row.get("flags", "")),
         str(row.get("passes", "")),
         pattern,
+        _term_list(row),
+        row.get("until") if _is_date(row.get("until")) else None,
     )
     return problems
 

@@ -29,8 +29,7 @@ start: an issue, a branch, a plan when it needs one, fitted, reviewed and approv
      skill among them.
 3. **Read before planning,** never from memory:
    - the code of every folder the change touches, and its tests;
-   - both ends of what it changes: for a command, the module in `src/byhand/`, its subcommand in `cli.py`,
-     and the skill or agent in `plugin/` that runs it; for a sign, the catalogue, its schema and the check;
+   - both ends of what it changes: for a sign, the catalogue, its schema, `render.py` and the skills that read it;
    - the docs that describe it (the READMEs) and `REVIEW.md`;
    - every Claude Code plugin API or library API it will call, through Context7 (`AGENTS.md`,
      Look up APIs before coding against them).

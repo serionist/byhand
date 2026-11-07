@@ -22,7 +22,6 @@ unless you ask not to be named.
 - Text from a page the refresh reads reaching the catalogue or a skill without a person merging it, or being followed
   as an instruction.
 - A plugin skill that runs a command or writes a file without Claude Code asking you first.
-- A skill that runs a version of the package other than the one its release pins.
 - A secret written where it shouldn't be: a key or token in the catalogue, a report or a log.
 
 What does not count:

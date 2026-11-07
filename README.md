@@ -6,6 +6,16 @@ own style, without the words, structure and layout that make text read as AI-wri
 Not released yet: this is the repo's harness, and [the bootstrap plan](https://github.com/serionist/byhand/blob/main/docs/plans/2026-11-06-bootstrap.md) designs the
 first version.
 
+## How it works
+
+byhand is two sets of Markdown files and the skills that read them:
+
+- **Signs:** what makes text read as AI-written, in each language. They ship with the plugin.
+- **Styles:** how you write, learned from your own samples. They stay on your machine.
+
+`/byhand:learn` makes a style. After that you ask Claude Code for a mail as you always do, and byhand writes it in your
+style, without the signs. There is nothing else to install or run.
+
 ## What it will do
 
 - **Know the signs.** A catalogue of what gives AI writing away ("delve", "it's worth noting", rule-of-three lists, a

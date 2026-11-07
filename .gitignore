@@ -38,3 +38,7 @@ CLAUDE.local.md
 
 # Scratch files the skills write: review packs, issue and PR bodies.
 .local/
+
+# A project's own styles, which hold real writing, and what an eval run leaves beside the suite.
+.byhand/
+plugin/evals/results/

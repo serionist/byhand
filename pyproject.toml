@@ -4,34 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "byhand"
-# One version for the package and the plugin: plugin/.claude-plugin/plugin.json and every byhand==X.Y.Z pin under
-# plugin/ equal it, and the gate refuses a difference. 0.0.0 until the release PR sets 0.1.0: Claude Code keeps a user
-# on a plugin's version until it changes, so an install before the release must not already read 0.1.0.
+# Fixed: this package is the repo's own tool and is never published. The version byhand has is plugin.json's.
 version = "0.0.0"
-description = "Write like a person, in your own voice and language, without the signs of AI writing"
-readme = "README.md"
+description = "byhand's own tools: they check the catalogue and render it into the plugin"
 license = "MIT"
 requires-python = ">=3.12"
-authors = [
-    { name = "Soma Osvay" },
-]
-keywords = ["writing", "style", "voice", "ai-writing", "multilingual", "claude-code"]
-classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
-    "Intended Audience :: End Users/Desktop",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Topic :: Text Processing :: Linguistic",
-]
-# Exact pins, as in the house's other repos: Dependabot moves them, and CI proves each move.
+classifiers = ["Private :: Do Not Upload"]
 dependencies = []
-
-[project.urls]
-Homepage = "https://github.com/serionist/byhand"
-Repository = "https://github.com/serionist/byhand"
-Issues = "https://github.com/serionist/byhand/issues"
 
 [project.scripts]
 byhand = "byhand.cli:main"
@@ -48,9 +27,6 @@ dev = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/byhand"]
-
-[tool.hatch.build.targets.sdist]
-include = ["/src", "/tests/test_package.py", "/README.md", "/CHANGELOG.md", "/LICENSE"]
 
 # Strict from the start, as in omniverse-mcp: an unknown marker or setting, an xfail that passes, a repeated
 # parametrize id and any warning are errors. The tests run on every core (pytest-xdist's -n auto); -n 0 runs them all

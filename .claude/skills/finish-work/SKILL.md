@@ -22,7 +22,7 @@ feels complete. `main` takes PRs only, and the maintainer squash-merges them (`A
 3. **The live sources,** for a change to the refresh: run it by hand against the sources the catalogue lists, into a
    folder git ignores, never a PR. Note which sources it read and which it could not, in which languages, and what it
    proposed. The PR says whether it ran.
-4. **Try it in a real session,** for a change under `plugin/` or to a command a skill runs, which no test reaches:
+4. **Try it in a real session,** for a change under `plugin/`, which no test reaches:
    with the installed copy turned off (`claude plugin disable byhand@byhand`), start `claude --plugin-dir plugin` in
    an empty folder and ask for the writing the change touches (a short mail, a Slack message, a deck outline), in at
    least one language other than English when the change is about languages. Check that the skill started by itself,
@@ -60,5 +60,4 @@ feels complete. `main` takes PRs only, and the maintainer squash-merges them (`A
 - Mark a `REVIEW.md` question yes without its evidence.
 - Add AI co-author trailers, "Generated with" lines or session links: commits, PR titles, PR bodies.
 - Push to `main`, merge without the maintainer's word, or push to someone else's branch.
-- Bump the version outside a release PR: `pyproject.toml`, `plugin.json` and every `byhand==` pin move
-  together, in the PR that dates the release in `CHANGELOG.md`.
+- Bump `plugin.json`'s version outside the PR that dates the release in `CHANGELOG.md`.

@@ -704,7 +704,7 @@ MARKET = {
     "name": "byhand",
     "plugins": [{"name": "byhand", "source": "./plugin", "description": "Write like a person."}],
 }
-PLUGIN_SKILL = f"""---
+PLUGIN_SKILL = """---
 name: write
 description: >-
   Use when someone wants a mail or a message written in their own voice.
@@ -713,7 +713,7 @@ allowed-tools: Read Glob Grep
 
 # Write a mail
 
-Run `uv run --no-project --with byhand=={VERSION} byhand validate`, as [the spec](spec.md) says.
+Follow [the spec](spec.md).
 """
 AGENT = """---
 name: checker
@@ -727,9 +727,8 @@ model: opus
 
 
 def plugin_tree(root: Path) -> Path:
-    """An invented plugin, its marketplace and the pyproject.toml it is versioned by, under root."""
+    """An invented plugin and its marketplace, under root."""
     files = {
-        "pyproject.toml": f'[project]\nname = "byhand"\nversion = "{VERSION}"\n',
         gate.MARKETPLACE: json.dumps(MARKET),
         gate.PLUGIN_MANIFEST: json.dumps(PLUGIN),
         "plugin/README.md": "# byhand\n\n| `/byhand:write` | a mail in your own voice |\n",
@@ -817,12 +816,6 @@ def test_agent_problems(stem, text, expected):
     assert expected in problems[0]
 
 
-def test_versions_agree_with_pyproject():
-    assert gate.version_problems({"pyproject.toml": "0.2.0", "plugin/skills/write/SKILL.md (pin 1)": "0.2.0"}) == []
-    (problem,) = gate.version_problems({"pyproject.toml": "0.2.0", "plugin/skills/write/SKILL.md (pin 1)": "0.1.0"})
-    assert "plugin/skills/write/SKILL.md (pin 1) has version '0.1.0' and pyproject.toml '0.2.0'" in problem
-
-
 CHANGELOG = "# Changelog\n\n## Unreleased\n\n### Added\n\n- The write skill.\n"
 RELEASED = "# Changelog\n\n## Unreleased\n\n## 0.1.0 (2026-11-02)\n\n### Added\n\n- The write skill.\n"
 
@@ -835,7 +828,7 @@ RELEASED = "# Changelog\n\n## Unreleased\n\n## 0.1.0 (2026-11-02)\n\n### Added\n
         ("0.1.0", RELEASED, []),
         ("0.2.0", RELEASED, ["CHANGELOG.md has no '## 0.2.0 (YYYY-MM-DD)' section, and 0.1.0 is released"]),
         ("0.1.0", RELEASED.replace("(2026-11-02)", "(soon)"), []),
-        (None, CHANGELOG, ["pyproject.toml has no [project] version"]),
+        (None, CHANGELOG, [f"{gate.PLUGIN_MANIFEST} has no version"]),
     ],
     ids=["first, unreleased", "bumped before any release", "released", "bumped outside a release", "undated", "none"],
 )
@@ -846,7 +839,8 @@ def test_release_problems(version, changelog, expected):
 
 
 def test_check_version_says_whether_the_version_is_released(tmp_path):
-    (tmp_path / "pyproject.toml").write_text('[project]\nname = "x"\nversion = "0.1.0"\n', encoding="utf-8")
+    (tmp_path / gate.PLUGIN_MANIFEST).parent.mkdir(parents=True)
+    (tmp_path / gate.PLUGIN_MANIFEST).write_text('{"version": "0.1.0"}', encoding="utf-8")
     (tmp_path / "CHANGELOG.md").write_text(CHANGELOG, encoding="utf-8")
     assert gate.check_version(gate.Scope([]), root=tmp_path).detail == "0.1.0, not released yet"
     (tmp_path / "CHANGELOG.md").write_text(RELEASED, encoding="utf-8")
@@ -982,14 +976,6 @@ def test_a_failing_step_before_a_tool_fails_its_row_and_the_tool_never_runs(monk
 
 # Each case: the file, the text replaced in it (None writes a new file) and its replacement, what the check says.
 PLUGIN_BREAKS = [
-    (
-        "plugin/skills/write/SKILL.md",
-        f"byhand=={VERSION}",
-        "byhand==9.9.9",
-        "plugin/skills/write/SKILL.md (pin 1) has version '9.9.9'",
-    ),
-    (gate.PLUGIN_MANIFEST, f'"{VERSION}"', '"9.9.9"', f"{gate.PLUGIN_MANIFEST} has version '9.9.9'"),
-    ("pyproject.toml", f'"{VERSION}"', '"9.9.9"', "has version '0.1.0' and pyproject.toml '9.9.9'"),
     ("plugin/README.md", "`/byhand:write`", "`/byhand:build`", "does not list `/byhand:write`"),
     ("plugin/skills/write/SKILL.md", "Read Glob Grep", "Read Write", "allowed-tools 'Write'"),
     ("plugin/agents/checker.md", "model: opus", "model: gpt-5", "model is 'gpt-5'"),
@@ -1001,13 +987,10 @@ PLUGIN_BREAKS = [
         "\n[usage][u]\n\n[u]: ../docs/USAGE.md\n|",
         "the link '../docs/USAGE.md' leads to no file",
     ),
-    (
-        "plugin/skills/write/SKILL.md",
-        f"--with byhand=={VERSION}",
-        f"--with byhand>={VERSION}",
-        "runs byhand unpinned",
-    ),
-    ("plugin/skills/write/SKILL.md", "Run `uv run", "Run `uvx byhand check`, or `uv run", "'uvx byhand' runs byhand"),
+    ("plugin/skills/write/SKILL.md", "Follow", "Run `uv run byhand check`, then follow", "'uv run' runs a command"),
+    ("plugin/skills/write/SKILL.md", "Follow", "Run `uvx byhand check`, then follow", "'uvx' runs a command"),
+    ("plugin/skills/write/SKILL.md", "Follow", "Run `pip install x`, then follow", "'pip install' runs a command"),
+    ("plugin/skills/write/SKILL.md", "Follow", "Use byhand==1.0, then follow", "'byhand==' runs a command"),
     ("plugin/hooks/hooks.json", None, "{}", "plugin/hooks/hooks.json: a file the gate doesn't check"),
     ("plugin/.mcp.json", None, '{"mcpServers": {}}', "plugin/.mcp.json: a file the gate doesn't check"),
     ("plugin/skills/write/build.py", None, "print(1)\n", "plugin/skills/write/build.py: a file the gate doesn't"),
@@ -1017,6 +1000,18 @@ PLUGIN_BREAKS = [
     (gate.PLUGIN_MANIFEST, '"name"', '"agents": "./agents", "name"', "the key 'agents' isn't checked"),
     (gate.MARKETPLACE, None, "{not json", "can't be read"),
     (gate.MARKETPLACE, '"source"', '"hooks": {}, "source"', "the plugin's key 'hooks' isn't checked"),
+    ("plugin/signs/en/run.py", None, "print(1)\n", "plugin/signs/en/run.py: a file the gate doesn't check"),
+    ("plugin/evals/setup.sh", None, "echo 1\n", "plugin/evals/setup.sh: a file the gate doesn't check"),
+    ("plugin/signs/en/any.md", None, "Run `uvx byhand check`.\n", "'uvx' runs a command"),
+    ("plugin/evals/case.yaml", None, "prompt: uv run byhand\n", "'uv run' runs a command"),
+    ("plugin/evals/case.yaml", None, "context:\n  scaffold_script: setup.md\n", "a scaffold_script runs a script"),
+    (
+        "plugin/signs/en/any.md",
+        None,
+        "A real [link](nowhere.md) outside code.\n",
+        "the link 'nowhere.md' leads to no file",
+    ),
+    ("plugin/README.md", "\n|", "\n`[x](nowhere.md)`\n|", "the link 'nowhere.md' leads to no file"),
 ]
 
 
@@ -1024,17 +1019,16 @@ PLUGIN_BREAKS = [
     "case",
     PLUGIN_BREAKS,
     ids=[
-        "a skill's pin",
-        "plugin.json's version",
-        "pyproject's version",
         "README",
         "a write pre-approved",
         "an agent's model",
         "a link to nothing",
         "a link out of plugin/",
         "a reference link out of plugin/",
-        "a ranged spec",
-        "uvx unpinned",
+        "uv run",
+        "uvx",
+        "pip install",
+        "a pin",
         "a hooks file",
         "a server",
         "a script beside a skill",
@@ -1044,6 +1038,13 @@ PLUGIN_BREAKS = [
         "a manifest key",
         "unreadable",
         "a marketplace key",
+        "a script among the signs",
+        "a script among the evals",
+        "a command in a sign file",
+        "a command in an eval",
+        "a scaffold script",
+        "a real link in a sign file",
+        "a link in a code span outside the signs",
     ],
 )
 def test_the_plugin_check_finds(case, tmp_path, monkeypatch):
@@ -1585,3 +1586,76 @@ def test_an_unreadable_base_fails_the_id_check(tmp_path):
 )
 def test_sign_ids_reads_a_file(text, expected):
     assert gate.sign_ids(text) == expected
+
+
+def test_the_rendered_signs_and_the_eval_suite_pass_and_an_eval_run_is_skipped(tmp_path, monkeypatch):
+    root = plugin_tree(tmp_path)
+    for rel, text in {
+        "plugin/signs/en/any.md": "# Signs\n\n- a term: `kulcsfontossag[ua](?:ak)?` and `[1](turn0search0)`\n",
+        "plugin/signs/zh-Hant/claude.layout.md": "# Signs\n",
+        "plugin/evals/write/prompt.md": "Write a mail.\n",
+        "plugin/evals/write/case.yaml": "graders: []\n",
+        "plugin/evals/write/history.jsonl": "{}\n",
+        "plugin/evals/results/2026-11-07/report.html": "<html></html>\n",
+        "plugin/evals/results/2026-11-07/aggregate-result.json": '"uvx byhand check, byhand==9.9.9"\n',
+    }.items():
+        (root / rel).parent.mkdir(parents=True, exist_ok=True)
+        (root / rel).write_text(text, encoding="utf-8")
+    monkeypatch.setattr(gate.shutil, "which", lambda name: None)
+    monkeypatch.delenv("GATE_REQUIRE_CLAUDE", raising=False)
+    result = gate.check_plugin(gate.Scope([]), root=root)
+    assert result.status == "warn", result.output
+
+
+def test_a_tracked_file_under_byhand_is_refused(tmp_path):
+    run = new_repo(tmp_path)
+    (tmp_path / "file").write_text("x\n", encoding="utf-8")
+    run("add", "file")
+    assert gate.check_private(gate.Scope([]), tmp_path).status == "pass"
+    style = tmp_path / ".byhand" / "styles" / "work.md"
+    style.parent.mkdir(parents=True)
+    style.write_text("# My style\n", encoding="utf-8")
+    assert gate.check_private(gate.Scope([]), tmp_path).status == "pass"  # on disk, ignored: it stays out of git
+    run("add", "-f", ".byhand/styles/work.md")
+    result = gate.check_private(gate.Scope([]), tmp_path)
+    assert result.status == "FAIL"
+    assert ".byhand/styles/work.md is tracked" in result.detail
+
+
+@pytest.mark.parametrize("rel", ["docs/.byhand/styles/me.md", "plugin/evals/results/run.sh"])
+def test_private_refuses_a_nested_style_and_a_tracked_eval_result(tmp_path, rel):
+    run = new_repo(tmp_path)
+    (tmp_path / rel).parent.mkdir(parents=True)
+    (tmp_path / rel).write_text("x\n", encoding="utf-8")
+    run("add", "-f", rel)
+    result = gate.check_private(gate.Scope([]), tmp_path)
+    assert (result.status, result.detail) == ("FAIL", f"{rel} is tracked: it must stay out of git")
+
+
+@pytest.mark.parametrize(
+    ("name", "args"), [("sign files", ["byhand", "render", "--check"]), ("catalogue", ["byhand", "validate"])]
+)
+def test_the_quick_lane_runs_the_package_as_a_tool_and_fails_with_it(monkeypatch, name, args):
+    check = {row[0]: row[1] for row in gate.lane_checks("quick")}[name]
+    calls: list[list[str]] = []
+
+    def run(cmd: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+        calls.append(cmd)
+        return subprocess.CompletedProcess(cmd, 1 if cmd[-len(args) :] == args else 0, "stale", "")
+
+    monkeypatch.setattr(gate, "run", run)
+    monkeypatch.setattr(gate.shutil, "which", lambda tool: tool)
+    assert check(gate.Scope([])).status == "FAIL"
+    assert calls[-1][-len(args) :] == args
+
+
+def test_the_quick_lane_holds_private_and_sign_ids():
+    names = [row[0] for row in gate.lane_checks("quick")]
+    assert {"private", "sign ids"} <= set(names)
+    checks = {row[0]: row[1] for row in gate.lane_checks("quick")}
+    assert checks["private"] is gate.check_private
+    assert checks["sign ids"] is gate.check_sign_ids
+
+
+def test_private_fails_where_git_cant_list(tmp_path):
+    assert gate.check_private(gate.Scope([]), tmp_path).status == "FAIL"

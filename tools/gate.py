@@ -5,17 +5,18 @@ Usage: uv run tools/gate.py quick|full [--base <ref>] [--head <ref>]
 
 Two kinds of check:
 - the working tree's: the lock file, ruff check, ruff format, basedpyright, import-linter's contracts, `byhand
-  validate` on the catalogue, run as a tool so the gate never imports the package, every sign id a base has still
-  in the tree, a coverage floor no lower than at
-  the start of each range checked, the version's CHANGELOG section once a release is dated, AGENTS.md within 150
-  lines, each skill's frontmatter and its Codex link, the plans (each refuses a review round with no Fit above it or
-  with a Fit row unanswered, an improvement id twice in its review, and a plan with no `## Plan review`; a file in
-  docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable, the plugin (its manifests,
-  one version everywhere, its skills pre-approving read-only tools only, its agents' frontmatter, and Claude Code's
-  own `claude plugin validate --strict`), and each BYHAND_ variable the docs and the repo's skills name being one the
-  plugin or the package reads, with AGENTS.md naming each the plugin reads; full adds pytest under coverage on every
-  core, then the workers' data combined and the report against the floor. They run when the head is the checked-out
-  commit, and are skipped, with the reason, when the tree is not what is checked;
+  validate` on the catalogue and `byhand render --check` on the plugin's sign files, each run as a tool so the gate
+  never imports the package, every sign id a base has still in the tree, no file tracked under .byhand/ or an eval
+  run's results, a coverage floor no lower than at the start of each range checked, the version's CHANGELOG section
+  once a release is dated, AGENTS.md within 150 lines, each skill's frontmatter and its Codex link, the plans (each
+  refuses a review round with no Fit above it or with a Fit row unanswered, an improvement id twice in its review, and
+  a plan with no `## Plan review`; a file in docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored
+  as executable, the plugin (its manifests, no command in it, its skills pre-approving read-only tools only, its
+  agents' frontmatter, and Claude Code's own `claude plugin validate --strict`), and each BYHAND_ variable the docs
+  and the repo's skills name being one the plugin or the package reads, with AGENTS.md naming each the plugin reads;
+  full adds pytest under coverage on every core, then the workers' data combined and the report against the floor.
+  They run when the head is the checked-out commit, and are skipped, with the reason, when the tree is not what is
+  checked;
 - the commits': no tool attribution in any message, and no tool as any commit's author or committer, and gitleaks,
   on base..head (merges included). gitleaks exits 0 when it could not read the commits, so a run that logged an
   error fails too.
@@ -79,6 +80,7 @@ DESCRIPTION_MAX = 1024
 # every improvement the fit raised has its answer (REVIEW.md, Improvements).
 PLANS_DIR = "docs/plans"
 SIGNS_DIR = "src/byhand/catalogue/signs"
+PRIVATE_DIR = ".byhand"
 PLAN_FILE = re.compile(r"^\d{4}-\d{2}-\d{2}-[a-z0-9]+(?:-[a-z0-9]+)*\.md$")
 PLAN_REVIEW = "## Plan review"
 PLAN_ANSWERS = ("taken", "left", "later")
@@ -99,6 +101,12 @@ PLUGIN_READS = frozenset({"Read", "Glob", "Grep"})
 # something the gate doesn't check, as would a file under plugin/ other than these and the skills' and agents'.
 PLUGIN_KEYS = ("name", "version", "description", "author", "homepage", "repository", "license", "keywords")
 PLUGIN_FILES = (".claude-plugin/plugin.json", "README.md")
+# The rendered signs, which `byhand render --check` holds equal to the catalogue, and the eval suite: what a case is
+# written in, never a script. Every eval run writes its results beside the suite, which git ignores and no check reads.
+PLUGIN_SIGNS = "signs"
+PLUGIN_EVALS = "evals"
+EVAL_SUFFIXES = (".md", ".yaml", ".jsonl")
+EVAL_RESULTS = "evals/results/"
 # The marketplace's entry may add commands, agents, hooks or servers to the plugin's own, so it holds only these.
 MARKET_ENTRY_KEYS = ("name", "source", "description")
 # What an agent's frontmatter may hold. Claude Code ignores hooks, mcpServers and permissionMode in a plugin's agent,
@@ -107,15 +115,12 @@ AGENT_KEYS = ("name", "description", "model", "effort", "tools")
 AGENT_MODELS = ("sonnet", "opus", "haiku", "fable", "inherit")
 AGENT_EFFORTS = ("low", "medium", "high", "xhigh", "max")
 _ALLOWED_ENTRY = re.compile(r"[^\s,(]+(?:\([^)]*\))?")
-# Every version the plugin names: `byhand==X.Y.Z`, the package its skills run. A placeholder such as <version>
-# starts no digit.
-_PIN = re.compile(r"byhand==([0-9](?:[0-9A-Za-z.+!-]*[0-9A-Za-z])?)")
-# A byhand the plugin runs without a pin: `--with byhand`, `--from byhand>=0.1`, `uvx byhand`. Each would run whatever
-# PyPI serves that day, not the release's version (REVIEW.md, blocker).
-_LOOSE = re.compile(r"(?:--with|--from)[ =]['\"]?byhand(?!==)(?![\w-])|\buvx\s+['\"]?byhand(?![\w-])")
+# What runs a command: a plugin skill runs none, so byhand needs nothing but the plugin (AGENTS.md).
+_COMMAND = re.compile(r"\buv\s+run\b|\buvx\b|\bpip\s+install\b|\bbyhand==")
 # A Markdown link's target: Claude Code installs plugin/ alone, so a relative one leads somewhere only when it names a
 # file under plugin/, such as a skill's side file.
 _LINK = re.compile(r"\]\(([^)\s]+)")
+_CODE_SPAN = re.compile(r"`[^`\n]*`")
 # A reference-style link's definition, `[name]: target`, which leads somewhere as an inline link does.
 _REF_LINK = re.compile(r"^ {0,3}\[[^\]]+\]:\s*<?([^\s>]+)", re.MULTILINE)
 # A release's heading in CHANGELOG.md, `## X.Y.Z (YYYY-MM-DD)`: the release PR dates the version it sets.
@@ -458,21 +463,11 @@ def agent_problems(stem: str, text: str) -> list[str]:
     return problems
 
 
-def version_problems(versions: dict[str, str | None]) -> list[str]:
-    """One version for the package and the plugin: each place's version, by where it is, equal to pyproject.toml's."""
-    want = versions.get("pyproject.toml")
-    return [
-        f"{where} has version {got!r} and pyproject.toml {want!r}: a release bumps them together"
-        for where, got in versions.items()
-        if got != want
-    ]
-
-
 def release_problems(version: str | None, changelog: str) -> list[str]:
     """The version has its dated section in CHANGELOG.md, `## X.Y.Z (YYYY-MM-DD)`, written by the release PR that set
     it. Until the first release dates one, the version is the one being prepared under Unreleased, and passes."""
     if not version:
-        return ["pyproject.toml has no [project] version"]
+        return [f"{PLUGIN_MANIFEST} has no version"]
     released = _RELEASE_HEADING.findall(changelog)
     if released and version not in released:
         return [
@@ -792,10 +787,8 @@ def check_coverage_floor(scope: Scope, root: Path = ROOT) -> Result:
 
 
 def check_version(_scope: Scope, root: Path = ROOT) -> Result:
-    """pyproject.toml's version against CHANGELOG.md's dated sections; the plugin check holds plugin.json and every pin
-    equal to it."""
-    with (root / "pyproject.toml").open("rb") as f:
-        version = tomllib.load(f).get("project", {}).get("version")
+    """plugin.json's version, the one version the repo has, against CHANGELOG.md's dated sections."""
+    version = _json(root / PLUGIN_MANIFEST).get("version")
     changelog = root / "CHANGELOG.md"
     if not changelog.is_file():
         return Result("version", "FAIL", "CHANGELOG.md is missing")
@@ -891,46 +884,46 @@ def _json(path: Path) -> dict[str, Any]:
     return cast(dict[str, Any], data)
 
 
-def plugin_versions(root: Path, plugin: dict[str, Any]) -> dict[str, str | None]:
-    """The version in each place that carries one: pyproject.toml, plugin.json, and each `byhand==` pin under
-    plugin/."""
-    with (root / "pyproject.toml").open("rb") as f:
-        versions: dict[str, str | None] = {"pyproject.toml": tomllib.load(f).get("project", {}).get("version")}
-    versions[PLUGIN_MANIFEST] = plugin.get("version")
-    for path in sorted((root / PLUGIN_DIR).rglob("*")):
-        if path.is_file() and path.suffix in (".json", ".md"):
-            for n, pin in enumerate(_PIN.findall(path.read_text(encoding="utf-8")), 1):
-                versions[f"{path.relative_to(root).as_posix()} (pin {n})"] = pin
-    return versions
+def plugin_paths(root: Path) -> list[Path]:
+    """Every file under plugin/, less what an eval run leaves there."""
+    base = root / PLUGIN_DIR
+    files = (path for path in sorted(base.rglob("*")) if path.is_file())
+    return [path for path in files if not path.relative_to(base).as_posix().startswith(EVAL_RESULTS)]
 
 
-def loose_pin_problems(root: Path) -> list[str]:
-    """Each place under plugin/ that runs byhand without `byhand==<version>`."""
+def command_problems(root: Path) -> list[str]:
+    """Each place under plugin/ that runs a command."""
     return [
-        f"{path.relative_to(root).as_posix()}: {match.group(0)!r} runs byhand unpinned; write byhand==<version>"
-        for path in sorted((root / PLUGIN_DIR).rglob("*"))
-        if path.is_file() and path.suffix in (".json", ".md")
-        for match in _LOOSE.finditer(path.read_text(encoding="utf-8"))
+        f"{path.relative_to(root).as_posix()}: {match.group(0)!r} runs a command; the plugin needs nothing but itself"
+        for path in plugin_paths(root)
+        if path.suffix in (".json", ".md", ".yaml", ".jsonl")
+        for match in _COMMAND.finditer(path.read_text(encoding="utf-8"))
     ]
 
 
 def plugin_file_problems(root: Path) -> list[str]:
     """Only the files the gate checks are under plugin/: the manifest, the README, each skill's SKILL.md and the
-    Markdown beside it, each agent's file. A Markdown link in it, inline or a reference's definition, is a URL, a
-    mailto: address, an anchor, or a file under plugin/."""
+    Markdown beside it, each agent's file, the rendered signs, the eval suite. A Markdown link in it, inline or a
+    reference's definition, is a URL, a mailto: address, an anchor, or a file under plugin/."""
     problems: list[str] = []
     base = root / PLUGIN_DIR
     inside = base.resolve()
-    for path in sorted(p for p in base.rglob("*") if p.is_file()):
+    for path in plugin_paths(root):
         rel = path.relative_to(base).as_posix()
         parts = rel.split("/")
         markdown = path.suffix == ".md"
         skill_file = len(parts) == 3 and parts[0] == "skills" and markdown and (path.parent / "SKILL.md").is_file()
         agent_file = len(parts) == 2 and parts[0] == "agents" and markdown
-        if rel not in PLUGIN_FILES and not skill_file and not agent_file:
+        sign_file = parts[0] == PLUGIN_SIGNS and markdown
+        eval_file = parts[0] == PLUGIN_EVALS and path.suffix in EVAL_SUFFIXES
+        if rel not in PLUGIN_FILES and not (skill_file or agent_file or sign_file or eval_file):
             problems.append(f"{PLUGIN_DIR}/{rel}: a file the gate doesn't check; give it a check first (write-skill)")
+        if eval_file and path.suffix == ".yaml" and "scaffold_script" in path.read_text(encoding="utf-8"):
+            problems.append(f"{PLUGIN_DIR}/{rel}: a scaffold_script runs a script; a suite in plugin/ holds none")
         if markdown:
             text = path.read_text(encoding="utf-8")
+            # A rendered term is a regular expression in backticks, where `](` is no link (the maintainer's call, #14).
+            text = _CODE_SPAN.sub("", text) if sign_file else text
             for target in _LINK.findall(text) + _REF_LINK.findall(text):
                 if target.startswith(("https://", "http://", "mailto:", "#")):
                     continue
@@ -960,9 +953,7 @@ def check_plugin(scope: Scope, root: Path = ROOT) -> Result:
         f"{PLUGIN_MANIFEST}: the key {key!r} isn't checked by the gate" for key in plugin if key not in PLUGIN_KEYS
     ]
     problems += plugin_file_problems(root)
-    versions = plugin_versions(root, plugin)
-    problems += version_problems(versions)
-    problems += loose_pin_problems(root)
+    problems += command_problems(root)
     skills = sorted((root / PLUGIN_SKILLS_DIR).glob("*/SKILL.md"))
     readme = root / PLUGIN_DIR / "README.md"
     listed = readme.read_text(encoding="utf-8") if readme.is_file() else ""
@@ -976,7 +967,7 @@ def check_plugin(scope: Scope, root: Path = ROOT) -> Result:
         problems += agent_problems(path.stem, path.read_text(encoding="utf-8"))
     if problems:
         return outcome("plugin", problems, "")
-    detail = f"{len(skills)} skills, {len(agents)} agents, version {versions['pyproject.toml']}"
+    detail = f"{len(skills)} skills, {len(agents)} agents, version {plugin['version']}"
     claude = shutil.which("claude")
     if not claude:
         if truthy(os.environ.get("GATE_REQUIRE_CLAUDE")):
@@ -988,6 +979,17 @@ def check_plugin(scope: Scope, root: Path = ROOT) -> Result:
             output = (done.stdout + done.stderr).strip()
             return Result("plugin", "FAIL", f"claude plugin validate --strict {target} failed", output=output)
     return Result("plugin", "pass", f"{detail}, validated by Claude Code")
+
+
+def check_private(_scope: Scope, root: Path = ROOT) -> Result:
+    """What git ignores because no one should ship it, and the gate refuses when it is forced past that: a project's
+    styles hold real writing, at any depth (AGENTS.md, Never), and an eval run's results sit in the plugin, whose other
+    checks skip them on the promise git ignores them."""
+    listed = git("ls-files", "--", f":(glob)**/{PRIVATE_DIR}/**", f"{PLUGIN_DIR}/{EVAL_RESULTS}", cwd=root)
+    if listed.returncode != 0:
+        return Result("private", "FAIL", "git ls-files failed", output=listed.stderr)
+    tracked = listed.stdout.splitlines()
+    return outcome("private", [f"{path} is tracked: it must stay out of git" for path in tracked], "none tracked")
 
 
 def sign_ids(text: str) -> set[str]:
@@ -1096,6 +1098,8 @@ TREE: list[tuple[str, Check]] = [
     ("imports", tool("imports", ["lint-imports"])),
     ("catalogue", tool("catalogue", ["byhand", "validate"])),
     ("sign ids", check_sign_ids),
+    ("sign files", tool("sign files", ["byhand", "render", "--check"])),
+    ("private", check_private),
     ("coverage floor", check_coverage_floor),
     ("version", check_version),
     ("AGENTS.md", check_agents_md),

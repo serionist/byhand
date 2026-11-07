@@ -98,6 +98,12 @@ F30 hold, each with its test.
 Refuted: N5, a stale `round: 1` and `head` in the frontmatter. `docs/reviews/README.md` says the frontmatter describes
 the first round, and later rounds are sections.
 
+## Closed
+
+Round 4's fix is the reviewer's own scratch variant, verified in the main session on its 46 probe lines: of the 30 plain
+replies only "an email you can send to the school", a chatbot's move, fires; 13 of the 16 chatbot lines fire; ripgrep
+and the office test agree. The maintainer merged on that, without a fifth round, on 2026-11-07.
+
 ## Checks
 
 - After round 2's fixes: `uv run tools/gate.py full`; copycheck over 1,690 files: 0 runs of 6 words, and 58 hits of 5

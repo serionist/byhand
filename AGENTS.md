@@ -25,7 +25,7 @@ styles, and the skills that read them. It is for the user's own writing, sent un
   user's machine.
 - **The plugin** (`plugin/`): skills that write and check text against the signs and a style, starting by themselves
   when the user writes mail, a message, a document or a deck. They run no command: nothing but the plugin to install.
-- **Where the work stands:** the harness, the catalogue's schema and its rendering. `docs/plans/2026-11-06-bootstrap.md`
+- **Where the work stands:** the harness, the catalogue with its first signs (`any`, `en`), its rendering. `docs/plans/2026-11-06-bootstrap.md`
   (#1) designs `0.1.0` and after; read its progress log first. The package in `src/` is the repo's own tool, never a user's.
 
 ## Where things are
@@ -35,7 +35,7 @@ styles, and the skills that read them. It is for the user's own writing, sent un
 | `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (version ranges), `render.py` (the plugin's sign files, the budgets), `cli.py` (`byhand validate`, `byhand render`) |
 | `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md`, `plugin/signs/` (rendered: never edited by hand), `plugin/evals/`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
-| `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), standard library only |
+| `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), `copycheck.py` (by hand: sign text against downloaded sources), standard library only |
 | `docs/` | `USAGE.md` (the commands, the budgets); `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
 | `.claude/` | `CLAUDE.md` (imports this file), `settings.json` (no attribution; allows the repo's own checks and read-only git and gh, each named whole but the git ones `tests/test_gate.py` sweeps and gh's reads), `skills/` (below) |
 | `.agents/` | `skills/`: links to `.claude/skills/<name>` for Codex, written into git's index by `uv run tools/setup.py link` |
@@ -82,8 +82,8 @@ PowerShell unless a PowerShell form stands beside it.
 6. **The maintainer,** @serionist, squash-merges; merging is the approval. `main` takes PRs only.
 
 The skills in `.claude/skills/` run this loop: `start-work` (1 to 3), `fit-plan` (is a written plan the right one,
-before its review), `review-plan`, `review-code`, `finish-work` (5), and `write-skill` for writing or fixing a skill,
-the repo's or the plugin's, or a plugin agent.
+before its review), `review-plan`, `review-code`, `finish-work` (5); `write-skill` writes or fixes a skill, the repo's
+or the plugin's, or a plugin agent; `propose-signs` drafts signs from a source.
 
 ## Writing
 
@@ -130,7 +130,7 @@ What this repo's sources already paid for, until its own history adds more:
 | A source's licence: Wikipedia's text is CC BY-SA | the catalogue | Signs are written in our own words and cite their source; no source text is copied |
 | A sign that flags plain human writing ("however", a list of three) makes the plugin preachy and wrong | the catalogue | Each sign has an invented example it flags and a human one it passes, both tested |
 | A model released after the catalogue: an exact match on its id loads none of its family's signs | the catalogue | A model scope is a family and an open version range; an unknown version gets its family's newest signs and the `any` ones, and Step 7's evals run an id the catalogue has never seen |
-| English's signs translated into another language: a tell in English can be normal in Hungarian or Mandarin | the catalogue | A sign is `any` only when its sources show it in several languages; otherwise it names its own |
+| English's signs translated into another language: a tell in English can be normal in Hungarian or Mandarin | the catalogue | A sign is `any` only when its sources show it in several languages, a translated page counting, or it is an artefact with a `check`; otherwise it names its own |
 
 ## Look up APIs before coding against them
 

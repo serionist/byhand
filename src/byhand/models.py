@@ -38,7 +38,7 @@ class Version:
 
 @dataclass(frozen=True)
 class Family:
-    """A model family. Its id names its rendered files, `plugin/signs/<language>/<id>.md`."""
+    """A model family. Its id names its rendered files, `plugin/signs/<language>/<id>.signs.md`."""
 
     id: str
     name: str

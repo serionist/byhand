@@ -1001,12 +1001,16 @@ def sign_ids(text: str) -> set[str]:
 
 
 def check_sign_ids(scope: Scope, root: Path = ROOT) -> Result:
-    """A sign's id is a one-way door, and a retired sign keeps it: each id a range's base has is still in the tree."""
+    """A sign's id is a one-way door, and a retired sign keeps it: each id on main at a range's base is still in the
+    tree. Main's, not the range's: pre-push's range starts at the pushed branch, and an id only that branch ever held
+    has reached no one, so a review may still cut it."""
     here: set[str] = set()
     for path in sorted((root / SIGNS_DIR).glob("*.toml")):
         here |= sign_ids(path.read_text(encoding="utf-8"))
     gone: list[str] = []
-    for ref, label in fork_points(scope.ranges, root):
+    for start, label in fork_points(scope.ranges, root):
+        on_main = git("merge-base", start, BASE, cwd=root)
+        ref = on_main.stdout.strip() if on_main.returncode == 0 else start
         listed = git("ls-tree", "--name-only", ref, "--", f"{SIGNS_DIR}/", cwd=root)
         if listed.returncode != 0:
             return Result("sign ids", "FAIL", f"cannot read the tree at {ref}", output=listed.stderr)

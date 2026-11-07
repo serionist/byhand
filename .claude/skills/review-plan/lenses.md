@@ -34,7 +34,7 @@ Applies when: the plan touches the catalogue, its schema, its languages, or the 
 
 Does every sign keep its id, name its language or `any`, say what a person writes instead, cite its source in our own
 words, and come with an invented example it flags and a human one it passes? Does a sign marked `any` rest on sources
-in more than one language? Are the language codes and the list of languages from one source the plan names? Does a
+in more than one language, a translated page counting, or is it an artefact with a `check`? Are the language codes and the list of languages from one source the plan names? Does a
 skill load only one draft's language and model, the `any` signs and one style, and does a model released after the
 catalogue still get its family's signs? A renamed id or a changed schema is a one-way
 door.

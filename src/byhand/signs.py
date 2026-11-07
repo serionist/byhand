@@ -20,7 +20,7 @@ from byhand.models import Family, ModelRange, parse_version
 CATALOGUE = Path(__file__).parent / "catalogue"
 ANY = "any"
 LANGUAGE_COUNT = 100
-WEAK_CLUSTER = 3  # a weak sign counts only with this many in one paragraph: people do them too
+WEAK_CLUSTER = 3  # hits of weak signs, in a paragraph or section, one phrase once: people do each of them too
 KINDS = ("message", "email", "post", "document", "deck", "sheet")
 LAYOUT_KINDS = ("deck", "sheet")
 CATEGORIES = ("word", "phrase", "structure", "formatting", "layout", "artefact")
@@ -398,7 +398,8 @@ def _citation(where: str, entry: object, catalogue: Catalogue) -> list[str]:
 
 def _sign_sources(where: str, row: Table, language: str, catalogue: Catalogue) -> list[str]:
     """Each citation, and what the citations cover: a sign comes from sources in its own language, so English's signs
-    aren't carried over into another, and an `any` sign from at least two (AGENTS.md, Traps)."""
+    aren't carried over into another, and an `any` sign from at least two (AGENTS.md, Traps). An artefact with a `check`
+    needs one: a tool's string looks the same in every language."""
     cited = row.get("sources")
     if not isinstance(cited, list) or not cited:
         return [f"{where}: `sources` must cite at least one"]
@@ -407,7 +408,7 @@ def _sign_sources(where: str, row: Table, language: str, catalogue: Catalogue) -
         return problems
     covered = {code for entry in cited for code in catalogue.sources[entry["source"]].languages}
     if language == ANY:
-        if len(covered) < 2:
+        if len(covered) < 2 and not (row.get("category") == "artefact" and "check" in row):
             problems.append(f"{where}: an {ANY} sign needs sources in at least two languages (AGENTS.md, Traps)")
         return problems
     entry = catalogue.languages.get(language)
@@ -417,19 +418,12 @@ def _sign_sources(where: str, row: Table, language: str, catalogue: Catalogue) -
 
 
 def _dates(where: str, row: Table) -> list[str]:
-    since, until = row.get("since"), row.get("until")
-    if since is None and until is None:
+    until = row.get("until")
+    if until is None:
         return []
     if row.get("models") != ANY:
         return [f"{where}: a model-scoped sign retires by its range's `to`, not by a date"]
-    problems = [
-        f"{where}: `{key}` must be a date"
-        for key, value in (("since", since), ("until", until))
-        if value is not None and not _is_date(value)
-    ]
-    if not problems and since and until and until < since:
-        problems.append(f"{where}: `until` comes before `since`")
-    return problems
+    return [] if _is_date(until) else [f"{where}: `until` must be a date"]
 
 
 def _term_list(row: Table) -> tuple[Term, ...]:
@@ -448,7 +442,7 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
     sign = _id(f"signs/{language}.toml", row, problems)
     where = f"signs/{language}.toml: {sign}"
     required = ("id", "category", "kinds", "models", "what", "instead", "strength", "flags", "passes", "sources")
-    problems += _keys(where, row, required, ("terms", "check", "since", "until"))
+    problems += _keys(where, row, required, ("terms", "check", "until"))
     slug = sign.removeprefix(f"{language}-")
     if slug == sign or not _SLUG.match(slug):
         problems.append(f"{where}: an id is {language}-<slug>, in lowercase letters, digits and hyphens")

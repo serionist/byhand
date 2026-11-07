@@ -1,5 +1,5 @@
 # The model families a sign can be scoped to. `id` names the family's rendered files,
-# `plugin/signs/<language>/<id>.md`, so it is a one-way door (AGENTS.md). A family here is one the sources name signs
+# `plugin/signs/<language>/<id>.signs.md`, so it is a one-way door (AGENTS.md). A family here is one the sources name signs
 # for; a model of any other family reads the `any` signs alone.
 
 [[family]]

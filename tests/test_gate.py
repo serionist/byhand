@@ -1561,6 +1561,25 @@ def test_a_sign_id_on_the_base_stays(tmp_path):
     assert "en-delve is at" in result.output or "en-delve is at" in result.detail
 
 
+def test_an_id_only_a_branch_held_may_go_and_an_id_on_main_may_not(tmp_path):
+    run, folder = signs_repo(tmp_path)
+    (folder / "en.toml").write_text('[[sign]]\nid = "en-main"\n', encoding="utf-8")
+    run("add", "-A")
+    run("commit", "-qm", "On main")
+    run("update-ref", "refs/remotes/origin/main", "HEAD")
+    (folder / "en.toml").write_text('[[sign]]\nid = "en-main"\n[[sign]]\nid = "en-branch"\n', encoding="utf-8")
+    run("add", "-A")
+    run("commit", "-qm", "On the branch, pushed")
+    pushed = run("rev-parse", "HEAD")
+    scope = gate.Scope([f"{pushed}..HEAD"])  # as pre-push ranges it: from the pushed branch
+    (folder / "en.toml").write_text('[[sign]]\nid = "en-main"\n', encoding="utf-8")
+    assert gate.check_sign_ids(scope, tmp_path).status == "pass"
+    (folder / "en.toml").write_text("", encoding="utf-8")
+    result = gate.check_sign_ids(scope, tmp_path)
+    assert result.status == "FAIL"
+    assert "en-main is at" in result.detail
+
+
 def test_a_base_with_no_signs_holds_no_ids(tmp_path):
     run, folder = signs_repo(tmp_path)
     (tmp_path / "file").write_text("x\n", encoding="utf-8")

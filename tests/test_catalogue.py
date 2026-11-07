@@ -77,7 +77,6 @@ sources = [
   { source = "wiki-en", where = "Style", seen = 2026-11-07 },
   { source = "wiki-de", where = "Stil", seen = 2026-11-07 },
 ]
-since = 2023-01-01
 until = 2030-01-01
 """
 CJK = """
@@ -259,7 +258,6 @@ BREAKS = [
         'flags = "It is fast."',
         "`flags` and `passes` must differ",
     ),
-    ("signs/any.toml", "until = 2030-01-01", "until = 2020-01-01", "`until` comes before `since`"),
     ("signs/any.toml", "until = 2030-01-01", 'until = "later"', "`until` must be a date"),
     (
         "signs/any.toml",
@@ -367,7 +365,8 @@ BREAKS = [
         'category = "word"\nterms = [{ term = "x", instead = "y" }]',
         "an any sign writes its `check`",
     ),
-    ("signs/any.toml", "since = 2023-01-01", "since = 2023-01-01T10:00:00", "`since` must be a date"),
+    ("signs/any.toml", "until = 2030-01-01", "until = 2030-01-01T10:00:00", "`until` must be a date"),
+    ("signs/any.toml", 'category = "structure"', 'category = "structure"\nsince = 2030-01-01', "unknown key `since`"),
     ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = '(?<!x)delve'", "Grep can't run"),
     ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = 'delve(?=s)'", "Grep can't run"),
     ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = '(d)elve\\1'", "Grep can't run"),
@@ -380,6 +379,29 @@ def test_a_broken_catalogue_says_why(root, case):
     rel, old, new, expected = case
     problems = problems_after(root, rel, old, new)
     assert any(expected in problem for problem in problems), problems
+
+
+def test_an_artefact_with_a_check_is_any_on_one_source(root):
+    artefact = """
+[[sign]]
+id = "any-tool-token"
+category = "artefact"
+kinds = ["any"]
+models = "any"
+what = "Leaves a tool's token in the text."
+instead = "Delete it."
+strength = "strong"
+check = 'tool-token-\\d'
+flags = "See tool-token-4."
+passes = "See page 4."
+sources = [{ source = "wiki-en", where = "Markup", seen = 2026-11-07 }]
+"""
+    (root / "signs" / "any.toml").write_text(STRUCTURE + artefact, encoding="utf-8")
+    assert signs.load(root)[1] == []
+    (root / "signs" / "any.toml").write_text(
+        STRUCTURE + artefact.replace('category = "artefact"', 'category = "formatting"'), encoding="utf-8"
+    )
+    assert any("any-tool-token: an any sign needs sources in at least two languages" in p for p in signs.load(root)[1])
 
 
 def test_a_sign_id_used_twice_is_refused(root):
@@ -433,7 +455,7 @@ def test_terms_and_until_reach_the_rendered_files(root):
     found, problems = signs.load(root)
     assert problems == []
     files = render.render(found)
-    assert sorted(files) == ["en/gpt.md", "zh/any.md"]  # any-rule-of-three has an `until`, so it is retired
-    assert "Terms: `delv(?:e|es|ing)`: look at" in files["en/gpt.md"]
+    assert sorted(files) == ["en/gpt.signs.md", "zh/any.signs.md"]  # any-rule-of-three has an `until`, so it is retired
+    assert "Terms: `delv(?:e|es|ing)`: look at" in files["en/gpt.signs.md"]
     assert found.signs["any-rule-of-three"].until == datetime.date(2030, 1, 1)
     assert found.signs["en-delve"].until is None

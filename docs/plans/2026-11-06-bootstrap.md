@@ -266,8 +266,8 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 |---|---|---|---|
 | 1. The harness and this plan | #1 | #9 | plan approved 2026-11-06 |
 | 2. The catalogue's schema | #2 | #12 | merged 2026-11-07 |
-| 3. Render and its gate check | #3 | #14 | |
-| 4. `propose-signs` and the seed | #4 | | |
+| 3. Render and its gate check | #3 | #14 | merged 2026-11-07 |
+| 4. `propose-signs` and the seed | #4 | #15, `any` and `en` | |
 | 5. `check` | #5 | | |
 | 6. Styles, `learn` and `write` | #6 | | |
 | 7. Tried in real sessions | #7 | | |
@@ -275,6 +275,38 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 Decisions on the way:
 
+- **Step 4, the seed's second round (the maintainer, 2026-11-07):**
+  - One phrase counts once toward the weak rule: `serves as a testament to` hits three weak signs, and alone it is no
+    cluster. The rendered header says so.
+  - The gate's `sign ids` holds each id on `main` where a range left it, not on the pushed branch: an id only an
+    unmerged branch held has reached no one, so a review may cut it. This loosens the check at pre-push, by the
+    maintainer's yes; on a PR and on `main` it holds as before.
+  - The closing offer stays a `document` sign: in mail, people write "let me know if you'd like" themselves.
+- **Step 4, the seed's review (the maintainer, 2026-11-07):**
+  - A translated page counts as its language: Wikipedia's de, ru and others can make a sign `any`, though they adapt the
+    English page. The review recommended the opposite, for what `any` pushes onto other languages; the maintainer kept
+    the wider rule, so a language's own review is where such a sign gets challenged.
+  - An `artefact` sign with a `check` may be `any` on one source: a tool's string looks the same in every language.
+    Gemini's, Grok's, DeepSeek's and other tool markup move to `any`, with their model scope.
+  - `flags` may hold the string its `check` needs and nothing else from a source. `tools/copycheck.py` finds a shared run
+    of six words between sign text and the downloads, leaving out what a sign's own check finds. It runs by hand, as CI
+    has no downloads, and `propose-signs` has a step for it.
+  - A weak sign counts with 3 or more hits of weak signs in a paragraph or section, not of one sign in a paragraph.
+  - When a budget runs short, Wikipedia's historical word lists go first; artefacts stay.
+  - `read_at` is what a source is pinned at, not proof it was read: `validate` needs it for every source.
+  - `any-invented-sources` stays strong for `write`. Step 5's `check` can't open a source, so it says "unverified", not
+    "AI".
+  - `any-bold-lead-in-list` is weak: one bold label is normal, and three hits make the cluster.
+  - The cut list: 67 signs to 55, merging signs that said one thing at two strengths. A regular expression merged in
+    only where it stayed silent on plain mail; the others are for the model's read. `tests/test_office.py` holds that
+    no strong or usual sign fires on plain office text.
+- **Step 4, from the seed (2026-11-07):**
+  - Rendered prose files end `.signs.md`: on Windows and macOS `claude.md` is a CLAUDE.md, which Claude Code loaded as
+    project instructions when the seed read one. A test holds it. The Light by design paths read accordingly.
+  - `since` is gone from the schema: nothing read it, and a sign's citations already date it.
+  - Wikipedia's Style and Markup subpages are sources of their own, so the refresh sees a change to them.
+  - A sign's `check` and `terms` may hold a source's short fixed strings, a word to watch or a tool's markup, in our own
+    order and never an example sentence.
 - **Simple, and no command on a user's machine (the maintainer, 2026-11-07):** byhand is two sets of Markdown files,
   signs and styles, and the skills that read them. Install is `/plugin install`, with no uv, no Python and no PyPI.
   This replaces what the plan says of the CLI for users, and changes three steps:
@@ -297,8 +329,8 @@ Decisions on the way:
 - **A check is what Grep can run (the maintainer, 2026-11-07):** no look-around and no backreference, held by
   `validate`. A term's edge is `\b`. `render` prints a sign's `check` in Step 5, for `Grep`; where it goes, the draft's
   files or a side file, is that step's call.
-- **Step 3, its review (the maintainer, 2026-11-07):** a third budget, 16 KB, holds a deck's or a sheet's layout files. The gate's link scan
-  skips code spans in `plugin/signs/` alone, where a term is a regular expression. A future `until` retires a sign
+- **Step 3, its review (the maintainer, 2026-11-07):** a third budget, 16 KB, holds a deck's or a sheet's layout files.
+  The gate's link scan skips code spans in `plugin/signs/` alone, where a term is a regular expression. A future `until` retires a sign
   today, and every reader of the signs treats it so.
 - **Step 3, a retired sign (2026-11-07):** a sign with an `until` renders nowhere, whatever the date: rendering by the
   clock would turn a file stale overnight and fail the gate on no change.

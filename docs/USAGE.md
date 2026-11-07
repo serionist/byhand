@@ -16,7 +16,7 @@ Users never run these. They build and check the catalogue in this repo.
 
 ## What a draft loads
 
-`byhand render` writes `plugin/signs/<language>/<family>.md`, and `<family>.layout.md` for the signs only decks and
+`byhand render` writes `plugin/signs/<language>/<family>.signs.md`, and `<family>.layout.md` for the signs only decks and
 sheets need. `<language>` or `<family>` is `any` for the signs of every language or model. A draft reads at most four
 prose files, six for a script variant such as `zh-Hant`, and a deck or a sheet adds their layout files.
 

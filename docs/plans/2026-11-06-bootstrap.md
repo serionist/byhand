@@ -280,6 +280,12 @@ Decisions on the way:
   two signs find, counts once. One habit repeated is a person's: a Japanese mail that says に関する three times, an
   essay with its dashes. A list of different AI words still makes one: "delve into the pivotal, multifaceted" is 3. The
   first wording, two different signs, missed that, as #21's review found. The rendered files print the rule. #20.
+- **Step 4, the Korean seed (2026-11-07), for the maintainer's review:**
+  - Translationese (에 의해, 되어지다, 그녀, ~를 통해) gives no sign: in Lee et al. 2026 its marks fall as the model
+    words rise, and im-not-ai measured people using ~를 통해 and 그는 more than models do.
+  - One Korean sign with a check counts alone, `ko-beyond-mere`; the rest are weak or for the model's read.
+    `tests/test_office_ko.py` holds plain Korean mail and chat against every sign that counts alone, and against a weak
+    cluster.
 - **Step 4, the seed's second round (the maintainer, 2026-11-07):**
   - One phrase counts once toward the weak rule: `serves as a testament to` hits three weak signs, and alone it is no
     cluster. The rendered header says so.

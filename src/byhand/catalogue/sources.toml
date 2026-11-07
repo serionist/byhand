@@ -118,8 +118,18 @@ kind = "repo"
 languages = ["ja"]
 licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "nanaism/yomiyasu", paths = ["references/slop-catalog.md"] }
+feed = { api = "github", repo = "nanaism/yomiyasu", paths = ["references/slop-catalog.md", "references/gemini-syntax.md", "docs/tools.md", "CHANGELOG.md"] }
 read_at = { commit = "8394e099486a", date = 2026-11-07 }
+
+[[source]]
+id = "stop-ai-slop-jp"
+url = "https://github.com/iKora128/stop-ai-slop-jp"
+kind = "repo"
+languages = ["ja"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "iKora128/stop-ai-slop-jp", paths = ["references/phrases.md", "references/structures.md"] }
+read_at = { commit = "e09d32796f25", date = 2026-11-07 }
 
 [[source]]
 id = "humanizer-ru"
@@ -226,7 +236,7 @@ id = "zaitsu-2025-japanese"
 url = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12558491/"
 kind = "paper"
 languages = ["ja"]
-licence = "facts only, with a citation"
+licence = "CC BY 4.0; facts only, with a citation"
 due = "by-hand"
 feed = { api = "none" }
 read_at = { date = 2026-11-07 }

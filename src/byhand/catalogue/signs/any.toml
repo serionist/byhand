@@ -601,7 +601,7 @@ models = "any"
 what = "Leaves a fill-in slot in the text: a bracketed name, a URL stub, a date of XX."
 instead = "Fill it in or cut it before you send."
 strength = "usual"
-check = '\[(?:your|insert|add|describe|company|recipient|имя|опишите|укажите)\b[^\]\n]*\]|\b(?:insert|paste)_[a-z0-9_]+_here\b|\b20\d\d-xx-xx\b'
+check = '\[(?:your|insert|add|describe|company|recipient|имя|опишите|укажите)\b[^\]\n]*\]|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】]'
 flags = "Thanks again, and see you on Friday.\n\n[Your Name]"
 passes = "Thanks again, and see you on Friday.\n\nMarta"
 sources = [
@@ -609,6 +609,7 @@ sources = [
   { source = "wikipedia-de", where = "Platzhaltertext, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "В обсуждениях, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "短語模板與占位符文字, revision 95337857", seen = 2026-11-07 },
+  { source = "yomiyasu", where = "references/slop-catalog.md, 6 仮置きの残り, commit 8394e099486a", seen = 2026-11-07 },
 ]
 
 [[sign]]

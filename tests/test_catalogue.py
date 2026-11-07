@@ -77,7 +77,6 @@ sources = [
   { source = "wiki-en", where = "Style", seen = 2026-11-07 },
   { source = "wiki-de", where = "Stil", seen = 2026-11-07 },
 ]
-since = 2023-01-01
 until = 2030-01-01
 """
 CJK = """
@@ -259,7 +258,6 @@ BREAKS = [
         'flags = "It is fast."',
         "`flags` and `passes` must differ",
     ),
-    ("signs/any.toml", "until = 2030-01-01", "until = 2020-01-01", "`until` comes before `since`"),
     ("signs/any.toml", "until = 2030-01-01", 'until = "later"', "`until` must be a date"),
     (
         "signs/any.toml",
@@ -367,7 +365,8 @@ BREAKS = [
         'category = "word"\nterms = [{ term = "x", instead = "y" }]',
         "an any sign writes its `check`",
     ),
-    ("signs/any.toml", "since = 2023-01-01", "since = 2023-01-01T10:00:00", "`since` must be a date"),
+    ("signs/any.toml", "until = 2030-01-01", "until = 2030-01-01T10:00:00", "`until` must be a date"),
+    ("signs/any.toml", 'category = "structure"', 'category = "structure"\nsince = 2030-01-01', "unknown key `since`"),
     ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = '(?<!x)delve'", "Grep can't run"),
     ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = 'delve(?=s)'", "Grep can't run"),
     ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = '(d)elve\\1'", "Grep can't run"),
@@ -433,7 +432,7 @@ def test_terms_and_until_reach_the_rendered_files(root):
     found, problems = signs.load(root)
     assert problems == []
     files = render.render(found)
-    assert sorted(files) == ["en/gpt.md", "zh/any.md"]  # any-rule-of-three has an `until`, so it is retired
-    assert "Terms: `delv(?:e|es|ing)`: look at" in files["en/gpt.md"]
+    assert sorted(files) == ["en/gpt.signs.md", "zh/any.signs.md"]  # any-rule-of-three has an `until`, so it is retired
+    assert "Terms: `delv(?:e|es|ing)`: look at" in files["en/gpt.signs.md"]
     assert found.signs["any-rule-of-three"].until == datetime.date(2030, 1, 1)
     assert found.signs["en-delve"].until is None

@@ -417,19 +417,12 @@ def _sign_sources(where: str, row: Table, language: str, catalogue: Catalogue) -
 
 
 def _dates(where: str, row: Table) -> list[str]:
-    since, until = row.get("since"), row.get("until")
-    if since is None and until is None:
+    until = row.get("until")
+    if until is None:
         return []
     if row.get("models") != ANY:
         return [f"{where}: a model-scoped sign retires by its range's `to`, not by a date"]
-    problems = [
-        f"{where}: `{key}` must be a date"
-        for key, value in (("since", since), ("until", until))
-        if value is not None and not _is_date(value)
-    ]
-    if not problems and since and until and until < since:
-        problems.append(f"{where}: `until` comes before `since`")
-    return problems
+    return [] if _is_date(until) else [f"{where}: `until` must be a date"]
 
 
 def _term_list(row: Table) -> tuple[Term, ...]:
@@ -448,7 +441,7 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
     sign = _id(f"signs/{language}.toml", row, problems)
     where = f"signs/{language}.toml: {sign}"
     required = ("id", "category", "kinds", "models", "what", "instead", "strength", "flags", "passes", "sources")
-    problems += _keys(where, row, required, ("terms", "check", "since", "until"))
+    problems += _keys(where, row, required, ("terms", "check", "until"))
     slug = sign.removeprefix(f"{language}-")
     if slug == sign or not _SLUG.match(slug):
         problems.append(f"{where}: an id is {language}-<slug>, in lowercase letters, digits and hyphens")

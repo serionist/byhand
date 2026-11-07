@@ -275,6 +275,13 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 
 Decisions on the way:
 
+- **Step 4, from the seed (2026-11-07):**
+  - Rendered prose files end `.signs.md`: on Windows and macOS `claude.md` is a CLAUDE.md, which Claude Code loaded as
+    project instructions when the seed read one. A test holds it. The Light by design paths read accordingly.
+  - `since` is gone from the schema: nothing read it, and a sign's citations already date it.
+  - Wikipedia's Style and Markup subpages are sources of their own, so the refresh sees a change to them.
+  - A sign's `check` and `terms` may hold a source's short fixed strings, a word to watch or a tool's markup, in our own
+    order and never an example sentence.
 - **Simple, and no command on a user's machine (the maintainer, 2026-11-07):** byhand is two sets of Markdown files,
   signs and styles, and the skills that read them. Install is `/plugin install`, with no uv, no Python and no PyPI.
   This replaces what the plan says of the CLI for users, and changes three steps:

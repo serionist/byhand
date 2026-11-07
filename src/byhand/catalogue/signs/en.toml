@@ -1,0 +1,574 @@
+# English's signs. A sign here cites a source that covers English; the shape of a sign is in `any.toml`. A term is a
+# regular-expression fragment, and `validate` wraps the list in `\b`, so a term stands as a word of its own.
+
+# Words and phrases of every model. Corroborated across model families, not only in GPT's text.
+
+[[sign]]
+id = "en-ai-vocabulary"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Leans on the same few elevated words; one is chance, several together are not."
+instead = "Use the plain word, or the fact the word stands in for."
+strength = "weak"
+terms = [
+  { term = 'delv(?:e|es|ed|ing)', instead = "look at" },
+  { term = 'pivotal', instead = "name why it matters" },
+  { term = 'crucial', instead = "needed" },
+  { term = 'multifaceted', instead = "name the parts" },
+  { term = 'underscor(?:ed|ing)|underscores (?:the|a|an|its|how|that|this|their|our)', instead = "shows" },
+  { term = 'foster(?:s|ed|ing)', instead = "build" },
+  { term = 'interplay', instead = "how A affects B" },
+  { term = 'interconnectedness', instead = "links" },
+  { term = 'intricate', instead = "detailed" },
+  { term = 'complexities', instead = "problems" },
+  { term = 'nuanced', instead = "say what the nuance is" },
+  { term = 'tapestry', instead = "mix" },
+  { term = 'vibrant', instead = "lively" },
+  { term = 'seamless(?:ly)?', instead = "smooth" },
+  { term = 'robust', instead = "say how it holds up" },
+  { term = 'transformative', instead = "say what changed" },
+  { term = 'aligns? with', instead = "matches" },
+  { term = 'leverag(?:e|es|ed|ing)', instead = "use" },
+]
+flags = "The report underscores a pivotal shift and the intricate interplay of cost and demand."
+passes = "The report shows a big shift: costs rose and demand fell. File names can hold underscores."
+sources = [
+  { source = "wikipedia-en", where = "High density of AI vocabulary words, revision 1384165696", seen = 2026-11-07 },
+  { source = "slop-forensics", where = "results_by_domain/essays/analysis, ten model profiles, commit c313f042620f", seen = 2026-11-07 },
+  { source = "russell-2025-detectors", where = "arXiv v2, expert clues: AI vocabulary", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-significance-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Reaches for set phrases that inflate a subject's importance."
+instead = "Say what happened and to whom."
+strength = "usual"
+terms = [
+  { term = 'play(?:s|ed|ing)? an? (?:crucial|pivotal|vital) role', instead = "say what it does" },
+  { term = '(?:is|stands as|serves as) a testament to', instead = "shows" },
+  { term = 'mark(?:s|ed|ing)? a (?:pivotal|significant) (?:moment|shift)', instead = "give the date and the change" },
+  { term = 'enduring legacy', instead = "say what remains" },
+  { term = 'indelible mark', instead = "say what changed" },
+  { term = 'evolving landscape', instead = "name the market or field" },
+  { term = 'setting the stage for', instead = "led to" },
+  { term = 'reflects? broader', instead = "name the trend, or cut" },
+  { term = 'valuable insights', instead = "say what was learnt" },
+]
+flags = "The festival stands as a testament to the town's enduring legacy."
+passes = "The festival has run every August since 1971."
+sources = [
+  { source = "wikipedia-en", where = "Undue emphasis on significance, legacy, and broader trends, revision 1384165696", seen = 2026-11-07 },
+  { source = "slop-forensics", where = "results_by_domain/essays/slop_lists/slop_list_trigrams.json, commit c313f042620f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-copula-avoidance"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Avoids plain 'is' and 'has' with grander verbs."
+instead = "Write 'is' or 'has'."
+strength = "weak"
+terms = [
+  { term = 'serv(?:es|ed|ing) as an?', instead = "is" },
+  { term = 'stands as an?', instead = "is" },
+  { term = 'functions as an?', instead = "is" },
+  { term = 'boasts an?', instead = "has" },
+  { term = 'holds the distinction of being', instead = "is" },
+]
+flags = "The hall serves as a venue for concerts and boasts a small kitchen."
+passes = "The hall is a concert venue with a small kitchen. She served as chair for two years."
+sources = [
+  { source = "wikipedia-en", where = "Avoidance of basic copulatives, revision 1384165696", seen = 2026-11-07 },
+  { source = "wikipedia-en", where = "Signs of human writing, Syntax, revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-trailing-participle"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Hangs an -ing clause of commentary off the end of a sentence."
+instead = "Stop at the full stop, or make the point its own sentence."
+strength = "usual"
+check = ',\s(?:highlighting|underscoring|emphasi[sz]ing|showcasing|reflecting|symboli[sz]ing|cementing|solidifying) (?:the|a|an|its|their|his|her|how|our)\b|,\scontributing to\b'
+flags = "The firm opened a second site in 2019, highlighting its commitment to the region."
+passes = "She waved from the platform, holding her hat on in the wind."
+sources = [
+  { source = "wikipedia-en", where = "Superficial analyses, revision 1384165696", seen = 2026-11-07 },
+  { source = "reinhart-2025-pnas", where = "arXiv v2: present participial clauses 2 to 5 times the human rate in instruction-tuned models", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-negation-pivot"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Pivots on 'it's not X, it's Y' or 'not just X but Y'."
+instead = "Write the second half alone."
+strength = "weak"
+check = '''\b(?:it|this|that)(?:['’]s| is)(?:n['’]t| not) (?:just |only |merely |about )*[^.\n]{1,50}(?:[,;:]|\s[-–—])\s*(?:it|this|that)(?:['’]s| is)\b|\bnot (?:just|only|merely) [^.\n]{1,60}\bbut\b'''
+flags = "It's not a phone, it's a way of life."
+passes = "It isn't ready yet, but it should be by Friday."
+sources = [
+  { source = "wikipedia-en", where = "Negative parallelisms, revision 1384165696", seen = 2026-11-07 },
+  { source = "russell-2025-detectors", where = "arXiv v2, Table 3, sentence structure", seen = 2026-11-07 },
+  { source = "vale-ai-tells", where = "styles/ai-tells/ContrastiveNegation.yml, commit 51f646e366ba", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-didactic-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Announces that something is worth noting before saying it."
+instead = "Say it."
+strength = "usual"
+terms = [
+  { term = '''it(?:['’]s| is) (?:important|crucial|critical|essential|worth) (?:to (?:note|remember|consider)|noting|remembering)''', instead = "cut" },
+]
+flags = "It's worth noting that the office is closed on Monday."
+passes = "It's important to call them before noon. The office is closed on Monday."
+sources = [
+  { source = "wikipedia-en", where = "Hedging disclaimers, 2023-24, revision 1384165696", seen = 2026-11-07 },
+  { source = "slop-gate", where = "rules/vocabulary.json, commit f78d5cbee0dc", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-corrective-framing"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Tells the reader how to take a source instead of saying what it shows."
+instead = "Say what the source shows; add a limit only where one is at issue."
+strength = "usual"
+check = 'should be (?:treated|read|understood|presented|seen) as [^.\n]{1,60}rather than|does not by itself (?:establish|prove|show)|does not establish that|distinction (?:matters|is important) because'
+flags = "The letter should be treated as a personal view rather than as company policy."
+passes = "The letter should be read before Monday's meeting, rather than at it."
+sources = [
+  { source = "wikipedia-en", where = "Hedging disclaimers, Mid-2026-present, revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-stock-openers"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Opens with a stock line about the modern world or diving in."
+instead = "Start with the subject."
+strength = "usual"
+terms = [
+  { term = '''in today['’]?s (?:fast-paced|digital|modern|ever-changing) (?:world|age|landscape|era)''', instead = "cut" },
+  { term = '''let['’]?s dive in(?:to)?''', instead = "cut" },
+  { term = 'deep dive', instead = "close look" },
+  { term = 'navigat(?:e|es|ing) the complexit(?:y|ies)', instead = "say what the task is" },
+  { term = 'unlock(?:s|ing)? the (?:power|potential)', instead = "say what becomes possible" },
+]
+flags = "In today's fast-paced world, every business must navigate the complexities of change."
+passes = "Our rent went up 12% in June, so we need to talk about the second office."
+sources = [
+  { source = "slop-gate", where = "rules/vocabulary.json, commit f78d5cbee0dc", seen = 2026-11-07 },
+  { source = "wikipedia-en", where = "High density of AI vocabulary words, revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-challenges-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Uses the stock wording of the challenges-and-prospects close."
+instead = "Name the problem."
+strength = "weak"
+terms = [
+  { term = 'despite (?:these|its|the|their) (?:challenges|limitations)', instead = "name them" },
+  { term = 'faces? (?:several|many|numerous|a number of) challenges', instead = "name them" },
+  { term = 'future (?:outlook|prospects)', instead = "say what is planned" },
+]
+flags = "Despite these challenges, the sector's future prospects remain bright."
+passes = "The roof still leaks, so the sale won't close until March."
+sources = [
+  { source = "wikipedia-en", where = "Outline-like conclusions about challenges and future prospects, revision 1384165696", seen = 2026-11-07 },
+  { source = "vale-ai-tells", where = "styles/ai-tells/DespiteChallenges.yml, commit 51f646e366ba", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-stiff-verbs"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Picks the stiff verb where a person uses the short one."
+instead = "Use the short verb."
+strength = "weak"
+terms = [
+  { term = 'utili[sz](?:e|es|ed|ing)', instead = "use" },
+  { term = 'relocated', instead = "moved" },
+  { term = 'authored', instead = "wrote" },
+  { term = 'attempted', instead = "tried" },
+]
+flags = "The team utilized a new tool and relocated to Leeds, where she authored the report."
+passes = "The team used a new tool and moved to Leeds, where she wrote the report."
+sources = [
+  { source = "wikipedia-en", where = "Signs of human writing, Syntax, revision 1384165696", seen = 2026-11-07 },
+  { source = "sun-2025-idiosyncrasies", where = "arXiv v2, Figure 6: utilize among GPT-4o's phrases", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-promotional-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Uses the stock wording of a brochure."
+instead = "Say where it is and what it has."
+strength = "weak"
+terms = [
+  { term = 'nestled', instead = "lies" },
+  { term = 'in the heart of', instead = "in" },
+  { term = 'diverse array', instead = "range" },
+  { term = 'rich (?:cultural )?heritage', instead = "name it" },
+  { term = 'natural beauty', instead = "say what is there" },
+  { term = 'groundbreaking', instead = "new" },
+  { term = 'renowned', instead = "known" },
+]
+flags = "Nestled in the heart of the Dales, the inn offers a diverse array of local ales."
+passes = "The inn is at the top of the Dale road and sells four local ales."
+sources = [
+  { source = "wikipedia-en", where = "Promotional and advertisement-like language (2023 to 2025), revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-stock-fiction-phrases"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Uses the stock beats and names of machine-written fiction."
+instead = "Write the thing this character does, in this place."
+strength = "weak"
+terms = [
+  { term = 'barely above a whisper', instead = "quietly" },
+  { term = 'sun dipped (?:below|behind)', instead = "the sun set" },
+  { term = 'shivers? (?:ran |run |running )?down (?:her|his|my|their) spine', instead = "show the fear" },
+  { term = '''could(?:n['’]t| not) help but (?:feel|wonder)''', instead = "felt" },
+  { term = 'Elara', instead = "another name" },
+]
+flags = "Her voice was barely above a whisper as the sun dipped below the horizon."
+passes = "She spoke quietly so the baby wouldn't wake."
+sources = [
+  { source = "slop-forensics", where = "data/slop_list_trigrams.json, commit c313f042620f", seen = 2026-11-07 },
+  { source = "wikipedia-en", where = "lead, note on fiction, revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-vague-connection"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Says two things are 'associated with' or 'connected to' each other without saying how."
+instead = "State the relation: she ran it, he taught there."
+strength = "weak"
+flags = "In 2017 he was associated with the leadership of Northgate Foods."
+passes = "In 2017 he ran Northgate Foods."
+sources = [
+  { source = "wikipedia-en", where = "Vague expression of connection or association, revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-even-sentences"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Keeps every sentence about the same length and shape."
+instead = "Let length follow the thought, some short and some long."
+strength = "weak"
+flags = "The team met on Monday. The plan was reviewed in detail. The budget was then approved. The next steps were agreed."
+passes = "We met Monday. Most of the hour went on the budget, because the quote had doubled since March and nobody could say why. It's approved now."
+sources = [
+  { source = "russell-2025-detectors", where = "arXiv v2, Table 3, sentence structure", seen = 2026-11-07 },
+  { source = "wikipedia-en", where = "High density of AI vocabulary words, GPT-6 era note, revision 1384165696", seen = 2026-11-07 },
+]
+
+# Tied to a model family.
+
+[[sign]]
+id = "en-em-dash"
+category = "formatting"
+kinds = ["any"]
+# OpenAI suppressed them from GPT-5.1, and ChatGPT now uses fewer than professional writers; Claude alone still uses
+# more, as Wikipedia reports The Economist of July 2026. No other family has a source yet.
+models = [{ family = "gpt", from = "3.5", to = "5.0" }, { family = "claude", from = "3" }]
+what = "Uses spaced em dashes as pivots, more than a person writing the same kind of text."
+instead = "Use a comma, a colon, brackets or a full stop."
+strength = "weak"
+check = '\s—\s'
+flags = "The launch is not late — it is on its own schedule."
+passes = "The launch—already late—moved to May."
+sources = [
+  { source = "wikipedia-en", where = "Overuse of em dashes (2022 to September 2026), revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-claude-prompt-echo"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "claude", from = "3.5" }]
+what = "Opens by pointing back at the material it was given."
+instead = "Start with the answer; name the document where the reader needs it."
+strength = "weak"
+terms = [
+  { term = 'according to the (?:text|passage)', instead = "cut" },
+  { term = 'based on the (?:text|passage)', instead = "cut" },
+  { term = '''here['’]s a summary''', instead = "start with it" },
+]
+flags = "Based on the text, the supplier missed two deadlines."
+passes = "According to the minutes, the supplier missed two deadlines."
+sources = [
+  { source = "sun-2025-idiosyncrasies", where = "arXiv v2, 3.1 Characteristic phrases, Figures 4 and 6, Claude 3.5 Sonnet", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-gpt-2023-vocabulary"
+category = "word"
+kinds = ["any"]
+models = [{ family = "gpt", from = "3.5", to = "4" }]
+what = "Uses the words of 2023 to mid-2024 ChatGPT."
+instead = "Use the plain word."
+strength = "weak"
+terms = [
+  { term = 'testament', instead = "proof" },
+  { term = 'tapestry', instead = "mix" },
+  { term = 'delv(?:e|es|ed|ing)', instead = "look at" },
+  { term = 'meticulous(?:ly)?', instead = "careful" },
+  { term = 'garner(?:s|ed|ing)?', instead = "got" },
+  { term = 'bolster(?:s|ed|ing)?', instead = "support" },
+  { term = 'boasts', instead = "has" },
+  { term = 'intricac(?:y|ies)', instead = "details" },
+  { term = 'interplay', instead = "how A affects B" },
+  { term = 'enduring', instead = "lasting" },
+  { term = 'pivotal', instead = "important" },
+  { term = 'vibrant', instead = "lively" },
+  { term = 'underscor(?:ed|ing)|underscores (?:the|a|an|its|how|that|this|their|our)', instead = "shows" },
+]
+flags = "This meticulously bolstered tapestry of evidence garnered praise."
+passes = "This careful review of the evidence got good feedback."
+sources = [
+  { source = "wikipedia-en", where = "High density of AI vocabulary words, 2023 to mid-2024, revision 1384165696", seen = 2026-11-07 },
+  { source = "kobak-2025-excess-vocabulary", where = "arXiv v5, section 2.1: excess style words in 2024 abstracts", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-gpt-2024-vocabulary"
+category = "word"
+kinds = ["any"]
+models = [{ family = "gpt", from = "4", to = "4" }]
+what = "Uses the words of mid-2024 to mid-2025 ChatGPT."
+instead = "Use the plain word."
+strength = "weak"
+terms = [
+  { term = 'showcas(?:e|es|ed|ing)', instead = "shows" },
+  { term = 'highlighting', instead = "showing" },
+  { term = 'emphasi[sz]ing', instead = "stressing" },
+  { term = 'foster(?:s|ed|ing)', instead = "build" },
+  { term = 'enhanc(?:e|es|ed|ing)', instead = "improve" },
+  { term = 'aligns? with', instead = "matches" },
+  { term = 'crucial', instead = "needed" },
+]
+flags = "The redesign aligns with user needs, showcasing and enhancing the brand."
+passes = "The redesign matches what users asked for and looks better."
+sources = [
+  { source = "wikipedia-en", where = "High density of AI vocabulary words, mid-2024 to mid-2025, revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-gpt-5-vocabulary"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "gpt", from = "5", to = "5" }]
+what = "Uses the words of GPT-5 and its stress on media coverage."
+instead = "Say what the source says, not what kind of source it is."
+strength = "weak"
+terms = [
+  { term = 'showcasing', instead = "showing" },
+  { term = 'highlighting', instead = "showing" },
+  { term = 'emphasi[sz]ing', instead = "stressing" },
+  { term = 'enhanc(?:e|es|ed|ing)', instead = "improve" },
+  { term = 'independent coverage', instead = "name the report" },
+  { term = 'trade publications', instead = "name them" },
+  { term = '(?:local|regional|national) media outlets', instead = "name them" },
+  { term = '(?:maintains?|has) an? (?:active|strong) (?:social media|digital) presence', instead = "cut" },
+]
+flags = "The studio maintains an active social media presence and has drawn independent coverage."
+passes = "The studio posts on Instagram, and the Yorkshire Post wrote about it in May."
+sources = [
+  { source = "wikipedia-en", where = "High density of AI vocabulary words, mid-2025 to mid-2026; Canned emphasis on notability, revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-gpt-6-vocabulary"
+category = "word"
+kinds = ["any"]
+models = [{ family = "gpt", from = "6" }]
+what = "Uses GPT-6's plainer words, in short even sentences of 8 to 20 words."
+instead = "Prefer the exact word, and vary the sentence length."
+strength = "weak"
+terms = [
+  { term = 'dependable', instead = "reliable" },
+  { term = 'echoed', instead = "repeated" },
+  { term = 'universally', instead = "by all" },
+  { term = 'multifaceted', instead = "name the parts" },
+  { term = 'prioriti[sz](?:e|es|ed|ing)', instead = "put first" },
+  { term = 'leverag(?:e|es|ed|ing)', instead = "use" },
+  { term = 'foster(?:s|ed|ing)', instead = "build" },
+]
+flags = "The change leverages a dependable process that is universally understood."
+passes = "The change reuses last year's process, which has worked so far."
+sources = [
+  { source = "wikipedia-en", where = "High density of AI vocabulary words, mid-2026 and on, revision 1384165696", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-nominalisation"
+category = "structure"
+kinds = ["any"]
+models = [{ family = "gpt", from = "4", to = "4" }, { family = "llama", from = "3", to = "3" }]
+what = "Packs sentences with nouns made from verbs."
+instead = "Use the verb and say who acts."
+strength = "weak"
+flags = "The implementation of the reduction of costs requires the automation of invoice processing."
+passes = "We can cut costs by automating the invoices."
+sources = [
+  { source = "reinhart-2025-pnas", where = "arXiv v2: nominalisations 1.5 to 2 times the human rate in GPT-4o and Llama 3 instruct", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-grok-vocabulary"
+category = "word"
+kinds = ["any"]
+models = [{ family = "grok", from = "1" }]
+what = "Uses Grok's would-be scientific words, and its 'democratizes' and 'demystifies'."
+instead = "Use the plain word, or the measurement."
+strength = "weak"
+terms = [
+  { term = 'causal', instead = "say what caused what" },
+  { term = 'empirical', instead = "measured" },
+  { term = 'correlat(?:e|es|ed|ing)', instead = "track" },
+  { term = 'underscor(?:ed|ing)|underscores (?:the|a|an|its|how|that|this|their|our)', instead = "shows" },
+  { term = 'democrati[sz](?:e|es|ed|ing)', instead = "opens up" },
+  { term = 'demystif(?:y|ies|ied|ying)', instead = "explains" },
+]
+flags = "The tool democratizes data, and the empirical results underscore its value."
+passes = "The tool is free, and last week's test showed it works."
+sources = [
+  { source = "wikipedia-en", where = "High density of AI vocabulary words, revision 1384165696", seen = 2026-11-07 },
+  { source = "slop-forensics", where = "results_by_domain/essays/analysis, x-ai grok-4-fast profile, commit c313f042620f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-gemini-phrases"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "gemini", from = "1.5" }]
+what = "Uses Gemini's breakdowns and its essay phrases."
+instead = "Say the thing directly."
+strength = "weak"
+terms = [
+  { term = '''here['’]s a breakdown''', instead = "start with it" },
+  { term = 'key improvements', instead = "what improved" },
+  { term = 'extends? far beyond', instead = "goes beyond" },
+  { term = 'multi-?pronged approach', instead = "name the steps" },
+  { term = 'manifests? in various ways', instead = "give the ways" },
+  { term = 'necessitates', instead = "needs" },
+  { term = 'complex interplay', instead = "how A affects B" },
+]
+flags = "Here's a breakdown of the issue, which extends far beyond one team and necessitates a multi-pronged approach."
+passes = "The issue hits three teams, so each needs its own fix."
+sources = [
+  { source = "sun-2025-idiosyncrasies", where = "arXiv v2, Figure 6, Gemini 1.5 Pro", seen = 2026-11-07 },
+  { source = "slop-forensics", where = "results_by_domain/essays/analysis, gemini-2.5-flash-lite profile, commit c313f042620f", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-llama-phrases"
+category = "phrase"
+kinds = ["any"]
+models = [{ family = "llama", from = "4" }]
+what = "Uses Llama 4's business-essay phrases."
+instead = "Say what was done and what came of it."
+strength = "weak"
+terms = [
+  { term = 'gain(?:s|ing)? a deeper understanding', instead = "learn" },
+  { term = 'stay(?:s|ing)? ahead of the competition', instead = "name the rival" },
+  { term = 'far-reaching consequences', instead = "name them" },
+  { term = 'role in shaping', instead = "say what it changed" },
+  { term = 'continues? to evolve', instead = "say what changed" },
+]
+flags = "Firms gain a deeper understanding of a market that continues to evolve, with far-reaching consequences."
+passes = "Firms learn the market by talking to customers, and prices moved twice this year."
+sources = [
+  { source = "slop-forensics", where = "results_by_domain/essays/analysis, llama-4-scout profile, commit c313f042620f", seen = 2026-11-07 },
+]
+
+# Tool markup that so far only English pages record. Nothing here is English as such, but an `any` sign needs sources
+# in two languages, so these wait here until another language's source shows them.
+
+[[sign]]
+id = "en-gemini-citation-markup"
+category = "artefact"
+kinds = ["any"]
+models = [{ family = "gemini", from = "1" }]
+what = "Leaves Gemini's citation markers in the text."
+instead = "Delete the marker and cite the source, or cut the claim."
+strength = "strong"
+check = '\[span_\d+\]\((?:start|end)_span\)|\[cite: ?\d+(?:, ?\d+)*\]'
+flags = "The agency was founded in 2010[cite: 17]."
+passes = "The agency was founded in 2010 [1]."
+sources = [
+  { source = "wikipedia-en-markup", where = "Gemini, revision 1383317735", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-grok-citation-markup"
+category = "artefact"
+kinds = ["any"]
+models = [{ family = "grok", from = "1" }]
+what = "Leaves Grok's citation-card markup in the text."
+instead = "Delete the markup and cite the source, or cut the claim."
+strength = "strong"
+check = 'grok_render_citation_card_json|grok_card|<grok-card\b'
+flags = "The drone was shown at the expo. [](grok_render_citation_card_json={\"cardIds\":[\"3bb883\"]})"
+passes = "The drone was shown at the expo in April."
+sources = [
+  { source = "wikipedia-en-markup", where = "Grok, revision 1383317735", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-deepseek-citation-markup"
+category = "artefact"
+kinds = ["any"]
+models = [{ family = "deepseek", from = "1" }]
+what = "Leaves DeepSeek's lenticular citation marks in the text."
+instead = "Delete the mark and cite the source, or cut the claim."
+strength = "strong"
+check = '【\d+†'
+flags = "The campaign began in 2024【85†L261-269】."
+passes = "The campaign began in 2024."
+sources = [
+  { source = "wikipedia-en-markup", where = "DeepSeek, revision 1383317735", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "en-chat-tool-markup"
+category = "artefact"
+kinds = ["any"]
+models = "any"
+what = "Leaves a chat tool's file or document tags in the text."
+instead = "Delete the tag."
+strength = "strong"
+check = '\[attached_file:\d+\]|\[web:\d+\]|ppl-ai-file-upload|:::writing\{variant='
+flags = "The board approved the plan.[attached_file:1]"
+passes = "The board approved the plan (see attached file)."
+sources = [
+  { source = "wikipedia-en-markup", where = "Perplexity; Unclassified, revision 1383317735", seen = 2026-11-07 },
+]

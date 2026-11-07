@@ -20,6 +20,8 @@ DRAFT_BUDGET = 16 * KB  # the prose files one draft reads, together
 LAYOUT_BUDGET = 16 * KB  # the layout files a deck or a sheet adds, together
 UNKNOWN_BUDGET = 48 * KB  # a text of unknown author: `any` and one language, in every family
 MAX_LINES = 2000  # Claude Code's `Read` default: past it, a file is read only in part
+# Not `<family>.md`: on Windows and macOS `claude.md` is a CLAUDE.md, which Claude Code loads as project instructions.
+PROSE = ".signs.md"
 LAYOUT = ".layout.md"
 _ORDER = {strength: n for n, strength in enumerate(signs.STRENGTHS)}
 
@@ -81,7 +83,7 @@ def render(catalogue: Catalogue) -> dict[str, str]:
         for family in {span.family for span in sign.models} or {ANY}:
             groups.setdefault((sign.language, family, is_layout(sign)), []).append(sign)
     return {
-        f"{language}/{family}{LAYOUT if layout else '.md'}": _file(catalogue, language, family, layout, found)
+        f"{language}/{family}{LAYOUT if layout else PROSE}": _file(catalogue, language, family, layout, found)
         for (language, family, layout), found in sorted(groups.items())
     }
 
@@ -94,7 +96,7 @@ def _scopes(catalogue: Catalogue, language: str) -> list[str]:
 
 def draft_files(catalogue: Catalogue, language: str, family: str) -> list[str]:
     """The prose files one draft reads, whether they exist or not: four, or six for a variant such as `zh-Hant`."""
-    return [f"{scope}/{name}.md" for scope in _scopes(catalogue, language) for name in dict.fromkeys((ANY, family))]
+    return [f"{scope}/{name}{PROSE}" for scope in _scopes(catalogue, language) for name in dict.fromkeys((ANY, family))]
 
 
 def _bytes(files: dict[str, str], paths: Iterable[str]) -> int:
@@ -128,7 +130,7 @@ def budget_problems(
         for family in (ANY, *catalogue.families):
             reads = draft_files(catalogue, language, family)
             over("a draft", reads, draft)
-            over("a deck or a sheet", (path.removesuffix(".md") + LAYOUT for path in reads), layout)
+            over("a deck or a sheet", (path.removesuffix(PROSE) + LAYOUT for path in reads), layout)
         scopes = _scopes(catalogue, language)
         scoped = [path for path in files if path.split("/")[0] in scopes]
         over("a text of unknown author", (path for path in scoped if not path.endswith(LAYOUT)), unknown)

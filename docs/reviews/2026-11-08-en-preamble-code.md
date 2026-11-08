@@ -52,3 +52,29 @@ Not covered: privacy-and-sources, plugin-contract and harness-integrity had noth
 - 6 mutants of the fixes, one at a time: any word after the reader's text, a register version of any object, no "text
   you provided", no register word in a version of your text, no edited or proofread, no article or personal statement.
   `tests/test_office.py` fails on each, as it did on the 11 mutants of the first commit.
+
+## Round 2
+
+**Where:** PR #35, `5158751..1818cb8`, a fresh reviewer who read the fixes and probed them with 67 invented person
+lines and 30 chatbot lines under Python. **Verdict:** needs-fixes, on F4. F1 to F3 hold: F1 by `OFFICE`'s email
+signature, email policy, response plan, email list, intro deck and message template lines; F2 by the logo, dress code
+and deck lines; F3 by `MACHINE`'s edited, proofread, streamlined, professional-version, text-you-provided and reworked
+caption lines.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F4 | major | any-assistant-preamble, English branch, the tails after the text and after a register version | Round 1's fix stopped finding common preambles the first commit found: "a revised version of your email incorporating your feedback:", "based on your feedback", "tailored to the role", "without the jargon", "of your email - more concise and direct", "(shorter and warmer)", "of your essay below", "a more professional version you can send:", "a more formal version, keeping your main points:", "suitable for a client", "of it:", "of the paragraph above:" | fixed: after the text, a dash or a bracket, above, below or that, or a linking word (about, addressing, based, for, from, in, incorporating, on, so, tailored, to, using, which, with, without); after a register version, a comma, for, in, suitable, that, which, with, you can, or "of it", "of that", "of this". 15 lines join `MACHINE`, the em dash one as an escape |
+| F5 | minor | the register branch | A register word about a non-text object still fires after for, with or that: "a more professional version for the client deck:", "a less formal version with the team photos:", "a more neutral version that uses the grey palette:" | wontfix: the rule's letter, a register word after more or less, fires on them, and they fired before this PR; narrowing for to text objects would lose "a more formal version for your manager" |
+| F6 | minor | the head-noun rule | "a revised version of your email to-do list:" fired, as `to\b` matched before the hyphen; "of your email, chat and file-sharing policy:" fires through the comma | fixed for the first: a linking word needs a space after it (that and above or below keep a word edge, for "that's more concise" and "below:"), and the line joins `OFFICE`. wontfix for the second: a list of nouns after the reader's text is rare, and a comma is how "of your email, with a warmer close" goes on |
+
+Refuted: "a more recent version of your email" fires, by the rule: it names the reader's text. F3's added words bring
+no false positive among the reviewer's 67 lines.
+
+Improvement: no test pinned "shared" or "wrote", nor rephrased, enhanced, corrected or conversational. Taken:
+`MACHINE` lines for wrote, rephrased, enhanced, corrected and conversational. Left: shared, one of three verbs
+after "the text you", the other two pinned.
+
+Checks: Python and Claude Code's Grep tool on the 44 ASCII English `MACHINE` preamble lines and the 53 English "here"
+lines in `OFFICE`: 44 found and none in both. 10 mutants of the round's changes, one at a time (no dash or bracket, no
+above or below, that needing a space, a linking word without a space after it, no incorporating, tailored or without,
+no you can, no suitable or in, no comma, not of it, no shared or wrote): `tests/test_office.py` fails on each.

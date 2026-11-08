@@ -220,6 +220,9 @@ MACHINE = [
     ("any-assistant-preamble", "Bien sûr ! Voici une version plus claire de votre courriel :"),
     ("any-assistant-preamble", "Absolument ! Voici une version plus professionnelle et plus claire de votre e-mail :"),
     ("any-assistant-preamble", "Avec plaisir ! Voici votre e-mail reformulé :"),
+    ("any-assistant-preamble", "Bien sûr ! Voici une version plus concise de votre rapport :"),
+    ("any-assistant-preamble", "Avec plaisir ! Voici une version améliorée de ton CV :"),
+    ("any-assistant-preamble", "Certainement ! Voici votre compte rendu retravaillé :"),
     ("any-assistant-preamble", "Bien sûr ! Voici ton texte retravaillé, prêt à envoyer :"),
     ("any-assistant-preamble", "Bien sûr ! Voici une version plus fluide de ton texte, prête à poster :"),
     ("any-assistant-preamble", "Avec plaisir ! Voici une version peaufinée de ta lettre de motivation :"),
@@ -375,6 +378,12 @@ FORMS = [
     ("fr-performative-candour", "Pour être franc, je n'y crois pas."),
     ("fr-performative-candour", "Soyons franches : le planning ne tient pas."),
     ("fr-performative-candour", "Soyons honnête : personne n'a lu le rapport."),
+    ("fr-engagement-lines", "Et vous ?"),
+    ("fr-engagement-lines", "Et toi\u202f?"),
+    ("fr-engagement-lines", "Et si on arrêtait les réunions du lundi ?"),
+    ("fr-calques", "Nous avons adressé l\u2019enjeu du recrutement en mai."),
+    ("fr-inflated-stakes", "Seul l\u2019avenir nous le dira."),
+    ("fr-staged-reveal", "C\u2019est ici que les choses deviennent intéressantes."),
     ("fr-stock-openers", "Dans un monde en constante évolution, la chorale de Saint-Lô répète le mardi."),
     ("fr-stock-openers", "«\u00a0Dans un monde en perpétuelle mutation, la mutuelle reste fidèle à ses adhérents."),
     ("fr-stock-openers", "**Dans un monde qui évolue à un rythme effréné**, notre cabinet ouvre à Brest."),
@@ -405,6 +414,8 @@ LEFT_ALONE = [
     ("fr-calques", "Ça fait sens, on valide."),
     ("fr-calques", "Je vous adresse le bon de commande."),
     ("fr-calques", "J'ai adressé le problème à la DSI."),
+    ("fr-engagement-lines", "Et vous, merci encore pour hier."),
+    ("fr-calques", "Je vous adresse ces deux devis."),
     ("fr-filler-notice", "Son intérêt n\u2019est plus à démontrer."),
     ("fr-false-contrast", "Il ne s\u2019agit pas de fermer l\u2019atelier, mais de le déplacer à Vierzon."),
     ("fr-inflated-stakes", "Une formation à l\u2019ère du numérique, le 12 mars à Caen."),
@@ -434,3 +445,49 @@ def test_a_weak_french_check_leaves_plain_forms_alone(catalogue, sign, text):
     pattern = catalogue.signs[sign].pattern
     assert pattern is not None
     assert not pattern.search(text), sign
+
+
+def _plain(text: str) -> str:
+    """A text as the alphabetical rule reads it: accents and case ignored."""
+    decomposed = unicodedata.normalize("NFD", text.lower())
+    return "".join(char for char in decomposed if not unicodedata.combining(char))
+
+
+# A group of plain words, with no regex syntax nested in it: the groups the rule can be checked on mechanically.
+_SIMPLE_GROUP = re.compile(r"\(\?:([^()\[\]\\?*+{}^$.]+)\)")
+
+
+def _french_regexes(catalogue: signs.Catalogue) -> list[tuple[str, str]]:
+    found = []
+    for sign in catalogue.signs.values():
+        if sign.language != "fr" or not sign.pattern:
+            continue
+        found += [(sign.id, term.term) for term in sign.terms] or [(sign.id, sign.pattern.pattern)]
+    return found
+
+
+def test_french_alternations_run_in_alphabetical_order(catalogue):
+    # fr.toml's header: our own order is alphabetical, so no source's order, forward or reversed, can come back (#24's
+    # review, F12). A group that breaks it for a prefix says so in a comment and would be listed here.
+    regexes = _french_regexes(catalogue)
+    groups = [(sign, group.split("|")) for sign, regex in regexes for group in _SIMPLE_GROUP.findall(regex)]
+    assert len(groups) >= 20  # the parse finds the groups, so the test can fail
+    wrong = [(sign, items) for sign, items in groups if [_plain(item) for item in items] != sorted(map(_plain, items))]
+    assert wrong == []
+
+
+def _term_key(term: str) -> str:
+    """A term's plain start: its first word or words, up to the first group or class, or a leading group's first
+    alternative."""
+    term = term.replace("['\u2019]", "'")
+    if term.startswith("(?:"):
+        return _plain(re.split(r"[|)]", term[3:], maxsplit=1)[0])
+    return _plain(re.split(r"[(\[]", term, maxsplit=1)[0])
+
+
+def test_french_term_lists_run_in_alphabetical_order(catalogue):
+    for sign in catalogue.signs.values():
+        if sign.language != "fr" or len(sign.terms) < 2:
+            continue
+        keys = [_term_key(term.term) for term in sign.terms]
+        assert keys == sorted(keys), sign.id

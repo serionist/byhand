@@ -78,3 +78,38 @@ The maintainer's call: a regular expression's alternation order counts as a list
 - copycheck over 239 files: no run of 6; at 5, only zh-Hant-mainland-terms; at 4, the French checks' own strings in
   their `flags` and "dans la salle de".
 - The largest French draft: 13,515 bytes of 16,384.
+
+## Round 3
+
+**Where:** `a099910..0f2f2c0`, read by a fresh reviewer against slopcheck-fr, boileau, avoid-ai-writing-multilingual
+and wikipedia-fr-sources. **Verdict:** needs-fixes.
+
+The maintainer's rule, so no one has to judge an order again: every French alternation, term list and list of examples
+in a `what` or `instead` runs in alphabetical order of its plain text, accents and case ignored, unless that changes
+what a regex matches (a shorter alternative that is a prefix of a longer one, with no edge after it): then the longer
+comes first, with a comment. fr.toml's header states it, and a test holds it.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F12 | blocker | fr-false-contrast, fr-slogan-mirrors, fr-stock-openers, fr-performative-candour, fr-filler-notice, fr-engagement-lines, fr-inflated-stakes, fr-ai-vocabulary's `what` | Round 2's "own order" was slopcheck-fr's order reversed, alternation by alternation; a reversed list is still the source's list | fixed: every French alternation, term list and list of examples alphabetical, the French branches in `any.toml` too; `test_french_alternations_run_in_alphabetical_order` parses each French sign's simple alternations of plain words (49 groups) and `test_french_term_lists_run_in_alphabetical_order` each term list; no prefix needed the exception, as fr-calques' articles now carry their own space or apostrophe |
+| F13 | blocker | fr-performative-candour's terms, fr-false-contrast's `what`, fr-article-scaffold's `what` | Still in a source's order: honnetete-performative's (la vérité, sans langue de bois, pour être), correction-deux-temps' (seulement, juste, simple), wikipedia-fr-sources' (summary up top, FAQ, sources at the end) | fixed: alphabetical, the scaffold's `what` rewritten as a list of its own |
+| F14 | blocker | fr-dash-asides `flags` | "la démo — répétée dix fois — a planté" followed slopcheck em-dash's bad example: noun, dashed participle aside, verb | fixed: a dashed aside that is a full clause, then a dash before a closing comment |
+| F15 | minor | fr-english-headings | "## Key Takeaways" was gabarit-anglais's first bad example, word for word | fixed: "## Wrap-Up", in `flags` and `what` |
+| F16 | minor | fr-engagement-lines | The "Et vous" branch kept et-vous's shape and its {0,80} bound | fixed: "Et toi ?" or "Et vous ?" alone, or opening a question that runs to the line's end, with no bound; `FORMS` and `LEFT_ALONE` lines |
+| F17 | minor | any-assistant-preamble, French branch | Missed "de votre rapport", "CV", "compte rendu" | fixed: in both forms, with `MACHINE` lines |
+
+The last read, every French field and list beside the three sources: five more `flags` sat on a source example's frame
+(slopcheck-fr's "Soyons honnêtes : …", "Il convient de noter que …", "Dans cet article, nous allons …", "Nous sommes
+ravis d'annoncer … !", and correction-deux-temps' "n'est pas un simple … : c'est le [image]"), and fr-calques' on
+calque-anglais's "Il faut adresser ce problème": each rewritten in another shape. fr-staged-reveal's two "entre en jeu"
+terms became one.
+
+### Checks
+
+- 7 mutants: an alternation reversed, a term list out of order, "Et vous" only before a comma, fr-calques without l',
+  the staged reveal without the words before "entre", the preamble without rapport, CV and compte rendu in either
+  form. Each fails a test.
+- ripgrep against Python: 394 cases, no disagreement.
+- copycheck over 239 files: no run of 6; at 5, only zh-Hant-mainland-terms; at 4, the French checks' own strings in
+  their `flags` and "dans la salle de".
+- The largest French draft: 13,417 bytes of 16,384.

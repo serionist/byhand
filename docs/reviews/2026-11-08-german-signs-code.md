@@ -30,6 +30,31 @@ ripgrep, and copycheck over wikipedia-de, avoid-ai-writing-multilingual and the 
 The maintainer also cut `de-english-constructions`: with no check and no example in its source, a model would read
 "macht Sinn" in a person's text as a sign. 14 German signs remain.
 
+## Round 2
+
+**Where:** `a5897ad..851e3b8`, a fresh reviewer. **Verdict:** approved, with four minors fixed at once; no third round.
+F1 to F10 held.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| m1 | minor | any-assistant-preamble, German branch | Case-insensitive, `ihre[sr]` took a third person's text: "Gerne! Hier ist die überarbeitete Fassung ihrer Rede, Frau Klein hat sie heute Morgen geschickt:" fired strong | fixed: the polite form is case-sensitive, `(?-i:Ihre[sr])`, which ripgrep honours under `-i`; the line, and one with "ihr überarbeiteter Entwurf", join `OFFICE` |
+| m2 | minor | the same branch | Missed "Natürlich! Hier ist Ihr umformulierter Text:", which round 1 swapped out of `MACHINE`, and comparatives ("eine professionellere Version Ihrer E-Mail") | fixed: a second branch takes the possessive before the adjective (case-sensitive Ihr, or dein, euer), and any `-ere` comparative; the line is back; "Ihre überarbeitete Präsentation" still passes |
+| m3 | minor | any-ai-self-reference, German branch | Missed a word between ich and the negation: "kann ich leider keine", "habe ich leider keinen Zugang", "kann ich das nicht" | fixed: up to two words, and keinen, keiner, keines; three lines in `MACHINE` |
+| m4 | minor | any-assistant-closing-offer, soll-ich branch | Fired on first-person FAQ headings in a document: "Soll ich ihn selbst erstellen …?", "Soll ich es notariell machen lassen?" | fixed: erstellen and machen only after daraus; three FAQ lines join `OFFICE` |
+| m5 | minor | any-unfilled-placeholder | "[Datum einfügen]" no longer fired once round 1 dropped its branch | fixed: a branch for a bracketed slot ending in einfügen, eintragen or ergänzen, beside the shared bracket, whose ending stays #22's; two lines in `MACHINE` |
+
+The maintainer accepted the three trade-offs the reviewer raised: a person's "Soll ich den Text noch kürzen?" at the foot
+of a draft document they share fires the closing offer; "Als Sprachmodell darf ich keine US-Cloud nutzen" fires the
+self-reference; a press release's register can reach 3 weak hits.
+
+Checked: 9 mutants of the changed checks, one at a time, each failing a test; the changed checks under ripgrep;
+copycheck at 6 and 5 words; `validate`, `render` and `gate.py full --base origin/main`.
+
+## Closed
+
+Round 2's minors are fixed in the commit after `851e3b8` that carries this section, verified by their mutants in the
+main session. The maintainer approved without a third round.
+
 ## Checks
 
 - 25 mutants, one at a time, of every check this round changed and of `_weak_hits`: each fails a test.

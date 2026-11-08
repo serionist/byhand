@@ -74,6 +74,10 @@ NOTES = [
     # prices, with the dash Swiss and German invoices write for no cents (#23's review, F6)
     "Eintritt: CHF 20." + EM + " pro Person, Kinder frei.",
     "Gesamtbetrag: 1.250," + EM + " € netto, zahlbar in 30 Tagen.",
+    # first-person questions as headings of an FAQ, which the closing offer reads (#23's review, m4)
+    "## Soll ich den Antrag selbst erstellen oder eine Vorlage nutzen?\nDie Vorlage spart Zeit.",
+    "## Soll ich es notariell machen lassen?\nNur beim Grundstückskauf.",
+    "Soll ich ihn selbst erstellen? Nein, die Personalabteilung schickt ihn zu.",
 ]
 
 # a reply ending on a colon, before the link, the file or the text; a person handing over or returning their own draft
@@ -88,6 +92,9 @@ REPLIES = [
     "Gerne! Hier ist eine überarbeitete Version mit deinen Anmerkungen:",
     "Gerne! Hier ist ein überarbeiteter Entwurf:",
     "Sehr gerne, hier ist die kürzere Fassung für den Aushang:",
+    # ihrer, a third person's: only the polite Ihrer, capitalised, is the reader's (#23's review, m1)
+    "Gerne! Hier ist die überarbeitete Fassung ihrer Rede, Frau Klein hat sie heute Morgen geschickt:",
+    "Gerne! Hier ist ihr überarbeiteter Entwurf, so wie Frau Klein ihn mir geschickt hat:",
     "Klar, hier ist die kürzere Fassung:",
     "Gerne, hier meine Vorschläge für die Agenda:",
     "Ich habe einen ersten Entwurf geschrieben, schau gern drüber:",
@@ -206,6 +213,9 @@ MACHINE = [
     ("any-assistant-preamble", "Selbstverständlich! Hier ist eine kürzere Version Ihres Beitrags:"),
     ("any-assistant-preamble", "Sehr gerne! Hier ist ein überarbeiteter Entwurf eurer Einladung:"),
     ("any-assistant-preamble", "Gerne, hier ist die verbesserte Fassung deiner Nachricht:"),
+    ("any-assistant-preamble", "Natürlich! Hier ist Ihr umformulierter Text:"),
+    ("any-assistant-preamble", "Gerne! Hier ist eine professionellere Version Ihrer E-Mail:"),
+    ("any-assistant-preamble", "Sicherlich! Hier ist deine freundlichere Fassung:"),
     ("any-assistant-closing-offer", "Gibt es noch etwas, womit ich dir behilflich sein kann?"),
     ("any-assistant-closing-offer", "Gibt es noch etwas, bei dem ich Ihnen noch helfen kann?"),
     ("any-assistant-closing-offer", "Möchten Sie, dass ich dies in eine Tabelle umwandle?"),
@@ -225,6 +235,9 @@ MACHINE = [
     ("any-ai-self-reference", "Als KI habe ich keine Gefühle, aber ich verstehe die Frage."),
     ("any-ai-self-reference", "Als Sprachmodell verfüge ich nicht über aktuelle Kurse."),
     ("any-ai-self-reference", "Als KI-Modell verfüge ich über keine Internetverbindung."),
+    ("any-ai-self-reference", "Als KI-Sprachmodell kann ich leider keine Echtzeitdaten abrufen."),
+    ("any-ai-self-reference", "Als KI habe ich leider keinen Zugang zu Ihrem Kalender."),
+    ("any-ai-self-reference", "Als Sprachmodell kann ich das nicht beurteilen."),
     ("any-knowledge-cutoff", "Stand meines letzten Wissensupdates gab es keine Fusion."),
     ("any-knowledge-cutoff", "Bis zu meinem letzten Wissensupdate war das Werk geöffnet."),
     ("any-knowledge-cutoff", "Bis zu meinem letzten Trainings-Update lag dazu nichts vor."),
@@ -235,6 +248,8 @@ MACHINE = [
     ("any-unfilled-placeholder", "Mit freundlichen Grüßen\n[Ihr Name]"),
     ("any-unfilled-placeholder", "Liebe Grüße, [dein Name]"),
     ("any-unfilled-placeholder", "Sehr geehrte Damen und Herren der [Ihre Firma],"),
+    ("any-unfilled-placeholder", "Die Lieferung erfolgt am [Datum einfügen]."),
+    ("any-unfilled-placeholder", "Ansprechpartner: [Name hier eintragen]"),
     ("any-unfilled-placeholder", "Mit freundlichen Grüßen\n[Your Name]"),
     ("any-unfilled-placeholder", "Mehr dazu unter insert_link_here."),
     ("any-unfilled-placeholder", "Abgabe am 2026-xx-xx."),

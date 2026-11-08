@@ -567,7 +567,7 @@ models = "any"
 what = "Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'."
 instead = "Delete the line; start with the text itself."
 strength = "strong"
-check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|gerne)! hier ist (?:eine?|ihre?) [^.!?\n]*(?:überarbeitete|verbesserte|kürzere|längere|förmlichere|umformulierte|geglättete)[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:\w+ )?(?:исправленн\w+|переработанн\w+|улучшенн\w+|отредактированн\w+|сокращ[её]нн\w+|более \w+) (?:\w+ )?(?:вариант|версия|текст|редакция)\b[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$'''
+check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|gerne)! hier ist (?:eine?|ihre?) [^.!?\n]*(?:überarbeitete|verbesserte|kürzere|längere|förmlichere|umformulierte|geglättete)[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:(?:ваш|тво)\w* (?:исправленн|переработанн|улучшенн|отредактированн|сокращ[её]нн)\w+ (?:текст|письмо|сообщение|пост|резюме|абзац)\b|(?:\w+ )?(?:исправленн|переработанн|улучшенн|отредактированн|сокращ[её]нн)\w+ (?:вариант|версия|текст|редакция) (?:ваш|тво)\w+ (?:текст|письм|сообщени|пост|стать|резюме|объявлени|абзац)\w*|(?:\w+ )?более \w+ (?:версия|вариант)\b)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$'''
 flags = "Certainly! Here is a polished version of your announcement:"
 passes = "Sure! Here's the link to the slides from yesterday."
 sources = [
@@ -604,8 +604,9 @@ models = "any"
 what = "Leaves a fill-in slot in the text: a bracketed name, a URL stub, a date of XX."
 instead = "Fill it in or cut it before you send."
 strength = "usual"
-# In Russian, «[Ваше имя]» is the chatbot's slot; a bare «[имя]» is a person's mail-merge field in a template they hand on.
-check = '\[(?:your|insert|add|describe|company|recipient|ваш\w*|вставьте|опишите|укажите)\b[^\]\n]*\]|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】]'
+# A slot left in a person's own template fires too, on purpose: it is unfilled. Markdown link text, [your account](...),
+# is no slot: a bracket with ( after it passes, in every branch.
+check = '\[(?:your|insert|add|describe|company|recipient|имя|ваш\w*|вставьте|опишите|укажите)\b[^\]\n]*\](?:[^(]|$)|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】](?:[^(（]|$)'
 flags = "Thanks again, and see you on Friday.\n\n[Your Name]"
 passes = "Thanks again, and see you on Friday.\n\nMarta"
 sources = [

@@ -14,12 +14,15 @@ id = "ru-title-case-headings"
 category = "formatting"
 kinds = ["any"]
 models = "any"
-what = "Capitalises every word of a heading, an English habit; Russian capitalises the first word and names only."
+what = "Capitalises every word of a heading, an English habit; Russian capitalises the first word and names only. Headings set in capitals throughout, as contracts use, are not this."
 instead = "Capitalise the first word and proper names; leave и, в, на and the rest small."
 strength = "usual"
-# Case matters here alone, so the part that reads capitals turns case-insensitivity off. It needs a heading or a whole
-# bold line, and a capitalised preposition or conjunction inside it, which no name or signature line has.
-check = '''^(?:#{1,6} +|\*\*)(?-i:[А-ЯЁ][А-ЯЁа-яё-]*(?: [А-ЯЁ][А-ЯЁа-яё-]*)* (?:И|Или|В|Во|На|С|Со|По|Для|От|До|Из|О|Об|К|За|Без|При|Через)(?: [А-ЯЁ][А-ЯЁа-яё-]*)+)(?:\*\*)?\s*$'''
+# Case matters here alone, so the part that reads capitals turns case-insensitivity off. It needs a Markdown heading
+# whose words each start with a capital and go on in lower case, so a contract's ПРАВА И ОБЯЗАННОСТИ passes, and a
+# capitalised preposition or conjunction inside, which no name has. A bold line isn't read: people set a signature,
+# Отдел Продаж И Маркетинга, that way. Nor С: people capitalise «С Новым Годом». A small и between capitalised words
+# (Ранняя Жизнь и Образование) is left to the model's read, as two names joined by и look the same.
+check = '''^#{1,6} +(?-i:[А-ЯЁ][а-яё-]+(?: [А-ЯЁ][а-яё-]+)* (?:И|Или|В|Во|На|По|Для|От|До|Из|О|Об|К|За|Без|При|Через)(?: [А-ЯЁ][а-яё-]+)+)\s*$'''
 flags = "## Сроки И Бюджет Проекта"
 passes = "## Сроки и бюджет проекта"
 sources = [
@@ -97,8 +100,8 @@ models = "any"
 what = "Links paragraphs only with кроме того or также, so none grows out of the one before."
 instead = "Let each paragraph answer, extend or turn on the one before it."
 strength = "weak"
-flags = "Отдел кадров переехал на третий этаж.\n\nТакже с понедельника меняется график обеда.\n\nКроме того, пропуска теперь продлевают онлайн."
-passes = "Отдел кадров переехал на третий этаж.\n\nТам же теперь продлевают пропуска, так что в бюро пропусков ходить не нужно."
+flags = "Весной мы открыли пункт выдачи в Химках.\n\nТакже курьеры теперь работают по субботам.\n\nКроме того, в магазине появилась примерочная."
+passes = "Весной мы открыли пункт выдачи в Химках.\n\nОн забрал половину заказов у курьеров, и в мае мы перевели двоих из них на субботние смены."
 sources = [
   { source = "humanizer-ru", where = "references/patterns.md, 34, commit ff990df404f7", seen = 2026-11-08 },
 ]
@@ -146,7 +149,7 @@ strength = "weak"
 terms = [
   { term = 'поворотн\w+ (?:момент|пункт|этап)\w*', instead = "give the date and the change" },
   { term = 'знамен(?:у|ова)\w*', instead = "начинается, or give the date" },
-  { term = 'символизиру\w*', instead = "say who reads it so" },
+  { term = 'символизир\w*', instead = "say who reads it so" },
   { term = '(?:служ|выступа|явля)\w* (?:ярким |живым )?(?:напоминанием|символом)', instead = "say what it shows" },
   { term = 'неизгладим\w+ след\w*', instead = "say what changed" },
   { term = 'непоколебим\w*', instead = "cut" },
@@ -169,12 +172,10 @@ strength = "weak"
 terms = [
   { term = 'подч[её]ркивая', instead = "cut, or say who stresses it" },
   { term = 'демонстрируя', instead = "cut" },
-  { term = 'свидетельствуя', instead = "say what it proves, and to whom" },
   { term = 'способствуя', instead = "say what it changed" },
-  { term = 'укрепляя', instead = "say what grew" },
   { term = 'отражая', instead = "name the cause" },
 ]
-flags = "Выручка магазина выросла на 4%, подчёркивая верность покупателей и укрепляя позиции сети."
+flags = "Выручка магазина выросла на 4%, подчёркивая верность покупателей и демонстрируя силу сети."
 passes = "Выручка магазина выросла на 4%: в октябре открыли вторую кассу."
 sources = [
   { source = "wikipedia-ru", where = "Поверхностный анализ, revision 156024043", seen = 2026-11-08 },
@@ -186,17 +187,16 @@ id = "ru-didactic-phrases"
 category = "phrase"
 kinds = ["any"]
 models = "any"
-# Not «следует отметить», the stock opener of a person's report.
+# Not «следует отметить», «стоит отметить» or a bare «важно отметить»: the stock openers of a person's report.
 what = "Tells the reader what is worth noting before saying it."
 instead = "Say it; the reader decides what matters."
 strength = "weak"
 terms = [
-  { term = '(?:крайне |критически )?важно (?:отметить|подч[её]ркнуть)', instead = "cut" },
-  { term = 'стоит (?:отметить|подч[её]ркнуть)', instead = "cut" },
+  { term = '(?:крайне|критически) важно (?:отметить|подч[её]ркнуть)', instead = "cut" },
   { term = 'нельзя не (?:отметить|упомянуть)', instead = "cut" },
   { term = 'стоит обратить внимание на то', instead = "cut" },
 ]
-flags = "Важно отметить, что парковка закрыта. Стоит подчеркнуть, что пропуска выдаёт охрана."
+flags = "Крайне важно отметить, что парковка закрыта. Нельзя не упомянуть, что пропуска выдаёт охрана."
 passes = "Парковку закрыли до среды, пропуск возьмите у охраны."
 sources = [
   { source = "wikipedia-ru", where = "Дидактические и редакционные оговорки, revision 156024043", seen = 2026-11-08 },
@@ -208,16 +208,16 @@ id = "ru-vague-authority"
 category = "phrase"
 kinds = ["any"]
 models = "any"
+# Not «по мнению экспертов» or «эксперты отмечают»: a person's report says them too.
 what = "Leans on unnamed experts and analysts."
 instead = "Name the person or the study, or drop the claim."
 strength = "weak"
 terms = [
-  { term = '(?:по мнению|по словам) (?:многих )?экспертов', instead = "name them" },
-  { term = '(?:эксперты|аналитики) (?:отмечают|считают|утверждают|подч[её]ркивают)', instead = "name them" },
   { term = 'некоторые критики', instead = "name them" },
-  { term = 'ряд (?:экспертов|источников|исследований)', instead = "cite them" },
+  { term = 'ряд\w* (?:экспертов|источников|исследований)', instead = "cite them" },
+  { term = 'исследователи утверждают', instead = "name them" },
 ]
-flags = "По мнению экспертов, новый тариф выгоден всем, а аналитики отмечают его популярность."
+flags = "Некоторые критики сомневаются в новом тарифе, но ряд исследований показывает его выгоду."
 passes = "Ирина из бухгалтерии посчитала: на новом тарифе мы экономим 3 000 рублей в месяц."
 sources = [
   { source = "wikipedia-ru", where = "Обтекаемые формулировки, revision 156024043", seen = 2026-11-08 },
@@ -233,9 +233,9 @@ what = "Ends on a stock pair: difficulties named in general, then a bright futur
 instead = "Name the problem and what is being done about it, or stop."
 strength = "weak"
 terms = [
-  { term = 'сталкива\w+ с (?:рядом |целым рядом |новыми |серь[её]зными )?вызов\w*', instead = "name the problem" },
+  { term = '(?:сталкива|столкну)\w+ с (?:целым )?рядом вызов\w*', instead = "name the problem" },
   { term = 'несмотря на (?:эти|все|существующие) (?:вызовы|трудности)', instead = "cut" },
-  { term = 'будущее выглядит (?:ярким|светлым|многообещающим)', instead = "give the next step" },
+  { term = 'будущее выглядит (?:ярким|светлым|многообещающ\w*)', instead = "give the next step" },
   { term = 'продолжа\w+ процветать', instead = "give a number" },
 ]
 flags = "Типография сталкивается с рядом вызовов, но будущее выглядит многообещающим."
@@ -320,8 +320,8 @@ what = "Pairs a Russian verb and noun the way English pairs them, not the way Ru
 instead = "Use the Russian pairing: решить проблему, успеть к сроку."
 strength = "weak"
 terms = [
-  { term = 'адрес(?:овать|ует|уют|овал\w*|уем) (?:эт\w+ |наш\w+ |ваш\w+ |главн\w+ )?(?:проблем|вопрос|задач|бол)\w*', instead = "решить, ответить на" },
-  { term = 'достав\w+ ценност\w*', instead = "say what the user gets" },
+  { term = 'адрес(?:овать|ует|уют|овал\w*|уем) (?:эт\w+ |наш\w+ |ваш\w+ |главн\w+ )?(?:проблем|задач|бол)\w*', instead = "решить" },
+  { term = 'достав(?:лять|ляет|ляют|ляем|лял\w*|ляя|ить|ит|ят|им|ил\w*) ценность', instead = "say what the user gets" },
   { term = 'встрет\w+ дедлайн\w*', instead = "успеть к сроку" },
 ]
 flags = "Релизы раз в две недели помогут нам доставлять ценность чаще."
@@ -341,7 +341,7 @@ strength = "weak"
 terms = [
   { term = 'в самом сердце', instead = "в центре, or the address" },
   { term = 'захватывающ\w* дух', instead = "describe it" },
-  { term = 'мо(?:жет|гут) похвастаться', instead = "есть" },
+  { term = '(?:[а-яё]{3,}|[а-яё]|[а-мо-яё][а-яё]|н[а-дж-яё]) мо(?:жет|гут) похвастаться', instead = "есть" },
   { term = 'богат\w* (?:культурн|историческ)\w+ (?:наследи|прошл)\w*', instead = "name what is there" },
   { term = 'потрясающ\w+ (?:природн\w+ )?красот\w*', instead = "describe it" },
 ]

@@ -33,6 +33,16 @@ REPORT_PRICES = (
     "Закупочные цены в октябре выросли на 5%, отражая рост курса. Стоит отметить, что два поставщика уже прислали "
     "новые прайсы. Данный рост мы заложили в бюджет на ноябрь в рамках резерва."
 )
+# Report paragraphs that once made a weak cluster from everyday phrases (#22's review, F3).
+REPORTS = [
+    "Стоит отметить, что переход на электронный документооборот занял два месяца, способствуя снижению затрат "
+    "на печать. Эксперты отмечают, что такие проекты окупаются за год.",
+    "2025 год стал поворотным моментом для компании: мы открыли второй склад. Сейчас отрасль сталкивается "
+    "\u0441 серьёзными вызовами из-за роста тарифов. По мнению экспертов, цены стабилизируются к осени.",
+    "Стоит отметить, что план продаж выполнен на 104%. Нельзя не упомянуть работу склада, который отгрузил "
+    "заказы без задержек. Эксперты отмечают рост спроса в регионе.",
+    REPORT_PRICES + " По мнению экспертов, к весне цены выровняются.",
+]
 OFFICIAL_LETTER = _text(
     "Исх. № 112/4 от 05.11.2026",
     "",
@@ -119,7 +129,11 @@ OFFICE = [
     "Безусловно! Вот обновлённый график дежурств:",
     "Вот мой вариант текста для рассылки, правь смело:",
     "Отправляю договор после моих правок, исправленная версия во вложении.",
-    TEMPLATE,
+    "Конечно! Вот исправленный вариант письма:",
+    "Конечно! Вот исправленный вариант договора:",
+    "Конечно! Вот исправленная версия презентации:",
+    "Конечно! Вот исправленный текст объявления:",
+    "Оплатить можно в [вашем личном кабинете](https://example.ru/lk).",
     # a teacher, a developer and a stock-keeper, in words a chatbot also uses
     "Курсовая в целом хорошая, но в предоставленных источниках не указаны страницы. Поправьте до 20 числа.",
     "Скрипт упал во время обновления моей базы данных, перезапущу ночью.",
@@ -140,6 +154,12 @@ OFFICE = [
     _text("## Итоги квартала", "", "Продажи выросли, расходы на логистику снизились."),
     "**Важно: пропуска теперь только электронные**",
     "## План на 2027 год",
+    "## ПРАВА И ОБЯЗАННОСТИ ПОДРЯДЧИКА",
+    "**ПОРЯДОК ОПЛАТЫ И ДОСТАВКИ**",
+    "### СРОКИ И ПОРЯДОК ПРИЁМКИ",
+    _text("Хорошей недели,", "", "**Отдел Продаж И Маркетинга**"),
+    "## Поздравляем \u0421 Новым Годом",  # people capitalise the greeting whole (#22's review, F4)
+    "## Анна Иванова и Пётр Смирнов",
     # plain Russian punctuation and plain contrasts
     DASHES_AND_QUOTES,
     "Мы не только закрыли долги, но и купили новый сервер.",
@@ -179,11 +199,11 @@ def test_no_sign_that_counts_alone_fires_on_plain_russian_work_text(counted_alon
 # above can't come from a sign that finds nothing, or from a branch that stopped finding.
 MACHINE = [
     ("ru-title-case-headings", "## Сроки И Бюджет Проекта"),
-    ("ru-title-case-headings", "**Планы И Задачи Отдела**"),
+    ("ru-title-case-headings", "# Права И Обязанности Подрядчика"),
     ("ru-title-case-headings", "### Итоги Года Для Отдела Продаж"),
-    ("any-assistant-preamble", "Конечно! Вот исправленный вариант письма:"),
-    ("any-assistant-preamble", "Безусловно! Вот более официальная версия вашего текста:"),
-    ("any-assistant-preamble", "Конечно! Вот сокращенная редакция:"),
+    ("any-assistant-preamble", "Конечно! Вот исправленный вариант вашего письма:"),
+    ("any-assistant-preamble", "Безусловно! Вот более официальная версия:"),
+    ("any-assistant-preamble", "Конечно! Вот сокращенная редакция твоего поста:"),
     ("any-assistant-preamble", "Конечно! Вот ваш отредактированный текст:"),
     ("any-assistant-closing-offer", "Сообщите мне, если хотите, чтобы я дополнил таблицу."),
     ("any-assistant-closing-offer", "Сообщите мне, если хотите, чтобы текст был сокращён."),
@@ -198,6 +218,8 @@ MACHINE = [
     ("any-unfilled-placeholder", "Спасибо,\n[Ваше имя]"),
     ("any-unfilled-placeholder", "Я пишу по поводу [опишите проблему]."),
     ("any-unfilled-placeholder", "Срок сдачи — [укажите дату]."),
+    # a slot left in a person's own template fires on purpose: it is unfilled (#22's review, F8)
+    ("any-unfilled-placeholder", TEMPLATE),
     ("any-unfilled-placeholder", "Подробности: [вставьте ссылку]"),
     ("any-unfilled-placeholder", "Срок сдачи — 2026-xx-xx."),
     ("any-emoji-markers", "- 🚀 Запуск в понедельник"),
@@ -250,8 +272,10 @@ FORMS = [
     ("ru-tacked-on-participles", "Цены выросли, подчеркивая дефицит."),
     ("ru-didactic-phrases", "Крайне важно подчеркнуть, что сроки прежние."),
     ("ru-didactic-phrases", "Нельзя не упомянуть вклад склада."),
-    ("ru-vague-authority", "Аналитики подчеркивают рост спроса."),
-    ("ru-challenges-formula", "Компании сталкиваются \u0441 серьёзными вызовами."),
+    ("ru-vague-authority", "По мнению ряда экспертов, спрос вырастет."),
+    ("ru-challenges-formula", "Компания столкнулась \u0441 целым рядом вызовов."),
+    ("ru-challenges-formula", "Будущее выглядит многообещающе."),
+    ("ru-significance-phrases", "Это символизировало перемены."),
     ("ru-challenges-formula", "Магазин продолжал процветать."),
     ("ru-throat-clearing", "Давайте разберемся, кто платит за тариф."),
     ("ru-throat-clearing", "Вот в чем фокус."),
@@ -270,6 +294,26 @@ def test_each_term_finds_its_forms(catalogue, sign, text):
     found = catalogue.signs[sign]
     assert found.pattern is not None
     assert found.pattern.search(text), sign
+
+
+# Plain Russian that a term's stem would reach if it were wider (#22's review, F5 and F6).
+PLAIN = [
+    ("ru-calques", "Предлагаю адресовать этот вопрос юристам."),
+    ("ru-calques", "Договор на доставку ценностей продлили до марта."),
+    ("ru-promotional-words", "Наш офис пока не может похвастаться парковкой."),
+    ("ru-didactic-phrases", "Важно отметить: оплата до пятницы."),
+    ("ru-vague-authority", "Эксперты отмечают рост спроса."),
+    ("ru-vague-authority", "По мнению экспертов, цены стабилизируются."),
+    ("ru-didactic-phrases", "Стоит отметить, что план выполнен."),
+    ("ru-challenges-formula", "Отрасль сталкивается \u0441 серьёзными вызовами."),
+]
+
+
+@pytest.mark.parametrize(("sign", "text"), PLAIN)
+def test_the_terms_leave_plain_russian_alone(catalogue, sign, text):
+    found = catalogue.signs[sign]
+    assert found.pattern is not None
+    assert not found.pattern.search(text), sign
 
 
 def _reads(sign: signs.Sign, kind: str) -> bool:
@@ -300,6 +344,7 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
 
 WEAK_CASES = [
     (REPORT, "document"),
+    *((report, "document") for report in REPORTS),
     (REPORT_PRICES, "document"),
     (OFFICIAL_LETTER, "document"),
     (OFFICIAL_LETTER, "email"),

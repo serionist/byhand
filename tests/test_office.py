@@ -51,6 +51,9 @@ OFFICE = [
     "★ Highly recommended",
     "⚠ The car park closes at 6.",
     "- Book the room\n- Order lunch\n- Send the agenda",
+    # Markdown link text is no slot (#22's review, F8)
+    "Update your details in [your account](https://example.com/account).",
+    "[ここに入力した例](https://example.jp/sample)を見てください。",
     # contrast
     "It's not a bug, it's a feature.",
     "This isn't about money, it's about trust.",
@@ -136,7 +139,7 @@ MACHINE = [
     ("any-assistant-preamble", "Sure! Here's a professional email you can send to your client:"),
     ("any-assistant-preamble", "Of course! Here is a shorter version of the post:"),
     ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung:"),
-    ("any-assistant-preamble", "Конечно! Вот исправленный текст:"),
+    ("any-assistant-preamble", "Конечно! Вот исправленный текст вашего письма:"),
     ("any-assistant-preamble", "当然可以\uff01以下是修改后的版本\uff1a"),
     ("any-didactic-aside", "It's worth noting that results vary."),
     ("any-didactic-aside", "It is crucial to note the deadline."),

@@ -59,7 +59,7 @@ languages = ["ru"]
 licence = "CC BY-SA 4.0"
 due = "weekly"
 feed = { api = "mediawiki", site = "ru.wikipedia.org", title = "Википедия:Признаки_сгенерированности_текста" }
-read_at = { revision = "156024043", date = 2026-11-07 }
+read_at = { revision = "156024043", date = 2026-11-08 }
 
 [[source]]
 id = "wikipedia-fr"
@@ -136,10 +136,10 @@ id = "humanizer-ru"
 url = "https://github.com/smixs/humanizer-ru"
 kind = "repo"
 languages = ["ru"]
-licence = "MIT"
+licence = "MIT; its English-derived patterns trace back to Wikipedia (CC BY-SA), so facts only"
 due = "weekly"
-feed = { api = "github", repo = "smixs/humanizer-ru", paths = ["SKILL.md"] }
-read_at = { commit = "ff990df404f7", date = 2026-11-07 }
+feed = { api = "github", repo = "smixs/humanizer-ru", paths = ["SKILL.md", "references/patterns.md", "scripts/lint.py"] }
+read_at = { commit = "ff990df404f7", date = 2026-11-08 }
 
 [[source]]
 id = "avoid-ai-writing-multilingual"

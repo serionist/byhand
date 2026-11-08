@@ -1,33 +1,7 @@
 # byhand
 
-A Claude Code plugin that writes the way you do: your mail, messages, documents and decks, in your language and your
+A Claude Code plugin that writes the way you do: your mail, messages, posts and documents, in your language and your
 own style, without the words, structure and layout that make text read as AI-written.
-
-Not released yet: this is the repo's harness, and [the bootstrap plan](https://github.com/serionist/byhand/blob/main/docs/plans/2026-11-06-bootstrap.md) designs the
-first version.
-
-## How it works
-
-byhand is two sets of Markdown files and the skills that read them:
-
-- **Signs:** what makes text read as AI-written, in each language. They ship with the plugin.
-- **Styles:** how you write, learned from your own samples. They stay on your machine.
-
-`/byhand:learn` makes a style. After that you ask Claude Code for a mail as you always do, and byhand writes it in your
-style, without the signs. There is nothing else to install or run.
-
-## What it will do
-
-- **Know the signs.** A catalogue of what gives AI writing away ("delve", "it's worth noting", rule-of-three lists, a
-  tagline under every title, bold lead-ins on every bullet), for the 100 most spoken languages and for the models
-  that write them. Each sign says what a person writes instead.
-- **Stay current.** A scheduled job reads the sources the catalogue lists and opens an issue when one changes; the
-  new signs come as a pull request, which a person reads before it lands.
-- **Load little.** For each draft, only the signs for its language and the model writing it, plus one style. Not the
-  whole catalogue.
-- **Write in your style.** It learns your styles from your own samples, several if you write differently for
-  different people, and uses the one you set for each kind of writing, or asks. Your samples stay on your machine.
-- **Start by itself** when you ask Claude Code for a mail, a message, a document or a deck.
 
 ## Install
 
@@ -35,6 +9,43 @@ style, without the signs. There is nothing else to install or run.
 /plugin marketplace add serionist/byhand
 /plugin install byhand@byhand
 ```
+
+That's all: no Python, nothing else to install or run. The first time a byhand skill runs in a session, Claude Code
+asks you to allow it.
+
+## Use it
+
+- **Write as you always do.** Ask Claude Code for a mail, a Slack message, a post or a document, in any language.
+  `/byhand:write` starts by itself, writes it in your style without the signs of AI writing, and reads its own draft
+  before showing it. It stays out of code: commit messages, READMEs and docstrings are left alone.
+- **Teach it your style.** "Learn my style from these" with two or more of your own mails or messages, as files or
+  pasted. `/byhand:learn` leaves out any sample that reads as AI-written, shows you the style, and saves it only when
+  you say yes. You can have several, and make one the default for each kind of writing and language.
+- **Tell it what you don't like.** After a draft, say what's off. If it's a habit, it offers to keep it as a rule;
+  "remember: …" does the same.
+- **Check a text.** "Does this read as AI-written?" `/byhand:check` lists the signs with their lines and what a person
+  writes instead. No score: it is for your own writing, not a detector.
+
+Your styles live in `~/.byhand/styles/`, on your machine only: an index and one short Markdown file per style, which
+you can edit.
+
+## How it works
+
+byhand is two sets of Markdown files and the skills that read them:
+
+- **Signs:** what makes text read as AI-written, per language and per model family and version. English, Chinese
+  (Simplified and Traditional), Japanese, Korean, Russian, German, French and Hungarian have their own; every language
+  gets the signs all languages share. Each sign says what a person writes instead.
+- **Styles:** how you write, learned from your own samples.
+
+Each draft loads only the signs for its language, its kind of writing and the model writing it, plus one style: a few
+thousand tokens, never the whole catalogue. A model newer than the catalogue gets its family's current signs.
+
+## Next
+
+- **Staying current:** a scheduled job that reads the sources the catalogue lists and opens an issue when one changes;
+  the new signs come as a pull request a person reads (`0.2.0`).
+- **More languages** (`0.3.0`), **decks and sheets** (`0.4.0`), **learning from your edits** (`0.5.0`).
 
 ## Contributing
 

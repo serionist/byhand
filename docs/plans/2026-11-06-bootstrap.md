@@ -368,6 +368,16 @@ Decisions on the way:
   maintainer on 2026-11-07: a range can't split them from their base version, and few write with them now. The
   o-series names no family yet. Two ids read wrongly and are kept: `gpt-35-turbo`, Azure's name for 3.5, reads 35, and
   `grok-code-fast-1` reads 1. `lah` stays beside `pa`, as CLDR counts it, so `aeb` falls to rank 101.
+- **Fewer tokens a draft (the maintainer, 2026-11-08):** measured on main after #23, a prose draft reads 9.7 to 15.3 KB;
+  35% of the sign lines' bytes are their `Terms:` regexes, and 32% are lines only posts and documents read. So:
+  - Step 5: `render` writes two sets. `write` reads files with each sign's words as plain examples and no regex;
+    `check` alone reads the patterns, for `Grep`. A language's prose signs split by length of writing, short (`message`,
+    `email`) and long (`post`, `document`): a mail or a message reads only the short file, a `post` or `document` both.
+    The draft budget falls with it, to what the split measures plus a margin, and only falls after.
+  - Step 6: `write` reads a sign file only when that file isn't in context already, or after a compaction; a second
+    draft in the same language and model reads nothing new. A style file holds 3 to 5 short excerpts and stays under
+    4 KB, which `learn` holds when it saves.
+  - Step 7: the record gives the tokens a draft reads per seed language, counted, beside the bytes.
 
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
 `0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.

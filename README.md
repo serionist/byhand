@@ -1,7 +1,7 @@
 # byhand
 
 A Claude Code plugin that writes the way you do: your mail, messages, posts and documents, in your language and your
-own style, without the words, structure and layout that make text read as AI-written.
+own style, without the words, structure and formatting that make text read as AI-written.
 
 ## Install
 
@@ -10,24 +10,33 @@ own style, without the words, structure and layout that make text read as AI-wri
 /plugin install byhand@byhand
 ```
 
-That's all: no Python, nothing else to install or run. The first time a byhand skill runs in a session, Claude Code
-asks you to allow it.
+That's all: no Python, nothing else to install or run. Claude Code may ask you to allow a byhand skill the first
+time it runs, and saving a style always asks first.
+
+## Update
+
+For a new version, run this in your shell, then start a new session:
+
+```text
+claude plugin update byhand@byhand
+```
 
 ## Use it
 
 - **Write as you always do.** Ask Claude Code for a mail, a Slack message, a post or a document, in any language.
   `/byhand:write` starts by itself, writes it in your style without the signs of AI writing, and reads its own draft
-  before showing it. It stays out of code: commit messages, READMEs and docstrings are left alone.
+  before showing it. It isn't meant for text that lives with code, such as commit messages, READMEs and
+  docstrings, and seldom starts on it.
 - **Teach it your style.** "Learn my style from these" with two or more of your own mails or messages, as files or
   pasted. `/byhand:learn` leaves out any sample that reads as AI-written, shows you the style, and saves it only when
   you say yes. You can have several, and make one the default for each kind of writing and language.
-- **Tell it what you don't like.** After a draft, say what's off. If it's a habit, it offers to keep it as a rule;
-  "remember: …" does the same.
+- **Tell it what you don't like.** After a draft in one of your styles, say what's off. If it's a habit, it offers to
+  keep it as a rule in that style; "remember: …" does the same.
 - **Check a text.** "Does this read as AI-written?" `/byhand:check` lists the signs with their lines and what a person
   writes instead. No score: it is for your own writing, not a detector.
 
-Your styles live in `~/.byhand/styles/`, on your machine only: an index and one short Markdown file per style, which
-you can edit.
+Your styles live in `~/.byhand/styles/` (`%USERPROFILE%\.byhand\styles\` on Windows), on your
+machine only: an index and one short Markdown file per style, which you can edit.
 
 ## How it works
 

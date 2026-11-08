@@ -38,5 +38,4 @@ What does not count:
 | The latest release | Every fix, from the first release |
 | Older releases | None before `1.0`: update to the latest |
 
-byhand is not released yet, so fixes land on `main` only. From the first release until `1.0`, only the latest
-release gets them.
+From `0.1.0` until `1.0`, only the latest release gets fixes.

@@ -1,7 +1,5 @@
 # Using byhand
 
-Not released yet. The skills come with `0.1.0`; this page grows with them.
-
 byhand is two sets of Markdown files, signs and styles, and the skills that read them.
 
 ## For contributors: the commands

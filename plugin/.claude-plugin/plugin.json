@@ -1,7 +1,7 @@
 {
   "name": "byhand",
   "version": "0.1.0",
-  "description": "Write like a person, in your own voice and language: mail, messages, documents and decks without the signs of AI writing.",
+  "description": "Write like a person, in your own voice and language: mail, messages, posts and documents without the signs of AI writing.",
   "author": {
     "name": "Soma Osvay",
     "url": "https://github.com/serionist"
@@ -15,7 +15,6 @@
     "voice",
     "ai-writing",
     "multilingual",
-    "email",
-    "presentations"
+    "email"
   ]
 }

@@ -170,6 +170,8 @@ OFFICE = [
     "Sure thing! Here's the link to the folder:",
     "Sure \u2013 here's your revised invoice:",
     "Sure, below is a more formal version of the dress code:",
+    "Below is a friendly message you can share with your team:",
+    "Happy to help! Here's a polite reply you can use if a customer asks for a refund:",
     # a bold list a person writes: weak, so it may fire, but it must not count alone
     "- **Mon:** stand-up at ten\n- **Tue:** client call\n- **Wed:** off",
 ]
@@ -266,6 +268,7 @@ MACHINE = [
     ("any-assistant-preamble", "Below is a revised version of your email:"),
     ("any-assistant-preamble", "Certainly! Below is a more concise version of your post:"),
     ("any-assistant-preamble", "Happy to help! Here's a rewrite of your bio:"),
+    ("any-assistant-preamble", "I'd be happy to help! Here's a more polished version of your email:"),
     ("any-assistant-preamble", "Sure - here's a more polished version of your email:"),
     ("any-assistant-preamble", "Sure \u2014 here's a revised version of your cover letter:"),
     ("any-assistant-preamble", "Sure\u2013here's a less formal version:"),

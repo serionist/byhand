@@ -48,6 +48,10 @@ listing, which ask the user or are missing on some machines.
 8. **Answer with the draft** and nothing else the user didn't ask for: no line before it ("Here's a draft"), no list
    of what you avoided, no offer after it. A note only when you had to guess something the text needs (a date, a
    name).
+9. **Feedback on a draft:** rewrite it. When the feedback is a habit that would hold for later texts too ("too
+   formal", "I never open with 'I hope you're well'"), not a fact of this one (a date, a name), and the draft used a
+   style, end the rewrite with one line offering to keep it: "Save this as a rule for <style>?". On a yes, `learn`
+   adds it under the style's `## Corrections`. No style: no offer.
 
 **Each new text starts this skill again,** even later in the same conversation: call the Skill tool for
 `byhand:write` before anything else. The grant to read the sign files lasts only the turn the skill starts in;

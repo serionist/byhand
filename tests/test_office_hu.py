@@ -334,10 +334,7 @@ def test_hungarian_alternations_run_in_alphabetical_order(catalogue):
     # hu.toml's header: our own order is alphabetical, so no source's order can come back (#28's review). The Hungarian
     # branches of the two any signs follow it too; their English branches are not ours to reorder here.
     regexes = [
-        (sign.id, term.term)
-        for sign in catalogue.signs.values()
-        if sign.language == "hu"
-        for term in sign.terms
+        (sign.id, term.term) for sign in catalogue.signs.values() if sign.language == "hu" for term in sign.terms
     ]
     regexes += [
         (sign.id, sign.pattern.pattern)

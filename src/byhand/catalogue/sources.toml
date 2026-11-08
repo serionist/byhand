@@ -89,7 +89,7 @@ languages = ["hu"]
 licence = "CC BY-SA 4.0"
 due = "weekly"
 feed = { api = "mediawiki", site = "hu.wikipedia.org", title = "Wikipédia:Mesterséges_intelligenciával_létrehozott_szövegek" }
-read_at = { revision = "29250550", date = 2026-11-07 }
+read_at = { revision = "29250550", date = 2026-11-08 }
 
 [[source]]
 id = "im-not-ai"
@@ -300,7 +300,8 @@ languages = ["hu"]
 licence = "facts only, with a citation"
 due = "by-hand"
 feed = { api = "none" }
-read_at = { date = 2026-11-07 }
+# A detector study with no stylistic finding; it publishes the test set, hun-ai-test, which the Hungarian signs cite.
+read_at = { date = 2026-11-08 }
 
 [[source]]
 id = "maintainer-hu"
@@ -310,4 +311,84 @@ languages = ["hu"]
 licence = "MIT"
 due = "by-hand"
 feed = { api = "none" }
-read_at = { date = 2026-11-07 }
+read_at = { date = 2026-11-08 }
+
+[[source]]
+id = "hun-ai-test"
+url = "https://huggingface.co/datasets/mihalykiss/Hun_ai_test"
+kind = "dataset"
+languages = ["hu"]
+licence = "Apache-2.0"
+due = "monthly"
+feed = { api = "hf", dataset = "mihalykiss/Hun_ai_test" }
+read_at = { commit = "c7c387679336", date = 2026-11-08 }
+
+[[source]]
+id = "novak-2026-morphology"
+url = "https://rgai.inf.u-szeged.hu/sites/rgai.inf.u-szeged.hu/files/mszny2026.pdf"
+kind = "paper"
+languages = ["hu"]
+licence = "not stated; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-08 }
+
+[[source]]
+id = "fodor-santa-2024"
+url = "https://www.inf.szte.hu/sites/default/files/kutatas/konferenciak/tdk/fodorg-santap_tdk2024t.pdf"
+kind = "paper"
+languages = ["hu"]
+licence = "not stated; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-08 }
+
+[[source]]
+id = "telex-2023-matura"
+url = "https://telex.hu/tech/2023/05/08/chatgpt-mesterseges-intelligencia-magyar-erettsegi-2023-essze"
+kind = "review"
+languages = ["hu"]
+licence = "all rights reserved; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-08 }
+
+[[source]]
+id = "humanizer-hu"
+url = "https://github.com/Dexxter182/humanizer-hu"
+kind = "repo"
+languages = ["hu"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "Dexxter182/humanizer-hu", paths = ["SKILL.md", "docs/nyelveszeti-forrasok.md"] }
+read_at = { commit = "3b021d28638c", date = 2026-11-08 }
+
+[[source]]
+id = "wikipedia-hu-pump-295"
+url = "https://hu.wikipedia.org/wiki/Wikip%C3%A9dia:Kocsmafal_(egy%C3%A9b)/Arch%C3%ADv295"
+kind = "wiki"
+languages = ["hu"]
+licence = "CC BY-SA 4.0"
+due = "quarterly"
+feed = { api = "mediawiki", site = "hu.wikipedia.org", title = "Wikipédia:Kocsmafal_(egyéb)/Archív295" }
+read_at = { revision = "27062227", date = 2026-11-08 }
+
+[[source]]
+id = "wikipedia-hu-patrol-41"
+url = "https://hu.wikipedia.org/wiki/Wikip%C3%A9dia:J%C3%A1r%C5%91r%C3%B6k_%C3%BCzen%C5%91fala/Arch%C3%ADv_41"
+kind = "wiki"
+languages = ["hu"]
+licence = "CC BY-SA 4.0"
+due = "quarterly"
+feed = { api = "mediawiki", site = "hu.wikipedia.org", title = "Wikipédia:Járőrök_üzenőfala/Archív_41" }
+read_at = { revision = "28540680", date = 2026-11-08 }
+
+[[source]]
+id = "wikipedia-hu-pump-328"
+url = "https://hu.wikipedia.org/wiki/Wikip%C3%A9dia:Kocsmafal_(egy%C3%A9b)/Arch%C3%ADv328"
+kind = "wiki"
+languages = ["hu"]
+licence = "CC BY-SA 4.0"
+due = "quarterly"
+feed = { api = "mediawiki", site = "hu.wikipedia.org", title = "Wikipédia:Kocsmafal_(egyéb)/Archív328" }
+read_at = { revision = "29482702", date = 2026-11-08 }

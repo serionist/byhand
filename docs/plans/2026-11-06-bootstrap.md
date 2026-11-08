@@ -267,7 +267,7 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 | 1. The harness and this plan | #1 | #9 | plan approved 2026-11-06 |
 | 2. The catalogue's schema | #2 | #12 | merged 2026-11-07 |
 | 3. Render and its gate check | #3 | #14 | merged 2026-11-07 |
-| 4. `propose-signs` and the seed | #4 | #15, `any` and `en`; #16, `zh` and `zh-Hant`; #17, `ko`; #18, `ja`; #22, `ru`; #23, `de`; #24, `fr` | |
+| 4. `propose-signs` and the seed | #4 | #15, `any` and `en`; #16, `zh` and `zh-Hant`; #17, `ko`; #18, `ja`; #22, `ru`; #23, `de`; #24, `fr`; #28, `hu` | |
 | 5. `check` | #5 | | |
 | 6. Styles, `learn` and `write` | #6 | | |
 | 7. Tried in real sessions | #7 | | |

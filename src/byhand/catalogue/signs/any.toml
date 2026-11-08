@@ -265,7 +265,9 @@ models = "any"
 what = "Stops to tell the reader which part deserves their attention."
 instead = "State the point; the reader decides what to note."
 strength = "usual"
-check = '''\bit(?:['’]s| is) (?:crucial|essential|important|worth) (?:noting|to note)'''
+# Hungarian needs its "hogy", and the phrase at a sentence's start: "fontos kiemelni a határidőt" is a plain request,
+# and "a meghívóban fontos kiemelni, hogy …" or "nem fontos kiemelni, hogy …" a person's (the maintainer, #28).
+check = '''\bit(?:['’]s| is) (?:crucial|essential|important|worth) (?:noting|to note)|(?:[.!?]\s+|^)\W*fontos (?:(?:azonban|itt|még|ugyanakkor|viszont) )?(?:hangsúlyozni|kiemelni|megjegyezni),? hogy\b'''
 flags = "It is important to note that results may vary by region."
 passes = "It's important to call them before noon: results vary by region."
 sources = [
@@ -273,6 +275,9 @@ sources = [
   { source = "wikipedia-de", where = "Redaktionelle Kommentare, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Дидактические и редакционные оговорки, revision 156024043", seen = 2026-11-07 },
   { source = "slop-gate", where = "rules/vocabulary.json, commit f78d5cbee0dc", seen = 2026-11-07 },
+  { source = "wikipedia-hu-pump-295", where = "ChatGPT-s cikkek – van-e válaszunk?: ChatGPT's own Hungarian reply, quoted 17 Mar 2023, revision 27062227", seen = 2026-11-08 },
+  { source = "humanizer-hu", where = "SKILL.md, 12. Túlhasznált AI-szavak, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, the two any signs", seen = 2026-11-08 },
 ]
 
 [[sign]]

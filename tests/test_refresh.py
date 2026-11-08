@@ -2,6 +2,7 @@
 and an issue body that holds none of a source's text. The sources are invented."""
 
 import datetime as dt
+import http.client
 import io
 import json
 import urllib.error
@@ -46,7 +47,7 @@ def wiki_reply(revid=101):
 
 
 def compare(*files, ahead=3):
-    return {"ahead_by": ahead, "files": list(files)}
+    return {"ahead_by": ahead, "files": list(files), "commits": [{"sha": "c" * 40}, {"sha": NEW}]}
 
 
 class Net:
@@ -84,6 +85,7 @@ def test_a_changed_wiki_page_writes_its_diff(tmp_path, capsys):
     # A moved page is followed, and a title with accents goes as UTF-8, percent-encoded.
     query = urllib.parse.parse_qs(urllib.parse.urlsplit(net.asked[0]).query)
     assert query["redirects"] == ["1"]
+    assert query["formatversion"] == ["2"]
     assert query["titles"] == ["Wikipédia:Jelek_ő"]
     assert "%C3%A9" in net.asked[0]
 
@@ -116,8 +118,8 @@ def test_a_repo_changed_under_a_watched_path(tmp_path, files, matched):
     assert code == 0
     body = (out / "repo-x.md").read_text(encoding="utf-8")
     assert "Watched paths changed: " + ", ".join(f"`{m}`" for m in matched) in body
-    assert "https://github.com/someone/repo-x/compare/aaaaaaaaaaaa...HEAD" in body
-    assert "`3 commits ahead`" in body
+    assert f"https://github.com/someone/repo-x/compare/aaaaaaaaaaaa...{NEW[:12]}" in body
+    assert f"`{NEW[:12]}, 3 commits ahead`" in body
 
 
 @pytest.mark.parametrize(
@@ -157,17 +159,40 @@ def test_a_dataset_changed_and_unchanged(tmp_path):
     assert not list(out.iterdir())
 
 
+@pytest.mark.parametrize(
+    "reply",
+    [
+        {"ahead_by": 1, "files": [{"filename": "evals/a.md"}], "commits": [{"sha": "not a sha"}]},
+        {"ahead_by": 0},
+        http.client.IncompleteRead(b""),
+    ],
+    ids=["no commit id", "no file list", "cut short"],
+)
+def test_a_repo_reply_of_another_shape_is_unreadable(tmp_path, reply):
+    assert run(tmp_path, REPO, Net(api_github_com=reply))[0] == 1
+
+
 def test_a_dataset_with_no_commit_id_is_unreadable(tmp_path):
     code, _ = run(tmp_path, DATA, Net(huggingface_co={"sha": "not a sha"}))
     assert code == 1
 
 
-def test_a_source_not_yet_due_is_not_read(tmp_path):
-    net = Net()
+@pytest.mark.parametrize(
+    ("day", "read"),
+    [
+        (1, []),
+        (2, ["xx.example.org"]),
+        (7, ["xx.example.org"]),
+        (8, ["xx.example.org", "api.github.com"]),
+        (13, ["xx.example.org", "api.github.com"]),
+        (14, ["xx.example.org", "api.github.com", "huggingface.co"]),
+    ],
+)
+def test_a_source_is_read_once_its_due_has_come_round(tmp_path, day, read):
     # Read on 1 Nov: daily is due on the 2nd, weekly on the 8th; a monthly read on 15 Oct, on 14 Nov.
-    code, out = run(tmp_path, WIKI + REPO + DATA, net, today=dt.date(2026, 11, 1))
-    assert (code, net.asked) == (0, [])
-    assert not list(out.iterdir())
+    net = Net(xx_example_org=wiki_reply(100), api_github_com=compare(), huggingface_co={"sha": "a" * 40})
+    run(tmp_path, WIKI + REPO + DATA, net, today=dt.date(2026, 11, day))
+    assert [urllib.parse.urlsplit(url).hostname for url in net.asked] == read
 
 
 @pytest.mark.parametrize(

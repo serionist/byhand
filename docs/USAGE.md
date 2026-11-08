@@ -13,7 +13,7 @@ Users never run these. They build and check the catalogue in this repo.
 | `byhand validate` | check the catalogue: its schema, every sign's examples, its sources; each problem, then a count; exit 1 on any |
 | `byhand render` | write the catalogue as the plugin's sign files |
 | `byhand render --check` | write nothing; exit 1 when the files differ from the catalogue |
-| `byhand refresh --out <dir>` | read each source whose `due` has come round since `read_at` (a day, a week, 30 or 90 days); write `<dir>/<id>.md`, an issue body of ids and links, for each changed one; exit 1 if any source couldn't be read. `refresh.yml` runs it daily and opens the issues |
+| `byhand refresh --out <dir>` | read each source whose `due` has come round since `read_at` (a day, a week, 30 or 90 days); write `<dir>/<id>.md`, an issue body of ids and links, for each changed one; exit 1 if any source couldn't be read. It reads `GITHUB_TOKEN`, if set, and sends it to api.github.com only: without one, GitHub allows 60 calls an hour. `refresh.yml` runs it daily and opens the issues |
 
 ## What a skill reads
 

@@ -27,10 +27,12 @@ jobs:
         with:
           persist-credentials: false
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      # Installed with no token in reach, so the build backend, which the lock doesn't pin, never sees one.
+      - run: uv sync --locked
       - name: Check the sources
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: uv run byhand refresh --out refresh/
+        run: uv run --locked --no-sync byhand refresh --out refresh/
       - name: Open an issue per changed source
         if: ${{ !cancelled() }}
         env:

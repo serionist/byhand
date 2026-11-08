@@ -5,6 +5,7 @@ message or a source's file name (AGENTS.md, Traps)."""
 from __future__ import annotations
 
 import datetime as dt
+import http.client
 import json
 import os
 import re
@@ -35,7 +36,7 @@ class UnreadableError(Exception):
 
 @dataclass(frozen=True)
 class Change:
-    now: str  # the revision or commit live now, or how far ahead it is
+    now: str  # the revision or commit live now
     link: str  # where a person reads the change
     matched: tuple[str, ...] = ()  # which of our own `paths` it touched
     cut: bool = False  # GitHub cut the file list
@@ -79,14 +80,18 @@ def _under(name: str, path: str) -> bool:
 def _github(feed: Mapping[str, Any], read_at: Mapping[str, Any], get: Get) -> Change | None:
     repo, old = feed["repo"], read_at["commit"]
     data = get(f"https://api.github.com/repos/{repo}/compare/{old}...HEAD")
-    files = data.get("files") or []
+    files = data["files"]
     names = {f["filename"] for f in files} | {f["previous_filename"] for f in files if "previous_filename" in f}
     matched = tuple(path for path in feed["paths"] if any(_under(name, path) for name in names))
     cut = len(files) >= GITHUB_FILES
     if not matched and not cut:
         return None
-    ahead = int(data["ahead_by"])
-    return Change(f"{ahead} commits ahead", f"https://github.com/{repo}/compare/{old}...HEAD", matched, cut)
+    # Unpaged, compare lists the newest commit last.
+    head = data["commits"][-1]["sha"]
+    if not isinstance(head, str) or not _SHA.match(head):
+        raise UnreadableError("no commit id")
+    now = f"{head[:12]}, {int(data['ahead_by'])} commits ahead"
+    return Change(now, f"https://github.com/{repo}/compare/{old}...{head[:12]}", matched, cut)
 
 
 def _hf(feed: Mapping[str, Any], read_at: Mapping[str, Any], get: Get) -> Change | None:
@@ -151,8 +156,9 @@ def run(out: Path, today: dt.date, get: Get = get_json, root: Path = signs.CATAL
             if reader is None:
                 raise UnreadableError(f"no reader for the feed {api!r}")
             change = reader(source["feed"], source["read_at"], get)
-        except (UnreadableError, OSError, LookupError, TypeError, ValueError) as exc:
-            # OSError holds urllib's errors and timeouts; ValueError, bad JSON; the rest, a reply of another shape.
+        except (UnreadableError, OSError, http.client.HTTPException, LookupError, TypeError, ValueError) as exc:
+            # OSError holds urllib's errors and timeouts; HTTPException, a reply cut short; ValueError, bad JSON; the
+            # rest, a reply of another shape.
             print(f"{source['id']}: unreadable ({type(exc).__name__}: {exc})")
             counts["unreadable"] += 1
             continue

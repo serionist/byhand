@@ -47,3 +47,22 @@ rendered sign files changed.
 - The first commit's 7 mutants (foster needing a suffix; no happy to help; no sure thing; no dash; no below is after a
   yes; no bare below is; a bare below is taking any line) each failed `tests/test_office.py`.
 
+## Round 2
+
+**Where:** PR #43, `7b914c4..65d8840`, a fresh reviewer who read the fixes, split the check into its top-level
+alternatives and compared each with main's, probed each English branch with about 35 invented lines, and ran the
+changed alternatives under Python and Claude Code's Grep tool, which agreed. **Verdict:** clean.
+
+- F1 holds: the text-to-send branch is main's opener and tail, byte for byte, as its own alternative. `OFFICE`'s
+  "Below is a friendly message you can share with your team:" and "Happy to help! Here's a polite reply you can use
+  ..." cover it, and `MACHINE`'s "Sure! Here's a friendly message you can post in the team chat:" and "a
+  professional email you can send to your client" still fire. A mutant putting the branch back behind the new
+  openers fails exactly the two `OFFICE` lines.
+- F2 holds: `MACHINE`'s "I'd be happy to help! Here's a more polished version of your email:" covers it; the curly
+  apostrophe fires too.
+- Refuted: person lines on the new opener ("I'd be happy to help with the move. Here's the plan:") pass; a bold
+  "**I'd be happy to help!**" is missed, as the bold "**Sure!**" was before this PR, and #37 doesn't ask for it; the
+  opener list written twice is main's opener kept as it was, the smallest change that keeps a template silent.
+- No new finding, no improvement. Every alternation stays alphabetical; no look-around or backreference.
+
+**Closed** at 65d8840: no blocker or major open; `uv run tools/gate.py full --base origin/main` passed on its tree.

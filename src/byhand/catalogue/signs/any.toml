@@ -91,12 +91,14 @@ models = "any"
 what = "Ends a fact on a clause saying what it shows, or has the fact itself highlight or underline something."
 instead = "Stop at the fact. If its meaning is worth stating, state it separately and name who draws it."
 strength = "usual"
-# Only Hungarian has a check: a -va/-ve participle tacked on after a comma, with its object. English's -ing clause is
-# for the model's read, as a person writes "reflecting the weaker dollar" too. "A szállás biztosítva." has no comma, and
-# "biztosítva lesz a fizetés" no object after it: both are plain Hungarian and pass.
-check = ',\s+(?:ezzel is\s+|így\s+)?(?:hozzájárulva|tükrözve|elősegítve|biztosítva)\s+az?\b'
+# Only Hungarian has a check: a -va/-ve participle tacked on after a comma, with the object it governs: an accusative
+# after biztosítva and elősegítve, -hoz/-hez/-höz after hozzájárulva, and for tükrözve an abstract noun, as mirroring an
+# icon is plain work talk. English's -ing clause is for the model's read, as a person writes "reflecting the weaker
+# dollar" too. "A szállás biztosítva." has no comma, "biztosítva lesz a fizetés" no object, and "biztosítva a kivetítő"
+# a subject: all plain Hungarian, all pass (#28).
+check = ',\s+(?:ezzel is\s+|így\s+)?(?:(?:biztosítva|elősegítve)\s+az?\s+(?:[^\s,.!?]+\s+){0,3}[^\s,.!?]*[aáeéiíjloóöősuúüűyz]t|hozzájárulva\s+az?\s+(?:[^\s,.!?]+\s+){0,3}[^\s,.!?]+h[eoö]z|tükrözve\s+az?\s+(?:[^\s,.!?]+\s+){0,3}(?:ambíció|elkötelezettség|elköteleződés|elv|érték|fontosság|hagyomány|identitás|jelentőség|küldetés|kultúr|szándék|szellemiség|törekvés|vízió)\w*)\b'
 flags = "The team won the cup in 1998, reflecting the club's enduring commitment to youth.\nAz új raktár hétfőn nyitott, tükrözve a cég hosszú távú elköteleződését a régió mellett."
-passes = "Sales fell 8% in the third quarter, reflecting the weaker dollar."
+passes = "Sales fell 8% in the third quarter, reflecting the weaker dollar.\nA helyszín a nagytárgyaló, biztosítva a kivetítő és a laptop is."
 sources = [
   { source = "wikipedia-en", where = "Superficial analyses, revision 1384165696", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Oberflächliche Analysen, revision 271721424", seen = 2026-11-07 },
@@ -271,8 +273,9 @@ models = "any"
 what = "Stops to tell the reader which part deserves their attention."
 instead = "State the point; the reader decides what to note."
 strength = "usual"
-# Hungarian needs its "hogy": "fontos kiemelni a határidőt" is a plain request to stress the deadline.
-check = '''\bit(?:['’]s| is) (?:essential|crucial|important|worth) (?:noting|to note)|\bfontos (?:(?:azonban|ugyanakkor|viszont|itt|még) )?(?:kiemelni|hangsúlyozni|megjegyezni),? hogy\b'''
+# Hungarian needs its "hogy", and the phrase at a sentence's start: "fontos kiemelni a határidőt" is a plain request,
+# and "a meghívóban fontos kiemelni, hogy …" or "nem fontos kiemelni, hogy …" a person's (the maintainer, #28).
+check = '''\bit(?:['’]s| is) (?:essential|crucial|important|worth) (?:noting|to note)|(?:^|[.!?]\s+)\W*fontos (?:(?:azonban|itt|még|ugyanakkor|viszont) )?(?:hangsúlyozni|kiemelni|megjegyezni),? hogy\b'''
 flags = "It is important to note that results may vary by region."
 passes = "It's important to call them before noon: results vary by region."
 sources = [

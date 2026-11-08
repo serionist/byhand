@@ -392,3 +392,34 @@ licence = "CC BY-SA 4.0"
 due = "quarterly"
 feed = { api = "mediawiki", site = "hu.wikipedia.org", title = "Wikipédia:Kocsmafal_(egyéb)/Archív328" }
 read_at = { revision = "29482702", date = 2026-11-08 }
+
+[[source]]
+id = "humanizer-es"
+url = "https://github.com/AIwithDiego/humanizer-es"
+kind = "repo"
+languages = ["es"]
+licence = "MIT; its framework traces back to Wikipedia (CC BY-SA) through blader/humanizer, so facts only"
+due = "weekly"
+feed = { api = "github", repo = "AIwithDiego/humanizer-es", paths = ["skills/humanizer-es/SKILL.md", "tools/deslop_es.py"] }
+read_at = { commit = "ac2a31be1a71", date = 2026-11-09 }
+
+[[source]]
+id = "alonso-simon-2025-spanish"
+url = "https://doi.org/10.58859/rael.v23i1.666"
+kind = "paper"
+languages = ["es"]
+licence = "CC BY-NC 4.0; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "resende-castilho-2026-style"
+url = "https://aclanthology.org/2026.stygenai-1.5/"
+kind = "paper"
+languages = ["en", "es", "pt"]
+# The paper's own notice is CC BY-ND 4.0; the Anthology's footer says CC BY 4.0. The stricter one holds.
+licence = "CC BY-ND 4.0; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }

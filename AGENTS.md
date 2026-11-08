@@ -83,7 +83,7 @@ PowerShell unless a PowerShell form stands beside it.
 
 The skills in `.claude/skills/` run this loop: `start-work` (1 to 3), `fit-plan` (is a written plan the right one,
 before its review), `review-plan`, `review-code`, `finish-work` (5); `write-skill` writes or fixes a skill, the repo's
-or the plugin's, or a plugin agent; `propose-signs` drafts signs from a source.
+or the plugin's, or a plugin agent; `propose-signs` drafts signs from a source; `find-sources` looks for new sources.
 
 ## Writing
 

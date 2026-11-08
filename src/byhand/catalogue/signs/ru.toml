@@ -22,7 +22,7 @@ strength = "usual"
 # capitalised preposition or conjunction inside, which no name has. A bold line isn't read: people set a signature,
 # Отдел Продаж И Маркетинга, that way. Nor С: people capitalise «С Новым Годом». A small и between capitalised words
 # (Ранняя Жизнь и Образование) is left to the model's read, as two names joined by и look the same.
-check = '''^#{1,6} +(?-i:[А-ЯЁ][а-яё-]+(?: [А-ЯЁ][а-яё-]+)* (?:И|Или|В|Во|На|По|Для|От|До|Из|О|Об|К|За|Без|При|Через)(?: [А-ЯЁ][а-яё-]+)+)\s*$'''
+check = '''^#{1,6} +(?-i:[А-ЯЁ][а-яё-]+(?: [А-ЯЁ][а-яё-]+)* (?:Без|В|Во|Для|До|За|И|Из|Или|К|На|О|Об|От|По|При|Через)(?: [А-ЯЁ][а-яё-]+)+)\s*$'''
 flags = "## Сроки И Бюджет Проекта"
 passes = "## Сроки и бюджет проекта"
 sources = [
@@ -147,12 +147,12 @@ what = "Hangs symbolism and turning points on ordinary facts with set phrases."
 instead = "Say what happened; name the change only if you can."
 strength = "weak"
 terms = [
-  { term = 'поворотн\w+ (?:момент|пункт|этап)\w*', instead = "give the date and the change" },
-  { term = 'знамен(?:у|ова)\w*', instead = "начинается, or give the date" },
-  { term = 'символизир\w*', instead = "say who reads it so" },
-  { term = '(?:служ|выступа|явля)\w* (?:ярким |живым )?(?:напоминанием|символом)', instead = "say what it shows" },
+  { term = '(?:выступа|служ|явля)\w* (?:живым |ярким )?(?:напоминанием|символом)', instead = "say what it shows" },
+  { term = 'знамен(?:ова|у)\w*', instead = "начинается, or give the date" },
   { term = 'неизгладим\w+ след\w*', instead = "say what changed" },
   { term = 'непоколебим\w*', instead = "cut" },
+  { term = 'поворотн\w+ (?:момент|пункт|этап)\w*', instead = "give the date and the change" },
+  { term = 'символизир\w*', instead = "say who reads it so" },
 ]
 flags = "Открытие новой проходной знаменует поворотный момент для всего завода."
 passes = "С понедельника открывается новая проходная, и утренняя очередь на заводе станет короче."
@@ -170,10 +170,10 @@ what = "Ends a sentence on a participle clause that draws a moral from the fact.
 instead = "Stop at the fact, or give the cause in a sentence of its own."
 strength = "weak"
 terms = [
-  { term = 'подч[её]ркивая', instead = "cut, or say who stresses it" },
   { term = 'демонстрируя', instead = "cut" },
-  { term = 'способствуя', instead = "say what it changed" },
   { term = 'отражая', instead = "name the cause" },
+  { term = 'подч[её]ркивая', instead = "cut, or say who stresses it" },
+  { term = 'способствуя', instead = "say what it changed" },
 ]
 flags = "Выручка магазина выросла на 4%, подчёркивая верность покупателей и демонстрируя силу сети."
 passes = "Выручка магазина выросла на 4%: в октябре открыли вторую кассу."
@@ -213,8 +213,8 @@ what = "Leans on unnamed experts and analysts."
 instead = "Name the person or the study, or drop the claim."
 strength = "weak"
 terms = [
-  { term = 'некоторые критики', instead = "name them" },
   { term = 'исследователи утверждают', instead = "name them" },
+  { term = 'некоторые критики', instead = "name them" },
 ]
 flags = "Некоторые критики сомневаются в новом тарифе, а исследователи утверждают обратное."
 passes = "Ирина из бухгалтерии посчитала: на новом тарифе мы экономим 3 000 рублей в месяц."
@@ -232,10 +232,10 @@ what = "Ends on a stock pair: difficulties named in general, then a bright futur
 instead = "Name the problem and what is being done about it, or stop."
 strength = "weak"
 terms = [
-  { term = '(?:сталкива|столкну)\w+ с (?:целым )?рядом вызов\w*', instead = "name the problem" },
-  { term = 'несмотря на (?:эти|все|существующие) (?:вызовы|трудности)', instead = "cut" },
   { term = 'будущее выглядит (?:ярким|светлым|многообещающ\w*)', instead = "give the next step" },
+  { term = 'несмотря на (?:все|существующие|эти) (?:вызовы|трудности)', instead = "cut" },
   { term = 'продолжа\w+ процветать', instead = "give a number" },
+  { term = '(?:сталкива|столкну)\w+ с (?:целым )?рядом вызов\w*', instead = "name the problem" },
 ]
 flags = "Типография сталкивается с рядом вызовов, но будущее выглядит многообещающим."
 passes = "Кафе пережило ремонт дороги; выручка в октябре вернулась к прошлогодней."
@@ -255,8 +255,8 @@ instead = "Start with the subject."
 strength = "weak"
 terms = [
   { term = 'в современном мире', instead = "cut" },
-  { term = '(?:ни для кого )?не секрет, что', instead = "cut" },
   { term = 'каждый из нас', instead = "say who" },
+  { term = '(?:ни для кого )?не секрет, что', instead = "cut" },
 ]
 flags = "Не секрет, что очереди раздражают всех, а в современном мире время дороже денег."
 passes = "Очередь в столовой к часу дня доходит до двери, так что ходите к двенадцати."
@@ -274,14 +274,14 @@ what = "Spends a sentence on what it is about to say, or on how frank it is bein
 instead = "Start with the point."
 strength = "weak"
 terms = [
-  { term = 'давайте разбер[её]мся', instead = "cut" },
-  { term = 'погрузимся в', instead = "cut" },
-  { term = 'вот что (?:нужно|важно) знать', instead = "cut" },
   { term = 'без лишних слов', instead = "cut" },
-  { term = 'если копнуть глубже', instead = "cut" },
-  { term = 'вот в ч[её]м (?:штука|фокус)', instead = "cut" },
+  { term = 'вот в ч[её]м (?:фокус|штука)', instead = "cut" },
+  { term = 'вот что (?:важно|нужно) знать', instead = "cut" },
   { term = 'давайте начистоту', instead = "cut" },
+  { term = 'давайте разбер[её]мся', instead = "cut" },
+  { term = 'если копнуть глубже', instead = "cut" },
   { term = 'настоящий вопрос в том', instead = "ask it" },
+  { term = 'погрузимся в', instead = "cut" },
 ]
 flags = "Без лишних слов: вторая касса окупится за полгода. Если копнуть глубже, дело в очереди."
 passes = "Вторая касса нужна из-за очереди: в обед люди стоят по десять минут."
@@ -298,10 +298,10 @@ what = "Comforts the reader with stock lines of emotional support."
 instead = "Give the fact that would reassure, or cut."
 strength = "weak"
 terms = [
-  { term = 'и это (?:нормально|окей)', instead = "cut" },
   { term = 'вы не одиноки', instead = "say who else has it" },
-  { term = 'позвольте себе', instead = "cut" },
   { term = 'давайте признаем', instead = "cut" },
+  { term = 'и это (?:нормально|окей)', instead = "cut" },
+  { term = 'позвольте себе', instead = "cut" },
 ]
 flags = "Первый месяц на новой работе всё валится из рук, и это нормально. Позвольте себе ошибаться."
 passes = "Первый месяц на новой работе у всех что-то валится из рук; Оля полгода путала склады."
@@ -319,9 +319,9 @@ what = "Pairs a Russian verb and noun the way English pairs them, not the way Ru
 instead = "Use the Russian pairing: решить проблему, успеть к сроку."
 strength = "weak"
 terms = [
-  { term = 'адрес(?:овать|ует|уют|овал\w*|уем) (?:эт\w+ |наш\w+ |ваш\w+ |главн\w+ )?(?:проблем|задач|бол)\w*', instead = "решить" },
-  { term = 'достав(?:лять|ляет|ляют|ляем|лял\w*|ляя|ить|ит|ят|им|ил\w*) ценность', instead = "say what the user gets" },
+  { term = 'адрес(?:овать|ует|уют|овал\w*|уем) (?:эт\w+ |наш\w+ |ваш\w+ |главн\w+ )?(?:бол|задач|проблем)\w*', instead = "решить" },
   { term = 'встрет\w+ дедлайн\w*', instead = "успеть к сроку" },
+  { term = 'достав(?:лять|ляет|ляют|ляем|лял\w*|ляя|ить|ит|ят|им|ил\w*) ценность', instead = "say what the user gets" },
 ]
 flags = "Релизы раз в две недели помогут нам доставлять ценность чаще."
 passes = "Релизы раз в две недели, и клиенты быстрее получают исправления."
@@ -338,10 +338,10 @@ what = "Describes a place or a business in tourist-brochure words."
 instead = "Say where it is and what is there."
 strength = "weak"
 terms = [
+  { term = '(?:[а-яё]{3,}|[а-яё]|[а-мо-яё][а-яё]|н[а-дж-яё]) мо(?:гут|жет) похвастаться', instead = "есть" },
+  { term = 'богат\w* (?:историческ|культурн)\w+ (?:наследи|прошл)\w*', instead = "name what is there" },
   { term = 'в самом сердце', instead = "в центре, or the address" },
   { term = 'захватывающ\w* дух', instead = "describe it" },
-  { term = '(?:[а-яё]{3,}|[а-яё]|[а-мо-яё][а-яё]|н[а-дж-яё]) мо(?:жет|гут) похвастаться', instead = "есть" },
-  { term = 'богат\w* (?:культурн|историческ)\w+ (?:наследи|прошл)\w*', instead = "name what is there" },
   { term = 'потрясающ\w+ (?:природн\w+ )?красот\w*', instead = "describe it" },
 ]
 flags = "Гостиница в самом сердце старого города может похвастаться видом, захватывающим дух."
@@ -361,9 +361,9 @@ what = "Leaves a chat assistant's sign-off in a post or a document: a hope that 
 instead = "Delete it; end on the last useful fact."
 strength = "weak"
 terms = [
-  { term = 'надеюсь, (?:это|эта информация|мой ответ) (?:поможет|помог|помогла|помогло|было полезно|была полезна|был полезен)', instead = "cut" },
   { term = 'буду рад\w* помочь', instead = "cut" },
-  { term = 'если (?:вы )?хотите (?:спросить|узнать) (?:что-то|что-нибудь) ещ[её]', instead = "cut" },
+  { term = 'если (?:вы )?хотите (?:спросить|узнать) (?:что-нибудь|что-то) ещ[её]', instead = "cut" },
+  { term = 'надеюсь, (?:мой ответ|эта информация|это) (?:был полезен|была полезна|было полезно|помог|помогла|помогло|поможет)', instead = "cut" },
 ]
 flags = "Вот и все шаги настройки принтера. Надеюсь, эта информация была полезна!"
 passes = "Вот и все шаги настройки принтера. Если застрянете, пишите Диме, он настраивал."

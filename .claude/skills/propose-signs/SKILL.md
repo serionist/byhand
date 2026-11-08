@@ -22,7 +22,10 @@ ranks the sources.
 3. **What the licence lets you take.** Facts and a citation, always. Never a sentence, an example or a list's order
    from the source, whatever its licence: an MIT skill may itself copy Wikipedia, which is CC BY-SA. A `CC BY-NC` or
    all-rights-reserved source gives facts only. `check` and `terms` may hold short fixed strings, a word to watch or a
-   tool's markup, in your own order; `flags` may hold the string its check needs and nothing else from a source.
+   tool's markup; `flags` may hold the string its check needs and nothing else from a source. Every list runs in
+   alphabetical order, accents and case ignored: a regex's alternatives, a sign's terms, and examples listed in a
+   `what` or `instead`. A source's order, kept or reversed, is the source's; `tests/test_order.py` holds the first two.
+   Write `flags` and `passes` on your own subject and sentence shape, never a source example's with words swapped.
 4. **Choose what earns a sign.** Structure first: how a text is built gives AI away more than a word does, and a word
    list alone makes the writing worse. Skip what the catalogue already holds, and say why you skipped the rest.
 5. **Write each sign** in `src/byhand/catalogue/signs/<language>.toml`:

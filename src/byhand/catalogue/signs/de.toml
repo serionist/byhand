@@ -64,7 +64,7 @@ models = "any"
 what = "Softens plain claims with kann and könnte throughout, or stacks two hedges on one claim."
 instead = "State it, or name the one condition that makes it uncertain."
 strength = "weak"
-check = '''\b(?:möglicherweise|eventuell|vielleicht|unter umständen|gegebenenfalls) (?:möglicherweise|eventuell|vielleicht|unter umständen|gegebenenfalls)\b|\bkönnten? (?:\w+ )?(?:möglicherweise|unter umständen)\b'''
+check = '''\b(?:eventuell|gegebenenfalls|möglicherweise|unter umständen|vielleicht) (?:eventuell|gegebenenfalls|möglicherweise|unter umständen|vielleicht)\b|\bkönnten? (?:\w+ )?(?:möglicherweise|unter umständen)\b'''
 flags = "Die neue Software könnte möglicherweise die Wartezeiten verkürzen."
 passes = "Die neue Software verkürzt die Wartezeit, wenn alle Filialen sie nutzen."
 sources = [
@@ -116,13 +116,13 @@ what = "Dresses a plain subject in set phrases of legacy and deep meaning."
 instead = "Give the fact or the number that shows it matters."
 strength = "weak"
 terms = [
-  { term = 'tief ?verwurzelt\w*', instead = "say since when, or cut" },
-  { term = 'unterstr(?:eicht|eichen|ich|ichen) (?:die|seine|ihre|deren|dessen) (?:\w+ )?(?:bedeutung|rolle|relevanz)', instead = "zeigt, or the fact itself" },
-  { term = 'unerschütterlich\w*', instead = "say what they kept doing" },
-  { term = 'schlüsselmoment\w*', instead = "give the date and what changed" },
-  { term = '(?:steht|stehen|stand|standen|dient|dienen|diente|dienten) als zeugnis', instead = "zeigt" },
   { term = 'bleibende[ns]? (?:erbes?|vermächtnis(?:ses)?)', instead = "say what remains" },
-  { term = 'fasziniert (?:bis heute|weiterhin|nach wie vor)', instead = "say who still comes or reads it" },
+  { term = '(?:dienen|dient|diente|dienten|stand|standen|stehen|steht) als zeugnis', instead = "zeigt" },
+  { term = 'fasziniert (?:bis heute|nach wie vor|weiterhin)', instead = "say who still comes or reads it" },
+  { term = 'schlüsselmoment\w*', instead = "give the date and what changed" },
+  { term = 'tief ?verwurzelt\w*', instead = "say since when, or cut" },
+  { term = 'unerschütterlich\w*', instead = "say what they kept doing" },
+  { term = 'unterstr(?:eichen|eicht|ich|ichen) (?:deren|dessen|die|ihre|seine) (?:\w+ )?(?:bedeutung|relevanz|rolle)', instead = "zeigt, or the fact itself" },
 ]
 flags = "Das sanierte Rathaus steht als Zeugnis für den unerschütterlichen Bürgersinn der Gemeinde."
 passes = "Das sanierte Rathaus hat wieder ein Bürgerbüro, und der Ratssaal ist barrierefrei."
@@ -143,11 +143,11 @@ terms = [
   { term = 'atemberaubend\w*', instead = "say what one sees" },
   { term = 'bahnbrechend\w*', instead = "say what is new, and since when" },
   { term = 'im herzen (?:der|des|von)', instead = "in, or the address" },
-  { term = 'revolutionier\w*', instead = "say what it changes" },
-  { term = 'reiche[nrs]? (?:kulturelle[nrs]? )?(?:erbes?|geschichte|traditionen?)', instead = "name one piece of it" },
-  { term = 'wegweisend\w*', instead = "say who followed" },
-  { term = 'paradigmenwechsel\w*', instead = "say what changed for whom" },
   { term = 'kulturelle[nrs]? teppich\w*', instead = "name the groups" },
+  { term = 'paradigmenwechsel\w*', instead = "say what changed for whom" },
+  { term = 'reiche[nrs]? (?:kulturelle[nrs]? )?(?:erbes?|geschichte|traditionen?)', instead = "name one piece of it" },
+  { term = 'revolutionier\w*', instead = "say what it changes" },
+  { term = 'wegweisend\w*', instead = "say who followed" },
 ]
 flags = "Im Herzen der Altstadt erwartet Sie ein atemberaubendes Café mit bahnbrechendem Konzept."
 passes = "Das Café liegt in der Altstadt, Ecke Marktstraße, und hat montags zu."
@@ -165,9 +165,9 @@ what = "Opens on a stock line about fast-changing modern times."
 instead = "Start with the subject."
 strength = "weak"
 terms = [
-  { term = 'in einer sich (?:\w+ ){0,2}(?:wandelnden|verändernden) welt', instead = "cut" },
-  { term = 'in (?:der|unserer) heutigen,? (?:schnelllebigen|digitalen|vernetzten|modernen) (?:zeit|welt|gesellschaft)', instead = "cut, or name the year" },
   { term = 'im (?:digitalen )?zeitalter (?:der|von) (?:digitalisierung|ki|künstlicher intelligenz)', instead = "cut" },
+  { term = 'in (?:der|unserer) heutigen,? (?:digitalen|modernen|schnelllebigen|vernetzten) (?:gesellschaft|welt|zeit)', instead = "cut, or name the year" },
+  { term = 'in einer sich (?:\w+ ){0,2}(?:verändernden|wandelnden) welt', instead = "cut" },
 ]
 flags = "In der heutigen digitalen Welt muss auch ein Sportverein online erreichbar sein."
 passes = "Unser Sportverein ist jetzt auch online erreichbar: Termine stehen auf der Website."
@@ -185,11 +185,11 @@ what = "Closes on a stock look ahead that promises nothing anyone can check."
 instead = "End on the last fact, or the next date."
 strength = "weak"
 terms = [
-  { term = 'nur die zeit wird (?:es )?zeigen', instead = "cut" },
-  { term = '(?:wir dürfen|man darf|darf man) gespannt sein', instead = "say what is decided, and when" },
-  { term = 'die zukunft sieht (?:\w+ )?(?:rosig|vielversprechend|glänzend) aus', instead = "give the plan or the forecast" },
-  { term = 'spannende zeiten (?:stehen|liegen)', instead = "cut" },
+  { term = '(?:darf man|man darf|wir dürfen) gespannt sein', instead = "say what is decided, and when" },
   { term = '(?:die|unsere) zukunft (?:gemeinsam )?(?:zu )?gestalten|gestalten wir (?:gemeinsam )?(?:die|unsere) zukunft', instead = "say what you will do next" },
+  { term = 'die zukunft sieht (?:\w+ )?(?:glänzend|rosig|vielversprechend) aus', instead = "give the plan or the forecast" },
+  { term = 'nur die zeit wird (?:es )?zeigen', instead = "cut" },
+  { term = 'spannende zeiten (?:liegen|stehen)', instead = "cut" },
 ]
 flags = "Der neue Standort ist bezogen. Wir dürfen gespannt sein, was die nächsten Jahre bringen."
 passes = "Der neue Standort ist bezogen. Im März ziehen auch Einkauf und Lager um."
@@ -209,7 +209,7 @@ what = "Tells the reader that a point deserves attention before making it."
 instead = "Make the point; the reader decides what matters."
 strength = "weak"
 terms = [
-  { term = '(?:es ist|dabei ist es|hierbei ist es) (?:jedoch |dabei |auch )?(?:wichtig|entscheidend),? zu (?:bemerken|betonen)', instead = "cut, and give the fact" },
+  { term = '(?:dabei ist es|es ist|hierbei ist es) (?:auch |dabei |jedoch )?(?:entscheidend|wichtig),? zu (?:bemerken|betonen)', instead = "cut, and give the fact" },
 ]
 flags = "Es ist wichtig zu betonen, dass die Kantine ab Montag früher schließt."
 passes = "Achtung: Die Kantine schließt ab Montag schon um 14 Uhr."
@@ -228,9 +228,9 @@ what = "Invites the reader to dive in with it, or offers to break the subject do
 instead = "Start with the first point."
 strength = "weak"
 terms = [
-  { term = 'tauch(?:en|t) (?:wir|sie|ihr) (?:\w+ ){0,3}ein', instead = "cut" },
-  { term = 'lass(?:t|en sie)? uns (?:\w+ ){0,3}eintauchen', instead = "cut" },
+  { term = 'lass(?:en sie|t)? uns (?:\w+ ){0,3}eintauchen', instead = "cut" },
   { term = 'lass(?:en sie)? mich (?:das|dies|es) (?:\w+ )?aufschlüsseln', instead = "give the parts" },
+  { term = 'tauch(?:en|t) (?:ihr|sie|wir) (?:\w+ ){0,3}ein', instead = "cut" },
 ]
 flags = "Tauchen wir gemeinsam ein in die Geschichte unserer Bäckerei."
 passes = "Unsere Bäckerei gibt es seit 1952; angefangen hat sie mit einem Ofen."
@@ -268,7 +268,7 @@ models = "any"
 what = "Opens with a question nobody asked: what if, have you ever wondered."
 instead = "Start with the point or the news."
 strength = "weak"
-check = '''^\W*(?:was wäre,? wenn\b|ha(?:ben sie sich|st du dich|bt ihr euch) (?:schon (?:einmal |mal )?|jemals |auch schon )?gefragt)'''
+check = '''^\W*(?:was wäre,? wenn\b|ha(?:ben sie sich|bt ihr euch|st du dich) (?:schon (?:einmal |mal )?|jemals |auch schon )?gefragt)'''
 flags = "Was wäre, wenn Ihr Kühlschrank selbst Milch nachbestellt?"
 passes = "Unser Kühlschrank bestellt jetzt selbst Milch nach, wenn der Vorrat zur Neige geht."
 sources = [

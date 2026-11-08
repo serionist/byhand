@@ -16,16 +16,16 @@ what = "Props up a plain fact with set words of significance, legacy and role."
 instead = "Say what happened, to whom and when; drop the word if no fact stands behind it."
 strength = "weak"
 terms = [
-  { term = '标志着|標誌著', instead = "say what changed" },
-  { term = '见证了|見證了', instead = "say what happened" },
-  { term = '奠定了?(?:坚实的?|堅實的?)?基[础礎]', instead = "say what it made possible" },
+  { term = '不[断斷](?:变化|演变|演變|變化)的格局', instead = "name the market" },
   { term = '不可磨[灭滅]', instead = "say what remains" },
-  { term = '根植[于於]', instead = "comes from" },
+  { term = '奠定了?(?:坚实的?|堅實的?)?基[础礎]', instead = "say what it made possible" },
   { term = '意[义義](?:重大|非凡)', instead = "say what it means" },
-  { term = '至[关關]重要|[举舉]足[轻輕]重', instead = "say why it matters" },
-  { term = '深[远遠]的?影[响響]', instead = "name the effect" },
   { term = '扮演[着著了]?[^。，\n]{0,10}角色', instead = "say what it does" },
-  { term = '不[断斷](?:变化|演变|變化|演變)的格局', instead = "name the market" },
+  { term = '标志着|標誌著', instead = "say what changed" },
+  { term = '根植[于於]', instead = "comes from" },
+  { term = '深[远遠]的?影[响響]', instead = "name the effect" },
+  { term = '至[关關]重要|[举舉]足[轻輕]重', instead = "say why it matters" },
+  { term = '见证了|見證了', instead = "say what happened" },
 ]
 flags = "新仓库启用标志着物流部迈入新阶段，也为明年扩张奠定了基础。"
 passes = "新仓库周一启用，比老仓库多放三千箱货，明年看情况再扩。"
@@ -45,10 +45,10 @@ strength = "weak"
 terms = [
   { term = '[废廢][话話]不多[说說]', instead = "cut" },
   { term = '[众眾]所周知', instead = "cut, or name the source" },
-  { term = '接下来我将为[你您]|接下來我將為[你您]|让我们一起来看看|讓我們一起來看看', instead = "start with it" },
-  { term = '不言而喻|毋庸置疑', instead = "cut" },
   { term = '不[难難][发發][现現]|不可否[认認]的是', instead = "cut" },
+  { term = '不言而喻|毋庸置疑', instead = "cut" },
   { term = '值得注意的是|需要指出的是', instead = "cut; state the point" },
+  { term = '接下来我将为[你您]|接下來我將為[你您]|让我们一起来看看|讓我們一起來看看', instead = "start with it" },
 ]
 flags = "众所周知，物流一直是短板。不难发现，三月的退货少了。"
 passes = "三月退货少了一半，主要是换了快递公司。"
@@ -67,9 +67,9 @@ what = "Restates the point under a stock wrap-up, or claims to reach its essence
 instead = "Stop at the last new point, or state the claim without the frame."
 strength = "weak"
 terms = [
-  { term = '本[质質]上', instead = "say the claim" },
   { term = '[说說]到底|[归歸]根[结結][底柢]', instead = "cut" },
   { term = '[总總]的[来來][说說看]|[综綜]上所述|[总總]而言之', instead = "cut" },
+  { term = '本[质質]上', instead = "say the claim" },
   { term = '由此可[见見]', instead = "cut" },
 ]
 flags = "综上所述，这次改版说到底是把选择权交给顾客。"
@@ -105,9 +105,9 @@ what = "Closes on an upbeat line about the future, or a call to embrace change t
 instead = "Stop after the last fact; if something comes next, name it."
 strength = "weak"
 terms = [
+  { term = '[让讓]我[们們]一起(?:拥抱|携手|擁抱|攜手|期待|迎接)', instead = "name the next step" },
   { term = '拭目以待', instead = "cut" },
   { term = '未[来來]可期', instead = "cut" },
-  { term = '[让讓]我[们們]一起(?:拥抱|擁抱|迎接|期待|携手|攜手)', instead = "name the next step" },
 ]
 flags = "新系统上线只是起点，后面的变化拭目以待，未来可期！"
 passes = "新系统下周一上线，遇到问题先找小周。"
@@ -143,8 +143,8 @@ strength = "weak"
 terms = [
   { term = '[滚滾][烫燙]', instead = "say what it is" },
   { term = '[丰豐]盈', instead = "full" },
-  { term = '微光', instead = "say what it is" },
   { term = '安放', instead = "put, or cut" },
+  { term = '微光', instead = "say what it is" },
   { term = '褶[皱皺]', instead = "say what it is" },
 ]
 flags = "那些被岁月折起的褶皱里，安放着我们滚烫的青春。"
@@ -162,13 +162,13 @@ what = "Piles up social-media hype words, as a post written in bulk does."
 instead = "Keep one if it is how you talk; say what the post gives."
 strength = "weak"
 terms = [
-  { term = '保姆[级級]', instead = "detailed" },
-  { term = '建[议議]收藏', instead = "cut" },
-  { term = '一文[读讀]懂', instead = "cut" },
   { term = '[划劃]重[点點]', instead = "cut" },
-  { term = '干[货貨]|乾貨', instead = "cut" },
   { term = '[绝絕][绝絕]子|[谁誰]懂啊', instead = "cut" },
+  { term = '一文[读讀]懂', instead = "cut" },
+  { term = '保姆[级級]', instead = "detailed" },
   { term = '姐妹[们們]', instead = "cut" },
+  { term = '干[货貨]|乾貨', instead = "cut" },
+  { term = '建[议議]收藏', instead = "cut" },
 ]
 flags = "保姆级报销攻略来了！干货满满，建议收藏，姐妹们冲！"
 passes = "整理了一份报销流程，三步就能填完，截图放在下面。"
@@ -311,7 +311,7 @@ models = "any"
 what = "Keeps chat lines meant for the person who asked: hope this helps, copy it as is, ask me anything else."
 instead = "Cut them; end with the text itself."
 strength = "weak"
-check = '希望(?:这|這|以上)(?:些)?(?:内容|內容|信息|資訊|回答)?(?:能)?(?:对|對)[你您]有所?(?:帮助|幫助)|直接(?:复制|複製)使用|如果[你您](?:还|還)有(?:其他|任何)(?:问题|問題)'
+check = '希望(?:以上|这|這)(?:些)?(?:信息|內容|内容|回答|資訊)?(?:能)?(?:对|對)[你您]有所?(?:帮助|幫助)|直接(?:复制|複製)使用|如果[你您](?:还|還)有(?:任何|其他)(?:問題|问题)'
 flags = "改好的通知在上面，直接复制使用即可。希望以上内容对您有所帮助。"
 passes = "通知改好了，你看下有没有要补的。"
 sources = [
@@ -328,7 +328,7 @@ models = "any"
 what = "Leaves the chatbot's request for input inside the text, such as asking for the passage to translate."
 instead = "Delete it, and check what the tool really returned there."
 strength = "weak"
-check = '[请請]提供(?:需要|[你您]需要)(?:翻[译譯]|[润潤]色|改[写寫]|[总總][结結])的(?:内容|內容|文本|文字)'
+check = '[请請]提供(?:需要|[你您]需要)(?:翻[译譯]|[润潤]色|改[写寫]|[总總][结結])的(?:內容|内容|文字|文本)'
 flags = "这款保温杯容量五百毫升。请提供您需要润色的文字。杯盖可以拆下来洗。"
 passes = "请把产品说明发我，我找人润色，周三给你。"
 sources = [
@@ -346,14 +346,14 @@ what = "Talks about ordinary work in debugging and combat verbs, and pushes offe
 instead = "Use the plain verb; offer more once, and say what."
 strength = "weak"
 terms = [
-  { term = '要不要我[顺順]手', instead = "offer once, plainly" },
-  { term = '我立[马馬]开始|我立馬開始', instead = "cut" },
   { term = '[揪抠摳]出[来來]', instead = "found" },
-  { term = '坐[实實]', instead = "confirmed" },
   { term = '[补補]一刀', instead = "add" },
-  { term = '不(?:瞎|靠)猜', instead = "say what you know" },
-  { term = '收口', instead = "finish" },
   { term = '[稳穩][稳穩](?:地)?兜住', instead = "handle" },
+  { term = '不(?:瞎|靠)猜', instead = "say what you know" },
+  { term = '坐[实實]', instead = "confirmed" },
+  { term = '我立[马馬]开始|我立馬開始', instead = "cut" },
+  { term = '收口', instead = "finish" },
+  { term = '要不要我[顺順]手', instead = "offer once, plainly" },
 ]
 flags = "这个报错我先收口，基本坐实是端口填错，我立马开始把旧日志揪出来。"
 passes = "报错查到了，端口填错了。旧日志要不要我也找出来？"
@@ -369,7 +369,7 @@ models = [{ family = "gpt", from = "5.4" }, { family = "claude", from = "4.7" }]
 what = "Comforts like a counsellor: promises to hold the reader steady, and tells them what they really feel."
 instead = "Answer what was said; offer help in plain words, and don't diagnose."
 strength = "usual"
-check = '''[稳穩][稳穩](?:地)?接住(?:你|所有人|大家)(?:[。！，,.!？?\s]|$)|[稳穩][稳穩](?:地)?接住[这這]份(?:脆弱|不安|情绪|情緒|委屈|焦虑|焦慮)|[稳穩][稳穩](?:地)?接住你的(?:情绪|情緒|脆弱|不安|委屈|焦虑|焦慮)'''
+check = '''[稳穩][稳穩](?:地)?接住(?:你|大家|所有人)(?:[。！，,.!？?\s]|$)|[稳穩][稳穩](?:地)?接住[这這]份(?:不安|委屈|情緒|情绪|焦慮|焦虑|脆弱)|[稳穩][稳穩](?:地)?接住你的(?:不安|委屈|情緒|情绪|焦慮|焦虑|脆弱)'''
 flags = "没关系，慢慢说，我会稳稳接住你。"
 passes = "没事，你慢慢讲，我在听，晚点给你打电话。"
 sources = [
@@ -385,8 +385,8 @@ what = "Announces that it is about to be honest or serious, to borrow trust for 
 instead = "Say the point; let the content carry it."
 strength = "weak"
 terms = [
-  { term = '我必[须須](?:很|要)?(?:[认認]真|[诚誠][实實])地[说說]', instead = "cut" },
   { term = '[说說]句[实實][话話]|坦白[讲講]', instead = "cut" },
+  { term = '我必[须須](?:很|要)?(?:[认認]真|[诚誠][实實])地[说說]', instead = "cut" },
 ]
 flags = "说句实话，这款耳机的降噪一般。"
 passes = "这款耳机降噪一般，地铁上还是吵。"

@@ -16,8 +16,8 @@ a score, a percentage or a verdict on who wrote it: byhand is for a person's own
 Read each file named here by its path with the Read tool, one call per file: never a command, never Glob or a
 listing, which ask the user or are missing on some machines.
 
-**Each new request starts this skill again,** even later in the same conversation: call the Skill tool for
-`byhand:check` first. The grant to read the plugin's files lasts only the turn the skill starts in.
+**Each new text to check starts this skill again,** even later in the same conversation: call the Skill tool
+for `byhand:check` first. The grant to read the plugin's files lasts only the turn the skill starts in.
 
 ## Steps
 

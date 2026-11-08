@@ -21,8 +21,8 @@ listing, which ask the user or are missing on some machines.
 1. **The kind:** `message` (chat, a text), `email`, `post` (social, a blog) or `document` (a report, notes, a
    letter, the text of a slide).
 2. **The language:** the one the user names; else that of the text they reply to; else the request's.
-3. **The model:** your own family and version, from your model id in your system prompt: `claude-opus-5-5` is
-   `claude` 5.5. An id you can't read: use the `any` files alone.
+3. **The model:** your own family and version, from your model id in your system prompt: an id such as
+   `claude-opus-9-1` is `claude` 9.1. An id you can't read: use the `any` files alone.
 4. **The style:** Read `~/.byhand/styles/index.md`, a table of `Style`, `Language` and `Default for`. Pick:
    - a style the user names;
    - else the style that is the default for this kind and language (two rows claiming one: the first wins);

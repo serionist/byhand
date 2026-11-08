@@ -388,8 +388,10 @@ Decisions on the way:
     text, screened by `check`'s steps.
 - **Step 7, as run (2026-11-08):** the suite pastes its texts, as the harness gives a case no file; the second draft
   is tried by hand in a headless `--continue` session instead of a hand-made history file. The maintainer's crowded
-  session ran in auto mode, so the manual-mode prompt count stays untried. Every bar met
-  (`docs/reviews/2026-11-08-real-sessions.md`): no `SessionStart` hook before the release.
+  session ran in auto mode, so the manual-mode prompt count and a draft after `/compact` stay untried, as does an id
+  the catalogue has never seen; tokens were not counted (no API key), bytes stand in. Every measured bar met
+  (`docs/reviews/2026-11-08-real-sessions.md`): no `SessionStart` hook before the release. `write` offers to keep a
+  draft's feedback as a rule in its style (the maintainer, 2026-11-09).
 
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
 `0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.

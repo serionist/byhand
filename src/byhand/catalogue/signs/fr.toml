@@ -4,12 +4,13 @@
 #
 # What these rest on: slopcheck-fr measured its rules on 1.2 million words of French books and Wikipedia and on 224
 # texts that Claude and GPT-5.6 wrote in October 2026; avoid-ai-writing-multilingual and boileau list patterns from
-# French guides; Wikipédia's help page lists what its editors see. None measured work mail, and formal French mail runs
+# French guides; Wikipédia's help pages list what its editors see. None measured work mail, and formal French mail runs
 # on set phrases (Je me permets de, N'hésitez pas à, Je reste à votre disposition, Veuillez agréer, dans le cadre de):
-# they are a person's, never a sign. So one French sign with a check counts alone, fr-stock-openers, and most weak ones
-# read posts and documents only. French typography is not a tell either: « » with no-break spaces, a space before ; : ! ?
-# and the dash of dialogue are how people write. tests/test_office_fr.py holds plain French mail, chat and reports
-# against every sign that counts alone, and against a weak cluster.
+# they are a person's, never a sign. So no French sign with a check counts alone (fr-stock-openers went weak in #24's
+# review, as speeches and editos open that way), and the weak checks read posts and documents, but for fr-hedge-stack.
+# French typography is not a tell either: « » with no-break spaces, a space before ; : ! ? and the dash of dialogue are
+# how people write. tests/test_office_fr.py holds plain French mail, chat and reports against every sign that counts
+# alone, and against a weak cluster.
 
 # Structure: how the text is built.
 
@@ -18,8 +19,9 @@ id = "fr-false-contrast"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-what = "Frames a point against a smaller version of itself (not merely X, it is Y; not about X but Y), or tacks ', et non Y' onto a choice no reader was weighing. Correcting a real mistake (jeudi, et non vendredi) is not one."
-instead = "State the claim on its own; bring in the alternative only if a reader believes it."
+# any-negative-parallelism says what the habit is; this sign holds its French forms and their check.
+what = "The French forms of a set-up contrast: a first half softened by seulement, juste or simple, or an il ne s'agit pas… mais. Correcting a real mistake is not one."
+instead = "Give Y its evidence, a figure or an example, instead of a foil."
 strength = "weak"
 # The check takes the forms with a minimiser (seulement, juste, simple) or il ne s'agit pas de: a bare "ce n'est pas X,
 # c'est Y" and "X, et non Y" also correct real mistakes, which the model tells apart and a pattern can't.
@@ -28,7 +30,6 @@ flags = "La nouvelle cantine n'est pas seulement un lieu pour déjeuner, c'est l
 passes = "La nouvelle cantine ouvre à 11 h 30. Elle n'est pas encore équipée pour les menus sans gluten."
 sources = [
   { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, correction-deux-temps and contraste-appose, commit 74c6b9685694", seen = 2026-11-08 },
-  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, patterns 17 and 23, commit 4e5aa4c51230", seen = 2026-11-08 },
 ]
 
 [[sign]]
@@ -36,11 +37,11 @@ id = "fr-connector-openers"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-what = "Hangs each new paragraph on Par ailleurs, En outre, De plus or Cependant, so the link words do the work the facts should. One now and then is ordinary French."
+what = "Opens most paragraphs on a formal link word, so the text reads as a pile of additions. One now and then is ordinary French."
 instead = "Let the order of the facts carry the link; keep a connector where the argument turns."
 strength = "weak"
-flags = "Le stock est à jour.\n\nPar ailleurs, la livraison arrive jeudi.\n\nEn outre, le fournisseur baisse ses prix.\n\nCependant, le transport coûte plus cher."
-passes = "Le stock est à jour et la livraison arrive jeudi. Le fournisseur baisse ses prix de 3 %, mais le transport augmente d'autant."
+flags = "Le gymnase rouvre en janvier après six mois de travaux.\n\nDe surcroît, la salle de danse a un parquet neuf.\n\nNéanmoins, les vestiaires ne seront prêts qu'en mars.\n\nQui plus est, l'abonnement annuel ne change pas."
+passes = "Le gymnase rouvre en janvier, avec un parquet neuf dans la salle de danse. Les vestiaires attendront mars ; l'abonnement reste à 90 €."
 sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 12, commit 4e5aa4c51230", seen = 2026-11-08 },
   { source = "boileau", where = "SKILL.md, 13 Connecteurs académiques en pluie, commit 5b272a70b1d5", seen = 2026-11-08 },
@@ -51,8 +52,8 @@ id = "fr-article-scaffold"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-what = "Builds a post or web article on a template: a bulleted summary up top, headings as questions or teasers (Ce que…), a closing FAQ, sources piled at the foot."
-instead = "Use headings that state their point, and cite each source where its fact is."
+what = "Lays a post out like a template web page: question headings, teaser headings (Ce que…), a summary list up top, an FAQ, a list of sources at the end."
+instead = "Title sections by what they say, and attach each source to the claim it backs."
 strength = "weak"
 flags = "## En bref\n- Le vélo cargo coûte cher\n- Il remplace une voiture\n\n## Pourquoi choisir un vélo cargo ?\n\n## Ce qui change vraiment au quotidien\n\n## FAQ"
 passes = "## Prix\nUn vélo cargo neuf coûte entre 2 000 et 6 000 €.\n\n## Entretien\nComptez une révision par an chez Cyclo'Rennes."
@@ -67,8 +68,8 @@ id = "fr-slogan-mirrors"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-what = "Writes mirror slogans as in ad copy: a short Moins de… sentence answered by a Plus de… one, or two Ni… fragments closed on Juste…"
-instead = "Say what changed and by how much: the hours saved, the price."
+what = "Writes ad-copy fragments in matched pairs: a short Moins de… sentence and then a Plus de… one, or two Ni… and then Juste…"
+instead = "Write one plain sentence with the real numbers in it."
 strength = "weak"
 check = '''(?:^|[.!?]\s+)moins de [^.!?\n]{1,40}\.\s+plus de [^.!?\n]{1,40}[.!]|(?:^|[.!?]\s+)ni [^.!?\n]{1,40}\.\s*ni [^.!?\n]{1,40}\.\s*(?:juste|seulement|simplement)\b'''
 flags = "Moins de paperasse. Plus de temps pour vos patients."
@@ -82,19 +83,17 @@ sources = [
 [[sign]]
 id = "fr-stock-openers"
 category = "phrase"
-kinds = ["any"]
+# Weak, and not mail, by the maintainer's call in #24's review: a co-op president's speech, a mayor's edito and a
+# retirement speech open this way too.
+kinds = ["post", "document"]
 models = "any"
-what = "Starts with a sentence on how fast the world moves, before any fact about the subject."
-instead = "Cut the line; the first sentence is about the subject itself."
-strength = "usual"
-# Usual: only the full frame, which no plain mail needs. "Un secteur en constante évolution" and "le monde bouge vite"
-# are a person's, and the era and landscape openers are weak, in fr-inflated-stakes.
-terms = [
-  { term = '''dans un monde en (?:constante|perpétuelle|pleine) (?:évolution|mutation)''', instead = "cut" },
-  { term = '''dans un monde qui (?:évolue|change|bouge) à (?:un rythme effréné|toute vitesse|grande vitesse)''', instead = "cut" },
-]
-flags = "Dans un monde en pleine mutation, notre service paie doit sans cesse s'adapter."
-passes = "Notre service paie a changé trois fois de logiciel depuis 2021 ; dans ce métier, tout bouge vite."
+what = "Opens a text or a paragraph on how fast the world moves, before any fact about the subject."
+instead = "Begin with the news itself."
+strength = "weak"
+# A check, not terms: the frame counts where a line starts, as the `what` says, not in the middle of a sentence.
+check = '''^\W*dans un monde (?:en (?:constante|perpétuelle|pleine) (?:évolution|mutation)|qui (?:évolue|change|bouge) à (?:un rythme effréné|toute vitesse|grande vitesse))\b'''
+flags = "Dans un monde qui change à toute vitesse, le club de handball de Vitré fête ses vingt ans."
+passes = "Le club de handball de Vitré fête ses vingt ans samedi, avec un tournoi des anciens à 14 h."
 sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, Tier 3, commit 4e5aa4c51230", seen = 2026-11-08 },
   { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, ouverture-cliche, commit 74c6b9685694", seen = 2026-11-08 },
@@ -105,12 +104,13 @@ id = "fr-inflated-stakes"
 category = "phrase"
 kinds = ["post", "document"]
 models = "any"
-what = "Lifts an ordinary event into an era or a turning point, or ends on a hopeful line about the future."
-instead = "Give the change in figures and names; stop at the last of them."
+# any-significance-inflation and any-challenges-formula say what the habit is; this sign holds its French phrases.
+what = "French stock phrases of eras, turning points and a bright future."
+instead = "Report the event at its own size: what opened, closed or moved, and when."
 strength = "weak"
 terms = [
-  { term = '''tournant (?:décisif|historique)''', instead = "say what changed" },
-  { term = '''moment charnière''', instead = "give the date" },
+  { term = '''tournants? (?:décisifs?|historiques?)''', instead = "say what changed" },
+  { term = '''moments? charnières?''', instead = "give the date" },
   { term = '''(?:nouvelle|prochaine) ère''', instead = "say what starts" },
   { term = '''à l['’]ère (?:du numérique|du digital|de l['’]ia|de l['’]intelligence artificielle)''', instead = "cut" },
   { term = '''dans le paysage (?:actuel|numérique|digital)''', instead = "name the market" },
@@ -119,8 +119,8 @@ terms = [
   { term = '''(?:seul )?l['’]avenir nous le dira''', instead = "end on the fact" },
   { term = '''plus (?:motivée?s?|déterminée?s?) que jamais''', instead = "say what comes next" },
 ]
-flags = "Ce nouveau logiciel de paie marque un tournant décisif : une nouvelle ère s'ouvre pour le service RH."
-passes = "Le nouveau logiciel de paie calcule seul les heures sup ; le service RH gagne une journée par mois."
+flags = "Avec ce troisième food truck, la boulangerie Morel entre dans une nouvelle ère, plus déterminée que jamais."
+passes = "Avec ce troisième food truck, la boulangerie Morel vend aussi le midi à la gare, du lundi au vendredi."
 sources = [
   { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, grandiloquence, virage-inspirant, ouverture-cliche and annonce-reseau-social, commit 74c6b9685694", seen = 2026-11-08 },
   { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, patterns 1, 29 and 41, Tier 3, commit 4e5aa4c51230", seen = 2026-11-08 },
@@ -131,8 +131,8 @@ id = "fr-staged-reveal"
 category = "phrase"
 kinds = ["post", "document"]
 models = "any"
-what = "Teases a plain fact as a reveal, with a promised reason, a framed question or a twist, and keeps the reader waiting a sentence for it."
-instead = "Put the fact in the first sentence."
+what = "Builds a small drumroll in front of an ordinary fact: a promised reason, a twist, a question nobody asked."
+instead = "Cut the teaser; the sentence after it already holds the point."
 strength = "weak"
 terms = [
   { term = '''et voici (?:pourquoi|comment)''', instead = "give the reason" },
@@ -142,6 +142,7 @@ terms = [
   { term = '''la question n['’]est (?:plus|pas) de savoir si''', instead = "state the point" },
   { term = '''c['’]est (?:là|ici) que (?:ça|cela|les choses) devien(?:t|nent) intéressant(?:es)?''', instead = "cut" },
   { term = '''c['’]est (?:là|ici) qu(?:e |['’])[^.!?\n]{1,40} entre(?:nt)? en (?:jeu|scène)''', instead = "say what it does" },
+  { term = '''c['’]est (?:là|ici) qu['’]entre(?:nt)? en (?:jeu|scène)''', instead = "say what it does" },
 ]
 flags = "Notre taux de retour a doublé en un an. Et voici pourquoi : les tailles changent d'une marque à l'autre."
 passes = "Notre taux de retour a doublé en un an, surtout parce que les tailles changent d'une marque à l'autre."
@@ -155,11 +156,11 @@ category = "phrase"
 kinds = ["post", "document"]
 models = "any"
 what = "Promises honesty or straight talk before saying something quite ordinary."
-instead = "Drop the preface and let the statement stand."
+instead = "Start at the statement; if it is candid, the reader will see it."
 strength = "weak"
 terms = [
-  { term = '''soyons (?:honnêtes|francs|lucides)''', instead = "cut" },
-  { term = '''pour être (?:tout à fait )?(?:honnête|transparente?|franche?)''', instead = "cut" },
+  { term = '''soyons (?:honnêtes|franc(?:he)?s|lucides)''', instead = "cut" },
+  { term = '''pour être (?:tout à fait )?(?:honnêtes?|transparente?s?|franc(?:he)?s?)''', instead = "cut" },
   { term = '''sans langue de bois''', instead = "cut" },
   { term = '''la vérité,? c['’]est que''', instead = "cut" },
 ]
@@ -175,14 +176,15 @@ category = "phrase"
 # Not mail: "Il convient de rappeler que les congés…" is how an office writes a notice.
 kinds = ["post", "document"]
 models = "any"
-what = "Flags the next point as worth noting, or as beyond proof, before getting to it."
-instead = "Delete the preface; the point stands without it."
+# any-didactic-aside says what the habit is. "Force est de constater" and "il ressort de" are for the model's read: a
+# plain compte rendu writes them (#24's review, F3).
+what = "Sets a stock preface before a remark, or says a point needs no proof, in the French phrases below."
+instead = "Start the sentence at the fact; show the proof or drop the claim."
 strength = "weak"
+# "que" after the verb: "il est essentiel de noter les heures" asks someone to write them down.
 terms = [
-  { term = '''il (?:convient|est (?:important|essentiel|crucial|intéressant)) de (?:noter|souligner)''', instead = "cut" },
-  { term = '''force est de constater''', instead = "cut" },
+  { term = '''il (?:convient|est (?:important|essentiel|crucial|intéressant)) de (?:noter|souligner) qu(?:e|['’])''', instead = "cut" },
   { term = '''n['’]est plus à (?:démontrer|prouver)''', instead = "give the proof" },
-  { term = '''il ressort de (?:cette|cet|ce) (?:analyse|étude|échange)''', instead = "give the finding" },
 ]
 flags = "Il convient de souligner que la nouvelle imprimante consomme deux fois moins d'encre."
 passes = "La nouvelle imprimante consomme deux fois moins d'encre. Il faut juste la redémarrer le lundi."
@@ -218,8 +220,8 @@ id = "fr-hedge-stack"
 category = "phrase"
 kinds = ["any"]
 models = "any"
-what = "Puts two hedges on one claim (pourrait potentiellement), where one already carries the doubt."
-instead = "Keep one hedge at the strength you mean; in a negotiation, leave the writer's own care alone."
+what = "Softens one claim twice over (pourrait potentiellement), so the reader can't tell how likely it is."
+instead = "Pick the verb that matches the odds (peut, risque de, va); in a negotiation, leave the writer's own care alone."
 strength = "weak"
 # Not "pourrait éventuellement" or "pourra éventuellement": people write both in mail every day.
 check = '''pourrai(?:t|ent) potentiellement|(?:éventuellement|potentiellement|possiblement) susceptibles? d|pourrai(?:t|ent) éventuellement peut-être'''
@@ -236,7 +238,7 @@ category = "phrase"
 kinds = ["post"]
 models = "any"
 what = "Frames a social post with stock lines: proud to announce, link in the comments, a closing Et vous ? or an opening Et si… ?"
-instead = "Put the news and the link in the post itself, and end on the news."
+instead = "Open with the news, paste the link where it is mentioned, and stop once the news is told."
 strength = "weak"
 check = '''\b(?:nous sommes|je suis) (?:très |tellement )?(?:ravie?s?|fi(?:er|ère|ers|ères)|heureux|heureuses?) d['’](?:annoncer|accueillir)|\b(?:lien|la suite|les détails) en (?:premier )?commentaire|^\W*et vous,? [^?\n]{0,80}\?\s*$|^\W*et si [^?\n]{3,80}\?\s*$'''
 flags = "Nous sommes ravis d'annoncer l'ouverture de notre atelier à Nantes !\n\nEt vous, quel est votre pire souvenir de crevaison ?"
@@ -255,8 +257,8 @@ category = "word"
 # model reads for them.
 kinds = ["post", "document"]
 models = "any"
-what = "Leans on the stock words models reach for: holistique, synergie, pierre angulaire, véritable before an abstract noun. One is chance; several are not."
-instead = "Use the plain word, or the fact the word stands for."
+what = "Uses the rare, grand words French model output is full of: holistique, synergie, pierre angulaire, véritable before an abstract noun. A single one proves nothing."
+instead = "Name what is actually there: the two teams, the shared planning, the street."
 strength = "weak"
 terms = [
   { term = '''holistiques?''', instead = "say what is included" },
@@ -281,7 +283,7 @@ category = "structure"
 kinds = ["post", "document"]
 models = "any"
 what = "Avoids a plain être or avoir with frames that place a thing in an approach or a logic: s'articule autour de, s'inscrit dans une démarche, se positionne comme."
-instead = "Use être or avoir, or an action verb with a person as its subject."
+instead = "Say what the thing is or does, and who does it."
 strength = "weak"
 # No terms: "la formation s'articule autour de trois modules" is plain office French, so only the model's read can tell a
 # frame from a plan.
@@ -297,14 +299,15 @@ id = "fr-calques"
 category = "word"
 kinds = ["post", "document"]
 models = "any"
-what = "Carries an English idiom into French word for word: adresser un problème, délivrer de la valeur."
+what = "Uses business English turned into French verbs: adresser un enjeu, délivrer de la valeur, naviguer dans l'incertitude."
 instead = "Use the idiom French already has for it."
 strength = "weak"
-# Not "faire sens": people say it at work every day.
+# Not "faire sens": people say it at work every day. Not "adresser un problème": "j'ai adressé le problème à la DSI"
+# sends it somewhere, which is plain French.
 terms = [
-  { term = '''adress(?:er|e|ent|ons|ez|é|ée|ées) (?:un|le|ce|cet|les|des|ces) (?:problèmes?|enjeux?|défis?)''', instead = "traiter" },
+  { term = '''adress(?:er|e|ent|ons|ez|é|ée|ées) (?:un|l['’]|le|ce|cet|les|des|ces) ?(?:enjeux?|défis?)''', instead = "traiter" },
   { term = '''délivr(?:er|e|ent|ons|ez|ant) (?:de la |plus de )?valeur''', instead = "apporter" },
-  { term = '''navigu(?:er|e|ent|ons|ez|ant) (?:dans|à travers) (?:la|cette|les|ces) (?:complexités?|incertitudes?)''', instead = "say how" },
+  { term = '''navigu(?:er|e|ent|ons|ez|ant) (?:dans|à travers) (?:la|l['’]|cette|les|ces) ?(?:complexités?|incertitudes?)''', instead = "say how" },
 ]
 flags = "Le comité veut adresser ces enjeux avant l'été, puis naviguer à travers les incertitudes du marché."
 passes = "Le comité veut régler ces sujets avant l'été ; le marché, lui, reste difficile à prévoir."
@@ -321,8 +324,8 @@ id = "fr-dash-asides"
 category = "formatting"
 kinds = ["any"]
 models = "any"
-what = "Sets off asides between spaced em dashes, several to a paragraph. A dialogue dash, or a writer's single incise, is ordinary French."
-instead = "Fold the aside in with a comma, or give it its own sentence."
+what = "Encloses aside after aside in spaced em dashes, several to a paragraph; dialogue dashes and an occasional incise are French typography, not this."
+instead = "Rewrite the sentence so the aside isn't needed, or move it to the next one."
 strength = "weak"
 # No check: a check can't tell a writer's incise from a model's habit, and French typography is no sign. In
 # slopcheck-fr's October 2026 texts, by our count, GPT-5.6 set an em dash inside a line in 11 of 56, Claude in 2 of 168.
@@ -339,8 +342,8 @@ id = "fr-english-headings"
 category = "formatting"
 kinds = ["post", "document"]
 models = "any"
-what = "Capitalises every word of a heading, as English titles do, or leaves an English label such as Key Takeaways in French text."
-instead = "Capitalise the first word and proper nouns only; title it in French."
+what = "Headings in English style over French text: a capital on each word, or an English label such as Key Takeaways."
+instead = "Case the heading as a sentence, and give an English label its French words."
 strength = "weak"
 flags = "## Notre Bilan Du Premier Trimestre\n\n## Key Takeaways"
 passes = "## Notre bilan du premier trimestre\n\n## Ce qu'on garde pour 2027"
@@ -355,8 +358,8 @@ id = "fr-hashtag-block"
 category = "formatting"
 kinds = ["post"]
 models = "any"
-what = "Ends a post on a block of four or more generic hashtags."
-instead = "End on the post's last sentence; tag only what a reader would search for."
+what = "Closes a post with a run of broad tags that name a mood or a sector, not anything a reader would look up."
+instead = "Let the post end on its last sentence."
 strength = "weak"
 check = '''(?:^|\s)#[^\W\d_]\w*(?:[ \t]+#[^\W\d_]\w*){3,}'''
 flags = "On ouvre une deuxième boutique à Rennes en mai.\n\n#Commerce #Rennes #Croissance #Entrepreneuriat"

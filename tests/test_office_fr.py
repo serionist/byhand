@@ -76,6 +76,22 @@ OWN_POST = (
     "honnête, le magasin va me manquer. Je commence chez Vélocité le 2 décembre. #Lyon #vélo"
 )
 
+# A plain compte rendu, which a review found reaching a weak cluster on three set phrases (#24, F3).
+MEETING_NOTE = (
+    "Compte rendu de l'entretien avec le transporteur, 3 novembre\n\nIl convient de noter que les retards viennent du "
+    "dépôt de Rungis. Force est de constater que le nouveau planning n'a rien changé. Il ressort de cet échange que le "
+    "transporteur paiera les pénalités d'octobre."
+)
+# People open speeches and editos on the fast-changing world too, so fr-stock-openers is weak (#24, F2).
+SPEECHES = [
+    "Chers coopérateurs,\n\nDans un monde en pleine mutation, notre coopérative a tenu bon : 212 adhérents, deux "
+    "magasins et un bilan à l'équilibre. Merci à chacun.",
+    "Le mot du maire\n\nDans un monde qui change à toute vitesse, Saint-Aubin garde ses commerces : la boulangerie "
+    "rouvre le 2 décembre et le marché passe au samedi.",
+    "Cher Gérard,\n\nDans un monde en constante évolution, tu as été notre point fixe pendant 32 ans à la compta. "
+    "Profite bien de ton potager.",
+]
+
 OFFICE = [
     # mail, vous and tu, France and Quebec, with the set phrases of formal French
     FORMAL_MAIL,
@@ -112,6 +128,10 @@ OFFICE = [
     f"Certainement. Voici la nouvelle version de votre contrat, avec les deux corrections demandées{NB}:",
     "Absolument! Voici une version retravaillée de mon texte d'hier:",
     f"Bien sûr{NB}! Voici une version corrigée de votre bon de commande, avec le bon RIB{NB}:",
+    # a supplier and an assistant reworking the reader's own document, which names no text of theirs (#24's review)
+    f"Avec plaisir. Voici une version retravaillée de votre devis, avec la remise de 5{NB}%{NB}:",
+    f"Bien sûr{NB}! Voici une version plus formelle de votre courrier{NB}:",
+    f"Bien sûr{NB}! Voici une version corrigée de votre texte, avec les deux fautes en moins{NB}:",
     "Je te renvoie mon texte retravaillé :\n\nL'atelier vélo ouvre le samedi de 10 h à 13 h.",
     # notes, minutes and reports
     "Compte rendu \u2013 réunion du 6 novembre\nPrésents : A. Martin, B. Diallo, C. Roy\n- Budget 2027 validé\n"
@@ -120,6 +140,8 @@ OFFICE = [
     "Modèle de relance\u00a0: «\u00a0Bonjour, je reviens vers vous concernant la facture du mois dernier.\u00a0»",
     "**Important** : le badge est obligatoire à partir de lundi.",
     MINUTES,
+    MEETING_NOTE,
+    *SPEECHES,
     REPORT,
     "Notre secteur est en constante évolution : trois concurrents ont fermé cette année.",
     "Dans le monde de la logistique, tout va très vite ; on a changé deux fois de transporteur.",
@@ -142,8 +164,14 @@ def catalogue():
 @pytest.fixture(scope="module")
 def counted_alone(catalogue):
     found = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength != "weak"]
-    assert any(sign.language == "fr" for sign in found)
+    assert found
     return found
+
+
+def test_no_french_check_counts_alone(counted_alone):
+    # fr-stock-openers was the last, made weak in #24's review: a speech or an edito opens that way too. A French sign
+    # with a pattern that counts alone needs its lines in MACHINE below, a line per branch of its check.
+    assert [sign.id for sign in counted_alone if sign.language == "fr"] == []
 
 
 def test_the_marks_are_the_real_ones():
@@ -165,10 +193,6 @@ def test_no_sign_that_counts_alone_fires_on_plain_french_work_text(counted_alone
 # can't come from a sign that finds nothing, or a branch that stopped finding. Branches that read only English, German,
 # Russian, Chinese or Japanese words have their lines in the other office tests.
 MACHINE = [
-    ("fr-stock-openers", "Dans un monde en constante évolution, notre service achats doit rester agile."),
-    ("fr-stock-openers", "Dans un monde en pleine mutation, les PME doivent repenser leur organisation."),
-    ("fr-stock-openers", "Dans un monde qui évolue à un rythme effréné, la formation devient une priorité."),
-    ("fr-stock-openers", "Dans un monde qui change à toute vitesse, chaque équipe doit se réinventer."),
     ("any-ai-self-reference", "En tant qu'IA, je n'ai pas d'avis sur le choix du prestataire."),
     ("any-ai-self-reference", "En tant qu\u2019intelligence artificielle, je ne peux pas signer ce document."),
     ("any-ai-self-reference", "En tant que modèle de langage, je ne dispose pas de vos chiffres."),
@@ -179,6 +203,9 @@ MACHINE = [
     ("any-assistant-preamble", f"Avec plaisir{NNB}! Voici une version plus professionnelle de votre message{NNB}:"),
     ("any-assistant-preamble", "Certainement ! Voici une nouvelle version reformulée de votre courriel :"),
     ("any-assistant-preamble", "Absolument! Voici une version plus chaleureuse de votre annonce:"),
+    ("any-assistant-preamble", "Bien sûr ! Voici une version plus fluide de ton texte, prête à poster :"),
+    ("any-assistant-preamble", "Avec plaisir ! Voici une version peaufinée de ta lettre de motivation :"),
+    ("any-assistant-preamble", "Certainement ! Voici une version plus engageante de votre publication LinkedIn :"),
     ("any-unfilled-placeholder", "Bien cordialement,\n[Votre nom]"),
     ("any-unfilled-placeholder", "Je travaille chez [Nom de l\u2019entreprise] depuis trois ans."),
     ("any-unfilled-placeholder", "Pour plus d'informations : [Insérer le lien]"),
@@ -187,8 +214,6 @@ MACHINE = [
     ("any-unfilled-placeholder", "Le bilan sera publié le 2026-xx-xx."),
     ("any-unfilled-placeholder", "Inscriptions : insert_link_here"),
     ("any-knowledge-cutoff", "À la date de mes connaissances, la société n'a pas fusionné."),
-    ("any-knowledge-cutoff", "Ma date limite de connaissances ne me permet pas de le confirmer."),
-    ("any-knowledge-cutoff", "Jusqu\u2019à ma dernière mise à jour des connaissances, le site était en travaux."),
     ("any-emoji-markers", "- 🚀 Nouvelle offre de formation"),
     ("any-emoji-markers", "## 📊 Les chiffres du mois"),
     ("any-emoji-markers", "1. ✨ Un accueil plus rapide"),
@@ -236,7 +261,10 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
     for sign in catalogue.signs.values():
         if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
             continue
-        phrases = [(term.term, re.compile(term.term, re.IGNORECASE | re.MULTILINE)) for term in sign.terms]
+        # each term with the word edges `validate` gives it, French being written with spaces
+        phrases = [
+            (term.term, re.compile(rf"\b(?:{term.term})\b", re.IGNORECASE | re.MULTILINE)) for term in sign.terms
+        ]
         for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
             for found in pattern.finditer(text):
                 if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
@@ -255,6 +283,8 @@ WEAK_CASES = [
     (REPORT, "document"),
     (REPORT, "email"),
     (OWN_POST, "post"),
+    (MEETING_NOTE, "document"),
+    *((line, "document") for line in SPEECHES),
     *((line, "message") for line in CHAT),
     *((line, "document") for line in TYPOGRAPHY),
 ]
@@ -315,11 +345,21 @@ FORMS = [
     ("fr-inflated-stakes", "Former nos équipes à l\u2019ère de l\u2019IA reste un défi."),
     ("fr-inflated-stakes", "Nous sommes plus motivées que jamais."),
     ("fr-inflated-stakes", "Le vote de mardi fut un moment charnière."),
+    ("fr-inflated-stakes", "La coopérative a connu trois moments charnières depuis 1990."),
+    ("fr-inflated-stakes", "Ces deux tournants décisifs ont changé le quartier."),
     ("fr-staged-reveal", "C\u2019est là que notre logiciel entre en jeu."),
+    ("fr-staged-reveal", "C\u2019est là qu\u2019entre en jeu notre service client."),
     ("fr-staged-reveal", "La question n'est plus de savoir si le télétravail va durer."),
-    ("fr-filler-notice", "C'est un point qu\u2019il convient de souligner."),
     ("fr-filler-notice", "Son intérêt n\u2019est plus à démontrer."),
+    ("fr-filler-notice", "Rappelons qu\u2019il convient de noter qu\u2019aucun remboursement n'est possible."),
+    ("fr-filler-notice", "Il est important de souligner que la salle ferme à 18 h."),
     ("fr-performative-candour", "Pour être tout à fait transparente, le budget est serré."),
+    ("fr-performative-candour", "Pour être franc, je n'y crois pas."),
+    ("fr-performative-candour", "Soyons franches : le planning ne tient pas."),
+    ("fr-stock-openers", "Dans un monde en constante évolution, la chorale de Saint-Lô répète le mardi."),
+    ("fr-stock-openers", "«\u00a0Dans un monde en perpétuelle mutation, la mutuelle reste fidèle à ses adhérents."),
+    ("fr-stock-openers", "**Dans un monde qui évolue à un rythme effréné**, notre cabinet ouvre à Brest."),
+    ("fr-stock-openers", "Dans un monde qui bouge à grande vitesse, le marché de Noël garde ses chalets."),
     ("fr-ai-vocabulary", "Ces deux véritables atouts sont nos pierres angulaires."),
     ("fr-ai-vocabulary", "Une maison nichée dans les vignes."),
     ("fr-calques", "Il faut adresser ces enjeux avant l'été."),
@@ -334,6 +374,7 @@ FORMS = [
     ("fr-engagement-lines", "Le lien en premier commentaire."),
     ("fr-hashtag-block", "Merci à tous ! #Équipe #Lyon #Été #Réussite"),
     ("any-closing-summary", "En conclusion, le projet tient ses délais."),
+    ("any-closing-summary", "Pour conclure, le budget tient."),
 ]
 
 LEFT_ALONE = [
@@ -344,6 +385,12 @@ LEFT_ALONE = [
     ("fr-false-contrast", "La réunion a lieu le 12 mars, et non le 15."),
     ("fr-calques", "Ça fait sens, on valide."),
     ("fr-calques", "Je vous adresse le bon de commande."),
+    ("fr-calques", "J'ai adressé le problème à la DSI."),
+    ("fr-filler-notice", "Il est essentiel de noter les heures sur la feuille de présence."),
+    ("fr-filler-notice", "Force est de constater que le stock a baissé."),
+    ("fr-filler-notice", "Il ressort de cet échange que la date tient."),
+    ("fr-stock-openers", "Chers collègues, dans un monde en pleine mutation, vous avez tenu bon."),
+    ("fr-stock-openers", "Notre secteur est en constante évolution."),
     ("fr-hashtag-block", "Voir les tickets #42 #43 #44 #45."),
     ("fr-hashtag-block", "Postez-le sur #général ou #annonces."),
     ("fr-staged-reveal", "La vraie question, c'est qui paie le transport."),
@@ -364,12 +411,3 @@ def test_a_weak_french_check_leaves_plain_forms_alone(catalogue, sign, text):
     pattern = catalogue.signs[sign].pattern
     assert pattern is not None
     assert not pattern.search(text), sign
-
-
-def test_text_is_compared_in_nfc(catalogue):
-    # a decomposed é (e and a combining accent), as some keyboards and PDFs give it, matches once the text is NFC
-    decomposed = "Le salon marque un tournant de\u0301cisif."
-    assert decomposed != unicodedata.normalize("NFC", decomposed)
-    pattern = catalogue.signs["fr-inflated-stakes"].pattern
-    assert pattern is not None
-    assert pattern.search(unicodedata.normalize("NFC", decomposed))

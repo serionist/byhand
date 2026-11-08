@@ -459,12 +459,12 @@ id = "any-emoji-markers"
 category = "formatting"
 kinds = ["email", "document"]
 models = "any"
-what = "Puts an emoji in front of headings or list items."
+what = "Puts an emoji in front of headings or list items; a ✅ or ❌ ticking off a list item is a person's."
 instead = "Drop it; a heading needs no decoration."
 strength = "usual"
-check = '^\s*(?:#{1,6}\s+|[-*•]\s+|\d+[.)]\s+)[\U0001F300-\U0001FAFF✅❌✨⚡⭐]'
-flags = "## 🚀 Next steps\n- ✅ Book the room"
-passes = "- ✓ Book the room\n- Thanks for the cake 🎂"
+check = '^\s*(?:#{1,6}\s+[\U0001F300-\U0001FAFF✅❌✨⚡⭐]|(?:[-*•]|\d+[.)])\s+(?:[\U0001F300-\U0001FAFF✨⚡⭐]|[✅❌]\s*\*\*[^*\n]+(?::\*\*|\*\*\s*[:：])))'
+flags = "## 🚀 Next steps\n- 💡 Book the room"
+passes = "- ✅ Book the room\n- ✓ Order lunch\n- Thanks for the cake 🎂"
 sources = [
   { source = "wikipedia-en-style", where = "Emoji as formatting, revision 1382924605", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Emojis, revision 271721424", seen = 2026-11-07 },

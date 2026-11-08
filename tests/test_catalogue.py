@@ -381,6 +381,72 @@ def test_a_broken_catalogue_says_why(root, case):
     assert any(expected in problem for problem in problems), problems
 
 
+# What Python's re reads and Grep refuses or reads otherwise, and the piece the problem names (#25). Each of these was
+# run through Claude Code's ripgrep: it refuses the pattern or finds other lines than Python.
+PYTHON_ONLY = [
+    ("(?a)delve", "(?a)"),
+    ("(?L)delve", "(?L)"),
+    ("(?x)delve", "(?x)"),
+    ("(?>delve)", "(?>"),
+    ("(?#a note)delve", "(?#"),
+    ("de*+lve", "*+"),
+    ("de++lve", "++"),
+    ("del?+ve", "?+"),
+    ("del{1}+ve", "{1}+"),
+    ("de{,1}lve", "{,1}"),
+    ("delve{", "{"),
+    (r"delve\Z", r"\Z"),
+    (r"\N{LATIN SMALL LETTER D}elve", r"\N"),
+    (r"delve\0", r"\0"),
+    (r"\<delve", r"\<"),
+    (r"delve\>", r"\>"),
+    (r"\bdelve\b{end}", r"\b{"),
+    ("[[:alpha:]]elve", "[[:alpha:]"),
+    ("[a-z--x]elve", "[a-z--x]"),
+    ("[a-z&&d]elve", "[a-z&&d]"),
+    ("[a-z~~x]elve", "[a-z~~x]"),
+    (r"[\0d]elve", r"[\0d]"),
+]
+# What both read alike, the scoped and global flags the catalogue uses among them; each finds `flags` and not `passes`.
+SHARED = [
+    "(?-i:L)et us delve",
+    "(?i)let us delve",
+    "(?i:LET) us",
+    "(?is:let) us",
+    "(?i-s:let) us",
+    "(?s)let.us",
+    "(?m)^let",
+    "(?im)^let us",
+    "(?u)let us",
+    "(?P<verb>delve) into",
+    "(?:let) us",
+    r"\Alet us",
+    r"\x4cet us",
+    r"\u004cet us",
+    r"\U0000004cet us",
+    r"\bdelve\b into",
+    "de{1}lve into",
+    "del{1,}ve into",
+    "delve in{1,2}to",
+    "delve.+?numbers",
+    "[]{]?delve into",
+    "[-d]elve into",
+    r"[\[d]elve into",
+    r"delve \{?into",
+]
+
+
+@pytest.mark.parametrize(("check", "piece"), PYTHON_ONLY, ids=[case[0] for case in PYTHON_ONLY])
+def test_a_check_only_python_reads_is_refused(root, check, piece):
+    problems = problems_after(root, "signs/en.toml", 'strength = "usual"', f"strength = \"usual\"\ncheck = '{check}'")
+    assert any(f"Grep can't run `{piece}`" in problem for problem in problems), problems
+
+
+@pytest.mark.parametrize("check", SHARED)
+def test_a_check_both_read_alike_passes(root, check):
+    assert problems_after(root, "signs/en.toml", 'strength = "usual"', f"strength = \"usual\"\ncheck = '{check}'") == []
+
+
 def test_an_artefact_with_a_check_is_any_on_one_source(root):
     artefact = """
 [[sign]]

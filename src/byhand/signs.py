@@ -42,8 +42,30 @@ _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 # Most signs are about a line in a draft, so `^` and `$` match at each line. Part of the schema: a check is written
 # against these flags.
 _FLAGS = re.IGNORECASE | re.MULTILINE
-# A check also runs through Claude Code's Grep, which is ripgrep: no look-around, no backreference. Part of the schema.
-_NOT_GREP = re.compile(r"\(\?<?[=!]|\(\?P=|\\[1-9]")
+# A check also runs through Claude Code's Grep, which is ripgrep: the Rust regex crate, not Python's re. A check uses
+# only what both read alike, and `_python_only` refuses the rest. Part of the schema.
+#
+# A pattern in the pieces where the two differ, and anything else one character at a time. A class is read as Python
+# reads it: to its first `]` that isn't escaped or first in it.
+_PIECE = re.compile(
+    r"(?P<escape>\\b\{|\\.)"
+    r"|(?P<set>\[\^?\]?(?:\\.|[^\]\\])*\]?)"
+    r"|(?P<group>\(\?(?:[\w-]+[:)=<]?|<?.)?)"
+    r"|(?P<count>\{[\d,]*\}?\+?)"
+    r"|(?P<possessive>[*+?]\+)"
+    r"|.",
+    re.DOTALL,
+)
+# The groups both read alike: `(?:`, a named group, and the flags i, m, s and u. Grep has no look-around, no
+# backreference, no atomic group, no comment, and no flag a, L or x as Python has them (its x skips spaces in a class).
+_SHARED_GROUP = re.compile(r"\(\?(?::|P<|(?:[imsu]+(?:-[ims]+)?|-[ims]+)[:)])")
+# A count Grep reads. Python reads `{,3}` as up to three, and a `{` that starts no count as itself; Grep refuses both.
+_COUNT = re.compile(r"\{\d+(?:,\d*)?\}")
+# Python reads these and Grep refuses them: `\Z`, `\N{...}`, a digit (a backreference or an octal), or reads them
+# otherwise: `\<`, `\>` and `\b{...}` are a word's edges in Grep and text in Python.
+_PYTHON_ESCAPES = frozenset(("\\b{", *(f"\\{c}" for c in "ZN<>0123456789")))
+# In a class, Grep reads a `[` as a class within it, and `&&`, `--` and `~~` as operations on two classes.
+_CLASS_OPERATORS = ("[", "&&", "--", "~~")
 
 Table = dict[str, Any]
 
@@ -152,9 +174,32 @@ def _is_date(value: object) -> bool:
     return isinstance(value, datetime.date) and not isinstance(value, datetime.datetime)
 
 
+def _python_set(piece: str) -> bool:
+    escapes = re.findall(r"\\.", piece)
+    rest = re.sub(r"\\.", "", piece[1:])
+    return bool(_PYTHON_ESCAPES.intersection(escapes)) or any(op in rest for op in _CLASS_OPERATORS)
+
+
+_PYTHON_ONLY = {
+    "escape": lambda piece: piece in _PYTHON_ESCAPES,
+    "set": _python_set,
+    "group": lambda piece: not _SHARED_GROUP.fullmatch(piece),
+    "count": lambda piece: not _COUNT.fullmatch(piece),
+    "possessive": lambda _: True,
+}
+
+
+def _python_only(pattern: str) -> str | None:
+    """The first piece of a pattern that Python's re reads and Grep refuses or reads otherwise, or None."""
+    for match in _PIECE.finditer(pattern):
+        if match.lastgroup and _PYTHON_ONLY[match.lastgroup](match.group()):
+            return match.group()
+    return None
+
+
 def _compile(where: str, pattern: str) -> tuple[re.Pattern[str] | None, list[str]]:
-    if _NOT_GREP.search(pattern):
-        return None, [f"{where}: Grep can't run a look-around or a backreference: {pattern}"]
+    if piece := _python_only(pattern):
+        return None, [f"{where}: Grep can't run `{piece}` as Python's re does: {pattern}"]
     try:
         return re.compile(_nfc(pattern), _FLAGS), []
     except re.error as exc:

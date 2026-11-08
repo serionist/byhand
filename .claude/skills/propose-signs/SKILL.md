@@ -36,7 +36,8 @@ ranks the sources.
      `weak` when people often do it too, so it counts only in a cluster. Read a `usual` sign against plain office mail.
    - `models`: `any` unless a source ties it to a family, with a range. No `to` for a sign still seen.
    - `terms` for a word list, as stems in an inflecting language (`kulcsfontosság\w*`), or a `check`. Each must be what
-     Grep can run: no look-around, no backreference.
+     Grep can run as Python does: no look-around, no backreference, nothing only Python reads, such as `\Z`, `*+` or
+     `(?x)`; `validate` names any it finds.
    - `flags`, an invented text the sign finds, and `passes`, an invented text a person would write, near to it. Never
      real text. `passes` is the harder one: it is what keeps a sign from accusing plain writing.
    - `sources`: the source id, the section and revision or commit, the date.

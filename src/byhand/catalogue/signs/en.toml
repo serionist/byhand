@@ -17,7 +17,7 @@ terms = [
   { term = 'crucial', instead = "say why it matters" },
   { term = 'deep dive', instead = "close look" },
   { term = 'delv(?:e|ed|es|ing)', instead = "look at" },
-  { term = 'foster(?:ed|ing|s)', instead = "build" },
+  { term = 'foster(?:ed|ing|s)?', instead = "build" },
   { term = 'interconnectedness', instead = "links" },
   { term = 'interplay', instead = "how A affects B" },
   { term = 'intricate', instead = "detailed" },

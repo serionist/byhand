@@ -161,6 +161,15 @@ OFFICE = [
     "Sure! Here's a more neutral version of this banner:",
     "Sure! Here's a revised version of your email marketing plan:",
     "Sure! Here's a shorter version, as requested:",
+    # the other openers chatbots use, on a person's own file (#37)
+    "Below is the revised quote, as agreed:",
+    "Below is a more detailed version of the budget:",
+    "Certainly! Below is a revised version of the lease:",
+    "Happy to help! Here's a shorter version of the contract:",
+    "Sure - here's the agenda for Monday:",
+    "Sure thing! Here's the link to the folder:",
+    "Sure \u2013 here's your revised invoice:",
+    "Sure, below is a more formal version of the dress code:",
     # a bold list a person writes: weak, so it may fire, but it must not count alone
     "- **Mon:** stand-up at ten\n- **Tue:** client call\n- **Wed:** off",
 ]
@@ -180,8 +189,8 @@ def test_no_sign_that_counts_alone_fires_on_plain_office_text(counted_alone, tex
     assert [sign.id for sign in counted_alone if sign.pattern and sign.pattern.search(text)] == []
 
 
-# What each sign that counts alone exists to catch: a line per branch of its check, so silence above can't come from a
-# sign that finds nothing, or from a branch that stopped finding.
+# What each sign exists to catch: a line per branch of its check, so silence above can't come from a sign that finds
+# nothing, or from a branch that stopped finding. A weak sign's term may have a line too (#38).
 MACHINE = [
     ("any-assistant-closing-offer", "Would you like me to convert this into a table?"),
     ("any-assistant-closing-offer", "Let me know if you'd like me to adjust the tone."),
@@ -253,6 +262,15 @@ MACHINE = [
     ("any-assistant-preamble", "当然可以\uff01以下是润色后的版本\uff1a"),
     ("any-assistant-preamble", "Sure! Here's a professional email you can send to your client:"),
     ("any-assistant-preamble", "Of course! Here is a shorter version of your post:"),
+    # the other openers, held to the same rule (#37)
+    ("any-assistant-preamble", "Below is a revised version of your email:"),
+    ("any-assistant-preamble", "Certainly! Below is a more concise version of your post:"),
+    ("any-assistant-preamble", "Happy to help! Here's a rewrite of your bio:"),
+    ("any-assistant-preamble", "Sure - here's a more polished version of your email:"),
+    ("any-assistant-preamble", "Sure \u2014 here's a revised version of your cover letter:"),
+    ("any-assistant-preamble", "Sure\u2013here's a less formal version:"),
+    ("any-assistant-preamble", "Sure thing! Here's a more formal version:"),
+    ("any-assistant-preamble", "Sure, below is your rewritten intro:"),
     # the German branch fires only when the line names the reader's text (#23's review, F2)
     ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung Ihrer Notiz:"),
     ("any-assistant-preamble", "Конечно! Вот исправленный текст вашего письма:"),
@@ -274,13 +292,21 @@ MACHINE = [
     ("any-emoji-markers", "\u2013 🚀 Launch day"),
     ("any-emoji-markers", "- ✅ **合同**\uff1a已盖章"),
     ("any-source-gap-disclaimer", "No such figure appears in the provided sources."),
+    ("en-ai-vocabulary", "We want to foster collaboration across the teams."),
     ("en-stock-openers", "In today's digital age, firms must adapt."),
 ]
 
 
+@pytest.fixture(scope="module")
+def every_sign():
+    catalogue, problems = signs.load()
+    assert problems == []
+    return catalogue.signs
+
+
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for(every_sign, sign, text):
+    pattern = every_sign[sign].pattern
     assert pattern is not None
     assert pattern.search(text), sign
 

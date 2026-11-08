@@ -402,7 +402,7 @@ def test_the_model_s_read_signs_have_no_check(catalogue):
 
 
 def test_the_calques_leave_out_the_contrastive_mikozben(catalogue):
-    # the maintainer writes ", miközben" himself (#4): it is no term of the sign
+    # the maintainer writes ", miközben" (#4): it is no term of the sign
     assert not any("miközben" in term.term for term in catalogue.signs["hu-calque-phrases"].terms)
 
 

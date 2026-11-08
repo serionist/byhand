@@ -67,6 +67,9 @@ OFFICE = [
     "- ✅ 계약서 서명 완료\n- ✅ 회의실 예약 완료\n- ❌ 다과 주문은 아직",
     "1. ✅ Договор подписан\n2. ✅ Переговорка забронирована\n3. ❌ Пропуска ещё не заказаны",
     "10. ✅ Contract signed\n11. ✅ Keys handed over",
+    "\u2013 ✅ Raum gebucht\n\u2013 ❌ Catering noch offen",
+    # a person bolding the item they ticked, with no label (#34's review, F2)
+    "- ✅ **Contract** signed\n- ❌ **Caterer** not confirmed",
     # Markdown link text is no slot (#22's review, F8)
     "Update your details in [your account](https://example.com/account).",
     "[ここに入力した例](https://example.jp/sample)を見てください。",
@@ -171,6 +174,8 @@ MACHINE = [
     ("any-emoji-markers", "# ❌ Blocked"),
     ("any-emoji-markers", "- ✅ **Faster builds:** they take half the time"),
     ("any-emoji-markers", "1. ❌ **Old flow**: no longer supported"),
+    ("any-emoji-markers", "\u2013 ✅ **Speed:** pages load in half the time"),
+    ("any-emoji-markers", "\u2013 🚀 Launch day"),
     ("any-emoji-markers", "- ✅ **合同**\uff1a已盖章"),
     ("any-source-gap-disclaimer", "No such figure appears in the provided sources."),
     ("en-stock-openers", "In today's digital age, firms must adapt."),

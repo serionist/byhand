@@ -15,7 +15,7 @@ A weak sign counts only with 3 or more hits of weak signs in a paragraph or sect
 - any-coverage-name-drop (usual): Proves importance by listing who covered the subject, not what they said. Instead: Report what a source says; name it where that helps the reader.
 - any-defensive-qualification (usual): Adds caveats nobody asked for about how far a source goes, aimed at a claim no one made. Instead: Limit a claim only where a reader could overreach, and give the finding.
 - any-didactic-aside (usual): Stops to tell the reader which part deserves their attention. Instead: State the point; the reader decides what to note.
-- any-emoji-markers (usual; email, document): Puts an emoji in front of headings or list items; a ✅ or ❌ ticking off a list item is a person's. Instead: Drop it; a heading needs no decoration.
+- any-emoji-markers (usual; email, document): Puts an emoji in front of headings or list items; a ✅ or ❌ ticking off a list item, with no bold label, is a person's. Instead: Drop it; a heading needs no decoration.
 - any-generic-over-specific (usual): Trades a telling detail for praise that would suit anyone. Instead: Keep the detail that fits only this subject: the name, number, date or event.
 - any-negative-parallelism (usual): Raises a claim nobody made in order to correct it: not this but that, or not just this. Instead: State the point itself; keep the negation only when someone really holds the view you reject.
 - any-overstructured-note (usual; message, email): Breaks a note or a reply into titled sections, as if it were a report. Instead: Write a few plain sentences; use a list only for a real list.

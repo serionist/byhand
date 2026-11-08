@@ -20,12 +20,13 @@ category = "structure"
 kinds = ["post", "document"]
 models = "any"
 # any-negative-parallelism says what the habit is; this sign holds its French forms and their check.
-what = "The French forms of a set-up contrast: a first half softened by seulement, juste or simple, or an il ne s'agit pas… mais. Correcting a real mistake is not one."
+what = "The French forms of a set-up contrast whose first half is played down with seulement, juste or simple. Correcting a real mistake, or scoping a plan, is not one."
 instead = "Give Y its evidence, a figure or an example, instead of a foil."
 strength = "weak"
-# The check takes the forms with a minimiser (seulement, juste, simple) or il ne s'agit pas de: a bare "ce n'est pas X,
-# c'est Y" and "X, et non Y" also correct real mistakes, which the model tells apart and a pattern can't.
-check = '''n['’]est pas (?:seulement |juste |simplement |qu['’]|un simple |une simple )[^.!?;:\n]{1,60}[,:]\s*c['’]est|il ne s['’]agit pas (?:seulement |juste |simplement )?(?:de |d['’])[^.!?;\n]{1,60},\s*mais (?:de |d['’])'''
+# The check takes only the forms with a minimiser (simple, juste, seulement): a bare "ce n'est pas X, c'est Y", "il ne
+# s'agit pas de X, mais de Y" and "X, et non Y" also correct real mistakes or scope a plan, as a compte rendu does (#24's
+# review, F9), which the model tells apart and a pattern can't.
+check = '''n['’]est pas (?:une simple |un simple |qu['’]|simplement |juste |seulement )[^.!?;:\n]{1,60}[,:]\s*c['’]est|il ne s['’]agit pas (?:simplement |juste |seulement )(?:d['’]|de )[^.!?;\n]{1,60},\s*mais (?:d['’]|de )'''
 flags = "La nouvelle cantine n'est pas seulement un lieu pour déjeuner, c'est le cœur battant de notre vie d'équipe."
 passes = "La nouvelle cantine ouvre à 11 h 30. Elle n'est pas encore équipée pour les menus sans gluten."
 sources = [
@@ -40,7 +41,7 @@ models = "any"
 what = "Opens most paragraphs on a formal link word, so the text reads as a pile of additions. One now and then is ordinary French."
 instead = "Let the order of the facts carry the link; keep a connector where the argument turns."
 strength = "weak"
-flags = "Le gymnase rouvre en janvier après six mois de travaux.\n\nDe surcroît, la salle de danse a un parquet neuf.\n\nNéanmoins, les vestiaires ne seront prêts qu'en mars.\n\nQui plus est, l'abonnement annuel ne change pas."
+flags = "Le gymnase rouvre en janvier, au bout d'un semestre de travaux.\n\nDe surcroît, la salle de danse a un parquet neuf.\n\nNéanmoins, les vestiaires ne seront prêts qu'en mars.\n\nQui plus est, l'abonnement annuel ne change pas."
 passes = "Le gymnase rouvre en janvier, avec un parquet neuf dans la salle de danse. Les vestiaires attendront mars ; l'abonnement reste à 90 €."
 sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 12, commit 4e5aa4c51230", seen = 2026-11-08 },
@@ -71,7 +72,7 @@ models = "any"
 what = "Writes ad-copy fragments in matched pairs: a short Moins de… sentence and then a Plus de… one, or two Ni… and then Juste…"
 instead = "Write one plain sentence with the real numbers in it."
 strength = "weak"
-check = '''(?:^|[.!?]\s+)moins de [^.!?\n]{1,40}\.\s+plus de [^.!?\n]{1,40}[.!]|(?:^|[.!?]\s+)ni [^.!?\n]{1,40}\.\s*ni [^.!?\n]{1,40}\.\s*(?:juste|seulement|simplement)\b'''
+check = '''(?:^|[.!?]\s+)moins de [^.!?\n]{1,40}\.\s+plus de [^.!?\n]{1,40}[.!]|(?:^|[.!?]\s+)ni [^.!?\n]{1,40}\.\s*ni [^.!?\n]{1,40}\.\s*(?:simplement|seulement|juste)\b'''
 flags = "Moins de paperasse. Plus de temps pour vos patients."
 passes = "Moins de paperasse depuis qu'on a le logiciel, et plus de temps avec les patients."
 sources = [
@@ -91,7 +92,7 @@ what = "Opens a text or a paragraph on how fast the world moves, before any fact
 instead = "Begin with the news itself."
 strength = "weak"
 # A check, not terms: the frame counts where a line starts, as the `what` says, not in the middle of a sentence.
-check = '''^\W*dans un monde (?:en (?:constante|perpétuelle|pleine) (?:évolution|mutation)|qui (?:évolue|change|bouge) à (?:un rythme effréné|toute vitesse|grande vitesse))\b'''
+check = '''^\W*dans un monde (?:qui (?:bouge|change|évolue) à (?:grande vitesse|toute vitesse|un rythme effréné)|en (?:pleine|perpétuelle|constante) (?:mutation|évolution))\b'''
 flags = "Dans un monde qui change à toute vitesse, le club de handball de Vitré fête ses vingt ans."
 passes = "Le club de handball de Vitré fête ses vingt ans samedi, avec un tournoi des anciens à 14 h."
 sources = [
@@ -106,18 +107,19 @@ kinds = ["post", "document"]
 models = "any"
 # any-significance-inflation and any-challenges-formula say what the habit is; this sign holds its French phrases.
 what = "French stock phrases of eras, turning points and a bright future."
-instead = "Report the event at its own size: what opened, closed or moved, and when."
+instead = "Write it as a status update would: what happened, and on which date."
 strength = "weak"
+# Our own order, and not "à l'ère du numérique" or "du digital": people title a training day that way.
 terms = [
-  { term = '''tournants? (?:décisifs?|historiques?)''', instead = "say what changed" },
-  { term = '''moments? charnières?''', instead = "give the date" },
-  { term = '''(?:nouvelle|prochaine) ère''', instead = "say what starts" },
-  { term = '''à l['’]ère (?:du numérique|du digital|de l['’]ia|de l['’]intelligence artificielle)''', instead = "cut" },
-  { term = '''dans le paysage (?:actuel|numérique|digital)''', instead = "name the market" },
-  { term = '''aujourd['’]hui plus que jamais''', instead = "cut" },
-  { term = '''l['’]avenir s['’]annonce (?:prometteur|radieux)''', instead = "end on the fact" },
+  { term = '''plus (?:déterminée?s?|motivée?s?) que jamais''', instead = "say what comes next" },
   { term = '''(?:seul )?l['’]avenir nous le dira''', instead = "end on the fact" },
-  { term = '''plus (?:motivée?s?|déterminée?s?) que jamais''', instead = "say what comes next" },
+  { term = '''l['’]avenir s['’]annonce (?:radieux|prometteur)''', instead = "end on the fact" },
+  { term = '''aujourd['’]hui plus que jamais''', instead = "cut" },
+  { term = '''dans le paysage (?:digital|actuel|numérique)''', instead = "name the market" },
+  { term = '''à l['’]ère de l['’](?:intelligence artificielle|ia)''', instead = "cut" },
+  { term = '''(?:prochaine|nouvelle) ère''', instead = "say what starts" },
+  { term = '''moments? charnières?''', instead = "give the date" },
+  { term = '''tournants? (?:historiques?|décisifs?)''', instead = "say what changed" },
 ]
 flags = "Avec ce troisième food truck, la boulangerie Morel entre dans une nouvelle ère, plus déterminée que jamais."
 passes = "Avec ce troisième food truck, la boulangerie Morel vend aussi le midi à la gare, du lundi au vendredi."
@@ -131,18 +133,17 @@ id = "fr-staged-reveal"
 category = "phrase"
 kinds = ["post", "document"]
 models = "any"
-what = "Builds a small drumroll in front of an ordinary fact: a promised reason, a twist, a question nobody asked."
+what = "Builds a small drumroll in front of an ordinary fact: a reason promised for the next sentence, a twist still to come."
 instead = "Cut the teaser; the sentence after it already holds the point."
 strength = "weak"
+# Our own order, and not "la réponse est simple" or "le constat est sans appel": people write both in a report.
 terms = [
-  { term = '''et voici (?:pourquoi|comment)''', instead = "give the reason" },
+  { term = '''la question n['’]est (?:pas|plus) de savoir si''', instead = "state the point" },
   { term = '''mais ce n['’]est pas tout''', instead = "cut" },
-  { term = '''la réponse est simple''', instead = "give the answer" },
-  { term = '''le constat est sans appel''', instead = "give the figure" },
-  { term = '''la question n['’]est (?:plus|pas) de savoir si''', instead = "state the point" },
-  { term = '''c['’]est (?:là|ici) que (?:ça|cela|les choses) devien(?:t|nent) intéressant(?:es)?''', instead = "cut" },
-  { term = '''c['’]est (?:là|ici) qu(?:e |['’])[^.!?\n]{1,40} entre(?:nt)? en (?:jeu|scène)''', instead = "say what it does" },
-  { term = '''c['’]est (?:là|ici) qu['’]entre(?:nt)? en (?:jeu|scène)''', instead = "say what it does" },
+  { term = '''et voici (?:comment|pourquoi)''', instead = "give the reason" },
+  { term = '''c['’]est (?:ici|là) qu['’]entre(?:nt)? en (?:scène|jeu)''', instead = "say what it does" },
+  { term = '''c['’]est (?:ici|là) qu(?:['’]|e )[^.!?\n]{1,40} entre(?:nt)? en (?:scène|jeu)''', instead = "say what it does" },
+  { term = '''c['’]est (?:ici|là) que (?:les choses|cela|ça) devien(?:nent|t) intéressant(?:es)?''', instead = "cut" },
 ]
 flags = "Notre taux de retour a doublé en un an. Et voici pourquoi : les tailles changent d'une marque à l'autre."
 passes = "Notre taux de retour a doublé en un an, surtout parce que les tailles changent d'une marque à l'autre."
@@ -159,10 +160,10 @@ what = "Promises honesty or straight talk before saying something quite ordinary
 instead = "Start at the statement; if it is candid, the reader will see it."
 strength = "weak"
 terms = [
-  { term = '''soyons (?:honnêtes|franc(?:he)?s|lucides)''', instead = "cut" },
-  { term = '''pour être (?:tout à fait )?(?:honnêtes?|transparente?s?|franc(?:he)?s?)''', instead = "cut" },
-  { term = '''sans langue de bois''', instead = "cut" },
   { term = '''la vérité,? c['’]est que''', instead = "cut" },
+  { term = '''sans langue de bois''', instead = "cut" },
+  { term = '''pour être (?:tout à fait )?(?:franc(?:he)?s?|transparente?s?|honnêtes?)''', instead = "cut" },
+  { term = '''soyons (?:lucides|franc(?:he)?s|honnêtes?)''', instead = "cut" },
 ]
 flags = "Soyons honnêtes : la plupart des réunions du lundi ne servent à rien."
 passes = "La réunion du lundi a duré 50 minutes et n'a rien décidé ; je propose de la supprimer."
@@ -176,15 +177,14 @@ category = "phrase"
 # Not mail: "Il convient de rappeler que les congés…" is how an office writes a notice.
 kinds = ["post", "document"]
 models = "any"
-# any-didactic-aside says what the habit is. "Force est de constater" and "il ressort de" are for the model's read: a
-# plain compte rendu writes them (#24's review, F3).
-what = "Sets a stock preface before a remark, or says a point needs no proof, in the French phrases below."
-instead = "Start the sentence at the fact; show the proof or drop the claim."
+# any-didactic-aside says what the habit is. "Force est de constater", "il ressort de" and "n'est plus à démontrer" are
+# for the model's read: a plain compte rendu writes them (#24's review, F3 and F9).
+what = "The French form of a didactic aside: an impersonal il convient or il est important clause in front of the point itself."
+instead = "Begin the sentence where the clause after que begins."
 strength = "weak"
-# "que" after the verb: "il est essentiel de noter les heures" asks someone to write them down.
+# "que" after the verb: "il est essentiel de noter les heures" asks someone to write them down. Our own order.
 terms = [
-  { term = '''il (?:convient|est (?:important|essentiel|crucial|intéressant)) de (?:noter|souligner) qu(?:e|['’])''', instead = "cut" },
-  { term = '''n['’]est plus à (?:démontrer|prouver)''', instead = "give the proof" },
+  { term = '''il (?:est (?:intéressant|essentiel|important)|convient) de (?:souligner|noter) qu(?:e|['’])''', instead = "cut" },
 ]
 flags = "Il convient de souligner que la nouvelle imprimante consomme deux fois moins d'encre."
 passes = "La nouvelle imprimante consomme deux fois moins d'encre. Il faut juste la redémarrer le lundi."
@@ -202,11 +202,11 @@ what = "Talks about the article instead of writing it: announces its plan, invit
 instead = "Cut the tour-guide lines; the headings already show the plan."
 strength = "weak"
 terms = [
-  { term = '''dans (?:cet|ce) (?:article|billet|guide),? (?:nous allons|je vais|on va)''', instead = "cut" },
-  { term = '''(?:plongeons|explorons|découvrons)(?: ensemble| dans)''', instead = "cut" },
-  { term = '''sans plus (?:attendre|tarder)''', instead = "cut" },
-  { term = '''vous l['’]aurez compris''', instead = "cut" },
   { term = '''entrons dans le vif du sujet''', instead = "cut" },
+  { term = '''vous l['’]aurez compris''', instead = "cut" },
+  { term = '''sans plus (?:tarder|attendre)''', instead = "cut" },
+  { term = '''(?:explorons|plongeons|découvrons)(?: dans| ensemble)''', instead = "cut" },
+  { term = '''dans (?:ce|cet) (?:guide|billet|article),? (?:on va|je vais|nous allons)''', instead = "cut" },
 ]
 flags = "Dans cet article, nous allons passer en revue les vélos cargo du marché. Plongeons dans le sujet sans plus attendre."
 passes = "Un vélo cargo coûte entre 2 000 et 6 000 €. Le prix dépend surtout du moteur."
@@ -224,7 +224,7 @@ what = "Softens one claim twice over (pourrait potentiellement), so the reader c
 instead = "Pick the verb that matches the odds (peut, risque de, va); in a negotiation, leave the writer's own care alone."
 strength = "weak"
 # Not "pourrait éventuellement" or "pourra éventuellement": people write both in mail every day.
-check = '''pourrai(?:t|ent) potentiellement|(?:éventuellement|potentiellement|possiblement) susceptibles? d|pourrai(?:t|ent) éventuellement peut-être'''
+check = '''pourrai(?:ent|t) potentiellement|(?:possiblement|potentiellement|éventuellement) susceptibles? d|pourrai(?:ent|t) éventuellement peut-être'''
 flags = "Ce changement de fournisseur pourrait potentiellement retarder la production."
 passes = "Ce changement de fournisseur peut retarder la production d'une semaine."
 sources = [
@@ -240,7 +240,7 @@ models = "any"
 what = "Frames a social post with stock lines: proud to announce, link in the comments, a closing Et vous ? or an opening Et si… ?"
 instead = "Open with the news, paste the link where it is mentioned, and stop once the news is told."
 strength = "weak"
-check = '''\b(?:nous sommes|je suis) (?:très |tellement )?(?:ravie?s?|fi(?:er|ère|ers|ères)|heureux|heureuses?) d['’](?:annoncer|accueillir)|\b(?:lien|la suite|les détails) en (?:premier )?commentaire|^\W*et vous,? [^?\n]{0,80}\?\s*$|^\W*et si [^?\n]{3,80}\?\s*$'''
+check = '''\b(?:je suis|nous sommes) (?:tellement |très )?(?:heureux|heureuses?|fi(?:ères|ers|ère|er)|ravie?s?) d['’](?:accueillir|annoncer)|\b(?:les détails|la suite|lien) en (?:premier )?commentaire|^\W*et vous,? [^?\n]{0,80}\?\s*$|^\W*et si [^?\n]{3,80}\?\s*$'''
 flags = "Nous sommes ravis d'annoncer l'ouverture de notre atelier à Nantes !\n\nEt vous, quel est votre pire souvenir de crevaison ?"
 passes = "Notre atelier ouvre à Nantes le 3 mars, 12 rue Kervégan. Premier mois : réglage des freins offert."
 sources = [
@@ -257,17 +257,18 @@ category = "word"
 # model reads for them.
 kinds = ["post", "document"]
 models = "any"
-what = "Uses the rare, grand words French model output is full of: holistique, synergie, pierre angulaire, véritable before an abstract noun. A single one proves nothing."
+what = "Uses the rare, grand words French model output is full of: véritable before an abstract noun, pierre angulaire, synergie, holistique. A single one proves nothing."
 instead = "Name what is actually there: the two teams, the shared planning, the street."
 strength = "weak"
+# Our own order, not the order of the sources' word lists.
 terms = [
-  { term = '''holistiques?''', instead = "say what is included" },
-  { term = '''synergies?''', instead = "say who does what together" },
+  { term = '''niché(?:es|e|s)?''', instead = "give the place" },
+  { term = '''véritables? (?:moteur|pilier|tournant|levier|atout|révolution)s?''', instead = "drop véritable" },
+  { term = '''façonn(?:ées|és|ée|é|ant|ent|er|e)''', instead = "say how" },
   { term = '''pierres? angulaires?''', instead = "base" },
-  { term = '''insuffl(?:er|e|ent|ant|é|ée|és|ées)''', instead = "say what changes" },
-  { term = '''façonn(?:er|e|ent|ant|é|ée|és|ées)''', instead = "say how" },
-  { term = '''niché(?:e|s|es)?''', instead = "give the place" },
-  { term = '''véritables? (?:atout|révolution|levier|pilier|moteur|tournant)s?''', instead = "drop véritable" },
+  { term = '''synergies?''', instead = "say who does what together" },
+  { term = '''insuffl(?:ées|és|ée|é|ant|ent|er|e)''', instead = "say what changes" },
+  { term = '''holistiques?''', instead = "say what is included" },
 ]
 flags = "Ce partenariat, véritable pierre angulaire de notre stratégie, crée une synergie entre nos équipes."
 passes = "Ce partenariat nous ouvre leurs entrepôts de Lyon ; les deux équipes partagent un planning."
@@ -282,12 +283,12 @@ id = "fr-copula-avoidance"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-what = "Avoids a plain être or avoir with frames that place a thing in an approach or a logic: s'articule autour de, s'inscrit dans une démarche, se positionne comme."
+what = "Avoids a plain être or avoir with reflexive frames that set a thing inside an approach, around axes, or in a role."
 instead = "Say what the thing is or does, and who does it."
 strength = "weak"
 # No terms: "la formation s'articule autour de trois modules" is plain office French, so only the model's read can tell a
 # frame from a plan.
-flags = "Le projet s'articule autour de trois axes et s'inscrit dans une démarche d'amélioration continue."
+flags = "Le projet s'articule autour de trois axes et se positionne comme le socle de notre transformation."
 passes = "Le projet a trois volets : les achats, la paie et le support. On commence par les achats."
 sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, patterns 9 and 43, commit 4e5aa4c51230", seen = 2026-11-08 },
@@ -299,15 +300,16 @@ id = "fr-calques"
 category = "word"
 kinds = ["post", "document"]
 models = "any"
-what = "Uses business English turned into French verbs: adresser un enjeu, délivrer de la valeur, naviguer dans l'incertitude."
+what = "Uses business English turned into French verbs: adresser un enjeu, naviguer dans l'incertitude."
 instead = "Use the idiom French already has for it."
 strength = "weak"
 # Not "faire sens": people say it at work every day. Not "adresser un problème": "j'ai adressé le problème à la DSI"
 # sends it somewhere, which is plain French.
+# Our own order, not the source list's.
 terms = [
-  { term = '''adress(?:er|e|ent|ons|ez|é|ée|ées) (?:un|l['’]|le|ce|cet|les|des|ces) ?(?:enjeux?|défis?)''', instead = "traiter" },
-  { term = '''délivr(?:er|e|ent|ons|ez|ant) (?:de la |plus de )?valeur''', instead = "apporter" },
-  { term = '''navigu(?:er|e|ent|ons|ez|ant) (?:dans|à travers) (?:la|l['’]|cette|les|ces) ?(?:complexités?|incertitudes?)''', instead = "say how" },
+  { term = '''navigu(?:ant|ons|ent|ez|er|e) (?:à travers|dans) (?:ces|cette|les|la|l['’]) ?(?:incertitudes?|complexités?)''', instead = "say how" },
+  { term = '''délivr(?:ant|ons|ent|ez|er|e) (?:plus de |de la )?valeur''', instead = "apporter" },
+  { term = '''adress(?:ées|ée|é|ons|ent|ez|er|e) (?:ces|cet|ce|des|les|l['’]|le|un) ?(?:défis?|enjeux?)''', instead = "traiter" },
 ]
 flags = "Le comité veut adresser ces enjeux avant l'été, puis naviguer à travers les incertitudes du marché."
 passes = "Le comité veut régler ces sujets avant l'été ; le marché, lui, reste difficile à prévoir."
@@ -342,8 +344,8 @@ id = "fr-english-headings"
 category = "formatting"
 kinds = ["post", "document"]
 models = "any"
-what = "Headings in English style over French text: a capital on each word, or an English label such as Key Takeaways."
-instead = "Case the heading as a sentence, and give an English label its French words."
+what = "A French heading that looks translated: capitals all along the line, or a section label such as Key Takeaways still in English."
+instead = "Retype it as a French memo would set it: Notre bilan du premier trimestre."
 strength = "weak"
 flags = "## Notre Bilan Du Premier Trimestre\n\n## Key Takeaways"
 passes = "## Notre bilan du premier trimestre\n\n## Ce qu'on garde pour 2027"

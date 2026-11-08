@@ -197,7 +197,7 @@ models = "any"
 what = "Ends a section or the whole text by restating it, often under a heading such as Conclusion."
 instead = "Stop when the point is made; end on the last new thing."
 strength = "weak"
-check = '^\W*(?:in conclusion|in summary|zusammenfassend|подводя итог|в заключение|en conclusion|pour conclure)\b'
+check = '^\W*(?:in conclusion|in summary|zusammenfassend|подводя итог|в заключение|pour conclure|en conclusion)\b'
 flags = "In conclusion, the plan offers clear benefits for everyone involved."
 passes = "So that's the plan. Tell me if Friday doesn't work."
 sources = [
@@ -534,7 +534,7 @@ instead = "Delete it and write as the author."
 strength = "strong"
 # French: only the role a model gives itself, followed by its "je"; "en tant qu'assistante de direction, je" is a
 # person's job.
-check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智能|人工智慧)\s?(?:语言模型|語言模型|助手|助理)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|en tant qu(?:e |['’])\s?(?:ia|intelligence artificielle|(?:grand )?modèle de langage|assistant (?:virtuel|ia|d['’]ia|conversationnel)),\s?je\b'''
+check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智能|人工智慧)\s?(?:语言模型|語言模型|助手|助理)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|virtuel|ia)|(?:grand )?modèle de langage|intelligence artificielle|ia),\s?je\b'''
 flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [
@@ -572,7 +572,7 @@ instead = "Delete the line; start with the text itself."
 strength = "strong"
 # French, by the rule the Chinese and Russian branches follow: only a reworked version that names the reader's text (de
 # votre e-mail, de ton message); a person returning a client's devis or courrier passes (#24's review).
-check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|gerne)! hier ist (?:eine?|ihre?) [^.!?\n]*(?:überarbeitete|verbesserte|kürzere|längere|förmlichere|umformulierte|geglättete)[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:\w+ )?(?:исправленный|переработанный|улучшенный|отредактированный|более \w+|сокращённый|сокращенный)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$|^\W*(?:bien sûr|certainement|absolument|avec plaisir)\s?[!,.]+\s?voici une (?:\w+ )?version (?:améliorée|retravaillée|reformulée|peaufinée|plus (?:professionnelle|fluide|percutante|formelle|chaleureuse|engageante)) de (?:votre|ton|ta) (?:e-?mail|courriel|message|lettre|texte|annonce|publication)\b[^.!?\n]*:\s*$'''
+check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|gerne)! hier ist (?:eine?|ihre?) [^.!?\n]*(?:überarbeitete|verbesserte|kürzere|längere|förmlichere|umformulierte|geglättete)[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:\w+ )?(?:исправленный|переработанный|улучшенный|отредактированный|более \w+|сокращённый|сокращенный)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$|^\W*(?:avec plaisir|certainement|absolument|bien sûr)\s?[!,.]+\s?voici (?:une (?:\w+ )?version (?:plus (?:professionnelle|percutante|engageante|chaleureuse|formelle|concise|courte|claire|fluide)(?: et plus \w+)?|révisée|peaufinée|reformulée|retravaillée|améliorée) de (?:ta|ton|votre) (?:publication|annonce|texte|lettre|message|post|courriel|e-?mail|mail)|(?:ton|votre) (?:texte|message|post|courriel|e-?mail|mail) (?:révisé|reformulé|retravaillé|amélioré))\b[^.!?\n]*:\s*$'''
 flags = "Certainly! Here is a polished version of your announcement:"
 passes = "Sure! Here's the link to the slides from yesterday."
 sources = [
@@ -612,7 +612,7 @@ what = "Leaves a fill-in slot in the text: a bracketed name, a URL stub, a date 
 instead = "Fill it in or cut it before you send."
 strength = "usual"
 # French: the slots a model leaves for the sender, not "[date à confirmer]" or "[à compléter]" in a person's notes.
-check = '''\[(?:your|insert|add|describe|company|recipient|имя|опишите|укажите|votre (?:nom|prénom|entreprise|société|fonction|poste)|vos coordonnées|insérer|nom (?:de l['’]entreprise|de la société|du destinataire))\b[^\]\n]*\]|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】]'''
+check = '''\[(?:your|insert|add|describe|company|recipient|имя|опишите|укажите|nom (?:du destinataire|de la société|de l['’]entreprise)|insérer|vos coordonnées|votre (?:poste|fonction|société|entreprise|prénom|nom))\b[^\]\n]*\]|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】]'''
 flags = "Thanks again, and see you on Friday.\n\n[Your Name]"
 passes = "Thanks again, and see you on Friday.\n\nMarta"
 sources = [

@@ -82,6 +82,16 @@ MEETING_NOTE = (
     "dépôt de Rungis. Force est de constater que le nouveau planning n'a rien changé. Il ressort de cet échange que le "
     "transporteur paiera les pénalités d'octobre."
 )
+# Plain reports that a review found reaching 3 weak hits, written anew: each a set phrase of a compte rendu (#24, F9).
+REPORTS = [
+    "En conclusion, il ne s'agit pas de fermer l'accueil de Blois, mais de le regrouper avec celui d'Orléans. "
+    "Il convient de noter qu'aucun poste n'est supprimé.",
+    "Compte rendu du CSE du 14 octobre\n\nLa direction précise qu'il ne s'agit pas de vendre l'entrepôt, mais de le "
+    "louer à la coopérative. Il convient de noter que le bail court sur trois ans. Soyons lucides : les élus n'ont pas "
+    "eu les chiffres avant la séance.",
+    "En conclusion, l'intérêt de ce partenariat avec la mairie n'est plus à démontrer. Il est important de noter qu'il "
+    "prend fin le 31 décembre.",
+]
 # People open speeches and editos on the fast-changing world too, so fr-stock-openers is weak (#24, F2).
 SPEECHES = [
     "Chers coopérateurs,\n\nDans un monde en pleine mutation, notre coopérative a tenu bon : 212 adhérents, deux "
@@ -141,6 +151,7 @@ OFFICE = [
     "**Important** : le badge est obligatoire à partir de lundi.",
     MINUTES,
     MEETING_NOTE,
+    *REPORTS,
     *SPEECHES,
     REPORT,
     "Notre secteur est en constante évolution : trois concurrents ont fermé cette année.",
@@ -203,6 +214,13 @@ MACHINE = [
     ("any-assistant-preamble", f"Avec plaisir{NNB}! Voici une version plus professionnelle de votre message{NNB}:"),
     ("any-assistant-preamble", "Certainement ! Voici une nouvelle version reformulée de votre courriel :"),
     ("any-assistant-preamble", "Absolument! Voici une version plus chaleureuse de votre annonce:"),
+    ("any-assistant-preamble", "Bien sûr ! Voici une version révisée de votre mail :"),
+    ("any-assistant-preamble", "Avec plaisir ! Voici une version plus concise de votre message :"),
+    ("any-assistant-preamble", "Certainement ! Voici une version plus courte de ton post LinkedIn :"),
+    ("any-assistant-preamble", "Bien sûr ! Voici une version plus claire de votre courriel :"),
+    ("any-assistant-preamble", "Absolument ! Voici une version plus professionnelle et plus claire de votre e-mail :"),
+    ("any-assistant-preamble", "Avec plaisir ! Voici votre e-mail reformulé :"),
+    ("any-assistant-preamble", "Bien sûr ! Voici ton texte retravaillé, prêt à envoyer :"),
     ("any-assistant-preamble", "Bien sûr ! Voici une version plus fluide de ton texte, prête à poster :"),
     ("any-assistant-preamble", "Avec plaisir ! Voici une version peaufinée de ta lettre de motivation :"),
     ("any-assistant-preamble", "Certainement ! Voici une version plus engageante de votre publication LinkedIn :"),
@@ -284,6 +302,7 @@ WEAK_CASES = [
     (REPORT, "email"),
     (OWN_POST, "post"),
     (MEETING_NOTE, "document"),
+    *((line, "document") for line in REPORTS),
     *((line, "document") for line in SPEECHES),
     *((line, "message") for line in CHAT),
     *((line, "document") for line in TYPOGRAPHY),
@@ -350,12 +369,12 @@ FORMS = [
     ("fr-staged-reveal", "C\u2019est là que notre logiciel entre en jeu."),
     ("fr-staged-reveal", "C\u2019est là qu\u2019entre en jeu notre service client."),
     ("fr-staged-reveal", "La question n'est plus de savoir si le télétravail va durer."),
-    ("fr-filler-notice", "Son intérêt n\u2019est plus à démontrer."),
     ("fr-filler-notice", "Rappelons qu\u2019il convient de noter qu\u2019aucun remboursement n'est possible."),
     ("fr-filler-notice", "Il est important de souligner que la salle ferme à 18 h."),
     ("fr-performative-candour", "Pour être tout à fait transparente, le budget est serré."),
     ("fr-performative-candour", "Pour être franc, je n'y crois pas."),
     ("fr-performative-candour", "Soyons franches : le planning ne tient pas."),
+    ("fr-performative-candour", "Soyons honnête : personne n'a lu le rapport."),
     ("fr-stock-openers", "Dans un monde en constante évolution, la chorale de Saint-Lô répète le mardi."),
     ("fr-stock-openers", "«\u00a0Dans un monde en perpétuelle mutation, la mutuelle reste fidèle à ses adhérents."),
     ("fr-stock-openers", "**Dans un monde qui évolue à un rythme effréné**, notre cabinet ouvre à Brest."),
@@ -386,6 +405,10 @@ LEFT_ALONE = [
     ("fr-calques", "Ça fait sens, on valide."),
     ("fr-calques", "Je vous adresse le bon de commande."),
     ("fr-calques", "J'ai adressé le problème à la DSI."),
+    ("fr-filler-notice", "Son intérêt n\u2019est plus à démontrer."),
+    ("fr-false-contrast", "Il ne s\u2019agit pas de fermer l\u2019atelier, mais de le déplacer à Vierzon."),
+    ("fr-inflated-stakes", "Une formation à l\u2019ère du numérique, le 12 mars à Caen."),
+    ("fr-staged-reveal", "La réponse est simple : on n\u2019a pas le budget."),
     ("fr-filler-notice", "Il est essentiel de noter les heures sur la feuille de présence."),
     ("fr-filler-notice", "Force est de constater que le stock a baissé."),
     ("fr-filler-notice", "Il ressort de cet échange que la date tient."),

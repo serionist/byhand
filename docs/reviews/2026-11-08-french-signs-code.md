@@ -52,3 +52,29 @@ The maintainer's calls in round 1:
   `LEFT_ALONE` and `OFFICE`: 360 cases, no disagreement.
 - copycheck over 239 files: no run of 6 words; at 5, one hit, on zh-Hant-mainland-terms, not this change.
 - `uv run byhand validate`, `uv run byhand render`, `uv run tools/gate.py full --base origin/main`.
+
+## Round 2
+
+**Where:** `fd5c698..a099910`, read by a fresh reviewer, who compared each term list and alternation with the source
+lists it could come from, and wrote plain reports and chatbot lines of their own. **Verdict:** needs-fixes. F1 to F6
+held but for what F8 found.
+
+The maintainer's call: a regular expression's alternation order counts as a list's order, so ours is our own, always.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F8 | blocker | fr-inflated-stakes, fr-stock-openers, fr-filler-notice, fr-staged-reveal; fields | (a) Alternations in slopcheck-fr's own order: the era and fast-world openers (ouverture-cliche), il convient / il est … de noter (il-convient-de-noter, minus one), fausse-revelation's first four. (b) fr-english-headings' `what` was casse-titre's message and its `instead` casse-titre's and gabarit-anglais's fixes. (c) Close: fr-filler-notice's `what` (il-convient-de-noter's message), fr-inflated-stakes' `instead` (grandiloquence's fix) | fixed: every French term list and alternation, and the French branches in `any.toml`, put in our own order after a check against each source list it could come from (slopcheck-fr, avoid-ai-writing-multilingual, boileau), which also reordered fr-performative-candour, fr-article-rituals, fr-ai-vocabulary, fr-calques, fr-engagement-lines, fr-false-contrast, fr-slogan-mirrors and fr-hedge-stack; items a person writes cut ("à l'ère du numérique" and "du digital", "la réponse est simple", "le constat est sans appel"); the fields written anew from what the sign does in a draft, and every field reread beside slopcheck-fr's message and fix lines, which rewrote fr-false-contrast's and fr-staged-reveal's `what` too; copycheck at 4 words finds only the checks' own strings and ordinary French |
+| F9 | major | fr-false-contrast, fr-filler-notice, any-closing-summary | A plain report still reached 3 weak hits: "En conclusion, il ne s'agit pas de supprimer le service, mais de le regrouper…" with "Il convient de noter que…"; a CSE compte rendu with "Soyons lucides"; "l'intérêt de cette convention n'est plus à démontrer" | fixed: "il ne s'agit pas de X, mais de Y" counts only with simplement, juste or seulement; "n'est plus à démontrer" is left to the model's read; three reports of our own in `WEAK_CASES` and `OFFICE`, each at 2 |
+| F10 | minor | any-assistant-preamble, French branch | Missed lines that name the reader's text: "de votre mail", "version révisée", "plus concise / courte / claire", "plus professionnelle et plus claire", "de ton post", "Voici votre e-mail reformulé :" | fixed: each added, with its line in `MACHINE`; the reader's-text anchor stays, and the eager yes is still needed |
+| F11 | minor | fr-performative-candour | "Soyons honnête", in the singular, was missed | fixed, with a form |
+
+### Checks
+
+- 9 mutants of round 2's changes: the contrast's il ne s'agit pas without a minimiser, the filler notice with "n'est
+  plus à démontrer", the staged reveal with "la réponse est simple", "soyons honnêtes" in the plural only, the stakes
+  with "à l'ère du numérique", the preamble without "et plus X", without "votre e-mail reformulé", without mail and
+  post, or without the reader's text. Each fails a test.
+- ripgrep against Python: 383 cases, no disagreement.
+- copycheck over 239 files: no run of 6; at 5, only zh-Hant-mainland-terms; at 4, the French checks' own strings in
+  their `flags` and "dans la salle de".
+- The largest French draft: 13,515 bytes of 16,384.

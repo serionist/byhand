@@ -1,0 +1,377 @@
+# French's signs. A sign here cites a source that covers French; the shape of a sign is in `any.toml`. A term is a
+# regular-expression fragment, and `validate` wraps the list in `\b`, so a term starts and ends at a word's edge. French
+# elides (l', d', qu') with either apostrophe, so a term writes ['’]; and it inflects for gender and number.
+#
+# Order (the maintainer's rule from #24's review, so no one judges an order again): every alternation, every term list
+# and every list of examples in a `what` or `instead` runs in alphabetical order of its plain text, accents and case
+# ignored. The one exception is where alphabetical order would change what a regex matches, a shorter alternative that
+# is a prefix of a longer one with no edge after it: there the longer comes first, with a comment saying so. A source's
+# order, forward or reversed, is never ours. tests/test_office_fr.py holds the simple alternations to the rule.
+#
+# What these rest on: slopcheck-fr measured its rules on 1.2 million words of French books and Wikipedia and on 224
+# texts that Claude and GPT-5.6 wrote in October 2026; avoid-ai-writing-multilingual and boileau list patterns from
+# French guides; Wikipédia's help pages list what its editors see. None measured work mail, and formal French mail runs
+# on set phrases (Je me permets de, N'hésitez pas à, Je reste à votre disposition, Veuillez agréer, dans le cadre de):
+# they are a person's, never a sign. So no French sign with a check counts alone (fr-stock-openers went weak in #24's
+# review, as speeches and editos open that way), and the weak checks read posts and documents, but for fr-hedge-stack.
+# French typography is not a tell either: « » with no-break spaces, a space before ; : ! ? and the dash of dialogue are
+# how people write. tests/test_office_fr.py holds plain French mail, chat and reports against every sign that counts
+# alone, and against a weak cluster.
+
+# Structure: how the text is built.
+
+[[sign]]
+id = "fr-false-contrast"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+# any-negative-parallelism says what the habit is; this sign holds its French forms and their check.
+what = "The French forms of a set-up contrast whose first half is played down with juste, seulement or simple. Correcting a real mistake, or scoping a plan, is not one."
+instead = "Give Y its evidence, an example or a figure, instead of a foil."
+strength = "weak"
+# The check takes only the forms with a minimiser (juste, seulement, simple): a bare "ce n'est pas X, c'est Y", "il ne
+# s'agit pas de X, mais de Y" and "X, et non Y" also correct real mistakes or scope a plan, as a compte rendu does (#24's
+# review, F9), which the model tells apart and a pattern can't.
+check = '''n['’]est pas (?:juste |qu['’]|seulement |simplement |un simple |une simple )[^.!?;:\n]{1,60}[,:]\s*c['’]est|il ne s['’]agit pas (?:juste |seulement |simplement )(?:d['’]|de )[^.!?;\n]{1,60},\s*mais (?:d['’]|de )'''
+flags = "La nouvelle cantine n'est pas seulement un lieu pour déjeuner, c'est là que se décide la moitié de nos projets."
+passes = "La nouvelle cantine ouvre à 11 h 30. Elle n'est pas encore équipée pour les menus sans gluten."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, correction-deux-temps and contraste-appose, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-connector-openers"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Opens most paragraphs on a formal link word, so the text reads as a pile of additions. One now and then is ordinary French."
+instead = "Let the order of the facts carry the link; keep a connector where the argument turns."
+strength = "weak"
+flags = "Le gymnase rouvre en janvier, au bout d'un semestre de travaux.\n\nDe surcroît, la salle de danse a un parquet neuf.\n\nNéanmoins, les vestiaires ne seront prêts qu'en mars.\n\nQui plus est, l'abonnement annuel ne change pas."
+passes = "Le gymnase rouvre en janvier, avec un parquet neuf dans la salle de danse. Les vestiaires attendront mars ; l'abonnement reste à 90 €."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 12, commit 4e5aa4c51230", seen = 2026-11-08 },
+  { source = "boileau", where = "SKILL.md, 13 Connecteurs académiques en pluie, commit 5b272a70b1d5", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-article-scaffold"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Lays a post out like a template web page: closing FAQ, question headings, source list at the foot, summary bullets up top, teaser headings (Ce que…)."
+instead = "Title sections by what they say, and attach each source to the claim it backs."
+strength = "weak"
+flags = "## En bref\n- Le vélo cargo coûte cher\n- Il remplace une voiture\n\n## Pourquoi choisir un vélo cargo ?\n\n## Ce qui change vraiment au quotidien\n\n## FAQ"
+passes = "## Prix\nUn vélo cargo neuf coûte entre 2 000 et 6 000 €.\n\n## Entretien\nComptez une révision par an chez Cyclo'Rennes."
+sources = [
+  { source = "wikipedia-fr", where = "Structure générale, revision 240703969", seen = 2026-11-08 },
+  { source = "wikipedia-fr-sources", where = "Comment les reconnaître ?, Propres à l'article, revision 239452520", seen = 2026-11-08 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, titre-relatif and intertitres-questions, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-slogan-mirrors"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Writes ad-copy fragments in matched pairs: a short Moins de… sentence and then a Plus de… one, or two Ni… and then Juste…"
+instead = "Write one plain sentence with the real numbers in it."
+strength = "weak"
+check = '''(?:^|[.!?]\s+)moins de [^.!?\n]{1,40}\.\s+plus de [^.!?\n]{1,40}[.!]|(?:^|[.!?]\s+)ni [^.!?\n]{1,40}\.\s*ni [^.!?\n]{1,40}\.\s*(?:juste|seulement|simplement)\b'''
+flags = "Moins de paperasse. Plus de temps pour vos patients."
+passes = "Moins de paperasse depuis qu'on a le logiciel, et plus de temps avec les patients."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, moins-plus and ni-ni-juste, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+# Phrases: set pieces a check can find.
+
+[[sign]]
+id = "fr-stock-openers"
+category = "phrase"
+# Weak, and not mail, by the maintainer's call in #24's review: a co-op president's speech, a mayor's edito and a
+# retirement speech open this way too.
+kinds = ["post", "document"]
+models = "any"
+what = "Opens a text or a paragraph on how fast the world moves, before any fact about the subject."
+instead = "Begin with the news itself."
+strength = "weak"
+# A check, not terms: the frame counts where a line starts, as the `what` says, not in the middle of a sentence.
+check = '''^\W*dans un monde (?:en (?:constante|perpétuelle|pleine) (?:évolution|mutation)|qui (?:bouge|change|évolue) à (?:grande vitesse|toute vitesse|un rythme effréné))\b'''
+flags = "Dans un monde qui change à toute vitesse, le club de handball de Vitré fête ses vingt ans."
+passes = "Le club de handball de Vitré fête ses vingt ans samedi, avec un tournoi des anciens à 14 h."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, Tier 3, commit 4e5aa4c51230", seen = 2026-11-08 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, ouverture-cliche, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-inflated-stakes"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+# any-significance-inflation and any-challenges-formula say what the habit is; this sign holds its French phrases.
+what = "French stock phrases of a bright future, eras and turning points."
+instead = "Write it as a status update would: what happened, and on which date."
+strength = "weak"
+# Not "à l'ère du numérique" or "du digital": people title a training day that way.
+terms = [
+  { term = '''à l['’]ère de l['’](?:ia|intelligence artificielle)''', instead = "cut" },
+  { term = '''aujourd['’]hui plus que jamais''', instead = "cut" },
+  { term = '''dans le paysage (?:actuel|digital|numérique)''', instead = "name the market" },
+  { term = '''l['’]avenir nous le dira''', instead = "end on the fact" },
+  { term = '''l['’]avenir s['’]annonce (?:prometteur|radieux)''', instead = "end on the fact" },
+  { term = '''moments? charnières?''', instead = "give the date" },
+  { term = '''(?:nouvelle|prochaine) ère''', instead = "say what starts" },
+  { term = '''plus (?:déterminée?s?|motivée?s?) que jamais''', instead = "say what comes next" },
+  { term = '''tournants? (?:décisifs?|historiques?)''', instead = "say what changed" },
+]
+flags = "Avec ce troisième food truck, la boulangerie Morel entre dans une nouvelle ère, plus déterminée que jamais."
+passes = "Avec ce troisième food truck, la boulangerie Morel vend aussi le midi à la gare, du lundi au vendredi."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, grandiloquence, virage-inspirant, ouverture-cliche and annonce-reseau-social, commit 74c6b9685694", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, patterns 1, 29 and 41, Tier 3, commit 4e5aa4c51230", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-staged-reveal"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Builds a small drumroll in front of an ordinary fact: a reason promised for the next sentence, a twist still to come."
+instead = "Cut the teaser; the sentence after it already holds the point."
+strength = "weak"
+# Not "la réponse est simple" or "le constat est sans appel": people write both in a report.
+terms = [
+  { term = '''c['’]est (?:ici|là) qu(?:['’]|e [^.!?\n]{1,40} )entre(?:nt)? en (?:jeu|scène)''', instead = "say what it does" },
+  { term = '''c['’]est (?:ici|là) que (?:ça|cela|les choses) devien(?:nent|t) intéressant(?:es)?''', instead = "cut" },
+  { term = '''et voici (?:comment|pourquoi)''', instead = "give the reason" },
+  { term = '''la question n['’]est (?:pas|plus) de savoir si''', instead = "state the point" },
+  { term = '''mais ce n['’]est pas tout''', instead = "cut" },
+]
+flags = "Notre taux de retour a doublé en un an. Et voici pourquoi : les tailles changent d'une marque à l'autre."
+passes = "Notre taux de retour a doublé en un an, surtout parce que les tailles changent d'une marque à l'autre."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, fausse-revelation, question-de-savoir and entre-en-jeu, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-performative-candour"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Promises honesty or straight talk before saying something quite ordinary."
+instead = "Start at the statement; if it is candid, the reader will see it."
+strength = "weak"
+terms = [
+  { term = '''la vérité,? c['’]est que''', instead = "cut" },
+  { term = '''pour être (?:tout à fait )?(?:franc(?:he)?s?|honnêtes?|transparente?s?)''', instead = "cut" },
+  { term = '''sans langue de bois''', instead = "cut" },
+  { term = '''soyons (?:franc(?:he)?s|honnêtes?|lucides)''', instead = "cut" },
+]
+flags = "La plupart des réunions du lundi, soyons honnêtes, ne servent à rien."
+passes = "La réunion du lundi a duré 50 minutes et n'a rien décidé ; je propose de la supprimer."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, honnetete-performative, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-filler-notice"
+category = "phrase"
+# Not mail: "Il convient de rappeler que les congés…" is how an office writes a notice.
+kinds = ["post", "document"]
+models = "any"
+# any-didactic-aside says what the habit is. "Force est de constater", "il ressort de" and "n'est plus à démontrer" are
+# for the model's read: a plain compte rendu writes them (#24's review, F3 and F9).
+what = "The French form of a didactic aside: an impersonal il convient or il est important clause in front of the point itself."
+instead = "Begin the sentence where the clause after que begins."
+strength = "weak"
+# "que" after the verb: "il est essentiel de noter les heures" asks someone to write them down.
+terms = [
+  { term = '''il (?:convient|est (?:essentiel|important|intéressant)) de (?:noter|souligner) qu(?:['’]|e)''', instead = "cut" },
+]
+flags = "Côté imprimantes, il est essentiel de souligner que la nouvelle consomme deux fois moins d'encre."
+passes = "La nouvelle imprimante consomme deux fois moins d'encre. Il faut juste la redémarrer le lundi."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, il-convient-de-noter, commit 74c6b9685694", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, patterns 30, 31 and 45, commit 4e5aa4c51230", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-article-rituals"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Talks about the article instead of writing it: announces its plan, invites the reader to dive in or explore together."
+instead = "Cut the tour-guide lines; the headings already show the plan."
+strength = "weak"
+terms = [
+  { term = '''dans (?:ce|cet) (?:article|billet|guide),? (?:je vais|nous allons|on va)''', instead = "cut" },
+  { term = '''(?:découvrons|explorons|plongeons) (?:dans|ensemble)''', instead = "cut" },
+  { term = '''entrons dans le vif du sujet''', instead = "cut" },
+  { term = '''sans plus (?:attendre|tarder)''', instead = "cut" },
+  { term = '''vous l['’]aurez compris''', instead = "cut" },
+]
+flags = "Six vélos cargo, trois budgets : dans ce guide, on va tout comparer. Plongeons dans les chiffres sans plus tarder."
+passes = "Un vélo cargo coûte entre 2 000 et 6 000 €. Le prix dépend surtout du moteur."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, rituel-article, commit 74c6b9685694", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 27, commit 4e5aa4c51230", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-hedge-stack"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Softens one claim twice over (pourrait potentiellement), so the reader can't tell how likely it is."
+instead = "Pick the verb that matches the odds (peut, risque de, va); in a negotiation, leave the writer's own care alone."
+strength = "weak"
+# Not "pourrait éventuellement" or "pourra éventuellement": people write both in mail every day.
+check = '''(?:éventuellement|possiblement|potentiellement) susceptibles? d|pourrai(?:ent|t) éventuellement peut-être|pourrai(?:ent|t) potentiellement'''
+flags = "Ce changement de fournisseur pourrait potentiellement retarder la production."
+passes = "Ce changement de fournisseur peut retarder la production d'une semaine."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, patterns 15 and 15a, commit 4e5aa4c51230", seen = 2026-11-08 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-strict.toml, empilement-precautions, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-engagement-lines"
+category = "phrase"
+kinds = ["post"]
+models = "any"
+what = "Frames a social post with stock lines: closing on Et vous ?, linking in the comments, opening on Et si… ?, proud announcements."
+instead = "Open with the news, paste the link where it is mentioned, and stop once the news is told."
+strength = "weak"
+# "Et toi ?" or "Et vous ?" alone on the post's last line, or opening a question that runs to the end of that line.
+check = '''^\W*et si\b[^\n]*\?\s*$|^\W*et (?:toi|vous)(?:,[^\n]*\?|\s?\?)\s*$|\b(?:je suis|nous sommes) (?:tellement |très )?(?:fi(?:er|ère|ères|ers)|heureuses?|heureux|ravie?s?) d['’](?:accueillir|annoncer)|\b(?:la suite|les détails|lien) en (?:premier )?commentaire'''
+flags = "Après deux ans de travaux, je suis très fière d'accueillir nos premiers clients dans l'atelier de Nantes.\n\nEt vous ?"
+passes = "Notre atelier ouvre à Nantes le 3 mars, 12 rue Kervégan. Premier mois : réglage des freins offert."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, annonce-reseau-social, rituel-reseau and et-vous, commit 74c6b9685694", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 24, commit 4e5aa4c51230", seen = 2026-11-08 },
+]
+
+# Words.
+
+[[sign]]
+id = "fr-ai-vocabulary"
+category = "word"
+# Not mail: au cœur de, levier, écosystème and crucial are everyday office French, so they are left out here and the
+# model reads for them.
+kinds = ["post", "document"]
+models = "any"
+what = "Uses the rare, grand words French model output is full of: holistique, pierre angulaire, synergie, véritable before an abstract noun. A single one proves nothing."
+instead = "Name what is actually there: the shared planning, the street, the two teams."
+strength = "weak"
+terms = [
+  { term = '''façonn(?:ant|e|é|ée|ées|ent|er|és)''', instead = "say how" },
+  { term = '''holistiques?''', instead = "say what is included" },
+  { term = '''insuffl(?:ant|e|é|ée|ées|ent|er|és)''', instead = "say what changes" },
+  { term = '''niché(?:e|es|s)?''', instead = "give the place" },
+  { term = '''pierres? angulaires?''', instead = "base" },
+  { term = '''synergies?''', instead = "say who does what together" },
+  { term = '''véritables? (?:atout|levier|moteur|pilier|révolution|tournant)s?''', instead = "drop véritable" },
+]
+flags = "Ce partenariat, véritable pierre angulaire de notre stratégie, crée une synergie entre nos équipes."
+passes = "Ce partenariat nous ouvre leurs entrepôts de Lyon ; les deux équipes partagent un planning."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, vocabulaire-ia, mot-gonfle and veritable, commit 74c6b9685694", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, Tier 1, commit 4e5aa4c51230", seen = 2026-11-08 },
+  { source = "boileau", where = "SKILL.md, 2 L'adjectif « véritable » antéposé, commit 5b272a70b1d5", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-copula-avoidance"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Avoids a plain être or avoir with reflexive frames that set a thing around axes, in a role or inside an approach."
+instead = "Say what the thing is or does, and who does it."
+strength = "weak"
+# No terms: "la formation s'articule autour de trois modules" is plain office French, so only the model's read can tell a
+# frame from a plan.
+flags = "Le projet s'articule autour de trois axes et se positionne comme le socle de notre transformation."
+passes = "Le projet a trois volets : les achats, la paie et le support. On commence par les achats."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, patterns 9 and 43, commit 4e5aa4c51230", seen = 2026-11-08 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-strict.toml, verbe-faible, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-calques"
+category = "word"
+kinds = ["post", "document"]
+models = "any"
+what = "Uses business English turned into French verbs: adresser un enjeu, naviguer dans l'incertitude."
+instead = "Use the idiom French already has for it."
+strength = "weak"
+# Not "faire sens": people say it at work every day. Not "adresser un problème": "j'ai adressé le problème à la DSI"
+# sends it somewhere, which is plain French. Each article carries its own space or apostrophe, so "ce " can't stop
+# short of "ces " and alphabetical order matches what any order would.
+terms = [
+  { term = '''adress(?:e|é|ée|ées|ent|er|ez|ons) (?:ce |ces |cet |des |l['’]|le |les |un )(?:défis?|enjeux?)''', instead = "traiter" },
+  { term = '''délivr(?:ant|e|ent|er|ez|ons) (?:de la |plus de )?valeur''', instead = "apporter" },
+  { term = '''navigu(?:ant|e|ent|er|ez|ons) (?:à travers|dans) (?:ces |cette |l['’]|la |les )(?:complexités?|incertitudes?)''', instead = "say how" },
+]
+flags = "En mai, le comité a adressé ces enjeux un par un, en naviguant dans l'incertitude du marché."
+passes = "En mai, le comité a réglé ces sujets un par un ; le marché, lui, reste difficile à prévoir."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, calque-anglais, commit 74c6b9685694", seen = 2026-11-08 },
+  { source = "boileau", where = "SKILL.md, 16 Anglicismes IA, commit 5b272a70b1d5", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, Tier 1, naviguer, commit 4e5aa4c51230", seen = 2026-11-08 },
+]
+
+# Formatting.
+
+[[sign]]
+id = "fr-dash-asides"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Encloses aside after aside in spaced em dashes, several to a paragraph; an occasional incise and dialogue dashes are French typography, not this."
+instead = "Rewrite the sentence so the aside isn't needed, or move it to the next one."
+strength = "weak"
+# No check: a check can't tell a writer's incise from a model's habit, and French typography is no sign. In
+# slopcheck-fr's October 2026 texts, by our count, GPT-5.6 set an em dash inside a line in 11 of 56, Claude in 2 of 168.
+flags = "Le salon de Lyon a été calme — nous l'avions prévu dès septembre — et les commandes ont suivi le même chemin — rien d'alarmant pour l'instant."
+passes = "— Tu as eu le devis ? demanda Paul.\n— Pas encore, il arrive lundi."
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, em-dash; bench/genere-2026-10, our count; commit 74c6b9685694", seen = 2026-11-08 },
+  { source = "wikipedia-fr", where = "Structure générale, revision 240703969", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 18, commit 4e5aa4c51230", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-english-headings"
+category = "formatting"
+kinds = ["post", "document"]
+models = "any"
+what = "A French heading that looks translated: capitals all along the line, or English section labels such as Wrap-Up."
+instead = "Retype it as a French memo would set it: Notre bilan du premier trimestre."
+strength = "weak"
+flags = "## Notre Bilan Du Premier Trimestre\n\n## Wrap-Up"
+passes = "## Notre bilan du premier trimestre\n\n## Ce qu'on garde pour 2027"
+sources = [
+  { source = "wikipedia-fr", where = "Mise en page, typographie, revision 240703969", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 21, commit 4e5aa4c51230", seen = 2026-11-08 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, gabarit-anglais; typo-fr.toml, casse-titre, commit 74c6b9685694", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "fr-hashtag-block"
+category = "formatting"
+kinds = ["post"]
+models = "any"
+what = "Closes a post with a run of broad tags that name a mood or a sector, not anything a reader would look up."
+instead = "Let the post end on its last sentence."
+strength = "weak"
+check = '''(?:^|\s)#[^\W\d_]\w*(?:[ \t]+#[^\W\d_]\w*){3,}'''
+flags = "On ouvre une deuxième boutique à Rennes en mai.\n\n#Commerce #Croissance #Entrepreneuriat #Rennes"
+passes = "On ouvre une deuxième boutique à Rennes en mai. #Rennes"
+sources = [
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, hashtags; bench/genere-2026-10, our count: 15 of 224 texts; commit 74c6b9685694", seen = 2026-11-08 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 44, commit 4e5aa4c51230", seen = 2026-11-08 },
+]

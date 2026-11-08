@@ -197,7 +197,7 @@ models = "any"
 what = "Ends a section or the whole text by restating it, often under a heading such as Conclusion."
 instead = "Stop when the point is made; end on the last new thing."
 strength = "weak"
-check = '^\W*(?:in conclusion|in summary|zusammenfassend|подводя итог|в заключение)\b'
+check = '^\W*(?:in conclusion|in summary|zusammenfassend|подводя итог|в заключение|en conclusion|pour conclure)\b'
 flags = "In conclusion, the plan offers clear benefits for everyone involved."
 passes = "So that's the plan. Tell me if Friday doesn't work."
 sources = [
@@ -205,6 +205,8 @@ sources = [
   { source = "wikipedia-de", where = "Abschnitts-Zusammenfassungen; Fazit, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Отдельный раздел/подраздел для краткого содержания написанного, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-fr", where = "Structure générale, revision 240703969", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, Tier 3, commit 4e5aa4c51230", seen = 2026-11-08 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, conclusion-rituelle, commit 74c6b9685694", seen = 2026-11-08 },
 ]
 
 [[sign]]
@@ -533,7 +535,9 @@ models = "any"
 what = "Says in the text that a language model or a named chatbot wrote it."
 instead = "Delete it and write as the author."
 strength = "strong"
-check = 'as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智能|人工智慧)\s?(?:语言模型|語言模型|助手|助理)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:ki|ki-sprachmodell|ki-modell|ki-assistent|sprachmodell|großes sprachmodell|künstliche intelligenz),? (?:habe|besitze|kann|darf|bin|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b'
+# French: only the role a model gives itself, followed by its "je"; "en tant qu'assistante de direction, je" is a
+# person's job.
+check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智能|人工智慧)\s?(?:语言模型|語言模型|助手|助理)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:ki|ki-sprachmodell|ki-modell|ki-assistent|sprachmodell|großes sprachmodell|künstliche intelligenz),? (?:habe|besitze|kann|darf|bin|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b'''
 flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [
@@ -541,6 +545,7 @@ sources = [
   { source = "wikipedia-de", where = "introduction, Eindeutige Indikatoren: a note in the text that an AI wrote it, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "資訊時效或來源限制相關的免責聲明, revision 95337857", seen = 2026-11-07 },
   { source = "speak-human-tw", where = "references/patterns.md, 34 知識截止免責聲明, commit 89b96e24fcfd", seen = 2026-11-07 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, formule-assistant, commit 74c6b9685694", seen = 2026-11-08 },
 ]
 
 [[sign]]
@@ -552,13 +557,14 @@ what = "Warns that its knowledge stops at a training date."
 instead = "Check the current fact, or give the date of your source."
 strength = "strong"
 # The Russian branches need the moment of the update: «во время обновления моей базы данных» is a person's server.
-check = '(?:as of|up to) my last (?:knowledge|training) update|stand meines letzten wissensupdates|bis zu meinem letzten (?:wissens|trainings)-?update|на момент моего обучения|момент (?:последнего )?обновления моей базы данных|мо[её] последнее обновление знаний'
+check = '''(?:as of|up to) my last (?:knowledge|training) update|stand meines letzten wissensupdates|bis zu meinem letzten (?:wissens|trainings)-?update|на момент моего обучения|момент (?:последнего )?обновления моей базы данных|мо[её] последнее обновление знаний|à la date de mes connaissances'''
 flags = "As of my last knowledge update, the company had not announced a merger."
 passes = "As of my last update on Tuesday, the shipment was still in Rotterdam."
 sources = [
   { source = "wikipedia-en", where = "Statements about knowledge cutoffs (2022 to 2023), revision 1384165696", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Hinweise auf Wissenslücken, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Отказ от ответственности и отсутствие источников, revision 156024043", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 28, commit 4e5aa4c51230", seen = 2026-11-08 },
 ]
 
 [[sign]]
@@ -569,7 +575,10 @@ models = "any"
 what = "Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'."
 instead = "Delete the line; start with the text itself."
 strength = "strong"
-check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|selbstverständlich|(?:sehr )?gerne)[!,] hier ist (?:eine?|die|der|das) (?:\w+ )?(?:überarbeitete|verbesserte|umformulierte|geglättete|\w+ere)[rs]? (?:version|fassung|entwurf|text) (?:(?-i:Ihre[sr])|deine[sr]|eure[sr])\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|selbstverständlich|(?:sehr )?gerne)[!,] hier ist (?:(?-i:Ihre?)|deine?|eure?) (?:\w+ )?(?:überarbeitete|verbesserte|umformulierte|geglättete|\w+ere)[rs]? (?:version|fassung|entwurf|text)\b[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:(?:ваш|тво)\w* (?:исправленн|переработанн|улучшенн|отредактированн|сокращ[её]нн)\w+ (?:текст|письмо|сообщение|пост|резюме|абзац)\b|(?:\w+ )?(?:исправленн|переработанн|улучшенн|отредактированн|сокращ[её]нн)\w+ (?:вариант|версия|текст|редакция) (?:ваш|тво)\w+ (?:текст|письм|сообщени|пост|стать|резюме|объявлени|абзац)\w*|(?:\w+ )?более (?:официальн|формальн|неформальн|вежлив|дружелюбн|лаконичн|кратк|профессиональн|нейтральн|делов|мягк)\w* (?:версия|вариант)\b)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$'''
+# French, by the rule the Chinese and Russian branches follow: only a reworked version that names the reader's text (de
+# votre e-mail, de ton message); a person returning a client's devis or courrier passes (#24's review). The French
+# alternations run in alphabetical order, as fr.toml's header says.
+check = '''^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an|your) (?:\w+ )?(?:revised|polished|improved|shorter|longer|rewritten|refined|reworded|tightened|condensed|clearer|more \w+|less \w+) (?:version|draft)\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) rewrite\b[^.!?\n]*:\s*$|^\W*(?:certainly|of course|sure|absolutely)[!,.]+ here(?:['’]s| is) (?:a|an) (?:\w+ ){0,3}(?:email|letter|post|message|reply|announcement) (?:that )?you can (?:send|use|post|share|copy)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|selbstverständlich|(?:sehr )?gerne)[!,] hier ist (?:eine?|die|der|das) (?:\w+ )?(?:überarbeitete|verbesserte|umformulierte|geglättete|\w+ere)[rs]? (?:version|fassung|entwurf|text) (?:(?-i:Ihre[sr])|deine[sr]|eure[sr])\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|selbstverständlich|(?:sehr )?gerne)[!,] hier ist (?:(?-i:Ihre?)|deine?|eure?) (?:\w+ )?(?:überarbeitete|verbesserte|umformulierte|geglättete|\w+ere)[rs]? (?:version|fassung|entwurf|text)\b[^.!?\n]*:\s*$|^\W*(?:конечно|безусловно)! вот (?:(?:ваш|тво)\w* (?:исправленн|переработанн|улучшенн|отредактированн|сокращ[её]нн)\w+ (?:текст|письмо|сообщение|пост|резюме|абзац)\b|(?:\w+ )?(?:исправленн|переработанн|улучшенн|отредактированн|сокращ[её]нн)\w+ (?:вариант|версия|текст|редакция) (?:ваш|тво)\w+ (?:текст|письм|сообщени|пост|стать|резюме|объявлени|абзац)\w*|(?:\w+ )?более (?:официальн|формальн|неформальн|вежлив|дружелюбн|лаконичн|кратк|профессиональн|нейтральн|делов|мягк)\w* (?:версия|вариант)\b)[^.!?\n]*:\s*$|^\W*(?:当然可以|當然可以|当然|當然)[!！]\s*(?:以下|下面)(?:是|为|為)(?:[为為][你您]|根[据據][你您]的(?:要求|意见|意見))?(?:修改|改写|改寫|润色|潤色|优化|優化)[后後]的(?:版本|文本)[:：]\s*$|^\W*(?:absolument|avec plaisir|bien sûr|certainement)\s?[!,.]+\s?voici (?:(?:ton|votre) (?:compte rendu|courriel|cv|e-?mail|mail|message|post|rapport|texte) (?:amélioré|reformulé|retravaillé|révisé)|une (?:\w+ )?version (?:améliorée|peaufinée|plus (?:chaleureuse|claire|concise|courte|engageante|fluide|formelle|percutante|professionnelle)(?: et plus \w+)?|reformulée|retravaillée|révisée) de (?:ta|ton|votre) (?:annonce|compte rendu|courriel|cv|e-?mail|lettre|mail|message|post|publication|rapport|texte))\b[^.!?\n]*:\s*$'''
 flags = "Certainly! Here is a polished version of your announcement:"
 passes = "Sure! Here's the link to the slides from yesterday."
 sources = [
@@ -578,6 +587,8 @@ sources = [
   { source = "wikipedia-ru", where = "Имитация диалога, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "協作式溝通訊息, revision 95337857", seen = 2026-11-07 },
   { source = "speak-human-tw", where = "references/patterns.md, 30 協作交流殘留, commit 89b96e24fcfd", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 26, commit 4e5aa4c51230", seen = 2026-11-08 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, formule-assistant, commit 74c6b9685694", seen = 2026-11-08 },
 ]
 
 [[sign]]
@@ -608,7 +619,8 @@ instead = "Fill it in or cut it before you send."
 strength = "usual"
 # A slot left in a person's own template fires too, on purpose: it is unfilled. Markdown link text, [your account](...),
 # is no slot: a bracket with ( after it passes, in every branch.
-check = '\[(?:your|insert|add|describe|company|recipient|имя|ваш\w*|вставьте|опишите|укажите|ihre?n?|dein(?:e|en)?)\b[^\]\n]*\](?:[^(]|$)|\[[^\]\n]{1,40} (?:einfügen|eintragen|ergänzen)\](?:[^(]|$)|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】](?:[^(]|$)'
+# French: the slots a model leaves for the sender, not "[date à confirmer]" or "[à compléter]" in a person's notes.
+check = '''\[(?:your|insert|add|describe|company|recipient|имя|ваш\w*|вставьте|опишите|укажите|ihre?n?|dein(?:e|en)?|insérer|nom (?:de l['’]entreprise|de la société|du destinataire)|vos coordonnées|votre (?:entreprise|fonction|nom|poste|prénom|société))\b[^\]\n]*\](?:[^(]|$)|\[[^\]\n]{1,40} (?:einfügen|eintragen|ergänzen)\](?:[^(]|$)|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|記入|挿入|貼)[^\]］】\n]{0,6}[\]］】](?:[^(]|$)'''
 flags = "Thanks again, and see you on Friday.\n\n[Your Name]"
 passes = "Thanks again, and see you on Friday.\n\nMarta"
 sources = [
@@ -617,6 +629,7 @@ sources = [
   { source = "wikipedia-ru", where = "В обсуждениях, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "短語模板與占位符文字, revision 95337857", seen = 2026-11-07 },
   { source = "yomiyasu", where = "references/slop-catalog.md, 6 仮置きの残り, commit 8394e099486a", seen = 2026-11-07 },
+  { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, placeholder, commit 74c6b9685694", seen = 2026-11-08 },
 ]
 
 [[sign]]

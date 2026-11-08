@@ -1,0 +1,55 @@
+# The refresh: once a day, `byhand refresh` checks each source the catalogue cites whose `due` has come round, and an
+# issue labelled `refresh` opens for each one that changed, unless one with its title is already open. The issue holds
+# our own ids, dates, paths and links, never the source's text; a maintainer runs `propose-signs` on it, and its PR
+# closes it. A source that can't be read fails the run, so GitHub mails the maintainer; the issues still open.
+name: Refresh
+
+on:
+  schedule:
+    - cron: "41 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Refresh
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+      # Installed with no token in reach, so the build backend, which the lock doesn't pin, never sees one.
+      - run: uv sync --locked
+      - name: Check the sources
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: uv run --locked --no-sync byhand refresh --out refresh/
+      - name: Open an issue per changed source
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          shopt -s nullglob
+          files=(refresh/*.md)
+          if [ ${#files[@]} -eq 0 ]; then exit 0; fi
+          gh label create refresh --color c5def5 --description "A source the catalogue cites changed" 2>/dev/null || true
+          # An exact title match, never a search: a search matches words and lags behind a new issue.
+          open=$(gh issue list --label refresh --state open --limit 1000 --json title --jq '.[].title')
+          for file in "${files[@]}"; do
+            title="Refresh: $(basename "$file" .md) changed"
+            if grep -Fxq -- "$title" <<<"$open"; then
+              echo "already open: $title"
+              continue
+            fi
+            gh issue create --title "$title" --label refresh --body-file "$file"
+          done

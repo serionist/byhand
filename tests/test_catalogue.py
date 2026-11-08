@@ -371,6 +371,13 @@ BREAKS = [
     ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = 'delve(?=s)'", "Grep can't run"),
     ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = '(d)elve\\1'", "Grep can't run"),
     ("signs/en.toml", 'term = "delv(?:e|es|ing)"', "term = '(?<!un)delve'", "Grep can't run"),
+    ("signs/en.toml", 'strength = "usual"', "strength = \"usual\"\ncheck = '(?L)delve'", "cannot use 'L' flag"),
+    (
+        "signs/en.toml",
+        'strength = "usual"',
+        "strength = \"usual\"\ncheck = '\\x{4c}et us'",
+        "not a regular expression: incomplete escape",
+    ),
 ]
 
 
@@ -385,7 +392,6 @@ def test_a_broken_catalogue_says_why(root, case):
 # run through Claude Code's ripgrep: it refuses the pattern or finds other lines than Python.
 PYTHON_ONLY = [
     ("(?a)delve", "(?a)"),
-    ("(?L)delve", "(?L)"),
     ("(?x)delve", "(?x)"),
     ("(?>delve)", "(?>"),
     ("(?#a note)delve", "(?#"),
@@ -406,8 +412,13 @@ PYTHON_ONLY = [
     ("[a-z&&d]elve", "[a-z&&d]"),
     ("[a-z~~x]elve", "[a-z~~x]"),
     (r"[\0d]elve", r"[\0d]"),
+    (r"delve \—", r"\—"),
+    (r"[\—-]? delve", r"[\—-]"),
+    (r"[\b]delve", r"[\b]"),
+    ("del{\N{ARABIC-INDIC DIGIT ONE}}ve", "{"),  # a digit, but not one a count takes
 ]
-# What both read alike, the scoped and global flags the catalogue uses among them; each finds `flags` and not `passes`.
+# What both read alike on one line, the scoped and global flags the catalogue uses among them; each finds `flags` and
+# not `passes`. Across lines, `validate` and Grep can still differ: how Grep is called is Step 5's call.
 SHARED = [
     "(?-i:L)et us delve",
     "(?i)let us delve",
@@ -433,6 +444,9 @@ SHARED = [
     "[-d]elve into",
     r"[\[d]elve into",
     r"delve \{?into",
+    r"[-\d-]?delve into",
+    r"[~\s~]?delve into",
+    r"delve\,? into",
 ]
 
 

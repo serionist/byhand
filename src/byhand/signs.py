@@ -11,6 +11,7 @@ import datetime
 import re
 import tomllib
 import unicodedata
+import warnings
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -51,7 +52,7 @@ _PIECE = re.compile(
     r"(?P<escape>\\b\{|\\.)"
     r"|(?P<set>\[\^?\]?(?:\\.|[^\]\\])*\]?)"
     r"|(?P<group>\(\?(?:[\w-]+[:)=<]?|<?.)?)"
-    r"|(?P<count>\{[\d,]*\}?\+?)"
+    r"|(?P<count>\{[0-9,]*\}?\+?)"
     r"|(?P<possessive>[*+?]\+)"
     r"|.",
     re.DOTALL,
@@ -59,12 +60,15 @@ _PIECE = re.compile(
 # The groups both read alike: `(?:`, a named group, and the flags i, m, s and u. Grep has no look-around, no
 # backreference, no atomic group, no comment, and no flag a, L or x as Python has them (its x skips spaces in a class).
 _SHARED_GROUP = re.compile(r"\(\?(?::|P<|(?:[imsu]+(?:-[ims]+)?|-[ims]+)[:)])")
-# A count Grep reads. Python reads `{,3}` as up to three, and a `{` that starts no count as itself; Grep refuses both.
-_COUNT = re.compile(r"\{\d+(?:,\d*)?\}")
+# A count Grep reads, in ASCII digits as Python's is. Python reads `{,3}` as up to three, and a `{` that starts no count
+# as itself; Grep refuses both.
+_COUNT = re.compile(r"\{[0-9]+(?:,[0-9]*)?\}")
 # Python reads these and Grep refuses them: `\Z`, `\N{...}`, a digit (a backreference or an octal), or reads them
-# otherwise: `\<`, `\>` and `\b{...}` are a word's edges in Grep and text in Python.
+# otherwise: `\<`, `\>` and `\b{...}` are a word's edges in Grep and text in Python. Grep also refuses an escaped
+# character outside ASCII, such as `\—`, which Python reads as the character.
 _PYTHON_ESCAPES = frozenset(("\\b{", *(f"\\{c}" for c in "ZN<>0123456789")))
-# In a class, Grep reads a `[` as a class within it, and `&&`, `--` and `~~` as operations on two classes.
+# In a class, Grep reads a `[` as a class within it, and `&&`, `--` and `~~` as operations on two classes. It refuses
+# `\b` there, which Python reads as a backspace.
 _CLASS_OPERATORS = ("[", "&&", "--", "~~")
 
 Table = dict[str, Any]
@@ -174,14 +178,21 @@ def _is_date(value: object) -> bool:
     return isinstance(value, datetime.date) and not isinstance(value, datetime.datetime)
 
 
+def _python_escape(piece: str) -> bool:
+    return piece in _PYTHON_ESCAPES or not piece[1:].isascii()
+
+
 def _python_set(piece: str) -> bool:
     escapes = re.findall(r"\\.", piece)
-    rest = re.sub(r"\\.", "", piece[1:])
-    return bool(_PYTHON_ESCAPES.intersection(escapes)) or any(op in rest for op in _CLASS_OPERATORS)
+    # An escape stands as one plain character, so `[-\d-]` doesn't read as `--`.
+    rest = re.sub(r"\\.", "e", piece[1:])
+    return any(_python_escape(escape) or escape == r"\b" for escape in escapes) or any(
+        op in rest for op in _CLASS_OPERATORS
+    )
 
 
 _PYTHON_ONLY = {
-    "escape": lambda piece: piece in _PYTHON_ESCAPES,
+    "escape": _python_escape,
     "set": _python_set,
     "group": lambda piece: not _SHARED_GROUP.fullmatch(piece),
     "count": lambda piece: not _COUNT.fullmatch(piece),
@@ -198,12 +209,17 @@ def _python_only(pattern: str) -> str | None:
 
 
 def _compile(where: str, pattern: str) -> tuple[re.Pattern[str] | None, list[str]]:
-    if piece := _python_only(pattern):
-        return None, [f"{where}: Grep can't run `{piece}` as Python's re does: {pattern}"]
+    """Python first: what it can't read is its error, not Grep's. Its warning on a class such as `[[` goes unshown, as
+    `_python_only` refuses that class with a problem of its own."""
     try:
-        return re.compile(_nfc(pattern), _FLAGS), []
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", FutureWarning)
+            compiled = re.compile(_nfc(pattern), _FLAGS)
     except re.error as exc:
         return None, [f"{where}: not a regular expression: {exc}"]
+    if piece := _python_only(pattern):
+        return None, [f"{where}: Grep can't run `{piece}` as Python's re does: {pattern}"]
+    return compiled, []
 
 
 def load_languages(root: Path, catalogue: Catalogue) -> list[str]:

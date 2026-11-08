@@ -4,7 +4,7 @@
 # the harness, the plugin
 # validated by Claude Code, no tool attribution in the commits, gitleaks over them); the tests run on Linux on Python
 # 3.12 to 3.14, on Windows on 3.12 and 3.14 and on macOS on 3.14, and the Linux 3.12 leg measures coverage against its floor.
-# CI needs both; it and pr-text.yml's PR text are the two checks the ruleset on main requires. Hosted CI never runs a Claude session or reads the live sources, so a
+# CI needs both; it and pr-text.yml's PR text are the two checks the ruleset on main requires. CI's tests never run a Claude session or read the live sources (refresh.yml reads them), so a
 # PR that touches the plugin or the refresh says what ran by hand.
 #
 # The daily run is for Dependabot's merges: dependabot-auto-merge.yml turns on auto-merge with the workflow's token,

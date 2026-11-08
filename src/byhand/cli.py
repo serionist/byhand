@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import sys
+from pathlib import Path
 
-from byhand import render, signs
+from byhand import refresh, render, signs
 
 
 def _utf8() -> None:
@@ -52,12 +54,16 @@ def render_signs(check: bool) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     _utf8()
-    parser = argparse.ArgumentParser(prog="byhand", description="Check the catalogue and render it into the plugin.")
+    parser = argparse.ArgumentParser(prog="byhand", description="Check the catalogue and its sources; render it.")
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("validate", help="check the catalogue: its schema, every sign's examples, its sources")
     write = commands.add_parser("render", help="write the catalogue as the plugin's sign files")
     write.add_argument("--check", action="store_true", help="write nothing; exit 1 when the files differ")
+    sources = commands.add_parser("refresh", help="check the sources that are due; write an issue body per changed one")
+    sources.add_argument("--out", type=Path, default=Path("refresh"), help="where the issue bodies go")
     args = parser.parse_args(argv)
+    if args.command == "refresh":
+        return refresh.run(args.out, dt.datetime.now(dt.UTC).date())
     return render_signs(args.check) if args.command == "render" else validate()
 
 

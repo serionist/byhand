@@ -32,14 +32,14 @@ styles, and the skills that read them. It is for the user's own writing, sent un
 
 | Path | What |
 |---|---|
-| `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (version ranges), `render.py` (the plugin's sign files, the budgets), `cli.py` (`byhand validate`, `byhand render`) |
+| `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (version ranges), `render.py` (the plugin's sign files, the budgets), `refresh.py` (which sources changed), `cli.py` (`byhand validate`, `byhand render`, `byhand refresh`) |
 | `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md` (`scan`: the patterns over a file), `plugin/signs/` (rendered: never edited by hand), `plugin/evals/`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
 | `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), `copycheck.py` (by hand: sign text against downloaded sources), standard library only |
 | `docs/` | `USAGE.md` (the commands, the budgets); `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
 | `.claude/` | `CLAUDE.md` (imports this file), `settings.json` (no attribution; allows the repo's own checks and read-only git and gh, each named whole but the git ones `tests/test_gate.py` sweeps and gh's reads), `skills/` (below) |
 | `.agents/` | `skills/`: links to `.claude/skills/<name>` for Codex, written into git's index by `uv run tools/setup.py link` |
-| `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and 3.14, macOS 3.14; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
+| `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and 3.14, macOS 3.14; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `refresh.yml` (daily: `byhand refresh`, an issue labelled `refresh` per changed source), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
 | `.githooks/` | `commit-msg` refuses attribution, `pre-push` runs gate quick on what the push sends, `post-checkout` and `post-merge` name changed AI setup files |
 | `AGENTS.md`, `REVIEW.md` | this file; what a review finding is, and the questions every review answers |
 | `.mcp.json` | Context7 over HTTP; `.claude/settings.local.json.example` turns it on |
@@ -63,8 +63,8 @@ PowerShell unless a PowerShell form stands beside it.
 | the gate | `uv run tools/gate.py quick` (lock, lint, format, types, imports, the catalogue, sign ids, sign files, private files, the coverage floor, the version, AGENTS.md, skills, plans, the plugin, the variables the docs name, hooks, attribution, secrets); `full` adds pytest under coverage, and the floor; `text --file -` checks a PR's title and description: no attribution, and the issue named |
 | the plugin from this clone | `claude --plugin-dir plugin`; after a change to a sign, `uv run byhand render` |
 
-- **Hosted CI never runs a Claude session or reads the live sources:** a change to the plugin or the refresh says in
-  its PR what ran by hand, on which versions, and what it could not show.
+- **CI's tests never run a Claude session or read the live sources** (only `refresh.yml` reads them): a change to the
+  plugin or the refresh says in its PR what ran by hand, on which versions, and what it could not show.
 - **Tests use invented text,** in every language they cover. Never a user's real mail, messages or style, the
   maintainer's included.
 - **Ratchets:** ruff's per-file ignores only shrink, and the coverage floor (`fail_under` in `pyproject.toml`) only

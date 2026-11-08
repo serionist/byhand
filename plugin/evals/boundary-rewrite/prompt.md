@@ -1,0 +1,15 @@
+---
+max_turns: 30
+timeout_seconds: 600
+allowed_tools: [Read, Skill]
+tags: [step7]
+---
+
+This sounds like ChatGPT wrote it. Rewrite it so it sounds like me:
+
+Hi team,
+
+I hope this message finds you well. As we navigate the complexities of Q3, it's worth noting that our roadmap is not just a plan, but a testament to our shared vision. Let's delve into the key pillars: speed, quality, and innovation.
+
+Best regards,
+Omar

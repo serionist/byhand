@@ -269,8 +269,8 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 | 3. Render and its gate check | #3 | #14 | merged 2026-11-07 |
 | 4. `propose-signs` and the seed | #4 | #15, `any` and `en`; #16, `zh` and `zh-Hant`; #17, `ko`; #18, `ja`; #22, `ru`; #23, `de`; #24, `fr`; #28, `hu`; #29, every list alphabetical | merged 2026-11-08 |
 | 5. `check` | #5 | #39 | merged 2026-11-08 |
-| 6. Styles, `learn` and `write` | #6 | #40 | |
-| 7. Tried in real sessions | #7 | | |
+| 6. Styles, `learn` and `write` | #6 | #40 | merged 2026-11-08 |
+| 7. Tried in real sessions | #7 | #41 | |
 | 8. Release `0.1.0` | #8 | | |
 
 Decisions on the way:
@@ -386,6 +386,12 @@ Decisions on the way:
     `write`'s alone: `check` can't tell a text is in a style without asking.
   - `write` checks its own draft by reading it; with no style it says nothing about it. `learn` takes files or pasted
     text, screened by `check`'s steps.
+- **Step 7, as run (2026-11-08):** the suite pastes its texts, as the harness gives a case no file; the second draft
+  is tried by hand in a headless `--continue` session instead of a hand-made history file. The maintainer's crowded
+  session ran in auto mode, so the manual-mode prompt count and a draft after `/compact` stay untried, as does an id
+  the catalogue has never seen; tokens were not counted (no API key), bytes stand in. Every measured bar met
+  (`docs/reviews/2026-11-08-real-sessions.md`): no `SessionStart` hook before the release. `write` offers to keep a
+  draft's feedback as a rule in its style (the maintainer, 2026-11-09).
 
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
 `0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.

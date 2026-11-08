@@ -187,16 +187,16 @@ id = "ru-didactic-phrases"
 category = "phrase"
 kinds = ["any"]
 models = "any"
-# Not «следует отметить», «стоит отметить» or a bare «важно отметить»: the stock openers of a person's report.
+# Not «следует отметить», «стоит отметить», «нельзя не отметить» or a bare «важно отметить»: the stock openers of a
+# person's report.
 what = "Tells the reader what is worth noting before saying it."
 instead = "Say it; the reader decides what matters."
 strength = "weak"
 terms = [
   { term = '(?:крайне|критически) важно (?:отметить|подч[её]ркнуть)', instead = "cut" },
-  { term = 'нельзя не (?:отметить|упомянуть)', instead = "cut" },
   { term = 'стоит обратить внимание на то', instead = "cut" },
 ]
-flags = "Крайне важно отметить, что парковка закрыта. Нельзя не упомянуть, что пропуска выдаёт охрана."
+flags = "Крайне важно отметить, что парковка закрыта, и стоит обратить внимание на то, что пропуска выдаёт охрана."
 passes = "Парковку закрыли до среды, пропуск возьмите у охраны."
 sources = [
   { source = "wikipedia-ru", where = "Дидактические и редакционные оговорки, revision 156024043", seen = 2026-11-08 },
@@ -208,16 +208,15 @@ id = "ru-vague-authority"
 category = "phrase"
 kinds = ["any"]
 models = "any"
-# Not «по мнению экспертов» or «эксперты отмечают»: a person's report says them too.
+# Not «по мнению экспертов», «эксперты отмечают» or «ряд экспертов считает»: a person's report says them too.
 what = "Leans on unnamed experts and analysts."
 instead = "Name the person or the study, or drop the claim."
 strength = "weak"
 terms = [
   { term = 'некоторые критики', instead = "name them" },
-  { term = 'ряд\w* (?:экспертов|источников|исследований)', instead = "cite them" },
   { term = 'исследователи утверждают', instead = "name them" },
 ]
-flags = "Некоторые критики сомневаются в новом тарифе, но ряд исследований показывает его выгоду."
+flags = "Некоторые критики сомневаются в новом тарифе, а исследователи утверждают обратное."
 passes = "Ирина из бухгалтерии посчитала: на новом тарифе мы экономим 3 000 рублей в месяц."
 sources = [
   { source = "wikipedia-ru", where = "Обтекаемые формулировки, revision 156024043", seen = 2026-11-08 },

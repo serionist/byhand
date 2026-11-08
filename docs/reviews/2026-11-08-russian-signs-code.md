@@ -4,7 +4,7 @@ base: main (3263b22)
 head: b9589f6
 date: 2026-11-08
 round: 1
-tier: standard (a fresh reviewer on Claude Opus 5.5, every lens; fixes verified in the main session with mutants)
+tier: standard (a fresh reviewer per round on Claude Opus 5.5, every lens; the last fixes verified by their mutants)
 verdict: needs-fixes
 ---
 
@@ -40,3 +40,23 @@ They now have their own subject, order and repair. `ru-office-register` stays fo
   branches back.
 - `uv run tools/copycheck.py` over the 11 Russian downloads: 0 hits at 6; at 5 one, `en-em-dash`, outside this change.
 - `uv run byhand validate`, `uv run byhand render`, `uv run tools/gate.py full --base origin/main`: all pass.
+
+## Round 2
+
+**Where:** `b9589f6..f2e7744`, a fresh reviewer, with new plain report paragraphs and chatbot lines, every changed
+pattern under Python and Grep. **Verdict:** needs-fixes, on one major. F1 to F8 held.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F11 | major | ru-didactic-phrases, ru-vague-authority | Plain report paragraphs still reached 3 different weak phrases: «нельзя не отметить», «ряд источников (экспертов)» and a participle (способствуя, отражая) or «поворотный момент» | fixed: under the maintainer's round-1 call, «нельзя не …» and «ряд …» cut; three paragraphs of that shape, written anew, join `REPORTS` at 1 or 2 hits; both lines held plain |
+| F12 | minor | any-unfilled-placeholder, Japanese branch | The link guard took a full-width （ too, so «【ここに会社名を入力】（正式名称）» stopped firing | fixed: only an ASCII ( after the bracket passes, as Markdown links use; the line in the Japanese `MACHINE` |
+| F13 | minor | any-assistant-preamble, Russian branch | «более … версия» fired on a person's «Конечно! Вот более свежая версия прайса:» | fixed: the maintainer's call, более only with a word of register (официальн, формальн, вежлив, дружелюбн, лаконичн, кратк, профессиональн and the like); two recency lines in `OFFICE` |
+
+Four mutants, one at a time, each killed: «нельзя не» back, «ряд …» back, the full-width bracket read as a link, any
+word after более. copycheck over the Russian downloads: 0 hits at 6; at 5 the same `en-em-dash` hit, outside this change.
+`validate`, `render` and `gate.py full --base origin/main` pass.
+
+## Closed
+
+Round 2's fixes are each held by a test that fails without them. The maintainer verifies them in the main session; no
+third round unless a major is left.

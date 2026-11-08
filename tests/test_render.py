@@ -427,6 +427,19 @@ def test_the_real_catalogue_renders_within_its_budgets():
     assert render.budget_problems(render.render(found), found) == []
 
 
+def test_every_sign_file_a_plugin_skill_names_is_one_render_writes():
+    # The rendered names changed twice (`.signs.md`, then `.short.md` and `.long.md`): a skill naming an old one would
+    # read nothing, and no test of render would see it.
+    plugin = pathlib.Path(signs.__file__).resolve().parents[2] / "plugin"
+    texts = [
+        path.read_text(encoding="utf-8") for path in [*plugin.glob("skills/*/SKILL.md"), *plugin.glob("agents/*.md")]
+    ]
+    named = [name for text in texts for name in re.findall(r"(?:any|<language>)/[\w<>-]+(?:\.[a-z]+)?\.md", text)]
+    assert len(named) >= 5  # the skills name their sign files, so the test can fail
+    suffixes = (render.SHORT, render.LONG, render.LAYOUT, "/" + render.CHECK)
+    assert [name for name in named if not name.endswith(suffixes)] == []
+
+
 def test_no_rendered_file_can_be_read_as_a_claude_md():
     # On Windows and macOS `claude.md` is a CLAUDE.md, which Claude Code loads as project instructions.
     claude = (ModelRange("claude", Version(4)),)

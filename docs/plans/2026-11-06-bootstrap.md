@@ -268,8 +268,8 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 | 2. The catalogue's schema | #2 | #12 | merged 2026-11-07 |
 | 3. Render and its gate check | #3 | #14 | merged 2026-11-07 |
 | 4. `propose-signs` and the seed | #4 | #15, `any` and `en`; #16, `zh` and `zh-Hant`; #17, `ko`; #18, `ja`; #22, `ru`; #23, `de`; #24, `fr`; #28, `hu`; #29, every list alphabetical | merged 2026-11-08 |
-| 5. `check` | #5 | | |
-| 6. Styles, `learn` and `write` | #6 | | |
+| 5. `check` | #5 | #39 | merged 2026-11-08 |
+| 6. Styles, `learn` and `write` | #6 | #40 | |
 | 7. Tried in real sessions | #7 | | |
 | 8. Release `0.1.0` | #8 | | |
 
@@ -378,6 +378,14 @@ Decisions on the way:
     draft in the same language and model reads nothing new. A style file holds 3 to 5 short excerpts and stays under
     4 KB, which `learn` holds when it saves.
   - Step 7: the record gives the tokens a draft reads per seed language, counted, beside the bytes.
+- **Styles, as Step 6 built them (the maintainer, 2026-11-08, on #6):** this replaces the Styles section's format.
+  - A user's styles only, in `~/.byhand/styles/`; a project's `.byhand/styles/` stays reserved, unused in `0.1.0`.
+  - `index.md` in that folder is the list, `| Style | Language | Default for |`: the main session can't list a folder
+    on macOS, Linux and WSL. A style it doesn't name is never used; one default per kind and language.
+  - A style's frontmatter holds `register` and `keeps`; name, language and defaults are the index's. `keeps` is
+    `write`'s alone: `check` can't tell a text is in a style without asking.
+  - `write` checks its own draft by reading it; with no style it says nothing about it. `learn` takes files or pasted
+    text, screened by `check`'s steps.
 
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
 `0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.

@@ -51,3 +51,40 @@ Budapestben", "bízom Szegedben"); these read rare, but they are right Hungarian
 - copycheck over 57 downloads: no run of 6 words; at 5 and 4 only existing English signs against the English quotations
   in a huwiki translation of the English page, none on a Hungarian field.
 - `uv run byhand validate`, `uv run byhand render`, `uv run tools/gate.py full --base origin/main`.
+
+## Round 2
+
+**Where:** `498611f..82f6a68`, then main's #27 and #29 merged in. F1 to F7 held: copycheck finds no run at 6 or 5, and
+no frame is left.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F8 | major | hu-place-name-suffix | Its check fired on right Hungarian, mostly names: a hotel's (a Hilton Budapestben, a Hotel Kecskemétben), a venue's (a Müpa Budapestben), a club's (a Pick Szegedben, a Kaposvárban játszott), a county (Jász-Nagykun-Szolnokban), and a verb that takes -ban/-ben (csalódtam Budapestben) | fixed, the maintainer's call: the model's read only, usual with no check, as hu-address-switching; its `instead` names these right uses so a model leaves them alone. The lines are in `OFFICE` as reminders; its `MACHINE` lines and pattern tests are gone, and a test holds it has no check |
+| F9 | minor | `tests/test_office_hu.py` | The order test skipped a group holding `[` or `\`: the hyphen check's suffixes reversed, or `(?:ezzel is\s+|így\s+)` reversed, passed it | fixed: every group is read, nested ones too, by each alternative's literal start up to the first `[`, `(` or `\`, as the term-list test reads a term; a test holds both reversals failing. any-didactic-aside's start group now reads `(?:[.!?]\s+|^)`, the same matches in order |
+| F10 | minor | three `what` and `instead` | Prose lists out of order: hu-promo-adjectives' place, event, product; hu-title-case-headings' heading, bold label; hu-place-name-suffix's -on, -en, -ön | fixed: an event, a place or a product; a bold label or a heading, and proper names and the first word; -en, -on or -ön |
+| F11 | minor | hu-address-switching | Its `flags` opened on "Köszi", an informal word people pair with Ön, not a te form: the sign would teach a model to move a client to te | fixed: "Köszönöm, hogy ilyen gyorsan válaszoltál!" carries the te, and the Ön after it is the switch |
+
+The maintainer's calls in round 2:
+
+- hu-place-name-suffix is for the model's read only (F8).
+- The Hungarian participle branch leaves any-tacked-on-analysis, which is main's again, for a weak Hungarian sign,
+  `hu-tacked-on-participle`, with its own examples and the same sources; its exact check finds 2 of 1,000 human texts
+  and none of the AI ones in Hun_ai_test. "A műszakot átszerveztük, biztosítva a hétvégi ügyeletet is." is in the plain
+  reports, under 3.
+- Kept: any-didactic-aside's sentence-start branch (1 human text, 6 AI) and hu-hyphenated-case-ending (its one human
+  hit, "Mária-val", is a novel's title).
+
+### Checks
+
+- 39 mutants, one at a time: the place check back; the participle sign usual, on any object, with r before the -t,
+  without its comma, ezzel is, hozzájárulva or tükrözve; the hyphen suffixes and `(?:ezzel is\s+|így\s+)` reversed,
+  the sentence-start group reversed, two names, infinitives, terms and nouns out of order; the fontos phrase anywhere,
+  after a full stop only, at a line's start only, without hogy, adverbs or kiemelni; the hyphen without -n, with the
+  -e particle, kata or any a/e word; the earlier round's. Each fails a test.
+- Every Hungarian pattern under Python and Claude Code's own ripgrep: 1,896 cases, no disagreement.
+- copycheck over 57 downloads at 6, 5 and 4 words: none on a Hungarian field.
+- `uv run byhand validate`, `uv run byhand render`, `uv run tools/gate.py full --base origin/main`.
+
+## Closed
+
+The maintainer verifies round 2's fixes in the main session.

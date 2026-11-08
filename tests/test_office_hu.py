@@ -80,6 +80,15 @@ CHAT = [
     "A helyszín a nagytárgyaló, biztosítva a kivetítő és a flipchart is.",
     "A meghívóban fontos kiemelni, hogy a parkolás fizetős.",
     "Most nem fontos kiemelni, hogy ki hibázott, inkább javítsuk ki.",
+    # a hotel's, a club's and a county's name, and a verb that takes -ban/-ben (#28's review, F8)
+    "A konferencia a Corinthia Hotel Budapestben lesz, a nagyteremben.",
+    "A vacsorát a Müpa Budapestben foglaltuk le.",
+    "A partnereink a Hilton Budapestben szállnak meg.",
+    "A Hotel Kecskemétben tartjuk a kihelyezett ülést.",
+    "Az unokaöcsém a Pick Szegedben kézilabdázik.",
+    "Régebben a Kaposvárban játszott, most edző.",
+    "Jász-Nagykun-Szolnokban három új telephelyünk van.",
+    "Őszintén szólva csalódtam Budapestben, többet vártam.",
 ]
 
 NOTES = [
@@ -125,6 +134,7 @@ REPORTS = [
     "márciusban kezdődik.",
     "Fontos, hogy a leltárt december 15-ig lezárjuk. A raktár két napig zárva lesz, a kiszállítás szünetel.",
     "A pilot lezárult. Mindegyik telephely részt vett benne, a költség 8%-kal a terv alatt maradt.",
+    "A műszakot átszerveztük, biztosítva a hétvégi ügyeletet is.",
     "A tárolóként szolgáló konténert a hónap végén elszállítják. A bérleti díj 45 000 forint havonta.",
 ]
 
@@ -180,13 +190,11 @@ def test_no_sign_that_counts_alone_fires_on_plain_hungarian_work_text(counted_al
     assert fired == []
 
 
-def test_the_hungarian_checks_that_count_alone_are_the_two_inflection_errors(counted_alone):
-    # The maintainer (#4): a native speaker writes neither. Any other Hungarian check that counts alone needs its lines
-    # in MACHINE and a reason.
-    assert sorted(sign.id for sign in counted_alone if sign.language == "hu") == [
-        "hu-hyphenated-case-ending",
-        "hu-place-name-suffix",
-    ]
+def test_the_one_hungarian_check_that_counts_alone_is_the_hyphen(counted_alone):
+    # The maintainer (#4): a native speaker never writes it. The place suffix is for the model's read, as names and
+    # verbs take -ban/-ben rightly (#28's review, F8). Any other Hungarian check that counts alone needs its lines in
+    # MACHINE and a reason.
+    assert [sign.id for sign in counted_alone if sign.language == "hu"] == ["hu-hyphenated-case-ending"]
 
 
 # What each sign that counts alone exists to catch, inside Hungarian text: a line per branch of its Hungarian check, so
@@ -201,12 +209,6 @@ MACHINE = [
     ("any-didactic-aside", "Fontos még kiemelni hogy a raktár zárva lesz."),
     ("any-didactic-aside", "A tesztek lefutottak. Fontos viszont kiemelni, hogy két hiba maradt."),
     ("any-didactic-aside", "Kész a terv! Fontos itt megjegyezni, hogy a keret változhat."),
-    ("any-tacked-on-analysis", "A kiállítás hétfőn nyílt meg, tükrözve a város kulturális ambícióit."),
-    ("any-tacked-on-analysis", "A cég két új üzemet nyitott, hozzájárulva a régió fejlődéséhez."),
-    ("any-tacked-on-analysis", "A program ingyenes, elősegítve az esélyegyenlőséget."),
-    ("any-tacked-on-analysis", "A rendszer naponta ment, biztosítva az adatok épségét."),
-    ("any-tacked-on-analysis", "A gyár napelemre állt át, ezzel is hozzájárulva a klímacélokhoz."),
-    ("any-tacked-on-analysis", "A belső képzés kötelező lett, így biztosítva az egységes tudást."),
     ("hu-hyphenated-case-ending", "Holnap Anna-val egyeztetek a szerződésről."),
     ("hu-hyphenated-case-ending", "A táblát Réka-nak küldtem el."),
     ("hu-hyphenated-case-ending", "Bence-vel beszéltem a határidőről."),
@@ -219,15 +221,6 @@ MACHINE = [
     ("hu-hyphenated-case-ending", "Csaba-ként írta alá."),
     ("hu-hyphenated-case-ending", "Gyula-nál van a kulcs."),
     ("hu-hyphenated-case-ending", "Imre-ről nem tudok semmit."),
-    ("hu-place-name-suffix", "A központ Budapestben van."),
-    ("hu-place-name-suffix", "A raktárunk Kaposvárban van."),
-    ("hu-place-name-suffix", "A konferencia Kecskemétben lesz."),
-    ("hu-place-name-suffix", "Miskolcban nyílt az új bolt."),
-    ("hu-place-name-suffix", "Nyíregyházában nyitunk irodát."),
-    ("hu-place-name-suffix", "A gyár Pécsben működik."),
-    ("hu-place-name-suffix", "A képzés Szegedben lesz."),
-    ("hu-place-name-suffix", "A tréning Székesfehérvárban lesz."),
-    ("hu-place-name-suffix", "Szolnokban lakik a csapat fele."),
     ("any-chatgpt-citation-markup", "A híd 1932-ben nyílt meg. :contentReference[oaicite:0]{index=0}"),
     ("any-chatbot-url-tag", "Bővebben: https://example.hu/jelentes?utm_source=chatgpt.com"),
     ("any-gemini-citation-markup", "A pékség 1998-ban költözött Szegedre.[cite: 2]"),
@@ -326,13 +319,45 @@ def _plain(text: str) -> str:
     return "".join(char for char in decomposed if not unicodedata.combining(char))
 
 
-# A group of plain words, with no regex syntax nested in it: the groups the rule can be checked on mechanically.
-_SIMPLE_GROUP = re.compile(r"\(\?:([^()\[\]\\?*+{}^$.]+)\)")
+def _groups(regex: str) -> list[str]:
+    """The inside of every (?:…) group in a regex, nested ones too."""
+    found = []
+    for opened in (n for n in range(len(regex)) if regex.startswith("(?:", n) and (n == 0 or regex[n - 1] != "\\")):
+        depth, escaped, in_class = 0, False, False
+        for n in range(opened, len(regex)):
+            char = regex[n]
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif in_class:
+                in_class = char != "]"
+            elif char == "[":
+                in_class = True
+            elif char == "(":
+                depth += 1
+            elif char == ")":
+                depth -= 1
+                if depth == 0:
+                    found.append(regex[opened + 3 : n])
+                    break
+    return found
+
+
+def _start(alternative: str) -> str:
+    """An alternative's literal start, up to the first class, group or escape, as the alphabetical rule reads it."""
+    return _plain(re.split(r"[\[(\\]", alternative, maxsplit=1)[0])
+
+
+def _misordered(regex: str) -> list[list[str]]:
+    groups = [_alternatives(group) for group in _groups(regex)]
+    return [items for items in groups if len(items) > 1 and [_start(i) for i in items] != sorted(map(_start, items))]
 
 
 def test_hungarian_alternations_run_in_alphabetical_order(catalogue):
-    # hu.toml's header: our own order is alphabetical, so no source's order can come back (#28's review). The Hungarian
-    # branches of the two any signs follow it too; their English branches are not ours to reorder here.
+    # hu.toml's header: our own order is alphabetical, so no source's order can come back (#28's review). A group with
+    # a class or an escape in it is read by each alternative's literal start (F9); any-didactic-aside's English groups
+    # are main's, already in order.
     regexes = [
         (sign.id, term.term) for sign in catalogue.signs.values() if sign.language == "hu" for term in sign.terms
     ]
@@ -341,14 +366,19 @@ def test_hungarian_alternations_run_in_alphabetical_order(catalogue):
         for sign in catalogue.signs.values()
         if sign.language == "hu" and sign.pattern and not sign.terms
     ]
-    for sign in ("any-didactic-aside", "any-tacked-on-analysis"):
-        pattern = catalogue.signs[sign].pattern
-        assert pattern is not None
-        regexes.append((sign, pattern.pattern.split("|(?:^|", 1)[-1] if "didactic" in sign else pattern.pattern))
-    groups = [(sign, group.split("|")) for sign, regex in regexes for group in _SIMPLE_GROUP.findall(regex)]
-    assert len(groups) >= 8  # the parse finds the groups, so the test can fail
-    wrong = [(sign, items) for sign, items in groups if [_plain(item) for item in items] != sorted(map(_plain, items))]
+    didactic = catalogue.signs["any-didactic-aside"].pattern
+    assert didactic is not None
+    regexes.append(("any-didactic-aside", didactic.pattern))
+    assert sum(len(_groups(regex)) for _, regex in regexes) >= 15  # the parse finds the groups, so the test can fail
+    wrong = [(sign, items) for sign, regex in regexes for items in _misordered(regex)]
     assert wrong == []
+
+
+def test_the_order_rule_reads_groups_with_classes_and_escapes():
+    # reversed, a suffix group with classes and a group with escapes both fail, so the test above can't pass on nothing
+    assert _misordered(r"-(?:v[ae]l|t|n[ae]k|b[ae]n?)\b") == [["v[ae]l", "t", "n[ae]k", "b[ae]n?"]]
+    assert _misordered(r",\s+(?:így\s+|ezzel is\s+)?") == [["így\\s+", "ezzel is\\s+"]]
+    assert _misordered(r"(?:b[ae]n?|n[ae]k|t|v[ae]l)(?:ezzel is\s+|így\s+)") == []
 
 
 def test_hungarian_term_lists_run_in_alphabetical_order(catalogue):
@@ -362,6 +392,7 @@ def test_hungarian_term_lists_run_in_alphabetical_order(catalogue):
 def test_the_model_s_read_signs_have_no_check(catalogue):
     # Te and Ön live in verb endings, and a check can't see capitals: these are for the model's own read (#4).
     for sign in (
+        "hu-place-name-suffix",
         "hu-address-switching",
         "hu-title-case-headings",
         "hu-explicit-subject-repeat",
@@ -403,6 +434,12 @@ def test_hungarian_typography_is_no_sign(catalogue, text):
 # Hungarian is agglutinative: the forms a weak check must still find, beyond its own `flags`, and what it must leave
 # alone. A term matches where the stem starts the word, after a superlative leg- where the term allows it.
 FORMS = [
+    ("hu-tacked-on-participle", "A kiállítás hétfőn nyílt meg, tükrözve a város kulturális ambícióit."),
+    ("hu-tacked-on-participle", "A cég két új üzemet nyitott, hozzájárulva a régió fejlődéséhez."),
+    ("hu-tacked-on-participle", "A program ingyenes, elősegítve az esélyegyenlőséget."),
+    ("hu-tacked-on-participle", "A rendszer naponta ment, biztosítva az adatok épségét."),
+    ("hu-tacked-on-participle", "A gyár napelemre állt át, ezzel is hozzájárulva a klímacélokhoz."),
+    ("hu-tacked-on-participle", "A belső képzés kötelező lett, így biztosítva az egységes tudást."),
     ("hu-ai-vocabulary", "A döntés kulcsfontosságúnak bizonyult."),
     ("hu-ai-vocabulary", "Ez az átfogóbb felmérés."),
     ("hu-ai-vocabulary", "A frissítés elengedhetetlenül szükséges."),
@@ -451,21 +488,17 @@ LEFT_ALONE = [
     ("hu-hyphenated-case-ending", "Teams-en elérsz."),
     ("hu-hyphenated-case-ending", "Annával, Bencével és Rékától kaptam választ."),
     ("hu-hyphenated-case-ending", "Az Anna-bálra megyünk Balatonfüredre."),
-    ("hu-place-name-suffix", "Szegeden, Győrben, Debrecenben és Pécsett is van irodánk."),
-    ("hu-place-name-suffix", "Budapestre, Egerbe és Sopronba visszük az árut."),
-    ("hu-place-name-suffix", "A győri és a szegedi telephely nyitva lesz."),
-    ("hu-place-name-suffix", "Győr-Moson-Sopron megyében is van ügyfelünk."),
-    ("hu-place-name-suffix", "Zalaegerszegen tartjuk a képzést."),
-    ("hu-place-name-suffix", "Az egéren nem működik a görgő."),
     ("any-didactic-aside", "Fontos, hogy péntekig leadjátok a jelenléti ívet."),
     ("any-didactic-aside", "Fontos kiemelni a határidőt a meghívóban."),
     ("any-didactic-aside", "Fontosnak tartom hangsúlyozni, hogy nem volt baleset."),
-    ("any-tacked-on-analysis", "A szállás biztosítva."),
-    ("any-tacked-on-analysis", "Az ebéd biztosítva, a parkolás nem."),
-    ("any-tacked-on-analysis", "Ha megjön az utalás, biztosítva lesz a fizetés."),
-    ("any-tacked-on-analysis", "Kérem, a hozzáférés legyen biztosítva hétfőre."),
-    ("any-tacked-on-analysis", "A wifi biztosítva a vendégeknek is."),
-    ("any-tacked-on-analysis", "Előre biztosítva a helyet, nyugodtan érkezhetsz."),
+    ("hu-tacked-on-participle", "Az ikont tedd át a jobb sarokba, tükrözve a függőleges tengelyre."),
+    ("hu-tacked-on-participle", "A helyszín a nagytárgyaló, biztosítva a kivetítő és a flipchart is."),
+    ("hu-tacked-on-participle", "A szállás biztosítva."),
+    ("hu-tacked-on-participle", "Az ebéd biztosítva, a parkolás nem."),
+    ("hu-tacked-on-participle", "Ha megjön az utalás, biztosítva lesz a fizetés."),
+    ("hu-tacked-on-participle", "Kérem, a hozzáférés legyen biztosítva hétfőre."),
+    ("hu-tacked-on-participle", "A wifi biztosítva a vendégeknek is."),
+    ("hu-tacked-on-participle", "Előre biztosítva a helyet, nyugodtan érkezhetsz."),
 ]
 
 

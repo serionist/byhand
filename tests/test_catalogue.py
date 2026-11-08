@@ -535,7 +535,9 @@ def test_terms_and_until_reach_the_rendered_files(root):
     found, problems = signs.load(root)
     assert problems == []
     files = render.render(found)
-    assert sorted(files) == ["en/gpt.signs.md", "zh/any.signs.md"]  # any-rule-of-three has an `until`, so it is retired
-    assert "Terms: `delv(?:e|es|ing)`: look at" in files["en/gpt.signs.md"]
+    # any-rule-of-three has an `until`, so it is retired
+    assert sorted(files) == ["en/check.md", "en/gpt.short.md", "zh/any.short.md", "zh/check.md"]
+    assert "Words: delve: look at" in files["en/gpt.short.md"]
+    assert "Pattern: `" in files["en/check.md"]
     assert found.signs["any-rule-of-three"].until == datetime.date(2030, 1, 1)
     assert found.signs["en-delve"].until is None

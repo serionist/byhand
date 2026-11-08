@@ -138,7 +138,8 @@ MACHINE = [
     ("any-assistant-preamble", "当然可以\uff01以下是润色后的版本\uff1a"),
     ("any-assistant-preamble", "Sure! Here's a professional email you can send to your client:"),
     ("any-assistant-preamble", "Of course! Here is a shorter version of the post:"),
-    ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung:"),
+    # the German branch fires only when the line names the reader's text (#23's review, F2)
+    ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung Ihrer Notiz:"),
     ("any-assistant-preamble", "Конечно! Вот исправленный текст вашего письма:"),
     ("any-assistant-preamble", "当然可以\uff01以下是修改后的版本\uff1a"),
     ("any-didactic-aside", "It's worth noting that results vary."),

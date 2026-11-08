@@ -1,0 +1,276 @@
+# German's signs. A sign here cites a source that covers German; the shape of a sign is in `any.toml`. German is written
+# with spaces, so `validate` wraps a sign's terms in `\b`: a term is a stem with its endings (`wegweisend\w*`), and a
+# compound matches only where the term starts the word. German's own typography is a person's, never a sign: „…“
+# quotes, the spaced short dash (–), long compounds and capitalised nouns. No German check counts alone: business German
+# (Nominalstil, im Rahmen, zeitnah, bezüglich) is how people write at work, so the word lists are weak, and most read
+# posts and documents only. `tests/test_office_de.py` holds plain work mail, chat, minutes and reports against them.
+
+# Formatting.
+
+[[sign]]
+id = "de-em-dash"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Sets off a clause with the long English dash (—); the spaced short dash (–) is German's own, and a person's."
+instead = "Use a comma or a full stop, or the spaced short dash."
+strength = "weak"
+# Text on both sides, so a line of dashes under a signature is no clause; and not after a comma or a full stop, so a
+# price (CHF 20.—, 1.250,— €) is none either.
+check = '[^\s—.,] ?— ?[^\s—]'
+flags = "Die Übergabe klappt — sofern der Schlüssel rechtzeitig da ist."
+passes = "Die Übergabe klappt – sofern der Schlüssel rechtzeitig da ist."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 18 Formatierungs-Overload, commit 4e5aa4c51230", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-title-case-headings"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Capitalises every word of a heading the English way, articles, und, für and adjectives included."
+instead = "Capitalise the first word, nouns and names only."
+strength = "weak"
+flags = "## Neue Regeln Für Die Urlaubsplanung Und Vertretung"
+passes = "## Neue Regeln für die Urlaubsplanung und Vertretung"
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 21 Title-Case-Überschriften, commit 4e5aa4c51230", seen = 2026-11-07 },
+]
+
+# Structure: how the text is built. Those without a `check` are for the model's own read.
+
+[[sign]]
+id = "de-stiff-connectives"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Starts sentence after sentence with ferner, des Weiteren or darüber hinaus; one of them, or a paper full of them, is a person's."
+instead = "Use und or auch, or let the order of the sentences carry the link."
+strength = "weak"
+flags = "Der Raum ist hell. Darüber hinaus ist er ruhig. Ferner liegt er zentral. Des Weiteren ist er günstig."
+passes = "Der Raum ist hell und ruhig, liegt zentral und kostet wenig."
+sources = [
+  { source = "wikipedia-de", where = "Bestimmte Konjunktionen, revision 271721424", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 12 Übergangsphrasen als Satzanfang, commit 4e5aa4c51230", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-hedging"
+category = "structure"
+# Not mail or chat, where könnte möglicherweise is how people soften a guess.
+kinds = ["post", "document"]
+models = "any"
+what = "Softens plain claims with kann and könnte throughout, or stacks two hedges on one claim."
+instead = "State it, or name the one condition that makes it uncertain."
+strength = "weak"
+check = '''\b(?:möglicherweise|eventuell|vielleicht|unter umständen|gegebenenfalls) (?:möglicherweise|eventuell|vielleicht|unter umständen|gegebenenfalls)\b|\bkönnten? (?:\w+ )?(?:möglicherweise|unter umständen)\b'''
+flags = "Die neue Software könnte möglicherweise die Wartezeiten verkürzen."
+passes = "Die neue Software verkürzt die Wartezeit, wenn alle Filialen sie nutzen."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 15 Hedge-Stacking and 15a kann-Overuse, commit 4e5aa4c51230", seen = 2026-11-07 },
+  { source = "stroeer-2023", where = "Werden, können und haben: ChatGPT und die Hilfsverben, updated 18 Dec 2024", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-sowohl-triad"
+category = "structure"
+# No check: "sowohl die Belege als auch die Kontoauszüge und das Kassenbuch" is a plain report's (#23's review, F5).
+kinds = ["post", "document"]
+models = "any"
+what = "Stretches sowohl … als auch over three items: a rule of three in German dress."
+instead = "List the items with und, or keep the two that matter."
+strength = "weak"
+flags = "Das Angebot richtet sich sowohl an Schüler als auch an Eltern und Lehrkräfte."
+passes = "Das Angebot richtet sich an Schüler, Eltern und Lehrkräfte."
+sources = [
+  { source = "wikipedia-de", where = "Trikolon, revision 271721424", seen = 2026-11-07 },
+]
+
+# Words and phrases of every model.
+
+[[sign]]
+id = "de-participle-asides"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Hangs a present participle on a sentence to say what the fact shows, a form German prose seldom uses."
+instead = "Stop at the fact; if its meaning matters, give it a sentence of its own."
+strength = "weak"
+terms = [
+  { term = 'verdeutlichend|widerspiegelnd|gewährleistend|unterstreichend|symbolisierend|hervorhebend|betonend', instead = "cut" },
+]
+flags = "Der Verein verdoppelte seine Mitglieder, die Beliebtheit des Sports widerspiegelnd."
+passes = "Der Verein hat seine Mitglieder verdoppelt, vor allem durch die neue Jugendgruppe."
+sources = [
+  { source = "wikipedia-de", where = "Oberflächliche Analysen, revision 271721424", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 3 Oberflächliche Partizipialkonstruktionen, commit 4e5aa4c51230", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-significance-phrases"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Dresses a plain subject in set phrases of legacy and deep meaning."
+instead = "Give the fact or the number that shows it matters."
+strength = "weak"
+terms = [
+  { term = 'tief ?verwurzelt\w*', instead = "say since when, or cut" },
+  { term = 'unterstr(?:eicht|eichen|ich|ichen) (?:die|seine|ihre|deren|dessen) (?:\w+ )?(?:bedeutung|rolle|relevanz)', instead = "zeigt, or the fact itself" },
+  { term = 'unerschütterlich\w*', instead = "say what they kept doing" },
+  { term = 'schlüsselmoment\w*', instead = "give the date and what changed" },
+  { term = '(?:steht|stehen|stand|standen|dient|dienen|diente|dienten) als zeugnis', instead = "zeigt" },
+  { term = 'bleibende[ns]? (?:erbes?|vermächtnis(?:ses)?)', instead = "say what remains" },
+  { term = 'fasziniert (?:bis heute|weiterhin|nach wie vor)', instead = "say who still comes or reads it" },
+]
+flags = "Das sanierte Rathaus steht als Zeugnis für den unerschütterlichen Bürgersinn der Gemeinde."
+passes = "Das sanierte Rathaus hat wieder ein Bürgerbüro, und der Ratssaal ist barrierefrei."
+sources = [
+  { source = "wikipedia-de", where = "Sprache und Tonfall; Werbesprache, revision 271721424", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 1 Bedeutungsinflation, commit 4e5aa4c51230", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-promo-words"
+category = "word"
+kinds = ["post", "document"]
+models = "any"
+what = "Sells a place, a firm or a product with brochure words where a neutral one would do."
+instead = "Describe what is there, and let the reader judge."
+strength = "weak"
+terms = [
+  { term = 'atemberaubend\w*', instead = "say what one sees" },
+  { term = 'bahnbrechend\w*', instead = "say what is new, and since when" },
+  { term = 'im herzen (?:der|des|von)', instead = "in, or the address" },
+  { term = 'revolutionier\w*', instead = "say what it changes" },
+  { term = 'reiche[nrs]? (?:kulturelle[nrs]? )?(?:erbes?|geschichte|traditionen?)', instead = "name one piece of it" },
+  { term = 'wegweisend\w*', instead = "say who followed" },
+  { term = 'paradigmenwechsel\w*', instead = "say what changed for whom" },
+  { term = 'kulturelle[nrs]? teppich\w*', instead = "name the groups" },
+]
+flags = "Im Herzen der Altstadt erwartet Sie ein atemberaubendes Café mit bahnbrechendem Konzept."
+passes = "Das Café liegt in der Altstadt, Ecke Marktstraße, und hat montags zu."
+sources = [
+  { source = "wikipedia-de", where = "Werbesprache, revision 271721424", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, Vokabular-Tabelle, Tier 1; 4 Werbevokabular, commit 4e5aa4c51230", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-stock-openers"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Opens on a stock line about fast-changing modern times."
+instead = "Start with the subject."
+strength = "weak"
+terms = [
+  { term = 'in einer sich (?:\w+ ){0,2}(?:wandelnden|verändernden) welt', instead = "cut" },
+  { term = 'in (?:der|unserer) heutigen,? (?:schnelllebigen|digitalen|vernetzten|modernen) (?:zeit|welt|gesellschaft)', instead = "cut, or name the year" },
+  { term = 'im (?:digitalen )?zeitalter (?:der|von) (?:digitalisierung|ki|künstlicher intelligenz)', instead = "cut" },
+]
+flags = "In der heutigen digitalen Welt muss auch ein Sportverein online erreichbar sein."
+passes = "Unser Sportverein ist jetzt auch online erreichbar: Termine stehen auf der Website."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, Vokabular-Tabelle, Tier 3; sources/DE-sources.md, 4 Eology, commit 4e5aa4c51230", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-future-closers"
+category = "phrase"
+# Not mail or chat, where wir dürfen gespannt sein is a plain wait for news.
+kinds = ["post", "document"]
+models = "any"
+what = "Closes on a stock look ahead that promises nothing anyone can check."
+instead = "End on the last fact, or the next date."
+strength = "weak"
+terms = [
+  { term = 'nur die zeit wird (?:es )?zeigen', instead = "cut" },
+  { term = '(?:wir dürfen|man darf|darf man) gespannt sein', instead = "say what is decided, and when" },
+  { term = 'die zukunft sieht (?:\w+ )?(?:rosig|vielversprechend|glänzend) aus', instead = "give the plan or the forecast" },
+  { term = 'spannende zeiten (?:stehen|liegen)', instead = "cut" },
+  { term = '(?:die|unsere) zukunft (?:gemeinsam )?(?:zu )?gestalten|gestalten wir (?:gemeinsam )?(?:die|unsere) zukunft', instead = "say what you will do next" },
+]
+flags = "Der neue Standort ist bezogen. Wir dürfen gespannt sein, was die nächsten Jahre bringen."
+passes = "Der neue Standort ist bezogen. Im März ziehen auch Einkauf und Lager um."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 29 Generische Schlussformeln and 41; Vokabular-Tabelle, Tier 3, commit 4e5aa4c51230", seen = 2026-11-07 },
+  { source = "wikipedia-de", where = "Schlussfolgerungen, revision 271721424", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-emphasis-phrases"
+category = "phrase"
+# Not mail or chat. Only the calques of "it's important to note": wichtig zu beachten or zu bedenken, es sei
+# darauf hingewiesen and bemerkenswert ist are how reports and instructions are written (#23's review, F1).
+kinds = ["post", "document"]
+models = "any"
+what = "Tells the reader that a point deserves attention before making it."
+instead = "Make the point; the reader decides what matters."
+strength = "weak"
+terms = [
+  { term = '(?:es ist|dabei ist es|hierbei ist es) (?:jedoch |dabei |auch )?(?:wichtig|entscheidend),? zu (?:bemerken|betonen)', instead = "cut, and give the fact" },
+]
+flags = "Es ist wichtig zu betonen, dass die Kantine ab Montag früher schließt."
+passes = "Achtung: Die Kantine schließt ab Montag schon um 14 Uhr."
+sources = [
+  { source = "wikipedia-de", where = "Redaktionelle Kommentare, revision 271721424", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 31 KI-Hervorhebungsmarker, commit 4e5aa4c51230", seen = 2026-11-07 },
+  { source = "stroeer-2023", where = "Noch mehr Phrasen: ChatGPT und der Satzanfang, updated 18 Dec 2024", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-dive-in"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Invites the reader to dive in with it, or offers to break the subject down, as a chatbot's walk-through does."
+instead = "Start with the first point."
+strength = "weak"
+terms = [
+  { term = 'tauch(?:en|t) (?:wir|sie|ihr) (?:\w+ ){0,3}ein', instead = "cut" },
+  { term = 'lass(?:t|en sie)? uns (?:\w+ ){0,3}eintauchen', instead = "cut" },
+  { term = 'lass(?:en sie)? mich (?:das|dies|es) (?:\w+ )?aufschlüsseln', instead = "give the parts" },
+]
+flags = "Tauchen wir gemeinsam ein in die Geschichte unserer Bäckerei."
+passes = "Unsere Bäckerei gibt es seit 1952; angefangen hat sie mit einem Ofen."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 27 Tauchen-wir-ein-Konstruktionen and 33 Denkprozess-Artefakte, commit 4e5aa4c51230", seen = 2026-11-07 },
+  { source = "stroeer-2023", where = "Tauchen Sie ein: ChatGPT und Arielle, updated 18 Dec 2024", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-list-announcers"
+category = "phrase"
+# Not eine große Palette or eine Vielzahl von, which plain reports write (#23's review, F1).
+kinds = ["post", "document"]
+models = "any"
+what = "Announces a list with a stock phrase of plenty before naming the items; common in people's ad copy too."
+instead = "Name the items, or give the number."
+strength = "weak"
+terms = [
+  { term = 'eine[rn]? vielzahl an', instead = "viele, or the number" },
+  { term = 'eine[rn]? breiten? palette (?:an|von)', instead = "name the items" },
+]
+flags = "Auf dem Markt gibt es eine breite Palette an Käsesorten aus der Region."
+passes = "Auf dem Markt gibt es Bergkäse, Ziegenkäse und Quark aus der Region."
+sources = [
+  { source = "stroeer-2023", where = "Aufzählungen und Paletten, updated 18 Dec 2024", seen = 2026-11-07 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, Vokabular-Tabelle, Tier 2, commit 4e5aa4c51230", seen = 2026-11-07 },
+]
+
+[[sign]]
+id = "de-rhetorical-openers"
+category = "phrase"
+# Not mail or chat, where was wäre, wenn is a real proposal.
+kinds = ["post", "document"]
+models = "any"
+what = "Opens with a question nobody asked: what if, have you ever wondered."
+instead = "Start with the point or the news."
+strength = "weak"
+check = '''^\W*(?:was wäre,? wenn\b|ha(?:ben sie sich|st du dich|bt ihr euch) (?:schon (?:einmal |mal )?|jemals |auch schon )?gefragt)'''
+flags = "Was wäre, wenn Ihr Kühlschrank selbst Milch nachbestellt?"
+passes = "Unser Kühlschrank bestellt jetzt selbst Milch nach, wenn der Vorrat zur Neige geht."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 24 Rhetorische Frageöffner, commit 4e5aa4c51230", seen = 2026-11-07 },
+]

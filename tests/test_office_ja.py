@@ -126,6 +126,8 @@ MACHINE = [
     ("ja-bold-not-rendered", "必ず**「保存」**、それから終了。"),
     ("any-unfilled-placeholder", "お世話になっております。\uff3bここに会社名を入れる\uff3dの山田です。"),
     ("any-unfilled-placeholder", "【ここに本文を貼り付け】"),
+    # a full-width bracket after the slot is no Markdown link (#22's review, F12)
+    ("any-unfilled-placeholder", "【ここに会社名を入力】\uff08正式名称\uff09"),
     ("any-unfilled-placeholder", "お世話になっております。[Your Name]です。"),
     ("any-unfilled-placeholder", "詳細は insert_link_here をご覧ください。"),
     ("any-unfilled-placeholder", "締め切りは2026-xx-xxです。"),

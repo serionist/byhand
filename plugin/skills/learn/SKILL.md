@@ -63,17 +63,18 @@ habits, words they like and words they never use.
 ## Learn a style
 
 1. **The samples:** files the user points at, or text they paste. At least two; more is better.
-2. **Screen each one** by `check`'s steps 2 to 7: Read `${CLAUDE_PLUGIN_ROOT}/skills/check/SKILL.md`. Its paths name
+2. **Screen each one** by `check`'s steps 1 to 7: Read `${CLAUDE_PLUGIN_ROOT}/skills/check/SKILL.md`. Its paths name
    the plugin's folder with a variable: it is `${CLAUDE_PLUGIN_ROOT}`. A file goes through the `byhand:scan` agent;
    pasted text is read. A sample with a strong or usual sign, or 3 different weak ones in a paragraph, reads as
    AI-written: leave it out and name it with the signs found, unless the user says it is theirs.
 3. **Judge** the language from the samples, and propose a short name.
-4. **Write the style** from the samples left: how this person writes, in their own patterns, not a list of virtues.
+4. **Write the style** from the samples left, and from the user's own lines only: never a quoted reply, a forwarded
+   message or code. How this person writes, in their own patterns, not a list of virtues.
    Pick the excerpts. Note the signs their samples use on purpose: those are the `keeps` to offer.
 5. **Show it with one question:** the name, the kinds it should be the default for (naming a style that would lose
    that default), and the signs to keep. A name the index already has: say so; the old style's `## Corrections`
    carry over.
-6. **Save on a yes,** with Write: the style, then the index with its row (a new index starts with the header above).
+6. **Save on a yes,** with Write or Edit: the style, then the index with its row (a new index starts with the header above).
    Setting a default removes it from the style that held it.
 
 ## Other requests
@@ -83,6 +84,6 @@ habits, words they like and words they never use.
 - **Remove:** take its row out of the index, and give the user the file's path to delete; no tool here deletes. To
   rename a style, learn it again, or rename the file and its row by hand.
 - **Remember:** add the rule under `## Corrections` of the style the last draft used, or the one the user names; ask
-  when it isn't clear. Date it, and name the kind of text it came from.
+  when it isn't clear. No style yet: say so, and offer to learn one from their samples. Date it, and name the kind of text it came from.
 
 Every save asks the user first, as it should. Never put the user's samples anywhere but their own style file.

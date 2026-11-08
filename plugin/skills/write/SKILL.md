@@ -36,7 +36,7 @@ listing, which ask the user or are missing on some machines.
    `<language>/<family>.short.md`; for a script variant its base language's too (`zh` for `zh-Hant`). For a post or a
    document, the same names with `.long.md` too. A file that isn't there has no signs: go on.
 6. **Draft.** The style first: its `## Corrections` above its rules, its rules above the signs, its excerpts as the
-   voice to match. Then the signs:
+   voice to match. Then the signs whose kinds, in the brackets after the id, hold this kind (none named: every kind):
    - no strong or usual sign;
    - never 3 different weak words or phrases in one paragraph or section;
    - a sign that names model versions only where its range holds yours (`5.x` is the whole 5 series, `and later` every
@@ -49,5 +49,6 @@ listing, which ask the user or are missing on some machines.
    of what you avoided, no offer after it. A note only when you had to guess something the text needs (a date, a
    name).
 
-A second text in the same language reads nothing new. When the user says "remember: …" about how they write, that is
+A second text reads only what isn't in context yet: another style, or the long files for a post or a document.
+When the user says "remember: …" about how they write, that is
 `learn`'s.

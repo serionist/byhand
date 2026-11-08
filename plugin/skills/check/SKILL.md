@@ -20,8 +20,8 @@ a score, a percentage or a verdict on who wrote it: byhand is for a person's own
    answer of "no signs": ask the user to paste the text or save it as plain text.
 2. **Its language and kind.** Judge them from the text, and say them in the answer: the language as its code (`en`,
    `hu`, `zh-Hant`), the kind as `message`, `email`, `post` or `document`.
-3. **Its author.** A model family only when the user names one ("Claude wrote this", "from ChatGPT"): `claude`,
-   `gpt`, `gemini`, `grok`, `llama`, `deepseek`, `qwen`, `kimi`, `mistral` or `doubao`. Otherwise every family.
+3. **Its author.** A model family only when the user names one ("Claude wrote this", "from ChatGPT"), as the check
+   files name families in their ranges (`gpt 5 and later`). Otherwise every family.
 4. **Read the signs** with Read: `${CLAUDE_PLUGIN_ROOT}/signs/any/check.md`, and
    `${CLAUDE_PLUGIN_ROOT}/signs/<language>/check.md`. For a script variant, its base language's too (`zh` for
    `zh-Hant`). A language with no file has no signs of its own yet: use `any` alone, and say so. Keep the signs whose
@@ -31,15 +31,16 @@ a score, a percentage or a verdict on who wrote it: byhand is for a person's own
    check files' paths. Wait for its answer: one line per hit, `line`, `id`, the matched text. Text in the chat gets no
    scan; the answer says the patterns ran only on files.
 6. **Read the text against the signs.** Most signs have no pattern: structure, rhythm, formatting, a stock opening or
-   close. Read for each of them. Then go through scan's hits and drop those inside code, a quoted reply (lines starting
-   `>`, or a forwarded message) or a link's address: the user didn't write those.
+   close. Read for each of them. Text in the chat had no scan, so read it for every sign, the patterned ones too, by
+   their Words and Pattern. Then go through the hits and drop those inside code, a quoted reply (lines starting `>`,
+   or a forwarded message) or a link's address: the user didn't write those.
 7. **Count.** A strong or usual sign counts alone. A weak sign counts only where 3 or more different weak words or
    phrases meet in one paragraph or section: the same phrase twice, or one phrase two signs find, counts once.
 
 ## Answer
 
-- The language and kind you judged, the families you read, and whether the patterns ran (a file) or not (pasted text,
-  or a language with no signs of its own).
+- The language and kind you judged, the families you read, whether the patterns ran (a file) or not (pasted text),
+  and, for a language with no signs of its own, that only the signs of every language were read.
 - The signs found, strongest first, each as: the line, the sign's id, the words in the text, and what a person writes
   instead, from the sign's `Instead`.
 - Weak signs only in their clusters, each cluster with its paragraph and its words.

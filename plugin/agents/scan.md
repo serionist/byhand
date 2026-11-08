@@ -18,8 +18,7 @@ From the `check` skill:
 - **the file:** the path of the text to scan;
 - **the kind:** `message`, `email`, `post` or `document`;
 - **the families:** the model families the text may come from, or `every`;
-- **the check files:** one to three paths of `check.md` files, or the patterns themselves, one per line as
-  `id<TAB>pattern`.
+- **the check files:** one to three paths of `check.md` files.
 
 ## What you do
 

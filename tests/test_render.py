@@ -156,14 +156,38 @@ def test_a_check_line_adds_the_pattern_grep_runs():
         ("verdeutlichend|widerspiegelnd|betonend", ["verdeutlichend", "widerspiegelnd", "betonend"]),
         (r"mark(?:s|ed|ing)? a (?:pivotal|significant) (?:moment|shift)", ["mark a pivotal shift"]),
         (r"in today['\u2019]?s (?:age|era)", ["in today's age"]),  # an optional apostrophe prints
-        (r"\w+ként\s+szolgál\w*", ["\u2026ként szolgál"]),  # a required run is the ellipsis, never a filler letter
-        (r"kulcsfontosság\w*", ["kulcsfontosság"]),
+        (r"\w+ként\s+szolgál\w*", ["\u2026ként szolgál\u2026"]),  # a required run: never a filler letter
+        (r"kulcsfontosság\w*", ["kulcsfontosság\u2026"]),  # a stem shows its open end
+        ("underscore a|underscore the", ["underscore a", "underscore the"]),  # a shared prefix keeps both
+        (r"im (?:digitalen )?zeitalter", ["im zeitalter"]),  # an optional word is not the bare form
+        (r"a[^.!?]b", ["a\u2026b"]),  # a negated class never prints a character it excludes
         ("至[关關]重要|[举舉]足[轻輕]重", ["至关重要", "举足轻重"]),
         (r"поворотн\w+ (?:момент|пункт)", ["поворотн\u2026 пункт"]),
     ],
 )
 def test_a_term_prints_one_plain_word_per_alternative(term, printed):
     assert render.words(term) == printed
+
+
+def test_every_top_level_alternative_of_the_real_catalogue_has_its_word():
+    # Python's parser folds a prefix two alternatives share; split on the term's own text, none is lost.
+    found, problems = signs.load()
+    assert problems == []
+    lost = [
+        (term.term, alternative)
+        for item in found.signs.values()
+        for term in item.terms
+        for alternative in render.alternatives(term.term)
+        if not any(
+            re.fullmatch(alternative, word.replace(render.ELLIPSIS, "x"), re.IGNORECASE)
+            for word in render.words(term.term)
+        )
+    ]
+    assert lost == []
+
+
+def test_alternatives_split_only_at_the_top_level():
+    assert render.alternatives(r"a(?:b|c)|[|x]|d\|e") == ["a(?:b|c)", "[|x]", "d\\|e"]
 
 
 def test_a_term_with_syntax_no_word_can_show_is_refused():

@@ -65,7 +65,10 @@ def part(sign: Sign) -> str:
 
 
 def _class(items: list[tuple[Any, Any]]) -> str:
-    """A character class's word: its first literal, a space for `\\s`, else the ellipsis."""
+    """A character class's word: its first literal, a space for `\\s`, else the ellipsis. A negated class's literals
+    are what it excludes, so it prints the ellipsis."""
+    if any(op.name == "NEGATE" for op, _value in items):
+        return ELLIPSIS
     for op, value in items:
         if op.name == "LITERAL":
             return chr(value)
@@ -96,18 +99,41 @@ def _shortest(items: Iterable[tuple[Any, Any]]) -> str:
             word = _shortest(inner)
             if low:
                 out.append(ELLIPSIS if ELLIPSIS in word else word * low)
-            elif high == 1 and word and not word.isalnum() and ELLIPSIS not in word:
-                out.append(word)  # an optional apostrophe or space prints: "today's", not "todays"
+            elif word == ELLIPSIS and high > 1 and out:
+                out.append(ELLIPSIS)  # a stem's open end: "служ…", not "служ", which reads as a typo
+            elif high == 1 and word and not any(char.isalpha() for char in word):
+                out.append(word)  # an optional apostrophe or space prints: "today's", not "todays"; a word doesn't
         elif name != "AT":  # `\b`, `^` and `$` print nothing; `validate` refuses what else Grep can't run
             raise ValueError(f"no word for {name}")
     return re.sub(f"{ELLIPSIS}+", ELLIPSIS, "".join(out))
 
 
+def alternatives(term: str) -> list[str]:
+    """A term's top-level alternatives, split on its own text: Python's parser pulls a prefix the alternatives share
+    out of them (`a b|a c` becomes `a (?:b|c)`), which would leave one word for two."""
+    found, depth, start, index = [], 0, 0, 0
+    while index < len(term):
+        char = term[index]
+        if char == "\\":
+            index += 1
+        elif char == "[":
+            index = term.index("]", index + 2 if term[index + 1 : index + 2] in ("]", "^") else index + 1)
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+        elif char == "|" and depth == 0:
+            found.append(term[start:index])
+            start = index + 1
+        index += 1
+    return [*found, term[start:]]
+
+
 def words(term: str) -> list[str]:
     """A term's plain words for `write`: one per top-level alternative, each the shortest text it matches."""
-    parsed = regex_parser.parse(term).data
-    branches = parsed[0][1][1] if len(parsed) == 1 and parsed[0][0].name == "BRANCH" else [parsed]
-    return list(dict.fromkeys(_shortest(branch).strip() for branch in branches))
+    return list(
+        dict.fromkeys(_shortest(regex_parser.parse(alternative).data).strip() for alternative in alternatives(term))
+    )
 
 
 def _span(span: ModelRange) -> str:

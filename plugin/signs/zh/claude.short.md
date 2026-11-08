@@ -5,5 +5,5 @@ A weak sign counts only with 3 or more hits of weak signs in a paragraph or sect
 A sign holds for the versions it names: `5.x` is the whole 5 series, `and later` every newer one.
 
 - zh-holding-space (usual; claude 4.7 and later): Comforts like a counsellor: promises to hold the reader steady, and tells them what they really feel. Instead: Answer what was said; offer help in plain words, and don't diagnose.
-- zh-gpt-5-register (weak; claude 5 and later): Talks about ordinary work in debugging and combat verbs, and pushes offers to do more. Instead: Use the plain verb; offer more once, and say what. Words: 揪出来: found; 补一刀: add; 稳稳兜住: handle; 不瞎猜: say what you know; 坐实: confirmed; 我立马开始: cut; 收口: finish; 要不要我顺手: offer once, plainly
+- zh-gpt-5-register (weak; claude 5 and later): Talks about ordinary work in debugging and combat verbs, and pushes offers to do more. Instead: Use the plain verb; offer more once, and say what. Words: 揪出来: found; 补一刀: add; 稳稳兜住: handle; 不瞎猜: say what you know; 坐实: confirmed; 我立马开始, 我立馬開始: cut; 收口: finish; 要不要我顺手: offer once, plainly
 - zh-honesty-preface (weak; claude 4.7 and later): Announces that it is about to be honest or serious, to borrow trust for an ordinary line. Instead: Say the point; let the content carry it. Words: 说句实话, 坦白讲: cut; 我必须认真地说: cut

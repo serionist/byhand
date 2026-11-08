@@ -1,7 +1,13 @@
 ---
-max_turns: 40
+max_turns: 30
 timeout_seconds: 600
-allowed_tools: [Read, Glob, Grep, Skill, Agent]
+allowed_tools: [Read, Skill]
 ---
 
-帮我看看 text 文件夹里的 post.md 读起来像不像 AI 写的？我准备发到公众号。
+帮我看看这篇读起来像不像 AI 写的？我准备发到公众号：
+
+最近很多读者问我，换工作之前要做哪些准备。
+
+我想先说一句：别着急，你的焦虑我都懂，我会稳稳接住你。
+
+我自己的做法很简单：先把这两年做过的项目列出来，再算一下存款够撑几个月。

@@ -78,3 +78,35 @@ Checks: Python and Claude Code's Grep tool on the 44 ASCII English `MACHINE` pre
 lines in `OFFICE`: 44 found and none in both. 10 mutants of the round's changes, one at a time (no dash or bracket, no
 above or below, that needing a space, a linking word without a space after it, no incorporating, tailored or without,
 no you can, no suitable or in, no comma, not of it, no shared or wrote): `tests/test_office.py` fails on each.
+
+## Round 3
+
+**Where:** PR #35, `1818cb8..1a7f8b5`, a fresh reviewer who probed the fixes with about 75 invented person lines and
+55 chatbot lines, against `main`, round 2's commit and the head, under Python and Claude Code's Grep tool.
+**Verdict:** needs-fixes, on F7. F4 holds by `MACHINE`'s incorporating, tailored, without, em dash, bracket, below,
+based on, you can, comma, of it, in, suitable and paragraph-above lines; F6 by `OFFICE`'s email to-do list line, with
+"a more neutral version of this banner" holding "of this" to text.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F7 | major | any-assistant-preamble, English branch, the same tails | F4's fix was partial: a bare register version still missed what `main` found ("a more professional version - clear, polite and to the point:", "(great for Slack)", "to send to your manager", "without losing the key points", "you could use", "of the above", "ready to send", "addressed to the board"), and so did the reader's text ("as requested", "while keeping the key points", "you can send", "aimed at", "focusing on") | fixed: after a register version, anything but "of" and an object that is no text, so "of the logo" still passes and the list can't fall short again; after the reader's text, the linking words grow (addressed, aimed, along, as, focusing, following, keeping, making, now, per, ready, reflecting, suitable, while, you), still no generic -ing word, which would let "email marketing plan" through. 16 lines join `MACHINE`; "your email marketing plan" and "a shorter version, as requested" join `OFFICE` |
+
+Refuted: a bare register version in PDF, in grey, with the new logo or "you can print" fires, as on `main`: F5's class,
+by the rule's letter. Compounds after the new dash, bracket and above or below ("your email list (without the
+bounces)", "post-dated price list", "reply-to address") pass. HR's "your revised post based on the new structure" fires,
+as it did with a comma at round 2: British "post" for a job, an eager yes and a closing colon at once, rare. Tutors'
+and editors' lines on the reader's essay or speech fire, by the rule. The register tails' `\b` lets "in-house" through,
+on a bare register version that fires anyway.
+
+Improvements: the ASCII " - " after the text pinned by a `MACHINE` line, taken; the long comment line rewrapped, taken.
+Still missed, and left as rare: "of your essay and some feedback" (and would let "your email and phone policy" in).
+
+Checks: Python and Claude Code's Grep tool on the 59 ASCII English `MACHINE` preamble lines and the 55 English "here"
+lines in `OFFICE`: 59 found and none in both. 6 mutants of the round's changes (the register tail without the o-not-f
+guard, or taking "of the logo"; no ASCII hyphen; no aimed or focusing; no as, while or you; no "of the above"):
+`tests/test_office.py` fails on each.
+
+**Closed** at 2c84dbd: F7 fixed, F5 and part of F6 recorded as wontfix, no blocker or major open; `uv run tools/gate.py
+full` passed. No fourth round, on the maintainer's rule not to overcomplicate: the register version now takes anything
+up to the colon (but "of" and an object that is no text), so its tail can't fall short again. The one list left is
+the words that may follow the reader's text, kept because "your email signature" and "your email policy" (F1) must pass.

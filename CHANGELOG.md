@@ -5,6 +5,8 @@ before `1.0` a minor may break something, under Breaking.
 
 ## Unreleased
 
+## 0.1.0 (2026-11-09)
+
 ### Added
 
 - `/byhand:write`: writes a message, a mail, a post or a document in your own style, without the signs of AI writing.

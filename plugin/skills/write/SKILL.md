@@ -49,6 +49,9 @@ listing, which ask the user or are missing on some machines.
    of what you avoided, no offer after it. A note only when you had to guess something the text needs (a date, a
    name).
 
-A second text reads only what isn't in context yet: another style, or the long files for a post or a document.
-When the user says "remember: …" about how they write, that is
-`learn`'s.
+**Each new text starts this skill again,** even later in the same conversation: call the Skill tool for
+`byhand:write` before anything else. The grant to read the sign files lasts only the turn the skill starts in;
+without it every read asks the user. Then read only what isn't in context yet: another language's files, another
+style, or the long files for a post or a document.
+
+When the user says "remember: …" about how they write, that is `learn`'s.

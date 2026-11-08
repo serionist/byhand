@@ -91,7 +91,11 @@ models = "any"
 what = "Ends a fact on a clause saying what it shows, or has the fact itself highlight or underline something."
 instead = "Stop at the fact. If its meaning is worth stating, state it separately and name who draws it."
 strength = "usual"
-flags = "The team won the cup in 1998, reflecting the club's enduring commitment to youth."
+# Only Hungarian has a check: a -va/-ve participle tacked on after a comma, with its object. English's -ing clause is
+# for the model's read, as a person writes "reflecting the weaker dollar" too. "A szállás biztosítva." has no comma, and
+# "biztosítva lesz a fizetés" no object after it: both are plain Hungarian and pass.
+check = ',\s+(?:ezzel is\s+|így\s+)?(?:hozzájárulva|tükrözve|elősegítve|biztosítva)\s+az?\b'
+flags = "The team won the cup in 1998, reflecting the club's enduring commitment to youth.\nAz új raktár hétfőn nyitott, tükrözve a cég hosszú távú elköteleződését a régió mellett."
 passes = "Sales fell 8% in the third quarter, reflecting the weaker dollar."
 sources = [
   { source = "wikipedia-en", where = "Superficial analyses, revision 1384165696", seen = 2026-11-07 },
@@ -99,6 +103,8 @@ sources = [
   { source = "wikipedia-ru", where = "Поверхностный анализ, revision 156024043", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "分析流於表面, revision 95337857", seen = 2026-11-07 },
   { source = "reinhart-2025-pnas", where = "arXiv v2: present participial clauses 2 to 5 times the human rate in instruction-tuned models", seen = 2026-11-07 },
+  { source = "humanizer-hu", where = "SKILL.md, 15. Felületes határozói igenevek (-va/-ve), commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, the two any signs", seen = 2026-11-08 },
 ]
 
 [[sign]]
@@ -263,7 +269,8 @@ models = "any"
 what = "Stops to tell the reader which part deserves their attention."
 instead = "State the point; the reader decides what to note."
 strength = "usual"
-check = '''\bit(?:['’]s| is) (?:essential|crucial|important|worth) (?:noting|to note)'''
+# Hungarian needs its "hogy": "fontos kiemelni a határidőt" is a plain request to stress the deadline.
+check = '''\bit(?:['’]s| is) (?:essential|crucial|important|worth) (?:noting|to note)|\bfontos (?:(?:azonban|ugyanakkor|viszont|itt|még) )?(?:kiemelni|hangsúlyozni|megjegyezni),? hogy\b'''
 flags = "It is important to note that results may vary by region."
 passes = "It's important to call them before noon: results vary by region."
 sources = [
@@ -271,6 +278,9 @@ sources = [
   { source = "wikipedia-de", where = "Redaktionelle Kommentare, revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-ru", where = "Дидактические и редакционные оговорки, revision 156024043", seen = 2026-11-07 },
   { source = "slop-gate", where = "rules/vocabulary.json, commit f78d5cbee0dc", seen = 2026-11-07 },
+  { source = "wikipedia-hu-pump-295", where = "ChatGPT-s cikkek – van-e válaszunk?: ChatGPT's own Hungarian reply, quoted 17 Mar 2023, revision 27062227", seen = 2026-11-08 },
+  { source = "humanizer-hu", where = "SKILL.md, 12. Túlhasznált AI-szavak, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, the two any signs", seen = 2026-11-08 },
 ]
 
 [[sign]]

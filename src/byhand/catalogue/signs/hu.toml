@@ -1,0 +1,232 @@
+# Hungarian's signs. A sign here cites a source that covers Hungarian; the shape of a sign is in `any.toml`. Hungarian
+# is written with spaces, so `validate` wraps a sign's terms in `\b`: a term is a stem with its suffixes (`átfogó\w*`),
+# and as Hungarian builds a superlative in front of the stem, an adjective may take `(?:leg)?`. Hungarian's own
+# typography is a person's, never a sign: „…” quotes, straight quotes, the spaced short dash (–). Checks run
+# case-insensitive, so a sign about capitals (Title Case, Ön and ön) is for the model's read. The measured signs rest on
+# counts in Hun_ai_test, a 2024 corpus of instruction answers, not work mail, so each is weak; the two that count alone
+# are inflection errors a native speaker doesn't make (the maintainer, #4). `tests/test_office_hu.py` holds plain work
+# mail, chat, minutes and reports against them.
+
+# Formatting.
+
+[[sign]]
+id = "hu-em-dash"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Sets off a clause with the long English dash (—), which Hungarian typography doesn't use."
+instead = "Use the spaced short dash (–), a comma or brackets, or end the sentence."
+strength = "weak"
+# Text on both sides, so a rule of dashes under a signature is no clause; and nothing after a comma or a full stop, so a
+# price written 4500,— Ft is none either.
+check = '[^\s—.,] ?— ?[^\s—]'
+flags = "A raktárköltözés — ha a szállító tartja a dátumot — péntekre lezárul."
+passes = "A raktárköltözés – ha a szállító tartja a dátumot – péntekre lezárul."
+sources = [
+  { source = "hun-ai-test", where = "mszny_test_final.csv, our count: the long dash in 11 of 1,000 human texts and 37 of 1,000 AI texts, commit c7c387679336", seen = 2026-11-08 },
+  { source = "humanizer-hu", where = "SKILL.md, 8. Gondolatjel mint univerzális kötőelem, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 4", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "hu-english-quotes"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Quotes with English curly marks (“…”); Hungarian opens low and closes high („…”), and plain text uses straight quotes."
+instead = "Write „…”, or straight quotes where the tool gives them."
+strength = "weak"
+# Opens high on the left mark; Hungarian's own quote opens low, so „…” and "…" never match.
+check = '“[^”„\n]{1,120}”'
+flags = "A tárgysorba írd be, hogy “Leltár 2025”, különben a szűrő nem találja meg."
+passes = "A tárgysorba írd be, hogy „Leltár 2025”, különben a szűrő nem találja meg."
+sources = [
+  { source = "humanizer-hu", where = "SKILL.md, 21. Tipográfiai idézőjelek, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 13", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "hu-title-case-headings"
+category = "formatting"
+kinds = ["document", "deck", "post"]
+models = "any"
+what = "Capitalises every word of a heading or a bold label, as English titles do; Hungarian capitalises the first word and proper names only."
+instead = "Keep the capital on the first word and on names: Negyedéves bérköltség és létszám."
+strength = "weak"
+flags = "## Negyedéves Bérköltség És Létszám"
+passes = "## Negyedéves bérköltség és létszám"
+sources = [
+  { source = "humanizer-hu", where = "SKILL.md, 20. Dekoratív címsorok, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 10", seen = 2026-11-08 },
+]
+
+# Structure: how the text is built. Each is for the model's own read.
+
+[[sign]]
+id = "hu-address-switching"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Changes how it speaks to the reader partway through: te in one sentence, Ön in the next, or ön and Ön mixed."
+instead = "Settle on te or Ön for this reader before writing, and use that form in every sentence."
+strength = "usual"
+flags = "Kérjük, a jelentkezési lapot péntekig küldje vissza. Ha valami nem világos, hívj fel nyugodtan."
+passes = "Kérjük, a jelentkezési lapot péntekig küldje vissza. Ha valami nem világos, hívjon fel nyugodtan."
+sources = [
+  { source = "humanizer-hu", where = "SKILL.md, Megszólítás and 26. Tegezés és magázás keveredése, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 6", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "hu-explicit-subject-repeat"
+category = "structure"
+kinds = ["document", "email"]
+models = "any"
+what = "Names the same subject at the head of sentence after sentence, though Hungarian leaves out a subject that carries on: it reads as translated."
+instead = "Drop the repeated subject where the verb already carries it, or join the sentences; a pronoun can stand once. Don't trade the noun for synonyms."
+strength = "weak"
+flags = "A kávégép a konyhában van. A kávégép csak reggel 7 és este 6 között működik. A kávégép tisztítását Gábor intézi."
+passes = "A kávégép a konyhában van, reggel 7 és este 6 között működik. A tisztítását Gábor intézi."
+sources = [
+  { source = "humanizer-hu", where = "SKILL.md, 7. Ismétlődő mondatkezdés, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 15", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "hu-parenthetical-gloss"
+category = "structure"
+kinds = ["document", "email"]
+models = "any"
+what = "Puts a term's translation in brackets beside it, English after Hungarian or the reverse, for a reader who knows the word."
+instead = "Use the word the team uses, once, with no gloss."
+strength = "weak"
+flags = "A lekérdezés (query) eredményét a gyorsítótárba (cache) írjuk, a naplót (log) hetente ürítjük."
+passes = "A lekérdezés eredményét a cache-be írjuk, a logot hetente ürítjük."
+sources = [
+  { source = "humanizer-hu", where = "SKILL.md, Zárójel, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 16", seen = 2026-11-08 },
+]
+
+# Words and phrases.
+
+[[sign]]
+id = "hu-hyphenated-case-ending"
+category = "word"
+kinds = ["any"]
+# Every model the source measured did it; Gemma 3 and chatPuli did too, and have no family here.
+models = [
+  { family = "gemini", from = "2.5" },
+  { family = "grok", from = "4" },
+  { family = "llama", from = "3.3" },
+  { family = "mistral", from = "3.1" },
+  { family = "qwen", from = "3" },
+]
+what = "Joins a case ending to a Hungarian name that ends in a or e with a hyphen and no long vowel (Anna-val), which a native speaker doesn't write."
+instead = "Join the ending to the name and lengthen its last vowel: Annával, Bencének, Nyíregyházán."
+strength = "usual"
+# A closed list of common Hungarian names and towns ending in a or e. A foreign or product name (Jira-ban, Teams-en),
+# which people do hyphenate, is never matched; nor is a double name (Anna-Mária) or the question particle (Anna-e).
+check = '\b(?:réka|bence|zsófia|attila|nóra|kata|imre|júlia|petra|csaba|hanna|ilona|béla|lilla|erika|gyula|dóra|anna|luca|emese|zita|viktória|mária|andrea|krisztina|éva|gabriella|nyíregyháza|békéscsaba|tatabánya)-(?:v[ae]l|n[ae]k|b[ae]n?|b[óő]l|r[ae]|r[óő]l|t[óő]l|h[eo]z|n[áé]l|ért|ig|ként|t|n|é|ék)\b'
+flags = "Csütörtökön Zsófia-val nézem át a szerződést, a végleges változatot Bence-nek küldöm."
+passes = "Csütörtökön Zsófiával nézem át a szerződést, a végleges változatot Bencének küldöm."
+sources = [
+  { source = "novak-2026-morphology", where = "MSZNY 2026, pp. 47 and 54-55: the extra hyphen, an error class in every model measured, and appendix tables 4 to 6", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 5", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "hu-place-name-suffix"
+category = "word"
+kinds = ["any"]
+models = [
+  { family = "gemini", from = "2.5" },
+  { family = "grok", from = "4" },
+  { family = "llama", from = "3.3" },
+  { family = "mistral", from = "3.1" },
+  { family = "qwen", from = "3" },
+]
+what = "Gives a well-known Hungarian town the wrong place ending (Szegedben for Szegeden, Győrön for Győrben), which a native speaker doesn't write."
+instead = "Use the town's own ending: Szegeden, Pécsen, Miskolcon, Kecskeméten; but Győrben, Debrecenben, Egerben, Sopronban."
+strength = "usual"
+# The wrong forms, by town, each with its 'in', 'into' and 'from'.
+check = '\b(?:kecskemétb(?:en|e|ől)|győr(?:ön|re|ről)|szolnokb(?:an|a|ól)|sopron(?:on|ra|ról)|budapestb(?:en|e|ől)|eger(?:en|re|ről)|székesfehérvárb(?:an|a|ól)|pécsb(?:en|e|ől)|veszprém(?:en|re|ről)|miskolcb(?:an|a|ól)|debrecen(?:en|re|ről)|kaposvárb(?:an|a|ól)|szegedb(?:en|e|ől)|nyíregyházáb(?:an|a|ól))\b'
+flags = "A tavaszi vásár Kecskemétben lesz, a raktárleltár után pedig Sopronon folytatjuk."
+passes = "A tavaszi vásár Kecskeméten lesz, a raktárleltár után pedig Sopronban folytatjuk."
+sources = [
+  { source = "novak-2026-morphology", where = "MSZNY 2026, appendix tables 4 to 6: the wrong place suffix, in every model measured", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 9", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "hu-ai-vocabulary"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Reaches for weighty abstract words where a plain word or the fact itself would do."
+instead = "Say what the thing does or why it matters, in the everyday word."
+strength = "weak"
+terms = [
+  { term = '(?:leg)?zökkenőmentes\w*', instead = "simán, gond nélkül" },
+  { term = 'kulcsfontosság\w*', instead = "fontos, and for whom" },
+  { term = '(?:leg)?elengedhetetlen\w*', instead = "kell, nem megy nélküle" },
+  { term = '(?:leg)?mélyreható\w*', instead = "alapos" },
+  { term = '(?:leg)?átfogó\w*', instead = "teljes, or name what it covers" },
+  { term = 'kulcsszerep\w*', instead = "say what it does" },
+  { term = 'nélkülözhetetlen\w*', instead = "kell" },
+  { term = 'aspektus\w*', instead = "szempont, oldal" },
+  { term = 'perspektív\w*', instead = "szempont, kilátás" },
+]
+flags = "A negyedéves átfogó elemzés kulcsfontosságú megállapításai elengedhetetlenek a zökkenőmentes költözéshez."
+passes = "A negyedéves elemzés szerint a költözés két hetet csúszik, mert a bútorszállító csak 20-án ér rá."
+sources = [
+  { source = "hun-ai-test", where = "mszny_test_final.csv, our count per 100,000 characters, human then AI: kulcsfontosságú 0.3 and 5.3, elengedhetetlen 0.8 and 6.1, átfogó 0.4 and 2.6, commit c7c387679336", seen = 2026-11-08 },
+  { source = "wikipedia-hu-patrol-41", where = "the thread on suspected AI articles, 11 Feb 2025: kulcsszerepet játszik among the turns AI uses, revision 28540680", seen = 2026-11-08 },
+  { source = "humanizer-hu", where = "SKILL.md, 12. Túlhasznált AI-szavak, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 1", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "hu-promo-adjectives"
+category = "word"
+kinds = ["any"]
+models = "any"
+what = "Praises a place, an event or a product with stock words of awe, as a brochure does."
+instead = "Say what is there or what happened; one detail does more than the adjective."
+strength = "weak"
+terms = [
+  { term = 'felejthetetlen\w*', instead = "what you will remember" },
+  { term = 'magával ragad\w*', instead = "what held you" },
+  { term = 'varázslatos\w*', instead = "what it looks like" },
+  { term = '(?:leg)?lenyűgöz\w*', instead = "the detail that impressed you" },
+]
+flags = "A céges kirándulás lenyűgöző helyszíne felejthetetlen napot és varázslatos naplementét ígér."
+passes = "A céges kirándulás Visegrádon lesz, a busz reggel 8-kor indul az Árpád hídtól."
+sources = [
+  { source = "hun-ai-test", where = "mszny_test_final.csv, our count per 100,000 characters, human then AI: lenyűgöző 0.2 and 9.7, varázslatos 0.2 and 5.5, felejthetetlen 0.1 and 3.4, commit c7c387679336", seen = 2026-11-08 },
+  { source = "humanizer-hu", where = "SKILL.md, 16. Reklámnyelv, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 2", seen = 2026-11-08 },
+]
+
+[[sign]]
+id = "hu-calque-phrases"
+category = "phrase"
+kinds = ["any"]
+models = "any"
+what = "Builds on English frames in Hungarian words: helps to do, makes it possible, including, serves as."
+instead = "Use the Hungarian construction: the verb itself, -hat/-het, a …-t is, or no verb for 'is'."
+strength = "weak"
+# segít takes only abstract infinitives here, so chat's "segítesz feltölteni?" passes. -ként szolgál is in the present
+# only: "katonaként szolgált" is a plain past.
+terms = [
+  { term = '\w+ként\s+szolgál(?:nak|hat|hatnak)?', instead = "X a Y, or arra való" },
+  { term = 'beleértve', instead = "a …-t is, köztük" },
+  { term = 'lehetővé\s+t(?:esz|eszi|eszik|ett|ette|ették|eheti|ehetik|éve|enné|enni)', instead = "így … tud, or -hat/-het" },
+  { term = 'segít(?:het|enek|hetnek|ett|ettek)?\s+(?:az?\s+\w+\s+)?(?:megelőzni|javítani|optimalizálni|csökkenteni|megőrizni|fenntartani|erősíteni|előmozdítani|felismerni|növelni|fejleszteni|biztosítani|megérteni|minimalizálni|kezelni)', instead = "the verb itself: csökkenti, kevesebb lesz" },
+]
+flags = "Az új beosztás segít csökkenteni a túlórát, és lehetővé teszi, hogy mindenki kivegye a szabadságát, beleértve a gyakornokokat is."
+passes = "Az új beosztással kevesebb lesz a túlóra, és mindenki ki tudja venni a szabadságát, a gyakornokok is."
+sources = [
+  { source = "hun-ai-test", where = "mszny_test_final.csv, our count per 100,000 characters, human then AI: segít with such an infinitive 0.7 and 7.9, lehetővé tesz 1.2 and 9.6, beleértve 0.5 and 4.4, commit c7c387679336", seen = 2026-11-08 },
+  { source = "humanizer-hu", where = "SKILL.md, 10. Anglicizmusok és tükörfordítások and 18. A létige kerülése, commit 3b021d28638c", seen = 2026-11-08 },
+  { source = "maintainer-hu", where = "issuecomment-6719155663, row 3", seen = 2026-11-08 },
+]

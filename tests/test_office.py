@@ -125,8 +125,7 @@ MACHINE = [
     ("any-assistant-closing-offer", "Would you like me to convert this into a table?"),
     ("any-assistant-closing-offer", "Let me know if you'd like me to adjust the tone."),
     ("any-assistant-closing-offer", "Is there anything else you'd like me to add?"),
-    # the offer to rework the text; "Gibt es noch etwas, bei dem ich helfen kann?" is a service desk's too (#4)
-    ("any-assistant-closing-offer", "Möchten Sie, dass ich dies in eine Tabelle umwandle?"),
+    ("any-assistant-closing-offer", "Gibt es noch etwas, bei dem ich helfen kann?"),
     ("any-assistant-closing-offer", "Сообщите мне, если хотите, чтобы я сократил текст."),
     ("any-assistant-preamble", "Certainly! Here is a revised draft of your announcement:"),
     ("any-assistant-preamble", "Absolutely! Here's a rewrite:"),
@@ -136,7 +135,8 @@ MACHINE = [
     ("any-assistant-preamble", "当然可以\uff01以下是润色后的版本\uff1a"),
     ("any-assistant-preamble", "Sure! Here's a professional email you can send to your client:"),
     ("any-assistant-preamble", "Of course! Here is a shorter version of the post:"),
-    ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung:"),
+    # the German branch fires only when the line names the reader's text (#23's review, F2)
+    ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung Ihrer Notiz:"),
     ("any-assistant-preamble", "Конечно! Вот исправленный текст:"),
     ("any-assistant-preamble", "当然可以\uff01以下是修改后的版本\uff1a"),
     ("any-didactic-aside", "It's worth noting that results vary."),

@@ -15,6 +15,9 @@ from byhand import signs
 
 LOW, HIGH, EN, EM = "\u201e", "\u201c", "\u2013", "\u2014"
 
+# A service desk's closing line, word for word a chatbot's: the closing offer reads documents only (#23's review, F3).
+SERVICE_DESK = "Gibt es noch etwas, bei dem ich Ihnen helfen kann? Sonst schlie\u00dfe ich das Ticket heute."
+
 MAIL = [
     "Sehr geehrte Frau Dr. Wagner,\n\nvielen Dank für Ihre schnelle Rückmeldung. Den unterschriebenen Vertrag sende "
     "ich Ihnen bis Freitag zurück.\n\nMit freundlichen Grüßen\nTobias Krämer",
@@ -26,7 +29,9 @@ MAIL = [
     "Donnerstag.\n\nLG\nSabine",
     "Sehr geehrte Damen und Herren,\n\nim Rahmen unserer Zusammenarbeit bitten wir Sie, uns zeitnah die aktualisierten "
     "Zertifikate zukommen zu lassen. Bezüglich der Lieferfristen melden wir uns gesondert.\n\nMit freundlichen Grüßen",
-    "Gibt es noch etwas, bei dem ich Ihnen helfen kann? Sonst schließe ich das Ticket heute.",
+    SERVICE_DESK,
+    "Als Projektleiterin habe ich keine Zeit für ein zweites Meeting, lass uns das am Montag klären.",
+    "Als KI-Beauftragte habe ich keine Admin-Rechte, frag bitte die IT.",
     "Bitte beachten Sie, dass das Parkhaus ab 18 Uhr schließt.",
     "Es ist wichtig, dass alle bis Freitag ihre Stunden im System eintragen.",
     "Sie haben völlig recht, das Datum stimmt nicht. Ich schicke die Rechnung neu.",
@@ -66,6 +71,9 @@ NOTES = [
     "Zusammenfassend: Angebot B, Start im Januar.",
     "Vorlage für die Einladung: Hallo [Name], wir freuen uns auf dich am 12.12.!",
     "## Neue Regeln für die Urlaubsplanung",
+    # prices, with the dash Swiss and German invoices write for no cents (#23's review, F6)
+    "Eintritt: CHF 20." + EM + " pro Person, Kinder frei.",
+    "Gesamtbetrag: 1.250," + EM + " € netto, zahlbar in 30 Tagen.",
 ]
 
 # a reply ending on a colon, before the link, the file or the text; a person handing over or returning their own draft
@@ -76,6 +84,10 @@ REPLIES = [
     "Natürlich! Hier ist der Entwurf für das Protokoll:",
     "Gerne! Hier ist meine überarbeitete Fassung:",
     "Gerne! Hier ist Ihre überarbeitete Präsentation:",
+    # reworked text that doesn't name the reader's: a person's too (#23's review, F2)
+    "Gerne! Hier ist eine überarbeitete Version mit deinen Anmerkungen:",
+    "Gerne! Hier ist ein überarbeiteter Entwurf:",
+    "Sehr gerne, hier ist die kürzere Fassung für den Aushang:",
     "Klar, hier ist die kürzere Fassung:",
     "Gerne, hier meine Vorschläge für die Agenda:",
     "Ich habe einen ersten Entwurf geschrieben, schau gern drüber:",
@@ -98,6 +110,23 @@ REPORTS = [
     "20.000 €. Begründung: höhere Hardwarekosten.",
     "Hinweis zur Datenschutzschulung: Es ist zu beachten, dass die Teilnahme für alle Beschäftigten verpflichtend ist. "
     "Die Schulung dauert etwa 45 Minuten und kann bis 31. Dezember absolviert werden.",
+    # summaries, notes and official phrases a plain report writes, which reached 3 weak hits (#23's review, F1)
+    "Alles in allem lässt sich sagen, dass die Inventur ohne größere Abweichungen verlief. Es sei darauf hingewiesen, "
+    "dass zwei Lagerplätze noch nachgezählt werden. Abschließend sei noch erwähnt, dass die Zählung eine halbe Stunde "
+    "kürzer dauerte als im Vorjahr.",
+    "Geprüft wurden sowohl die Reisekostenbelege als auch die Bankauszüge und das Fahrtenbuch. Zusammenfassend lässt "
+    "sich feststellen, dass es keine Beanstandungen gibt. Es ist wichtig zu bedenken, dass die Prüfung nur Stichproben "
+    "umfasst.",
+    "Der neue Lieferant hat eine große Palette von Ersatzteilen. Abschließend lässt sich festhalten, dass die Preise "
+    "stabil bleiben. Es ist wichtig zu beachten, dass die Lieferzeit auf sechs Wochen gestiegen ist.",
+    "Insgesamt lässt sich festhalten, dass die neue Schichtplanung angenommen wird. Bemerkenswert ist, dass die "
+    "Überstunden um 12 % gesunken sind. Es ist anzumerken, dass zwei Teams noch nach dem alten Plan arbeiten.",
+    "Es bleibt festzuhalten, dass das Budget eingehalten wurde. Eine Vielzahl von Rückmeldungen betraf die Kantine; im "
+    "Rahmen der nächsten Befragung fragen wir dort gezielter nach.",
+    "Zusammenfassend: Das Pilotprojekt ist abgeschlossen. Es ist wichtig zu betonen, dass alle Standorte teilgenommen "
+    "haben. Die Kosten lagen 8 % unter Plan.",
+    "Die Umstellung betraf sowohl Einkauf, Lager als auch Versand. Die Schulungen sind abgeschlossen; offen ist nur "
+    "noch die Anbindung des Kassensystems.",
 ]
 
 # posts a person writes: a short post on the company channel and a farm shop's newsletter
@@ -110,6 +139,17 @@ POSTS = [
 ]
 
 OFFICE = MAIL + CHAT + NOTES + REPLIES + REPORTS + POSTS
+# Each text with the kind of writing it is: a sign counts alone only in the kinds it reads.
+KINDS = [
+    *((text, "email") for text in MAIL + REPLIES),
+    *((text, "message") for text in CHAT),
+    *((text, "document") for text in NOTES + REPORTS),
+    *((text, "post") for text in POSTS),
+]
+
+
+def _reads(sign: signs.Sign, kind: str) -> bool:
+    return bool({"any", kind} & set(sign.kinds))
 
 
 @pytest.fixture(scope="module")
@@ -136,9 +176,19 @@ def test_the_marks_are_the_real_ones():
     assert len(OFFICE) >= 40
 
 
-@pytest.mark.parametrize("text", OFFICE)
-def test_no_sign_that_counts_alone_fires_on_plain_german_work_text(counted_alone, text):
-    assert [sign.id for sign in counted_alone if sign.pattern and sign.pattern.search(text)] == []
+@pytest.mark.parametrize(("text", "kind"), KINDS)
+def test_no_sign_that_counts_alone_fires_on_plain_german_work_text(counted_alone, text, kind):
+    fired = [sign.id for sign in counted_alone if _reads(sign, kind) and sign.pattern and sign.pattern.search(text)]
+    assert fired == []
+
+
+def test_a_service_desk_s_closing_line_meets_a_sign_that_reads_only_documents(catalogue):
+    # the maintainer's call on #23: the chatbot's line and the service desk's are the same words, so the sign stays
+    # strong for documents, where no person writes it, and never reads mail
+    offer = catalogue.signs["any-assistant-closing-offer"]
+    assert offer.pattern is not None
+    assert offer.pattern.search(SERVICE_DESK)
+    assert offer.kinds == ("document",)
 
 
 def test_no_german_check_counts_alone(counted_alone):
@@ -151,23 +201,40 @@ def test_no_german_check_counts_alone(counted_alone):
 # Russian, Chinese or Japanese words have their lines in the other office tests.
 MACHINE = [
     ("any-assistant-preamble", "Gerne! Hier ist eine überarbeitete Version Ihres Anschreibens:"),
-    ("any-assistant-preamble", "Natürlich! Hier ist Ihr umformulierter Text:"),
-    ("any-assistant-preamble", "Sicherlich! Hier ist eine etwas förmlichere Fassung:"),
+    ("any-assistant-preamble", "Natürlich, hier ist der umformulierte Text deiner Bewerbung:"),
+    ("any-assistant-preamble", "Sicherlich! Hier ist eine etwas förmlichere Fassung Ihrer E-Mail:"),
+    ("any-assistant-preamble", "Selbstverständlich! Hier ist eine kürzere Version Ihres Beitrags:"),
+    ("any-assistant-preamble", "Sehr gerne! Hier ist ein überarbeiteter Entwurf eurer Einladung:"),
+    ("any-assistant-preamble", "Gerne, hier ist die verbesserte Fassung deiner Nachricht:"),
+    ("any-assistant-closing-offer", "Gibt es noch etwas, womit ich dir behilflich sein kann?"),
+    ("any-assistant-closing-offer", "Gibt es noch etwas, bei dem ich Ihnen noch helfen kann?"),
     ("any-assistant-closing-offer", "Möchten Sie, dass ich dies in eine Tabelle umwandle?"),
-    ("any-assistant-closing-offer", "Möchtest du, dass ich diesen Text noch etwas kürze?"),
+    ("any-assistant-closing-offer", "Möchtest du, dass ich den Text etwas kürzer fasse?"),
+    ("any-assistant-closing-offer", "Möchten Sie, dass ich daraus eine Präsentation erstelle?"),
+    ("any-assistant-closing-offer", "Möchtest du, dass ich den Entwurf förmlicher formuliere?"),
+    ("any-assistant-closing-offer", "Möchten Sie, dass ich es um ein Fazit ergänze?"),
+    ("any-assistant-closing-offer", "Soll ich den Text noch etwas lockerer umschreiben?"),
+    ("any-assistant-closing-offer", "Soll ich daraus eine kurze Mail machen?"),
+    ("any-assistant-closing-offer", "Soll ich diesen Entwurf noch um Beispiele erweitern?"),
+    ("any-assistant-closing-offer", "Lassen Sie mich wissen, wenn ich den Ton noch anpassen soll."),
+    ("any-assistant-closing-offer", "Lass mich wissen, ob ich etwas kürzen soll."),
     ("any-ai-self-reference", "Als KI-Sprachmodell habe ich keine persönliche Meinung zum Dienstplan."),
     ("any-ai-self-reference", "Als künstliche Intelligenz kann ich nicht in die Zukunft sehen."),
     ("any-ai-self-reference", "Als großes Sprachmodell bin ich nicht in der Lage, Links zu öffnen."),
     ("any-ai-self-reference", "Als KI-Assistent darf ich keine Rechtsberatung geben."),
+    ("any-ai-self-reference", "Als KI habe ich keine Gefühle, aber ich verstehe die Frage."),
+    ("any-ai-self-reference", "Als Sprachmodell verfüge ich nicht über aktuelle Kurse."),
+    ("any-ai-self-reference", "Als KI-Modell verfüge ich über keine Internetverbindung."),
     ("any-knowledge-cutoff", "Stand meines letzten Wissensupdates gab es keine Fusion."),
     ("any-knowledge-cutoff", "Bis zu meinem letzten Wissensupdate war das Werk geöffnet."),
     ("any-knowledge-cutoff", "Bis zu meinem letzten Trainings-Update lag dazu nichts vor."),
     ("any-source-gap-disclaimer", "In den bereitgestellten Quellen findet sich dazu keine Angabe."),
     ("any-source-gap-disclaimer", "In den bereitgestellten Suchergebnissen fehlt das Gründungsjahr."),
     ("any-source-gap-disclaimer", "Spezifische Details bleiben rar, doch die Firma prägte vermutlich den Handel."),
+    ("any-source-gap-disclaimer", "Obwohl spezifische Details rar sind, gilt die Mühle als Wahrzeichen."),
     ("any-unfilled-placeholder", "Mit freundlichen Grüßen\n[Ihr Name]"),
     ("any-unfilled-placeholder", "Liebe Grüße, [dein Name]"),
-    ("any-unfilled-placeholder", "Sehr geehrte Damen und Herren von [Name der Firma einfügen],"),
+    ("any-unfilled-placeholder", "Sehr geehrte Damen und Herren der [Ihre Firma],"),
     ("any-unfilled-placeholder", "Mit freundlichen Grüßen\n[Your Name]"),
     ("any-unfilled-placeholder", "Mehr dazu unter insert_link_here."),
     ("any-unfilled-placeholder", "Abgabe am 2026-xx-xx."),
@@ -202,20 +269,43 @@ def test_the_signs_still_find_what_they_are_for_in_german(counted_alone, sign, t
     assert pattern.search(text), sign
 
 
-def _reads(sign: signs.Sign, kind: str) -> bool:
-    return bool({"any", kind} & set(sign.kinds))
+def _alternatives(term: str) -> list[str]:
+    """A term's top-level alternatives: `a|b` is two phrases, `(?:a|b)c` one phrase with two spellings."""
+    found, depth, start, escaped, in_class = [], 0, 0, False, False
+    for n, char in enumerate(term):
+        if escaped:
+            escaped = False
+        elif char == "\\":
+            escaped = True
+        elif in_class:
+            in_class = char != "]"
+        elif char == "[":
+            in_class = True
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+        elif char == "|" and depth == 0:
+            found.append(term[start:n])
+            start = n + 1
+    return [*found, term[start:]]
 
 
 def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
     """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
-    A term is one phrase however its endings vary, and a check one habit however often it fires; one phrase two signs
-    find counts once."""
+    Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check is one habit however
+    often it fires; one phrase two signs find counts once. German is written with spaces, so a phrase has word edges,
+    as `validate` gives it (#23's review, F10)."""
     counted: set[str] = set()
     spans: list[tuple[int, int]] = []
     for sign in catalogue.signs.values():
         if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
             continue
-        phrases = [(term.term, re.compile(term.term, re.IGNORECASE | re.MULTILINE)) for term in sign.terms]
+        phrases = [
+            (phrase, re.compile(rf"\b(?:{phrase})\b", re.IGNORECASE | re.MULTILINE))
+            for term in sign.terms
+            for phrase in _alternatives(term.term)
+        ]
         for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
             for found in pattern.finditer(text):
                 if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
@@ -225,15 +315,7 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
     return len(counted)
 
 
-WEAK_CASES = [
-    *((text, "email") for text in MAIL + REPLIES),
-    *((text, "message") for text in CHAT),
-    *((text, "document") for text in NOTES + REPORTS),
-    *((text, "post") for text in POSTS),
-]
-
-
-@pytest.mark.parametrize(("text", "kind"), WEAK_CASES)
+@pytest.mark.parametrize(("text", "kind"), KINDS)
 def test_plain_german_work_text_makes_no_weak_cluster(catalogue, text, kind):
     for paragraph in text.split("\n\n"):
         assert _weak_hits(catalogue, paragraph, kind) < signs.WEAK_CLUSTER, paragraph
@@ -245,6 +327,14 @@ def test_weak_hits_count_as_the_rule_does(catalogue):
     again = "Atemberaubend der Blick, atemberaubend das Essen, atemberaubend der Preis."
     assert _weak_hits(catalogue, three, "post") == 3
     assert _weak_hits(catalogue, again, "post") == 1
+    # two participles of one term are two different words
+    two = "Die Halle wurde erweitert, den Standort betonend und das Wachstum verdeutlichend."
+    assert _weak_hits(catalogue, two, "post") == 2
+
+
+def test_a_term_s_alternatives_are_split_at_the_top_level():
+    assert _alternatives("a|b(?:c|d)|[|]e") == ["a", "b(?:c|d)", "[|]e"]
+    assert _alternatives(r"x\|y") == [r"x\|y"]
 
 
 # Word lists people use at work: they read posts and documents, never mail or chat (#4).
@@ -259,7 +349,6 @@ AT_WORK = [
     "de-significance-phrases",
     "de-sowohl-triad",
     "de-stock-openers",
-    "de-summary-formulas",
 ]
 
 
@@ -268,6 +357,11 @@ def test_a_word_list_people_use_at_work_reads_posts_and_documents(catalogue, sig
     found = catalogue.signs[sign]
     assert found.strength == "weak"
     assert set(found.kinds) == {"post", "document"}
+
+
+def test_the_sowohl_triad_is_for_the_model_s_read(catalogue):
+    # as a check it counted toward a cluster on a plain audit report (#23's review, F5)
+    assert catalogue.signs["de-sowohl-triad"].pattern is None
 
 
 @pytest.mark.parametrize(
@@ -317,7 +411,6 @@ FORMS = [
     ("de-hedging", "Die Kosten könnten unter Umständen steigen."),
     ("de-hedging", "Das wird vielleicht eventuell klappen."),
     ("de-hedging", "Das könnte sich möglicherweise verzögern."),
-    ("de-sowohl-triad", "Das betrifft sowohl Planung, Bau als auch Betrieb."),
     ("de-rhetorical-openers", "Haben Sie sich schon einmal gefragt, warum Brot so teuer ist?"),
     ("de-rhetorical-openers", "Hast du dich jemals gefragt, wer die Kantine plant?"),
     ("de-participle-asides", "Die Halle wurde erweitert, die Bedeutung des Standorts betonend."),
@@ -328,11 +421,15 @@ FORMS = [
     ("de-significance-phrases", "Der Abend war einer der Schlüsselmomente des Jahres."),
     ("de-significance-phrases", "Die Mühle stand als Zeugnis für den Fleiß der Bauern."),
     ("de-significance-phrases", "Sie hinterließ ein bleibendes Vermächtnis."),
+    ("de-significance-phrases", "Die Pflege des bleibenden Erbes kostet Geld."),
+    ("de-significance-phrases", "Die Stiftung wacht über den Erhalt eines bleibenden Vermächtnisses."),
     ("de-promo-words", "Die Aussicht ist atemberaubend."),
     ("de-promo-words", "Das Werk zeigt einen bahnbrechenden Ansatz."),
     ("de-promo-words", "Die App revolutioniert den Einkauf."),
     ("de-promo-words", "Die Stadt mit ihrer reichen Geschichte lädt ein."),
     ("de-promo-words", "Die Region hat ein reiches kulturelles Erbe."),
+    ("de-promo-words", "Das Tal mit seinen reichen Traditionen lädt ein."),
+    ("de-promo-words", "Die Pflege eines reichen kulturellen Erbes lohnt sich."),
     ("de-promo-words", "Das Hotel liegt im Herzen des Viertels."),
     ("de-promo-words", "Des Paradigmenwechsels wegen gab es Streit."),
     ("de-stock-openers", "In einer sich rasant wandelnden Welt zählt Tempo."),
@@ -341,27 +438,29 @@ FORMS = [
     ("de-future-closers", "Man darf gespannt sein."),
     ("de-future-closers", "Gemeinsam gestalten wir die Zukunft."),
     ("de-future-closers", "Die Zukunft sieht also rosig aus."),
-    ("de-summary-formulas", "Abschließend lässt sich feststellen, dass alles lief."),
-    ("de-summary-formulas", "Alles in allem lässt sich sagen: gut."),
-    ("de-summary-formulas", "Abschließend sei noch erwähnt, dass es Kuchen gab."),
-    ("de-emphasis-phrases", "Es ist entscheidend zu bedenken, dass der Raum klein ist."),
-    ("de-emphasis-phrases", "Es sei darauf hingewiesen, dass Parken Geld kostet."),
-    ("de-emphasis-phrases", "Bemerkenswert ist dass niemand fehlte."),
+    ("de-emphasis-phrases", "Es ist jedoch wichtig zu bemerken, dass der Raum klein ist."),
+    ("de-emphasis-phrases", "Dabei ist es wichtig, zu betonen, dass Parken Geld kostet."),
+    ("de-emphasis-phrases", "Hierbei ist es entscheidend zu betonen, dass niemand fehlte."),
+    ("any-flattering-agreement", "Tolle Frage! Das erkläre ich gern."),
+    ("any-flattering-agreement", "Da haben Sie absolut recht, der Termin war falsch."),
+    ("any-flattering-agreement", "Was für eine ausgezeichnete Frage!"),
     ("de-dive-in", "Tauchen Sie ein in unsere kleine Kaffeekunde."),
     ("de-dive-in", "Lasst uns tiefer eintauchen."),
     ("de-dive-in", "Lassen Sie uns gemeinsam eintauchen."),
     ("de-dive-in", "Lass mich das kurz aufschlüsseln."),
     ("de-list-announcers", "Im Kurs lernen Sie eine Vielzahl an Knoten."),
     ("de-list-announcers", "Mit einer breiten Palette an Kursen."),
-    ("de-list-announcers", "Es gibt eine große Palette von Sorten."),
+    ("de-list-announcers", "Es gibt eine breite Palette von Sorten."),
 ]
 
 LEFT_ALONE = [
     ("de-em-dash", "Die Übergabe klappt " + EN + " sofern der Schlüssel da ist."),
+    ("de-em-dash", "Eintritt: CHF 20." + EM + " pro Person"),
+    ("de-em-dash", "Summe 1.250," + EM + " €"),
+    ("de-em-dash", "Summe 1.250," + EM + "€"),
     ("de-hedging", "Könntest du vielleicht kurz anrufen?"),
     ("de-hedging", "Das kann eventuell klappen."),
     ("de-hedging", "Das könnte vielleicht am Wetter liegen."),
-    ("de-sowohl-triad", "Das gilt sowohl für Kunden als auch für Partner."),
     ("de-participle-asides", "Die hervorhebende Farbe ist Gelb."),
     ("de-participle-asides", "Die Weste ist reflektierend."),
     ("de-significance-phrases", "Das Arbeitszeugnis liegt bei."),
@@ -375,13 +474,18 @@ LEFT_ALONE = [
     ("de-stock-openers", "In der heutigen Sitzung geht es um das Budget."),
     ("de-future-closers", "Wir sind gespannt auf eure Ideen."),
     ("de-future-closers", "Es bleibt abzuwarten, ob der Kunde zusagt."),
-    ("de-summary-formulas", "Insgesamt lässt sich der Termin halten."),
-    ("de-summary-formulas", "Zusammenfassend: Angebot B."),
     ("de-emphasis-phrases", "Es ist zu beachten, dass der Raum klein ist."),
     ("de-emphasis-phrases", "Es ist wichtig, dass alle kommen."),
+    ("de-emphasis-phrases", "Es ist wichtig zu beachten, dass die Frist endet."),
+    ("de-emphasis-phrases", "Es ist wichtig zu bedenken, dass es nur Stichproben sind."),
+    ("de-emphasis-phrases", "Es sei darauf hingewiesen, dass Parken Geld kostet."),
+    ("de-emphasis-phrases", "Bemerkenswert ist, dass niemand fehlte."),
+    ("any-flattering-agreement", "Sie haben völlig recht, das Datum stimmt nicht."),
+    ("any-flattering-agreement", "Gute Frage, ich schaue nach."),
     ("de-dive-in", "Die Kosten schlüsseln wir nach Abteilung auf."),
     ("de-dive-in", "Der Taucher taucht ein zweites Mal."),
     ("de-list-announcers", "Eine Vielzahl von Kunden hat geantwortet."),
+    ("de-list-announcers", "Der Lieferant hat eine große Palette von Ersatzteilen."),
     ("de-list-announcers", "Die Farbpalette steht im Styleguide."),
 ]
 

@@ -15,13 +15,13 @@ models = "any"
 what = "Sets off a clause with the long English dash (—); the spaced short dash (–) is German's own, and a person's."
 instead = "Use a comma or a full stop, or the spaced short dash."
 strength = "weak"
-# Text on both sides: a line of dashes under a signature is no clause.
-check = '[^\s—] ?— ?[^\s—]'
+# Text on both sides, so a line of dashes under a signature is no clause; and not after a comma or a full stop, so a
+# price (CHF 20.—, 1.250,— €) is none either.
+check = '[^\s—.,] ?— ?[^\s—]'
 flags = "Die Übergabe klappt — sofern der Schlüssel rechtzeitig da ist."
 passes = "Die Übergabe klappt – sofern der Schlüssel rechtzeitig da ist."
 sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 18 Formatierungs-Overload, commit 4e5aa4c51230", seen = 2026-11-07 },
-  { source = "wikipedia-de", where = "Verwendung von Gedankenstrichen, revision 271721424", seen = 2026-11-07 },
 ]
 
 [[sign]]
@@ -75,30 +75,16 @@ sources = [
 [[sign]]
 id = "de-sowohl-triad"
 category = "structure"
+# No check: "sowohl die Belege als auch die Kontoauszüge und das Kassenbuch" is a plain report's (#23's review, F5).
 kinds = ["post", "document"]
 models = "any"
 what = "Stretches sowohl … als auch over three items: a rule of three in German dress."
 instead = "List the items with und, or keep the two that matter."
 strength = "weak"
-check = '''\bsowohl\b[^.;:!?\n]{1,60}?\bals auch\b[^.;:!?\n]{1,60}?\b(?:und|sowie)\b|\bsowohl\b[^.;:!?\n]{1,40}?,[^.;:!?\n]{1,40}?\bals auch\b'''
 flags = "Das Angebot richtet sich sowohl an Schüler als auch an Eltern und Lehrkräfte."
 passes = "Das Angebot richtet sich an Schüler, Eltern und Lehrkräfte."
 sources = [
   { source = "wikipedia-de", where = "Trikolon, revision 271721424", seen = 2026-11-07 },
-]
-
-[[sign]]
-id = "de-english-constructions"
-category = "structure"
-kinds = ["any"]
-models = "any"
-what = "Builds German sentences the English way: an idiom, a preposition or a word order carried over."
-instead = "Write it the way you would say it in German."
-strength = "weak"
-flags = "Am Ende des Tages macht es Sinn, in 2027 mehr in Weiterbildung zu investieren."
-passes = "Unterm Strich lohnt es sich, 2027 mehr in Weiterbildung zu investieren."
-sources = [
-  { source = "wikipedia-de", where = "Wechsel im Schreibstil, revision 271721424", seen = 2026-11-07 },
 ]
 
 # Words and phrases of every model.
@@ -111,9 +97,8 @@ models = "any"
 what = "Hangs a present participle on a sentence to say what the fact shows, a form German prose seldom uses."
 instead = "Stop at the fact; if its meaning matters, give it a sentence of its own."
 strength = "weak"
-# One term: the habit is the form, whichever participle fills it.
 terms = [
-  { term = '(?:verdeutlichen|widerspiegeln|gewährleisten|unterstreichen|symbolisieren|hervorheben|betonen)d', instead = "cut" },
+  { term = 'verdeutlichend|widerspiegelnd|gewährleistend|unterstreichend|symbolisierend|hervorhebend|betonend', instead = "cut" },
 ]
 flags = "Der Verein verdoppelte seine Mitglieder, die Beliebtheit des Sports widerspiegelnd."
 passes = "Der Verein hat seine Mitglieder verdoppelt, vor allem durch die neue Jugendgruppe."
@@ -136,7 +121,7 @@ terms = [
   { term = 'unerschütterlich\w*', instead = "say what they kept doing" },
   { term = 'schlüsselmoment\w*', instead = "give the date and what changed" },
   { term = '(?:steht|stehen|stand|standen|dient|dienen|diente|dienten) als zeugnis', instead = "zeigt" },
-  { term = 'bleibende[ns]? (?:erbe|vermächtnis)', instead = "say what remains" },
+  { term = 'bleibende[ns]? (?:erbes?|vermächtnis(?:ses)?)', instead = "say what remains" },
   { term = 'fasziniert (?:bis heute|weiterhin|nach wie vor)', instead = "say who still comes or reads it" },
 ]
 flags = "Das sanierte Rathaus steht als Zeugnis für den unerschütterlichen Bürgersinn der Gemeinde."
@@ -159,7 +144,7 @@ terms = [
   { term = 'bahnbrechend\w*', instead = "say what is new, and since when" },
   { term = 'im herzen (?:der|des|von)', instead = "in, or the address" },
   { term = 'revolutionier\w*', instead = "say what it changes" },
-  { term = 'reiche[nrs]? (?:kulturelle[nrs]? )?(?:erbe|geschichte|tradition)', instead = "name one piece of it" },
+  { term = 'reiche[nrs]? (?:kulturelle[nrs]? )?(?:erbes?|geschichte|traditionen?)', instead = "name one piece of it" },
   { term = 'wegweisend\w*', instead = "say who followed" },
   { term = 'paradigmenwechsel\w*', instead = "say what changed for whom" },
   { term = 'kulturelle[nrs]? teppich\w*', instead = "name the groups" },
@@ -214,41 +199,17 @@ sources = [
 ]
 
 [[sign]]
-id = "de-summary-formulas"
-category = "phrase"
-kinds = ["post", "document"]
-models = "any"
-what = "Announces a wrap-up with a set formula, then restates what came before. People write these too."
-instead = "Stop at the last new point, or state the conclusion plainly."
-strength = "weak"
-terms = [
-  { term = 'es bleibt festzuhalten', instead = "cut" },
-  { term = '(?:abschließend|insgesamt|zusammenfassend|alles in allem) lässt sich (?:sagen|festhalten|feststellen)', instead = "cut, and state the point" },
-  { term = 'abschließend sei (?:noch )?(?:erwähnt|gesagt|angemerkt)', instead = "cut" },
-  { term = 'es lässt sich festhalten', instead = "cut" },
-]
-flags = "Insgesamt lässt sich festhalten, dass der Umzug gut verlaufen ist."
-passes = "Der Umzug lief gut; nur zwei Kisten mit Ordnern fehlen noch."
-sources = [
-  { source = "wikipedia-de", where = "Abschnitts-Zusammenfassungen, revision 271721424", seen = 2026-11-07 },
-  { source = "avoid-ai-writing-multilingual", where = "SKILL-DE.md, 30 KI-Zusammenfassungsöffner, commit 4e5aa4c51230", seen = 2026-11-07 },
-  { source = "stroeer-2023", where = "Noch mehr Phrasen: ChatGPT und der Satzanfang, updated 18 Dec 2024", seen = 2026-11-07 },
-]
-
-[[sign]]
 id = "de-emphasis-phrases"
 category = "phrase"
-# Not mail or chat; and es ist zu beachten, the plain wording of instructions, is left out.
+# Not mail or chat. Only the calques of "it's important to note": wichtig zu beachten or zu bedenken, es sei
+# darauf hingewiesen and bemerkenswert ist are how reports and instructions are written (#23's review, F1).
 kinds = ["post", "document"]
 models = "any"
 what = "Tells the reader that a point deserves attention before making it."
 instead = "Make the point; the reader decides what matters."
 strength = "weak"
 terms = [
-  { term = 'bemerkenswert ist,? dass', instead = "cut, and give the fact" },
-  { term = 'es ist (?:wichtig|entscheidend|wesentlich) zu (?:betonen|beachten|bedenken|bemerken)', instead = "cut" },
-  { term = 'es sei (?:darauf )?hingewiesen', instead = "cut, or bitte beachten" },
-  { term = 'es ist anzumerken', instead = "cut" },
+  { term = '(?:es ist|dabei ist es|hierbei ist es) (?:jedoch |dabei |auch )?(?:wichtig|entscheidend),? zu (?:bemerken|betonen)', instead = "cut, and give the fact" },
 ]
 flags = "Es ist wichtig zu betonen, dass die Kantine ab Montag früher schließt."
 passes = "Achtung: Die Kantine schließt ab Montag schon um 14 Uhr."
@@ -281,6 +242,7 @@ sources = [
 [[sign]]
 id = "de-list-announcers"
 category = "phrase"
+# Not eine große Palette or eine Vielzahl von, which plain reports write (#23's review, F1).
 kinds = ["post", "document"]
 models = "any"
 what = "Announces a list with a stock phrase of plenty before naming the items; common in people's ad copy too."
@@ -288,7 +250,7 @@ instead = "Name the items, or give the number."
 strength = "weak"
 terms = [
   { term = 'eine[rn]? vielzahl an', instead = "viele, or the number" },
-  { term = 'eine[rn]? (?:breite|große|umfangreiche)n? palette (?:an|von)', instead = "name the items" },
+  { term = 'eine[rn]? breiten? palette (?:an|von)', instead = "name the items" },
 ]
 flags = "Auf dem Markt gibt es eine breite Palette an Käsesorten aus der Region."
 passes = "Auf dem Markt gibt es Bergkäse, Ziegenkäse und Quark aus der Region."

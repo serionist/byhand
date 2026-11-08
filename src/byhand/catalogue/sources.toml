@@ -9,7 +9,7 @@ languages = ["en"]
 licence = "CC BY-SA 4.0"
 due = "daily"
 feed = { api = "mediawiki", site = "en.wikipedia.org", title = "Wikipedia:Signs_of_AI_writing" }
-read_at = { revision = "1384165696", date = 2026-11-07 }
+read_at = { revision = "1384534594", date = 2026-11-09 }
 
 [[source]]
 id = "wikipedia-en-style"

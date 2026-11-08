@@ -270,7 +270,7 @@ If Step 7 falls below its bar, the `SessionStart` hook's plan comes before Step 
 | 4. `propose-signs` and the seed | #4 | #15, `any` and `en`; #16, `zh` and `zh-Hant`; #17, `ko`; #18, `ja`; #22, `ru`; #23, `de`; #24, `fr`; #28, `hu`; #29, every list alphabetical | merged 2026-11-08 |
 | 5. `check` | #5 | #39 | merged 2026-11-08 |
 | 6. Styles, `learn` and `write` | #6 | #40 | merged 2026-11-08 |
-| 7. Tried in real sessions | #7 | this PR | |
+| 7. Tried in real sessions | #7 | #41 | |
 | 8. Release `0.1.0` | #8 | | |
 
 Decisions on the way:

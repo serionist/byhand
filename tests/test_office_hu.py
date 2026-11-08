@@ -15,7 +15,7 @@ import pytest
 
 from byhand import signs
 
-LOW, HIGH, OPEN, EN, EM = "„", "”", "“", "–", "—"
+LOW, HIGH, OPEN, EN, EM = "\u201e", "\u201d", "\u201c", "\u2013", "\u2014"
 
 MAIL = [
     "Tisztelt Kovács Úr!\n\nMellékelten küldöm a második negyedéves elszámolást. Kérdés esetén keressen bátran a "
@@ -25,15 +25,16 @@ MAIL = [
     "Kedves Péter,\nköszönöm a levelet, holnap visszahívlak.\nÜdv,\nZsófi",
     "Kedves Kollégák!\n\nEmlékeztetőül: holnap 9-kor tűzriadó-gyakorlat lesz. A gyülekezőhely a parkoló.\n\n"
     "Üdvözlettel:\nHR",
-    "Tisztelt Ügyfelünk!\n\nTájékoztatjuk, hogy a számlázási rendszer frissítése miatt december 3-án 18 és 22 óra között "
-    "az ügyfélkapu nem érhető el. Megértését köszönjük.",
+    "Tisztelt Ügyfelünk!\n\nTájékoztatjuk, hogy a számlázási rendszer frissítése miatt december 3-án 18 és 22 "
+    "óra között az ügyfélkapu nem érhető el. Megértését köszönjük.",
     "Kedves Réka!\n\nAnnával és Bencével egyeztettem, csütörtökön 10-kor jó mindenkinek. Zsófiától még várok "
     "választ.\n\nÜdv,\nGergő",
     "Tisztelt Nagy Úr!\n\nA szállás biztosítva, az étkezést a helyszínen intézzük. A parkolás nem megoldott, "
     "kérem, tömegközlekedéssel érkezzen.\n\nÜdvözlettel:\nKiss Erika",
     "Szia Bence!\n\nJövő héten Debrecenben leszek, utána Szegeden, a hónap végén pedig Győrben. Ha kell, Pécsre is "
     "le tudok menni.\n\nÜdv,\nCsaba",
-    "Kedves Ilona!\n\nFontos, hogy a jelenléti íveket péntekig leadjátok. A bérszámfejtés hétfőn indul.\n\nKöszi,\nDóra",
+    "Kedves Ilona!\n\nFontos, hogy a jelenléti íveket péntekig leadjátok. A bérszámfejtés hétfőn indul.\n\n"
+    "Köszi,\nDóra",
     "Tisztelt Hölgyem!\n\nA vezetés döntése alapján az új rendszer bevezetésre kerül a második negyedévben. Az ezzel "
     "kapcsolatos kérdéseit kérem, jelezze.\n\nTisztelettel:\nVarga Attila",
     "Szia Petra!\n\nHa megjön az utalás, biztosítva lesz a fizetés is, addig nem tudok mit tenni.\n\nÜdv,\nLilla",
@@ -298,7 +299,12 @@ def test_a_term_s_alternatives_are_split_at_the_top_level():
 
 def test_the_model_s_read_signs_have_no_check(catalogue):
     # Te and Ön live in verb endings, and a check can't see capitals: these are for the model's own read (#4).
-    for sign in ("hu-address-switching", "hu-title-case-headings", "hu-explicit-subject-repeat", "hu-parenthetical-gloss"):
+    for sign in (
+        "hu-address-switching",
+        "hu-title-case-headings",
+        "hu-explicit-subject-repeat",
+        "hu-parenthetical-gloss",
+    ):
         assert catalogue.signs[sign].pattern is None, sign
 
 
@@ -315,7 +321,7 @@ TYPOGRAPHY = [
     "A költözés " + EN + " ha minden jól megy " + EN + " péntekre kész.",
     "Szállítás: 4500," + EM + " Ft.",
     "Kiss Erika\n" + EM * 12 + "\nértékesítés",
-    "A belső idézet: " + LOW + "azt mondta, " + "»" + "majd holnap" + "«" + HIGH + ".",
+    "A belső idézet: " + LOW + "azt mondta, " + "\u00bb" + "majd holnap" + "\u00ab" + HIGH + ".",
 ]
 
 

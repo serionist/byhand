@@ -27,7 +27,7 @@ kinds = ["post", "document"]
 models = "any"
 # any-negative-parallelism says what the habit is; this sign holds its French forms and their check.
 what = "The French forms of a set-up contrast whose first half is played down with juste, seulement or simple. Correcting a real mistake, or scoping a plan, is not one."
-instead = "Give Y its evidence, a figure or an example, instead of a foil."
+instead = "Give Y its evidence, an example or a figure, instead of a foil."
 strength = "weak"
 # The check takes only the forms with a minimiser (juste, seulement, simple): a bare "ce n'est pas X, c'est Y", "il ne
 # s'agit pas de X, mais de Y" and "X, et non Y" also correct real mistakes or scope a plan, as a compte rendu does (#24's

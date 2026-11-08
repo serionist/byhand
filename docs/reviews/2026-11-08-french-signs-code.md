@@ -113,3 +113,18 @@ terms became one.
 - copycheck over 239 files: no run of 6; at 5, only zh-Hant-mainland-terms; at 4, the French checks' own strings in
   their `flags` and "dans la salle de".
 - The largest French draft: 13,417 bytes of 16,384.
+
+## Round 4
+
+**Where:** `0f2f2c0..12b48e4`: the alphabetical order, the reshaped examples, and the merge of main (#22, #23), whose
+four `any` checks and one feed the maintainer's session joined by hand. Approved: copycheck at 6 and 5 finds nothing,
+no example sits on a source's frame, and the merge keeps every German and Russian branch byte for byte.
+
+| # | Sev | Where | Finding | Status |
+|---|---|---|---|---|
+| F15 | minor | fr-false-contrast `instead` | "a figure or an example" broke the header's alphabetical rule | fixed: "an example or a figure" |
+| I1 | improvement | tests/test_office_fr.py | the order test skips groups with `?`, `[` or `\` (15 of 58) and the French branches in `any.toml`; all are in order today | later: with the rule in `propose-signs` for every language |
+
+## Closed
+
+The maintainer merged on round 4's approval.

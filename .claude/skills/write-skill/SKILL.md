@@ -69,8 +69,10 @@ holds:
 - `name`, equal to the file's name; a `description` of what it is for, as a `>-` block;
 - `model`: `sonnet`, `opus`, `haiku`, `fable` or `inherit`, its default, which the skill may override when it starts
   the agent with the model the user chose;
-- optionally `effort` (`low`, `medium`, `high`, `xhigh` or `max`) and `tools`, which narrows what the agent can call
-  and approves nothing.
+- `tools`, which narrows what the agent can call and approves nothing: only `Read`, `Glob` and `Grep`. With none an
+  agent gets every tool, and with Bash Claude Code leaves Grep out on macOS, Linux and WSL; listed without Bash, Grep
+  comes back for the agent;
+- optionally `effort` (`low`, `medium`, `high`, `xhigh` or `max`).
 
 Claude Code ignores `hooks`, `mcpServers` and `permissionMode` in a plugin's agent, and the gate refuses them and any
 other key. The body is the agent's brief: what it reads, what it returns, and what it must never see (a checker never

@@ -25,7 +25,7 @@ styles, and the skills that read them. It is for the user's own writing, sent un
   user's machine.
 - **The plugin** (`plugin/`): skills that write and check text against the signs and a style, starting by themselves
   when the user writes mail, a message, a document or a deck. They run no command: nothing but the plugin to install.
-- **Where the work stands:** the harness, the catalogue with its first signs (`any`, `en`, `zh`, `zh-Hant`, `ko`, `ja`, `ru`, `de`, `fr`, `hu`), its rendering. `docs/plans/2026-11-06-bootstrap.md`
+- **Where the work stands:** the harness, the catalogue with its first signs (`any`, `en`, `zh`, `zh-Hant`, `ko`, `ja`, `ru`, `de`, `fr`, `hu`), its rendering, the `check` skill and its `scan` agent. `docs/plans/2026-11-06-bootstrap.md`
   (#1) designs `0.1.0` and after; read its progress log first. The package in `src/` is the repo's own tool, never a user's.
 
 ## Where things are
@@ -33,7 +33,7 @@ styles, and the skills that read them. It is for the user's own writing, sent un
 | Path | What |
 |---|---|
 | `src/byhand/` | the package: `catalogue/` (TOML: `languages.toml`, `models.toml`, `sources.toml`, `signs/<language>.toml`), `signs.py` (reads the catalogue and says what is wrong with it), `models.py` (version ranges), `render.py` (the plugin's sign files, the budgets), `cli.py` (`byhand validate`, `byhand render`) |
-| `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md`, `plugin/signs/` (rendered: never edited by hand), `plugin/evals/`, `plugin/README.md` |
+| `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md` (`scan`: the patterns over a file), `plugin/signs/` (rendered: never edited by hand), `plugin/evals/`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
 | `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), `copycheck.py` (by hand: sign text against downloaded sources), standard library only |
 | `docs/` | `USAGE.md` (the commands, the budgets); `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |

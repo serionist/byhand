@@ -94,7 +94,7 @@ models = "any"
 what = "Opens a section by announcing what the section will cover."
 instead = "Start the section with its first fact."
 strength = "weak"
-check = '''^\W*(?:이|이번|본) (?:섹션|절|단락|장)에서는'''
+check = '''^\W*(?:본|이|이번) (?:단락|섹션|장|절)에서는'''
 flags = "## 예산\n본 장에서는 내년도 예산 편성 방향을 살펴본다."
 passes = "## 예산\n내년 예산은 올해보다 5% 줄어든 12억 원이다."
 sources = [
@@ -115,7 +115,7 @@ strength = "weak"
 # nouns are an open set, so it counts only in a cluster (round 3 of #17). X is one word, or two when the first doesn't
 # end like a clause (-서, -고, -지만, a subject particle): "단순한 오타라서 예산을 넘어선" is two clauses. 넘어서면 and
 # 넘어가 are a condition and a verb of their own, and are left alone.
-check = '''단순한 (?:[^\s.,!?]*[^\s.,!?서고며데요다니면지게만라도는은이가] )?[^\s.,!?]+[을를] 넘어(?:서는|서|선)?(?:[\s,]|$)'''
+check = '''단순한 (?:[^\s.,!?]*[^\s.,!?서고며데요다니면지게만라도는은이가] )?[^\s.,!?]+[을를] 넘어(?:서|서는|선)?(?:[\s,]|$)'''
 flags = "이번 워크숍은 단순한 교육을 넘어 팀 문화를 바꾸는 계기가 될 것입니다."
 passes = "이번 워크숍은 교육 위주예요. 끝나고 팀별로 저녁도 같이 먹어요."
 sources = [
@@ -132,8 +132,8 @@ what = "Frames the point as what is needed or what matters, then names it."
 instead = "Make the thing itself the subject of a plain sentence."
 strength = "weak"
 terms = [
-  { term = '(?:필요한|중요한) 것은', instead = "~가 필요합니다" },
   { term = '관건은', instead = "say what decides it" },
+  { term = '(?:중요한|필요한) 것은', instead = "~가 필요합니다" },
 ]
 flags = "이번 분기에 중요한 것은 신규 고객보다 기존 고객의 이탈을 막는 일이다."
 passes = "중요한 건 금요일까지 견적서를 보내는 거예요."
@@ -149,7 +149,7 @@ models = "any"
 what = "Ends a paragraph on a stock line: now is the time to, that is why, it all leads to."
 instead = "End on the last fact, or give the actual chain of cause."
 strength = "weak"
-check = '''\S+ (?:때|시점)(?:다|이다|입니다)[.!]?\s*$|[는은] 이유(?:다|이다|입니다)[.]?\s*$|(?:으로|로) 이어(?:진다|집니다|질 (?:수|것))|에 직결(?:된다|됩니다)'''
+check = '''\S+ (?:때|시점)(?:다|이다|입니다)[.!]?\s*$|[는은] 이유(?:다|이다|입니다)[.]?\s*$|(?:로|으로) 이어(?:진다|집니다|질 (?:것|수))|에 직결(?:된다|됩니다)'''
 flags = "작은 불편이 쌓이면 결국 고객 이탈로 이어집니다. 이제 서비스 전반을 다시 점검할 때입니다."
 passes = "작은 불편이 쌓여서 지난달에만 고객 12명이 해지했어요. 다음 회의에서 원인부터 같이 봐요."
 sources = [
@@ -164,7 +164,7 @@ models = "any"
 what = "Labels a conclusion before giving it, or ends on an academic hedge that it can be called so."
 instead = "Drop the label and the hedge; give the conclusion."
 strength = "weak"
-check = '''\b(?:결론적으로|요약하(?:면|자면)|종합하(?:면|자면|건대))\b|[라다]고 (?:할|볼) 수 있(?:다|습니다|을 것)|[음함]을 알 수 있(?:다|습니다)'''
+check = '''\b(?:결론적으로|요약하(?:면|자면)|종합하(?:건대|면|자면))\b|[라다]고 (?:볼|할) 수 있(?:다|습니다|을 것)|[음함]을 알 수 있(?:다|습니다)'''
 flags = "결론적으로 이번 이전은 비용과 일정 모두에서 합리적인 선택이라고 할 수 있다."
 passes = "그래서 이전은 다음 달로 하기로 했어요. 비용은 지난번 견적 그대로예요."
 sources = [
@@ -182,10 +182,10 @@ instead = "Say what follows from it, or cut the phrase."
 strength = "weak"
 terms = [
   { term = '간과할 수 없\w*', instead = "cut" },
-  { term = '주목할 만(?:하|한|합)\w*', instead = "say why" },
   { term = '방점을 찍\w*', instead = "say where the weight falls" },
+  { term = '새로운 장을 (?:여|연|열|엽)\w*', instead = "say what starts" },
   { term = '의미가 적지 않\w*', instead = "say what it means" },
-  { term = '새로운 장을 (?:열|연|여|엽)\w*', instead = "say what starts" },
+  { term = '주목할 만(?:하|한|합)\w*', instead = "say why" },
 ]
 flags = "이번 협약은 지역 상생에 방점을 찍었다는 점에서 주목할 만하다."
 passes = "이번 협약으로 지역 업체 세 곳이 납품을 맡게 됐어요."
@@ -201,7 +201,7 @@ models = "any"
 what = "Announces how many parts a list has before giving it."
 instead = "Give the items."
 strength = "weak"
-check = '''크게 (?:두|세|네|다섯|[2-5]) ?가지로 (?:나눌|나누|나눠|나뉩|나뉜|나뉘|구분|정리|요약)'''
+check = '''크게 (?:두|세|네|다섯|[2-5]) ?가지로 (?:구분|나누|나눌|나눠|나뉘|나뉜|나뉩|요약|정리)'''
 flags = "이번 조직 개편의 변화는 크게 세 가지로 나눌 수 있습니다."
 passes = "조직 개편으로 보고 라인과 좌석 배치가 바뀌어요."
 sources = [
@@ -216,7 +216,7 @@ models = "any"
 what = "Stacks two hedges on one claim, so the possibility itself becomes possible."
 instead = "Keep one hedge at the strength you mean; in a negotiation, leave the writer's own care alone."
 strength = "weak"
-check = '''가능성(?:이|도) 있을 수(?: 있|도 있)|(?:보여질|여겨질) 수(?: 있|도 있)'''
+check = '''가능성(?:도|이) 있을 수(?: 있|도 있)|(?:보여질|여겨질) 수(?: 있|도 있)'''
 flags = "이번 일정 변경은 협력사 납품에 영향을 줄 가능성이 있을 수 있습니다."
 passes = "이번 일정 변경은 협력사 납품에 영향을 줄 수도 있어요. 내일 확인해 볼게요."
 sources = [
@@ -234,8 +234,8 @@ what = "Uses the academic verbs that spread through Korean journal abstracts fro
 instead = "Use the plain verb (보여 주다, 밝히다, 다루다) or state the finding."
 strength = "weak"
 terms = [
-  { term = '시사(?:하|한|할|함|합|해|했|점)\w*', instead = "보여 주다" },
   { term = '규명\w*', instead = "밝히다" },
+  { term = '시사(?:점|하|한|할|함|합|해|했)\w*', instead = "보여 주다" },
   { term = '조명(?:하|한|할|함|합|해|했)\w*', instead = "다루다" },
 ]
 flags = "본 연구는 조직 내 소통이 실제로 굴러가는 방식을 규명하고, 그 결과가 현장에 시사하는 바를 정리한다."
@@ -253,14 +253,14 @@ what = "Dresses a plain point in an image, a blueprint, a red light, a rival eat
 instead = "Give the number or the event the image stands for."
 strength = "weak"
 terms = [
-  { term = '청사진\w*', instead = "계획" },
-  { term = '적신호\w*', instead = "say what is wrong" },
   { term = '경고등\w*', instead = "say what is wrong" },
+  { term = '뿌리(?:내려|내렸|내리|내린|내릴)\w*', instead = "자리 잡다" },
   { term = '신호탄\w*', instead = "첫 사례" },
+  { term = '움켜(?:줬|쥐|쥐어|쥐었|쥔|쥘|쥡)\w*', instead = "say what is held" },
   { term = '잠식\w*', instead = "give the share lost" },
-  { term = '짓(?:누르|누른|누를|눌러|눌렀|눌리|눌린|눌려)\w*', instead = "give the cost" },
-  { term = '뿌리(?:내리|내린|내릴|내려|내렸)\w*', instead = "자리 잡다" },
-  { term = '움켜(?:쥐|쥔|쥘|쥡|쥐어|쥐었|줬)\w*', instead = "say what is held" },
+  { term = '적신호\w*', instead = "say what is wrong" },
+  { term = '짓(?:누르|누른|누를|눌러|눌렀|눌려|눌리|눌린)\w*', instead = "give the cost" },
+  { term = '청사진\w*', instead = "계획" },
 ]
 flags = "이번 분기 실적에 적신호가 켜지자 회사는 서둘러 새 청사진을 내놓았다."
 passes = "이번 분기 매출이 8% 줄어서 회사가 내년 사업 계획을 다시 짜기로 했어요."
@@ -277,7 +277,7 @@ what = "Lets 구축, 강화 and 확대 stand in for every action, and has 설계
 instead = "Write what was done, by whom, in its own verb: 담당자를 한 명 늘렸다."
 strength = "weak"
 terms = [
-  { term = '(?:관계|경험|여정|일상|문화)[을를] (?:재)?설계\w*', instead = "say how, in a verb" },
+  { term = '(?:경험|관계|문화|여정|일상)[을를] (?:재)?설계\w*', instead = "say how, in a verb" },
 ]
 flags = "고객과의 관계를 재설계하고 구성원의 경험을 설계하는 것이 이번 전략의 핵심이다."
 passes = "고객 응대 순서를 다시 짰고, 신입 교육 일정도 2주로 늘렸어요."
@@ -349,10 +349,10 @@ what = "Uses the verbs of 2024 GPT models in Korean: contribute, explore, emphas
 instead = "Use the plain verb, or say what was done."
 strength = "weak"
 terms = [
-  { term = '기여(?:하|한|할|함|합|해|했)\w*', instead = "돕다" },
-  { term = '탐구(?:하|한|할|함|합|해|했)\w*', instead = "알아보다" },
   { term = '강조(?:하|한|할|함|합|해|했)\w*', instead = "say it once" },
+  { term = '기여(?:하|한|할|함|합|해|했)\w*', instead = "돕다" },
   { term = '중요한 역할\w*', instead = "say what it does" },
+  { term = '탐구(?:하|한|할|함|합|해|했)\w*', instead = "알아보다" },
 ]
 flags = "이 연구는 지역 축제가 공동체 회복에 중요한 역할을 한다는 점을 강조하며, 그 요인을 탐구한다."
 passes = "이 연구는 지역 축제 다섯 곳을 다니며 주민 120명을 인터뷰했어요."
@@ -398,7 +398,7 @@ models = [{ family = "gemini", from = "2.5" }]
 what = "Sums up a change as a slogan from one quoted label to another, 'X'에서 'Y'로."
 instead = "Say what changed, for whom, and when."
 strength = "weak"
-check = '''['‘"“][^'’"”\n]{1,20}['’"”](?:에서|[을를] 넘어) ['‘"“][^'’"”\n]{1,20}['’"”](?:으로|로)'''
+check = '''['‘"“][^'’"”\n]{1,20}['’"”](?:에서|[을를] 넘어) ['‘"“][^'’"”\n]{1,20}['’"”](?:로|으로)'''
 flags = "인사팀은 이제 '규정의 문지기'에서 '성장의 동반자'로 거듭나고 있다."
 passes = "인사팀은 올해부터 채용과 교육을 같이 맡아요."
 sources = [

@@ -12,26 +12,26 @@ what = "Leans on the same few elevated words; one is chance, several together ar
 instead = "Use the plain word, or the fact the word stands in for."
 strength = "weak"
 terms = [
-  { term = 'delv(?:e|es|ed|ing)', instead = "look at" },
-  { term = 'pivotal', instead = "say why it matters" },
-  { term = 'crucial', instead = "say why it matters" },
-  { term = 'multifaceted', instead = "name the parts" },
-  { term = 'underscor(?:ed|ing)|underscores? (?:the|a|an|its|how|that|this|their|our)', instead = "shows" },
-  { term = 'foster(?:s|ed|ing)', instead = "build" },
-  { term = 'interplay', instead = "how A affects B" },
-  { term = 'interconnectedness', instead = "links" },
-  { term = 'intricate', instead = "detailed" },
-  { term = 'complexities', instead = "problems" },
-  { term = 'nuanced', instead = "say what the nuance is" },
-  { term = 'tapestry', instead = "mix" },
-  { term = 'vibrant', instead = "lively" },
-  { term = 'seamless(?:ly)?', instead = "smooth" },
-  { term = 'robust', instead = "say how it holds up" },
-  { term = 'transformative', instead = "say what changed" },
   { term = 'aligns? with', instead = "matches" },
-  { term = 'leverag(?:e|es|ed|ing)', instead = "use" },
+  { term = 'complexities', instead = "problems" },
+  { term = 'crucial', instead = "say why it matters" },
   { term = 'deep dive', instead = "close look" },
+  { term = 'delv(?:e|ed|es|ing)', instead = "look at" },
+  { term = 'foster(?:ed|ing|s)', instead = "build" },
+  { term = 'interconnectedness', instead = "links" },
+  { term = 'interplay', instead = "how A affects B" },
+  { term = 'intricate', instead = "detailed" },
   { term = '''let['’]?s dive in(?:to)?''', instead = "cut" },
+  { term = 'leverag(?:e|ed|es|ing)', instead = "use" },
+  { term = 'multifaceted', instead = "name the parts" },
+  { term = 'nuanced', instead = "say what the nuance is" },
+  { term = 'pivotal', instead = "say why it matters" },
+  { term = 'robust', instead = "say how it holds up" },
+  { term = 'seamless(?:ly)?', instead = "smooth" },
+  { term = 'tapestry', instead = "mix" },
+  { term = 'transformative', instead = "say what changed" },
+  { term = 'underscor(?:ed|ing)|underscores? (?:a|an|how|its|our|that|the|their|this)', instead = "shows" },
+  { term = 'vibrant', instead = "lively" },
 ]
 flags = "The report underscores a pivotal shift and the intricate interplay of cost and demand."
 passes = "The report shows a big shift: costs rose and demand fell. File names can hold underscores."
@@ -50,14 +50,14 @@ what = "Reaches for set phrases that inflate a subject's importance."
 instead = "Say what happened and to whom."
 strength = "weak"
 terms = [
-  { term = 'play(?:s|ed|ing)? an? (?:crucial|pivotal|vital) role', instead = "say what it does" },
-  { term = '(?:is|stands as|serves as) a testament to', instead = "shows" },
-  { term = 'mark(?:s|ed|ing)? a (?:pivotal|significant) (?:moment|shift)', instead = "give the date and the change" },
   { term = 'enduring legacy', instead = "say what remains" },
-  { term = 'indelible mark', instead = "say what changed" },
   { term = 'evolving landscape', instead = "name the market or field" },
-  { term = 'setting the stage for', instead = "led to" },
+  { term = 'indelible mark', instead = "say what changed" },
+  { term = '(?:is|serves as|stands as) a testament to', instead = "shows" },
+  { term = 'mark(?:ed|ing|s)? a (?:pivotal|significant) (?:moment|shift)', instead = "give the date and the change" },
+  { term = 'play(?:ed|ing|s)? an? (?:crucial|pivotal|vital) role', instead = "say what it does" },
   { term = 'reflects? broader', instead = "name the trend, or cut" },
+  { term = 'setting the stage for', instead = "led to" },
   { term = 'valuable insights', instead = "say what was learnt" },
 ]
 flags = "The festival stands as a testament to the town's enduring legacy."
@@ -77,10 +77,10 @@ instead = "Write 'is' or 'has'."
 strength = "weak"
 terms = [
   { term = 'boasts an?', instead = "has" },
-  { term = 'holds the distinction of being', instead = "is" },
   { term = 'functions as an?', instead = "is" },
+  { term = 'holds the distinction of being', instead = "is" },
+  { term = 'serv(?:ed|es|ing) as an?', instead = "is" },
   { term = 'stands as an?', instead = "is" },
-  { term = 'serv(?:es|ed|ing) as an?', instead = "is" },
 ]
 flags = "The hall serves as a venue for concerts and boasts a small kitchen."
 passes = "The hall is a concert venue with a small kitchen. She served as chair for two years."
@@ -98,9 +98,9 @@ what = "Uses a stock line about the modern world, or about unlocking potential."
 instead = "Start with the subject."
 strength = "usual"
 terms = [
-  { term = '''in today['’]?s (?:ever-changing|modern|digital|fast-paced) (?:era|landscape|world|age)''', instead = "cut" },
-  { term = 'navigat(?:e|es|ing) the complexit(?:y|ies)', instead = "say what the task is" },
-  { term = 'unlock(?:s|ing)? the (?:power|potential)', instead = "say what becomes possible" },
+  { term = '''in today['’]?s (?:digital|ever-changing|fast-paced|modern) (?:age|era|landscape|world)''', instead = "cut" },
+  { term = 'navigat(?:e|es|ing) the complexit(?:ies|y)', instead = "say what the task is" },
+  { term = 'unlock(?:ing|s)? the (?:potential|power)', instead = "say what becomes possible" },
 ]
 flags = "In today's fast-paced world, every business must navigate the complexities of change."
 passes = "In today's meeting we'll talk about the rent, and how to navigate the move."
@@ -118,10 +118,10 @@ what = "Picks the stiff verb where a person uses the short one."
 instead = "Use the short verb."
 strength = "weak"
 terms = [
-  { term = 'utili[sz](?:e|es|ed|ing)', instead = "use" },
-  { term = 'relocated', instead = "moved" },
-  { term = 'authored', instead = "wrote" },
   { term = 'attempted', instead = "tried" },
+  { term = 'authored', instead = "wrote" },
+  { term = 'relocated', instead = "moved" },
+  { term = 'utili[sz](?:e|ed|es|ing)', instead = "use" },
 ]
 flags = "The team utilized a new tool and relocated to Leeds, where she authored the report."
 passes = "The team used a new tool and moved to Leeds, where she wrote the report."
@@ -187,8 +187,8 @@ what = "Opens by pointing back at the material it was given."
 instead = "Start with the answer; name the document where the reader needs it."
 strength = "weak"
 terms = [
-  { term = 'according to the (?:text|passage)', instead = "cut" },
-  { term = 'based on the (?:text|passage)', instead = "cut" },
+  { term = 'according to the (?:passage|text)', instead = "cut" },
+  { term = 'based on the (?:passage|text)', instead = "cut" },
   { term = '''here['’]s a summary''', instead = "start with it" },
 ]
 flags = "Based on the text, the supplier missed two deadlines."
@@ -206,13 +206,13 @@ what = "Uses the words of 2023 to mid-2024 ChatGPT."
 instead = "Use the plain word."
 strength = "weak"
 terms = [
-  { term = 'testament', instead = "proof" },
-  { term = 'meticulous(?:ly)?', instead = "careful" },
-  { term = 'garner(?:s|ed|ing)?', instead = "got" },
-  { term = 'bolster(?:s|ed|ing)?', instead = "support" },
   { term = 'boasts', instead = "has" },
-  { term = 'intricac(?:y|ies)', instead = "details" },
+  { term = 'bolster(?:ed|ing|s)?', instead = "support" },
   { term = 'enduring', instead = "lasting" },
+  { term = 'garner(?:ed|ing|s)?', instead = "got" },
+  { term = 'intricac(?:ies|y)', instead = "details" },
+  { term = 'meticulous(?:ly)?', instead = "careful" },
+  { term = 'testament', instead = "proof" },
 ]
 flags = "This meticulously bolstered body of evidence garnered praise."
 passes = "This careful review of the evidence got good feedback."
@@ -230,10 +230,10 @@ what = "Uses the words of mid-2024 to mid-2026 ChatGPT."
 instead = "Use the plain word."
 strength = "weak"
 terms = [
-  { term = 'enhanc(?:e|es|ed|ing)', instead = "improve" },
   { term = 'emphasi[sz]ing', instead = "stressing" },
+  { term = 'enhanc(?:e|ed|es|ing)', instead = "improve" },
   { term = 'highlighting', instead = "showing" },
-  { term = 'showcas(?:e|es|ed|ing)', instead = "shows" },
+  { term = 'showcas(?:e|ed|es|ing)', instead = "shows" },
 ]
 flags = "The redesign is showcasing and enhancing the brand."
 passes = "The redesign matches what users asked for and looks better."
@@ -251,9 +251,9 @@ instead = "Say what the source says, not what kind of source it is."
 strength = "weak"
 terms = [
   { term = 'independent coverage', instead = "name the report" },
+  { term = '(?:local|national|regional) media outlets', instead = "name them" },
+  { term = '(?:maintains?|has) an? (?:active|strong) (?:digital|online|social media) presence', instead = "cut" },
   { term = 'trade publications', instead = "name them" },
-  { term = '(?:local|regional|national) media outlets', instead = "name them" },
-  { term = '(?:maintains?|has) an? (?:active|strong) (?:online|social media|digital) presence', instead = "cut" },
 ]
 flags = "The studio maintains an active social media presence and has drawn independent coverage."
 passes = "The studio posts on Instagram, and the Yorkshire Post wrote about it in May."
@@ -272,8 +272,8 @@ strength = "weak"
 terms = [
   { term = 'dependable', instead = "reliable" },
   { term = 'echoed', instead = "say who repeated it" },
+  { term = 'prioriti[sz](?:e|ed|es|ing)', instead = "put first" },
   { term = 'universally', instead = "say who" },
-  { term = 'prioriti[sz](?:e|es|ed|ing)', instead = "put first" },
 ]
 flags = "The change leverages a dependable process that is universally understood."
 passes = "The change reuses last year's process, which has worked so far."
@@ -305,10 +305,10 @@ instead = "Use the plain word, or the measurement."
 strength = "weak"
 terms = [
   { term = 'causal', instead = "say what caused what" },
+  { term = 'correlat(?:e|ed|es|ing)', instead = "track" },
+  { term = 'democrati[sz](?:e|ed|es|ing)', instead = "opens up" },
+  { term = 'demystif(?:ied|ies|y|ying)', instead = "explains" },
   { term = 'empirical', instead = "measured" },
-  { term = 'correlat(?:e|es|ed|ing)', instead = "track" },
-  { term = 'democrati[sz](?:e|es|ed|ing)', instead = "opens up" },
-  { term = 'demystif(?:y|ies|ied|ying)', instead = "explains" },
 ]
 flags = "The tool democratizes data, and the empirical results correlate well."
 passes = "The tool is free, and last week's test showed it works."
@@ -326,13 +326,13 @@ what = "Uses Gemini's breakdowns and its essay phrases."
 instead = "Say the thing directly."
 strength = "weak"
 terms = [
+  { term = 'complex interplay', instead = "how A affects B" },
+  { term = 'extends? far beyond', instead = "goes beyond" },
   { term = '''here['’]s a breakdown''', instead = "start with it" },
   { term = 'key improvements', instead = "what improved" },
-  { term = 'extends? far beyond', instead = "goes beyond" },
-  { term = 'multi-?pronged approach', instead = "name the steps" },
   { term = 'manifests? in various ways', instead = "give the ways" },
+  { term = 'multi-?pronged approach', instead = "name the steps" },
   { term = 'necessitates', instead = "needs" },
-  { term = 'complex interplay', instead = "how A affects B" },
 ]
 flags = "Here's a breakdown of the issue, which extends far beyond one team and necessitates a multi-pronged approach."
 passes = "The issue hits three teams, so each needs its own fix."
@@ -350,10 +350,10 @@ what = "Uses Llama 4's business-essay phrases."
 instead = "Say what was done and what came of it."
 strength = "weak"
 terms = [
-  { term = 'gain(?:s|ing)? a deeper understanding', instead = "learn" },
-  { term = 'stay(?:s|ing)? ahead of the competition', instead = "name the rival" },
   { term = 'far-reaching consequences', instead = "name them" },
+  { term = 'gain(?:ing|s)? a deeper understanding', instead = "learn" },
   { term = 'role in shaping', instead = "say what it changed" },
+  { term = 'stay(?:ing|s)? ahead of the competition', instead = "name the rival" },
 ]
 flags = "Firms gain a deeper understanding of a market, with far-reaching consequences."
 passes = "Firms learn the market by talking to customers, and prices moved twice this year."

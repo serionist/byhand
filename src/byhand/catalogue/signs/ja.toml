@@ -176,16 +176,16 @@ what = "Uses vogue words that sound concrete or perceptive but say nothing anyon
 instead = "Say the fact behind the word: who, what, how much."
 strength = "weak"
 terms = [
-  { term = '肌感(?:覚)?', instead = "what you saw, or the number" },
-  { term = '解像度(?:が上が|を上げ|が高)', instead = "understand in detail" },
-  { term = '熱量', instead = "say how much work went in" },
-  { term = '腹落ち', instead = "納得" },
-  { term = '温度感', instead = "how keen they are" },
+  { term = '地に足のついた', instead = "practical" },
   { term = '手触り', instead = "describe it" },
   { term = '泥臭(?:い|さ)', instead = "name the hands-on work" },
-  { term = '血の通った', instead = "say what is personal in it" },
-  { term = '地に足のついた', instead = "practical" },
+  { term = '温度感', instead = "how keen they are" },
+  { term = '熱量', instead = "say how much work went in" },
   { term = '等身大の', instead = "ordinary" },
+  { term = '肌感(?:覚)?', instead = "what you saw, or the number" },
+  { term = '腹落ち', instead = "納得" },
+  { term = '血の通った', instead = "say what is personal in it" },
+  { term = '解像度(?:が上が|が高|を上げ)', instead = "understand in detail" },
 ]
 flags = "現場の肌感と熱量を大事にしながら、課題の解像度を上げていきます。"
 passes = "現場で聞いた不満を三つ挙げ、来週までに理由を探る。"
@@ -203,15 +203,15 @@ what = "Dresses a small personal experience in grand literary words."
 instead = "Tell it at its real size, in everyday words."
 strength = "weak"
 terms = [
-  { term = '美学', instead = "say what you like about it" },
-  { term = '境地', instead = "say where you got to" },
-  { term = '極致', instead = "the best" },
-  { term = '宿命', instead = "say why it was bound to happen" },
-  { term = '虚飾', instead = "show" },
-  { term = '深淵', instead = "depth, or cut" },
-  { term = '禁欲的', instead = "plain" },
   { term = '冷徹な', instead = "cold" },
-  { term = '真理(?:が|を|に|だ|で|へ|。)', instead = "say what you found" },
+  { term = '境地', instead = "say where you got to" },
+  { term = '宿命', instead = "say why it was bound to happen" },
+  { term = '極致', instead = "the best" },
+  { term = '深淵', instead = "depth, or cut" },
+  { term = '真理(?:。|が|だ|で|に|へ|を)', instead = "say what you found" },
+  { term = '禁欲的', instead = "plain" },
+  { term = '美学', instead = "say what you like about it" },
+  { term = '虚飾', instead = "show" },
 ]
 flags = "週末の家庭菜園に、土と向き合う美学と、ある種の境地を見た。"
 passes = "週末の家庭菜園で、ミニトマトが二十個ほど採れた。"
@@ -230,20 +230,20 @@ what = "Explains with stock metaphors and metaphor verbs: a compass, a catalyst,
 instead = "Say what the thing does, or what happened, in plain words."
 strength = "weak"
 terms = [
-  { term = '起爆剤', instead = "say what it starts" },
-  { term = '羅針盤', instead = "say how it guides" },
-  { term = '両輪', instead = "both are needed" },
-  { term = '触媒(?:と|に|として)', instead = "say what it speeds up" },
-  { term = '勝ち筋', instead = "a plan that can work" },
-  { term = '(?:思考|仕事|人生|意思決定)の?OS', instead = "way of thinking" },
-  { term = '人生をハック', instead = "工夫する" },
-  { term = '(?:一つ|1つ|ひとつ)ずつ潰し', instead = "say what was fixed" },
-  { term = '側に倒(?:す|し)', instead = "say which you chose" },
-  { term = '時間を溶かし', instead = "say how long it took" },
-  { term = '静かに(?:壊れ|失敗し)', instead = "say what fails and that no one is told" },
-  { term = '黙って(?:無視|捨て|破棄)', instead = "say it is dropped with no notice" },
-  { term = '地味に効(?:く|き|いて)', instead = "say what it helps" },
+  { term = '(?:1つ|ひとつ|一つ)ずつ潰し', instead = "say what was fixed" },
   { term = '(?:ここ|そこ)で効いてくる', instead = "say what changes" },
+  { term = '両輪', instead = "both are needed" },
+  { term = '(?:人生|仕事|思考|意思決定)の?OS', instead = "way of thinking" },
+  { term = '人生をハック', instead = "工夫する" },
+  { term = '側に倒(?:し|す)', instead = "say which you chose" },
+  { term = '勝ち筋', instead = "a plan that can work" },
+  { term = '地味に効(?:いて|き|く)', instead = "say what it helps" },
+  { term = '時間を溶かし', instead = "say how long it took" },
+  { term = '羅針盤', instead = "say how it guides" },
+  { term = '触媒(?:と|として|に)', instead = "say what it speeds up" },
+  { term = '起爆剤', instead = "say what it starts" },
+  { term = '静かに(?:壊れ|失敗し)', instead = "say what fails and that no one is told" },
+  { term = '黙って(?:捨て|無視|破棄)', instead = "say it is dropped with no notice" },
 ]
 flags = "この指針はチームの羅針盤になる。迷ったら止める側に倒します。"
 passes = "この指針があれば、優先順位で揉めずに済む。迷ったら止めます。"
@@ -262,17 +262,17 @@ what = "Swaps a plain word for consultants' katakana, or a short verb for a stif
 instead = "Use the plain Japanese word, or the short verb."
 strength = "weak"
 terms = [
-  { term = 'シナジー', instead = "say what each side gains" },
-  { term = 'プライオリティ', instead = "優先順位" },
-  { term = 'アライン(?:メント)?', instead = "すり合わせる" },
-  { term = 'アグリー', instead = "賛成です" },
-  { term = 'インテグリティ', instead = "say what honesty means here" },
-  { term = 'シームレス', instead = "say what no longer gets in the way" },
-  { term = 'を実現することができ', instead = "できる" },
   { term = 'することが可能(?:です|となり|になり)', instead = "できます" },
+  { term = 'を実現することができ', instead = "できる" },
   { term = 'を活用することで', instead = "を使えば" },
-  { term = '多角的(?:な|に)', instead = "name the angles" },
+  { term = 'アグリー', instead = "賛成です" },
+  { term = 'アライン(?:メント)?', instead = "すり合わせる" },
+  { term = 'インテグリティ', instead = "say what honesty means here" },
+  { term = 'シナジー', instead = "say what each side gains" },
+  { term = 'シームレス', instead = "say what no longer gets in the way" },
+  { term = 'プライオリティ', instead = "優先順位" },
   { term = '包括的(?:な|に)', instead = "say what it covers" },
+  { term = '多角的(?:な|に)', instead = "name the angles" },
 ]
 flags = "部署間のシナジーを生むため、多角的な視点で目標をアラインする。"
 passes = "部署どうしで手を組めるよう、営業と経理に聞いて目標をすり合わせる。"
@@ -291,10 +291,10 @@ what = "Carries English idiom over word for word: the moment, on the table, proj
 instead = "Say it the Japanese way: すぐに, 未定, この案件だけの."
 strength = "weak"
 terms = [
-  { term = 'テーブルに(?:載|残)|テーブルの上に(?:あ|残|載)', instead = "未定" },
   { term = 'た瞬間に', instead = "たらすぐ" },
-  { term = '(?:プロジェクト|リポジトリ|ワークスペース|組織)レベルの', instead = "say where it applies" },
   { term = 'を正本(?:と|に)|の正本として', instead = "原本, or the file to check against" },
+  { term = 'テーブルに(?:残|載)|テーブルの上に(?:あ|残|載)', instead = "未定" },
+  { term = '(?:プロジェクト|リポジトリ|ワークスペース|組織)レベルの', instead = "say where it applies" },
 ]
 flags = "組織レベルの目標を見直した瞬間に、部署ごとの計画も動き出す。"
 passes = "会社全体の目標を見直すと、すぐに部署ごとの計画も変わる。"
@@ -311,11 +311,11 @@ what = "Uses stock phrases that leave out who judged, what risk lurks, or who ne
 instead = "Name the person, the risk or the use the phrase stands in for."
 strength = "weak"
 terms = [
+  { term = 'が招く(?:事故|失敗|混乱)', instead = "say what goes wrong" },
   { term = '(?:という|との)見立てです', instead = "name who thinks so" },
-  { term = 'に潜む(?:リスク|課題|罠|危険)|(?:リスク|課題|罠|問題)が潜んで', instead = "name the problem" },
-  { term = '欠かせない存在と(?:なって|なりつつ)|今や[^。\n]{0,20}欠かせない存在', instead = "say who uses it, for what" },
-  { term = 'が招く(?:混乱|失敗|事故)', instead = "say what goes wrong" },
   { term = 'という挙動を(?:排除|防止|阻止)', instead = "say what stops what" },
+  { term = 'に潜む(?:リスク|危険|罠|課題)|(?:リスク|問題|罠|課題)が潜んで', instead = "name the problem" },
+  { term = '欠かせない存在と(?:なって|なりつつ)|今や[^。\n]{0,20}欠かせない存在', instead = "say who uses it, for what" },
 ]
 flags = "発注フローの変更に潜むリスクを、早めに洗い出します。"
 passes = "発注フローを変えると、締め日の確認が一回増えます。"
@@ -333,7 +333,7 @@ what = "Opens a sentence by clearing its throat: what matters is, to be honest, 
 instead = "Start with the point."
 strength = "weak"
 terms = [
-  { term = '(?:^|。)(?:まず|ここで)?(?:重要|大事|大切)なのは、', instead = "cut" },
+  { term = '(?:^|。)(?:ここで|まず)?(?:大事|大切|重要)なのは、', instead = "cut" },
   { term = '(?:^|。)結論から言うと', instead = "cut" },
   { term = '(?:^|。)正直に言うと', instead = "cut" },
   { term = 'ここで注目すべきは', instead = "cut" },
@@ -355,9 +355,9 @@ what = "Closes on a set tail that overstates or hedges a plain claim."
 instead = "End on the fact itself."
 strength = "weak"
 terms = [
-  { term = '過言では', instead = "cut, and state the fact" },
-  { term = 'に(?:他|ほか)なりません', instead = "です" },
   { term = 'と言えるでしょう', instead = "でしょう" },
+  { term = 'に(?:ほか|他)なりません', instead = "です" },
+  { term = '過言では', instead = "cut, and state the fact" },
 ]
 flags = "この改修は、売上回復の決め手と言っても過言ではありません。"
 passes = "この改修のあと、売上は二か月続けて伸びました。"
@@ -375,12 +375,12 @@ what = "Announces the structure instead of giving it: there are three points, le
 instead = "Start on the first point; headings show the structure."
 strength = "weak"
 terms = [
-  { term = '本記事では|本稿では', instead = "cut" },
-  { term = '(?:ポイント|理由|観点|コツ)は(?:3|３|三)つ(?:です|あります)', instead = "give the points" },
-  { term = '以下の(?:3|３|三)つの(?:観点|ポイント)', instead = "give the points" },
-  { term = '(?:順に)?見ていきましょう', instead = "cut" },
-  { term = '深掘りしていきます', instead = "cut" },
   { term = 'ここからが本題です', instead = "cut" },
+  { term = '(?:コツ|ポイント|理由|観点)は(?:3|三|３)つ(?:あります|です)', instead = "give the points" },
+  { term = '以下の(?:3|三|３)つの(?:ポイント|観点)', instead = "give the points" },
+  { term = '本記事では|本稿では', instead = "cut" },
+  { term = '深掘りしていきます', instead = "cut" },
+  { term = '(?:順に)?見ていきましょう', instead = "cut" },
 ]
 flags = "本記事では、棚卸しのやり方をざっと押さえます。"
 passes = "棚卸しのやり方を、うちの店の例で残しておく。"
@@ -400,8 +400,8 @@ strength = "weak"
 terms = [
   { term = 'いかがでした', instead = "cut" },
   { term = 'ぜひ(?:参考にして|試して)みてください', instead = "cut, or say who it suits" },
-  { term = 'まずは小さく始めましょう', instead = "give the first step" },
   { term = 'の重要性を再認識しました', instead = "say what changed" },
+  { term = 'まずは小さく始めましょう', instead = "give the first step" },
 ]
 flags = "棚卸しの手順は以上の五つ。いかがでしたでしょうか。"
 passes = "棚卸しの手順は以上の五つ。質問は佐藤まで。"
@@ -419,10 +419,10 @@ what = "Lets data, culture or problems act on their own: the data tells, a cultu
 instead = "Name who did it or who noticed."
 strength = "weak"
 terms = [
+  { term = 'が浮かび上が', instead = "で分かった" },
+  { term = 'が浮き彫りに', instead = "で分かった" },
   { term = 'が物語って', instead = "を見ると" },
   { term = '文化が醸成', instead = "say who built it" },
-  { term = 'が浮き彫りに', instead = "で分かった" },
-  { term = 'が浮かび上が', instead = "で分かった" },
 ]
 flags = "アンケート結果が物語っているのは、新制度への不安だ。"
 passes = "アンケートを読むと、新制度を不安に思う人が多かった。"
@@ -441,10 +441,10 @@ what = "Takes no side: it depends, there are pros and cons, opinions differ."
 instead = "Say which you chose and why, or what it depends on."
 strength = "weak"
 terms = [
+  { term = 'ケースバイケース', instead = "name the cases" },
   { term = 'メリットもあればデメリットも', instead = "name the one that decides it" },
   { term = '一概には言えません', instead = "say what it depends on" },
   { term = '賛否が分かれ', instead = "say what you think" },
-  { term = 'ケースバイケース', instead = "name the cases" },
 ]
 flags = "在宅勤務の是非は賛否が分かれる話で、どちらにも一理あります。"
 passes = "A案にします。B案は安いけれど、納期が二週間遅れるので。"
@@ -463,7 +463,7 @@ what = "Calls a version of a text 版, as English says version."
 instead = "Write 案 or バージョン, or name what changed."
 strength = "weak"
 terms = [
-  { term = '(?:短い|長い|別の|今回の|簡単な|丁寧な)版(?:で|を|は|に|の|が|も|と)', instead = "案, or バージョン" },
+  { term = '(?:丁寧な|今回の|別の|短い|簡単な|長い)版(?:が|で|と|に|の|は|も|を)', instead = "案, or バージョン" },
   { term = '向けの版', instead = "向けの案" },
 ]
 flags = "図を減らした簡単な版を、別に用意した。"

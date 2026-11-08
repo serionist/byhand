@@ -1,14 +1,21 @@
-"""Write the catalogue as Markdown into the plugin, one small file per language and model family.
+"""Write the catalogue as Markdown into the plugin: lean files `write` reads, and check files `check` reads.
 
-The plugin's skills run no command: they read these files, at most four for a draft (six for a script variant), so a
-hundred languages cost a draft no more than one. Nothing is rendered that a draft doesn't need, no citation and no
-example, only what the model acts on. Nothing here reads the clock, so a file can't go stale overnight.
+The plugin's skills run no command: they read these files. A draft reads only what its kind of writing needs, a mail
+or a message the short files, a post or a document the long ones too, so a hundred languages cost a draft no more than
+one. `write`'s files hold no regex, only plain words: a pattern is for Grep, which `check` runs through its `scan`
+agent from the check files. Nothing is rendered that a skill doesn't act on, no citation and no example, and nothing
+here reads the clock, so a file can't go stale overnight.
 """
 
 from __future__ import annotations
 
-from collections.abc import Iterable
+import re
+import re._parser as regex_parser  # pyright: ignore[reportMissingModuleSource]
+from collections.abc import Callable, Iterable
+from dataclasses import dataclass
+from functools import partial
 from pathlib import Path
+from typing import Any
 
 from byhand import signs
 from byhand.models import ModelRange
@@ -16,19 +23,117 @@ from byhand.signs import ANY, Catalogue, Sign
 
 OUT = Path(__file__).resolve().parents[2] / "plugin" / "signs"
 KB = 1024
-DRAFT_BUDGET = 16 * KB  # the prose files one draft reads, together
-LAYOUT_BUDGET = 16 * KB  # the layout files a deck or a sheet adds, together
-UNKNOWN_BUDGET = 48 * KB  # a text of unknown author: `any` and one language, in every family
+
+
+@dataclass(frozen=True)
+class Budgets:
+    """The bytes each reader may take, set from the catalogue of 2026-11-08 with a margin, and only ever lowered."""
+
+    mail: int = 14 * KB  # the short files a mail or a message reads, together
+    document: int = 16 * KB  # the short and long files a post or a document reads, together
+    layout: int = 16 * KB  # the layout files a deck or a sheet adds, together
+    check: int = 32 * KB  # the check files one check reads: `any`, a variant's base language, the language
+
+
+BUDGETS = Budgets()
 MAX_LINES = 2000  # Claude Code's `Read` default: past it, a file is read only in part
 # Not `<family>.md`: on Windows and macOS `claude.md` is a CLAUDE.md, which Claude Code loads as project instructions.
-PROSE = ".signs.md"
+SHORT = ".short.md"
+LONG = ".long.md"
 LAYOUT = ".layout.md"
+CHECK = "check.md"
+SHORT_KINDS = ("email", "message")
+LONG_KINDS = ("document", "post")
+ELLIPSIS = "…"
 _ORDER = {strength: n for n, strength in enumerate(signs.STRENGTHS)}
+_SUFFIX = {"short": SHORT, "long": LONG, "layout": LAYOUT}
 
 
 def is_layout(sign: Sign) -> bool:
     """A sign only a deck or a sheet needs: every message would pay for it otherwise."""
     return set(sign.kinds) <= set(signs.LAYOUT_KINDS)
+
+
+def part(sign: Sign) -> str:
+    """Which file a sign goes to: `short` when a mail or a message reads it, `long` when only a post or a document
+    does, `layout` when only a deck or a sheet does."""
+    if is_layout(sign):
+        return "layout"
+    if ANY in sign.kinds or set(sign.kinds) & set(SHORT_KINDS):
+        return "short"
+    return "long"
+
+
+def _class(items: list[tuple[Any, Any]]) -> str:
+    """A character class's word: its first literal, a space for `\\s`, else the ellipsis. A negated class's literals
+    are what it excludes, so it prints the ellipsis."""
+    if any(op.name == "NEGATE" for op, _value in items):
+        return ELLIPSIS
+    for op, value in items:
+        if op.name == "LITERAL":
+            return chr(value)
+    if any(op.name == "CATEGORY" and value.name == "CATEGORY_SPACE" for op, value in items):
+        return " "
+    return ELLIPSIS
+
+
+def _shortest(items: Iterable[tuple[Any, Any]]) -> str:
+    """The shortest text a parsed pattern matches, with a required run of `\\w` or of a class as the ellipsis: a
+    filler letter would read as part of the word ("aként" for `\\w+ként`)."""
+    out: list[str] = []
+    for op, value in items:
+        name = op.name
+        if name == "LITERAL":
+            out.append(chr(value))
+        elif name in ("NOT_LITERAL", "ANY"):
+            out.append(ELLIPSIS)
+        elif name == "IN":
+            out.append(_class(value))
+        elif name == "SUBPATTERN":
+            out.append(_shortest(value[-1]))
+        elif name == "BRANCH":
+            # A word before an ellipsis: "delve" says more than "…".
+            out.append(min((_shortest(branch) for branch in value[1]), key=lambda word: (ELLIPSIS in word, len(word))))
+        elif name in ("MAX_REPEAT", "MIN_REPEAT"):
+            low, high, inner = value
+            word = _shortest(inner)
+            if low:
+                out.append(ELLIPSIS if ELLIPSIS in word else word * low)
+            elif word == ELLIPSIS and high > 1 and out:
+                out.append(ELLIPSIS)  # a stem's open end: "служ…", not "служ", which reads as a typo
+            elif high == 1 and word and not any(char.isalpha() for char in word):
+                out.append(word)  # an optional apostrophe or space prints: "today's", not "todays"; a word doesn't
+        elif name != "AT":  # `\b`, `^` and `$` print nothing; `validate` refuses what else Grep can't run
+            raise ValueError(f"no word for {name}")
+    return re.sub(f"{ELLIPSIS}+", ELLIPSIS, "".join(out))
+
+
+def alternatives(term: str) -> list[str]:
+    """A term's top-level alternatives, split on its own text: Python's parser pulls a prefix the alternatives share
+    out of them (`a b|a c` becomes `a (?:b|c)`), which would leave one word for two."""
+    found, depth, start, index = [], 0, 0, 0
+    while index < len(term):
+        char = term[index]
+        if char == "\\":
+            index += 1
+        elif char == "[":
+            index = term.index("]", index + 2 if term[index + 1 : index + 2] in ("]", "^") else index + 1)
+        elif char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+        elif char == "|" and depth == 0:
+            found.append(term[start:index])
+            start = index + 1
+        index += 1
+    return [*found, term[start:]]
+
+
+def words(term: str) -> list[str]:
+    """A term's plain words for `write`: one per top-level alternative, each the shortest text it matches."""
+    return list(
+        dict.fromkeys(_shortest(regex_parser.parse(alternative).data).strip() for alternative in alternatives(term))
+    )
 
 
 def _span(span: ModelRange) -> str:
@@ -38,29 +143,33 @@ def _span(span: ModelRange) -> str:
     return f"{span.family} {span.since} to {span.to}{'.x' if span.to.minor is None else ''}"
 
 
-def _line(sign: Sign, family: str) -> str:
+def _line(sign: Sign, family: str | None) -> str:
+    """A sign as the model acts on it: its ranges in `family`, or all of them in a check file."""
     notes = [sign.strength]
-    notes += [_span(span) for span in sign.models if span.family == family]
+    notes += [_span(span) for span in sign.models if family is None or span.family == family]
     if ANY not in sign.kinds:
         notes.append(", ".join(sign.kinds))
     line = f"- {sign.id} ({'; '.join(notes)}): {sign.what} Instead: {sign.instead}"
     if sign.terms:
-        line += " Terms: " + "; ".join(f"`{term.term}`: {term.instead}" for term in sign.terms)
+        line += " Words: " + "; ".join(f"{', '.join(words(term.term))}: {term.instead}" for term in sign.terms)
     return line
 
 
-def _title(catalogue: Catalogue, language: str, family: str, layout: bool) -> str:
+def _check_line(sign: Sign) -> str:
+    line = _line(sign, None)
+    if sign.pattern is not None:
+        line += f" Pattern: `{sign.pattern.pattern}`"
+    return line
+
+
+def _title(catalogue: Catalogue, language: str, family: str, what: str) -> str:
     who = catalogue.languages[language].name if language in catalogue.languages else "every language"
     model = catalogue.families[family].name if family in catalogue.families else "every model"
-    return f"# Signs of AI writing: {who}, {model}{', decks and sheets' if layout else ''}"
+    return f"# Signs of AI writing: {who}, {model}, {what}"
 
 
-def _file(catalogue: Catalogue, language: str, family: str, layout: bool, found: list[Sign]) -> str:
-    lines = [
-        _title(catalogue, language, family, layout),
-        "",
-        "Generated by `byhand render` from the catalogue; a change here is lost.",
-    ]
+def _file(title: str, found: list[Sign], line: Callable[[Sign], str]) -> str:
+    lines = [title, "", "Generated by `byhand render` from the catalogue; a change here is lost."]
     if any(sign.strength == "weak" for sign in found):
         lines.append(
             f"A weak sign counts only with {signs.WEAK_CLUSTER} or more hits of weak signs in a paragraph or section, "
@@ -70,51 +179,79 @@ def _file(catalogue: Catalogue, language: str, family: str, layout: bool, found:
         lines.append(
             "A sign holds for the versions it names: `5.x` is the whole 5 series, `and later` every newer one."
         )
+    if any(sign.pattern is not None for sign in found) and line is _check_line:
+        lines.append(
+            "A pattern is what Grep runs on a file, case-insensitive and line by line; a sign with none is found by "
+            "reading."
+        )
     lines.append("")
-    ordered = sorted(found, key=lambda sign: (_ORDER[sign.strength], sign.id))
-    lines += [_line(sign, family) for sign in ordered]
+    lines += [line(sign) for sign in sorted(found, key=lambda sign: (_ORDER[sign.strength], sign.id))]
     return "\n".join(lines) + "\n"
+
+
+_WHAT = {
+    "short": "for every kind of writing",
+    "long": "for posts and documents",
+    "layout": "for decks and sheets",
+}
 
 
 def render(catalogue: Catalogue) -> dict[str, str]:
     """Each rendered file, by its path under plugin/signs. A sign with an `until` is retired and renders nowhere; a
-    sign with ranges in two families renders in both."""
-    groups: dict[tuple[str, str, bool], list[Sign]] = {}
+    sign with ranges in two families renders in both, and once in its language's check file."""
+    groups: dict[tuple[str, str, str], list[Sign]] = {}
+    checks: dict[str, list[Sign]] = {}
     for sign in catalogue.signs.values():
         if sign.until is not None:
             continue
+        where = part(sign)
         for family in {span.family for span in sign.models} or {ANY}:
-            groups.setdefault((sign.language, family, is_layout(sign)), []).append(sign)
-    return {
-        f"{language}/{family}{LAYOUT if layout else PROSE}": _file(catalogue, language, family, layout, found)
-        for (language, family, layout), found in sorted(groups.items())
+            groups.setdefault((sign.language, family, where), []).append(sign)
+        if where != "layout":  # decks and sheets come with 0.4.0
+            checks.setdefault(sign.language, []).append(sign)
+    files = {
+        f"{language}/{family}{_SUFFIX[where]}": _file(
+            _title(catalogue, language, family, _WHAT[where]), found, partial(_line, family=family)
+        )
+        for (language, family, where), found in groups.items()
     }
+    files |= {
+        f"{language}/{CHECK}": _file(_title(catalogue, language, ANY, "to check a text"), found, _check_line)
+        for language, found in checks.items()
+    }
+    return dict(sorted(files.items()))
 
 
 def _scopes(catalogue: Catalogue, language: str) -> list[str]:
-    """Where a draft's signs come from: every language's, then its base language's if it is a variant, then its own."""
+    """Where a text's signs come from: every language's, then its base language's if it is a variant, then its own."""
     entry = catalogue.languages.get(language)
     return list(dict.fromkeys([ANY, *([entry.of] if entry and entry.of else []), language]))
 
 
-def draft_files(catalogue: Catalogue, language: str, family: str) -> list[str]:
-    """The prose files one draft reads, whether they exist or not: four, or six for a variant such as `zh-Hant`."""
-    return [f"{scope}/{name}{PROSE}" for scope in _scopes(catalogue, language) for name in dict.fromkeys((ANY, family))]
+def draft_files(catalogue: Catalogue, language: str, family: str, kind: str) -> list[str]:
+    """The files one draft reads, whether they exist or not: the short ones for every kind, the long ones too for a
+    post or a document, the layout ones for a deck or a sheet."""
+    suffixes = {"deck": (LAYOUT,), "sheet": (LAYOUT,)}.get(kind, (SHORT, LONG) if kind in LONG_KINDS else (SHORT,))
+    return [
+        f"{scope}/{name}{suffix}"
+        for suffix in suffixes
+        for scope in _scopes(catalogue, language)
+        for name in dict.fromkeys((ANY, family))
+    ]
+
+
+def check_files(catalogue: Catalogue, language: str) -> list[str]:
+    """The check files one check reads, whether they exist or not."""
+    return [f"{scope}/{CHECK}" for scope in _scopes(catalogue, language)]
 
 
 def _bytes(files: dict[str, str], paths: Iterable[str]) -> int:
     return sum(len(files[path].encode("utf-8")) for path in paths if path in files)
 
 
-def budget_problems(
-    files: dict[str, str],
-    catalogue: Catalogue,
-    draft: int = DRAFT_BUDGET,
-    unknown: int = UNKNOWN_BUDGET,
-    layout: int = LAYOUT_BUDGET,
-) -> list[str]:
+def budget_problems(files: dict[str, str], catalogue: Catalogue, budgets: Budgets = BUDGETS) -> list[str]:
     """What overruns the budgets: a catalogue that grows past them fails here, before a user pays for it. Each set of
-    files is named once: `any/any.signs.md` alone over budget is one problem, not one per language and family."""
+    files is named once: `any/any.short.md` alone over budget is one problem, not one per language and family."""
     problems = [
         f"{path}: {text.count(chr(10))} lines; a file stays under {MAX_LINES}, Claude Code's `Read` default"
         for path, text in files.items()
@@ -131,13 +268,10 @@ def budget_problems(
 
     for language in catalogue.languages:
         for family in (ANY, *catalogue.families):
-            reads = draft_files(catalogue, language, family)
-            over("a draft", reads, draft)
-            over("a deck or a sheet", (path.removesuffix(PROSE) + LAYOUT for path in reads), layout)
-        scopes = _scopes(catalogue, language)
-        scoped = [path for path in files if path.split("/")[0] in scopes]
-        over("a text of unknown author", (path for path in scoped if not path.endswith(LAYOUT)), unknown)
-        over("a deck of unknown author", (path for path in scoped if path.endswith(LAYOUT)), unknown)
+            over("a mail or a message", draft_files(catalogue, language, family, "email"), budgets.mail)
+            over("a post or a document", draft_files(catalogue, language, family, "document"), budgets.document)
+            over("a deck or a sheet", draft_files(catalogue, language, family, "deck"), budgets.layout)
+        over("a check", check_files(catalogue, language), budgets.check)
     return problems
 
 

@@ -433,7 +433,8 @@ def plugin_skill_problems(folder: str, text: str, reads: frozenset[str] = PLUGIN
 
 def agent_problems(stem: str, text: str) -> list[str]:
     """What is wrong with `plugin/agents/<stem>.md`: the frontmatter holds only AGENT_KEYS, `name` equal to the file's
-    stem, a `description` (valid YAML), a `model` Claude Code knows, and an `effort` it knows when one is set."""
+    stem, a `description` (valid YAML), a `model` Claude Code knows, an `effort` it knows when one is set, and `tools`
+    naming only tools that read."""
     where = f"{PLUGIN_AGENTS_DIR}/{stem}.md"
     try:
         fields = frontmatter(text)
@@ -460,6 +461,16 @@ def agent_problems(stem: str, text: str) -> list[str]:
     effort = fields.get("effort")
     if effort is not None and effort[0] not in AGENT_EFFORTS:
         problems.append(f"{where}: effort is {effort[0]!r}; it must be one of {', '.join(AGENT_EFFORTS)}")
+    # An agent with no `tools` gets every tool, Bash among them; and with Bash, Claude Code leaves Grep out on macOS,
+    # Linux and WSL. Listing only tools that read keeps the plugin free of commands and gives it Grep everywhere.
+    tools = _ALLOWED_ENTRY.findall(fields.get("tools", ("", True))[0])
+    if not tools:
+        problems.append(f"{where}: tools is missing; without it an agent gets every tool, Bash among them")
+    problems += [
+        f"{where}: tools {entry!r} is not one of the tools that only read ({', '.join(sorted(PLUGIN_READS))})"
+        for entry in tools
+        if entry not in PLUGIN_READS
+    ]
     return problems
 
 

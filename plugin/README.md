@@ -15,6 +15,15 @@ Not released yet. The skills come with the first version, `0.1.0`; the
 
 That's all: no Python, nothing else to install. Its skills read Markdown and run no commands.
 
+## Skills
+
+| Skill | What | Starts |
+|---|---|---|
+| `/byhand:check` | finds the signs of AI writing in a text or a file, with their lines and what a person writes instead; no score | when you ask whether a text reads as AI-written |
+
+`check` hands a file to its `scan` agent, which runs the signs' patterns over it with Grep and reads nothing else.
+Text pasted into the chat gets a reading, without the patterns.
+
 ## Updating
 
 `/plugin marketplace update byhand`.

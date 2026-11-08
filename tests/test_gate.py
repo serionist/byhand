@@ -720,6 +720,7 @@ name: checker
 description: >-
   Reads a draft cold, never the writer's reasoning.
 model: opus
+tools: Read, Grep
 ---
 
 # Checker
@@ -775,7 +776,7 @@ def test_a_plugin_skill_keeps_the_skill_rules():
 
 def test_a_good_agent_has_no_problems():
     assert gate.agent_problems("checker", AGENT) == []
-    with_more = AGENT.replace("model: opus", "model: inherit\neffort: high\ntools: Read, Glob, Grep")
+    with_more = AGENT.replace("model: opus", "model: inherit\neffort: high").replace("Read, Grep", "Read, Glob, Grep")
     assert gate.agent_problems("checker", with_more) == []
 
 
@@ -790,10 +791,17 @@ def test_a_good_agent_has_no_problems():
         ("checker", AGENT.replace("model: opus", "model: opus\nhooks: x"), "frontmatter key 'hooks'"),
         ("checker", AGENT.replace("model: opus", "model: opus\nmcpServers: x"), "frontmatter key 'mcpServers'"),
         ("checker", AGENT.replace("model: opus", "model: opus\npermissionMode: x"), "frontmatter key 'permissionMode'"),
-        ("checker", "---\nname: checker\nmodel: opus\n---\n", "description is missing"),
-        ("checker", "---\nname: checker\ndescription: Checks: renders\nmodel: opus\n---\n", "write it as a >- block"),
+        ("checker", "---\nname: checker\nmodel: opus\ntools: Read\n---\n", "description is missing"),
+        (
+            "checker",
+            "---\nname: checker\ndescription: Checks: renders\nmodel: opus\ntools: Read\n---\n",
+            "write it as a >- block",
+        ),
         ("Checker", AGENT.replace("name: checker", "name: Checker"), "lowercase letters, digits and hyphens"),
         ("checker", "# no frontmatter\n", "it does not start with a --- line"),
+        ("checker", AGENT.replace("tools: Read, Grep\n", ""), "tools is missing"),
+        ("checker", AGENT.replace("Read, Grep", "Read, Grep, Bash"), "tools 'Bash' is not one of"),
+        ("checker", AGENT.replace("Read, Grep", "Read, Write"), "tools 'Write' is not one of"),
     ],
     ids=[
         "name",
@@ -808,6 +816,9 @@ def test_a_good_agent_has_no_problems():
         "colon",
         "file name",
         "frontmatter",
+        "no tools",
+        "bash",
+        "a write",
     ],
 )
 def test_agent_problems(stem, text, expected):

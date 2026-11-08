@@ -7,5 +7,8 @@ before `1.0` a minor may break something, under Breaking.
 
 ### Added
 
+- `/byhand:write`: writes a message, a mail, a post or a document in your own style, without the signs of AI writing.
+- `/byhand:learn`: learns a style from your own samples, never from text that reads as AI-written, and keeps your
+  styles in `~/.byhand/styles/`.
 - `/byhand:check`: finds the signs of AI writing in a text or a file, in any of the catalogue's languages, with
   their lines and what a person writes instead. No score. A file's patterns run through its `scan` agent.

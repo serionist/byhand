@@ -13,6 +13,9 @@ allowed-tools: Read
 Write the text the user asked for, the way they write, without the signs that make text read as AI-written. Ask
 nothing you can judge yourself.
 
+Read each file named here by its path with the Read tool, one call per file: never a command, never Glob or a
+listing, which ask the user or are missing on some machines.
+
 ## Steps
 
 1. **The kind:** `message` (chat, a text), `email`, `post` (social, a blog) or `document` (a report, notes, a

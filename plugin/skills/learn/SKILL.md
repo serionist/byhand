@@ -13,6 +13,9 @@ allowed-tools: Read
 A style is how one person writes one kind of text: their own words, rhythm and habits, learned from their own
 samples, never from AI-written text. Styles live in `~/.byhand/styles/`, on the user's machine only.
 
+Read each file named here by its path with the Read tool, one call per file: never a command, never Glob or a
+listing, which ask the user or are missing on some machines.
+
 ## The format
 
 `~/.byhand/styles/index.md` is the list of styles. A style file it doesn't name is never used.

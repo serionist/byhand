@@ -81,7 +81,7 @@ sources = [
 [[sign]]
 id = "hu-explicit-subject-repeat"
 category = "structure"
-kinds = ["document", "email"]
+kinds = ["document", "email", "deck"]
 models = "any"
 what = "Spells out a subject the verb's ending already names (én, mi, ő) or a noun nothing has displaced, sentence after sentence, as English must; it reads as translated."
 instead = "Any of: a pronoun once; leaving out the subject the verb's ending carries; one sentence where two share it. Never a synonym in its place."
@@ -96,7 +96,7 @@ sources = [
 [[sign]]
 id = "hu-parenthetical-gloss"
 category = "structure"
-kinds = ["document", "email"]
+kinds = ["document", "email", "deck"]
 models = "any"
 what = "Puts a term's translation in brackets beside it, English after Hungarian or the reverse, for a reader who knows the word."
 instead = "Use the word the team uses, once, with no gloss."

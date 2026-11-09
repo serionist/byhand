@@ -496,7 +496,7 @@ def test_a_file_of_too_many_lines_fails():
 
 def test_the_budgets_are_the_plans():
     assert (
-        render.Budgets(mail=14 * 1024, document=16 * 1024, layout=16 * 1024, check=16 * 1024, scan=9 * 1024)
+        render.Budgets(mail=14 * 1024, document=16 * 1024, layout=11 * 1024, check=16 * 1024, scan=9 * 1024)
         == render.BUDGETS
     )
 
@@ -568,6 +568,23 @@ def test_the_real_catalogue_renders_within_its_budgets():
     found, problems = signs.load()
     assert problems == []
     assert render.budget_problems(render.render(found), found) == []
+
+
+def test_a_deck_reads_the_document_signs_a_slide_shows_and_not_raw_markdown_or_emoji():
+    # The outline form is built of `## ` headings, and people's slides hold more emoji than generated ones (#66): those
+    # two lines stay in the short file a deck reads, but don't name a deck.
+    found, _ = signs.load()
+    files = render.render(found)
+    read = {
+        line.split(" (", 1)[0][2:]: line.split(" (", 1)[1].split("): ", 1)[0].split("; ")[-1].split(", ")
+        for path in render.draft_files(found, "en", "any", "deck")
+        if path in files
+        for line in lines(files[path])
+    }
+    assert "deck" in read["any-assistant-preamble"]
+    assert "deck" in read["any-assistant-closing-offer"]
+    assert "deck" not in read["any-raw-markdown"]
+    assert "deck" not in read["any-emoji-markers"]
 
 
 def test_every_sign_file_a_plugin_skill_names_is_one_render_writes():

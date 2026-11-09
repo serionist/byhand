@@ -12,7 +12,7 @@
 # rests on one of the papers, or on humanizer-ar beside one. None measured work mail. Each Arabic sign is weak on that
 # evidence (#72): the measured habits are rates over many texts, which one person's text can match; الضوء is news'
 # own word; and Wang et al.'s annotators, who saw Qwen2 mix dialects, read 36% of people's tweets as a machine's
-# (#85). The one Arabic check reads posts and documents only.
+# (#85). The one Arabic check reads posts, documents and decks only.
 # Left out, as people write them in office Arabic and humanizer-ar alone lists them: its stock connectors and closers
 # (تجدر الإشارة إلى, علاوة على ذلك, في هذا السياق, وفي الختام), its inflated phrases (حجر الزاوية, نقلة نوعية), its
 # hedges, openers and copulas (يُعد, يُعتبر), تم with a verbal noun, the light verb قام ب and collocation calques, which
@@ -75,7 +75,7 @@ sources = [
 [[sign]]
 id = "ar-shed-light"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Says that a text sheds light on its subject (تسليط الضوء, يسلط الضوء على); one alone is ordinary Arabic, in news above all."
 instead = "Say what it shows: the finding, the name or the number."

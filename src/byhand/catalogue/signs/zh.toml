@@ -323,7 +323,7 @@ sources = [
 [[sign]]
 id = "zh-leaked-request"
 category = "artefact"
-kinds = ["document"]
+kinds = ["document", "deck"]
 models = "any"
 what = "Leaves the chatbot's request for input inside the text, such as asking for the passage to translate."
 instead = "Delete it, and check what the tool really returned there."

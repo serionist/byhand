@@ -13,7 +13,7 @@
 # French guides; Wikipédia's help pages list what its editors see. None measured work mail, and formal French mail runs
 # on set phrases (Je me permets de, N'hésitez pas à, Je reste à votre disposition, Veuillez agréer, dans le cadre de):
 # they are a person's, never a sign. So no French sign with a check counts alone (fr-stock-openers went weak in #24's
-# review, as speeches and editos open that way), and the weak checks read posts and documents, but for fr-hedge-stack.
+# review, as speeches and editos open that way), and the weak checks never read mail or chat, but for fr-hedge-stack.
 # French typography is not a tell either: « » with no-break spaces, a space before ; : ! ? and the dash of dialogue are
 # how people write. tests/test_office_fr.py holds plain French mail, chat and reports against every sign that counts
 # alone, and against a weak cluster.
@@ -92,7 +92,7 @@ id = "fr-stock-openers"
 category = "phrase"
 # Weak, and not mail, by the maintainer's call in #24's review: a co-op president's speech, a mayor's edito and a
 # retirement speech open this way too.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Opens a text or a paragraph on how fast the world moves, before any fact about the subject."
 instead = "Begin with the news itself."
@@ -109,7 +109,7 @@ sources = [
 [[sign]]
 id = "fr-inflated-stakes"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 # any-significance-inflation and any-challenges-formula say what the habit is; this sign holds its French phrases.
 what = "French stock phrases of a bright future, eras and turning points."
@@ -137,7 +137,7 @@ sources = [
 [[sign]]
 id = "fr-staged-reveal"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Builds a small drumroll in front of an ordinary fact: a reason promised for the next sentence, a twist still to come."
 instead = "Cut the teaser; the sentence after it already holds the point."
@@ -159,7 +159,7 @@ sources = [
 [[sign]]
 id = "fr-performative-candour"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Promises honesty or straight talk before saying something quite ordinary."
 instead = "Start at the statement; if it is candid, the reader will see it."
@@ -180,7 +180,7 @@ sources = [
 id = "fr-filler-notice"
 category = "phrase"
 # Not mail: "Il convient de rappeler que les congés…" is how an office writes a notice.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 # any-didactic-aside says what the habit is. "Force est de constater", "il ressort de" and "n'est plus à démontrer" are
 # for the model's read: a plain compte rendu writes them (#24's review, F3 and F9).
@@ -261,7 +261,7 @@ id = "fr-ai-vocabulary"
 category = "word"
 # Not mail: au cœur de, levier, écosystème and crucial are everyday office French, so they are left out here and the
 # model reads for them.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Uses the rare, grand words French model output is full of: holistique, pierre angulaire, synergie, véritable before an abstract noun. A single one proves nothing."
 instead = "Name what is actually there: the shared planning, the street, the two teams."
@@ -303,7 +303,7 @@ sources = [
 [[sign]]
 id = "fr-calques"
 category = "word"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Uses business English turned into French verbs: adresser un enjeu, naviguer dans l'incertitude."
 instead = "Use the idiom French already has for it."
@@ -347,7 +347,7 @@ sources = [
 [[sign]]
 id = "fr-english-headings"
 category = "formatting"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "A French heading that looks translated: capitals all along the line, or English section labels such as Wrap-Up."
 instead = "Retype it as a French memo would set it: Notre bilan du premier trimestre."

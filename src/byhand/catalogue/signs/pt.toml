@@ -20,7 +20,7 @@
 # Portuguese sign is weak on that evidence (#72): evitar-escrita-ia calls its words and phrases a strong sign only
 # several to a text, and people write each alone; the measured habits are rates over many texts, which one person's
 # text can match; a school essay stacks its connectors; and the dash is weak in every language, as people write it.
-# The Portuguese checks read posts and documents, but the dash, as the set phrases of mail (Fico à disposição, Qualquer
+# The Portuguese checks never read mail or chat, but the dash, as the set phrases of mail (Fico à disposição, Qualquer
 # dúvida, é só dizer, Sem mais para o momento) are a person's.
 # A calque of English (a full stop after a list label, alavancar, endereçar um problema, Espero que esta mensagem o
 # encontre bem, Title Case) is translationese, which people write too: no source measures models writing one more than
@@ -82,7 +82,7 @@ sources = [
 [[sign]]
 id = "pt-closing-cheer"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Ends on a cheer that says nothing: o céu é o limite, o futuro é promissor, só o tempo dirá."
 instead = "End on the next step or the last fact."
@@ -103,7 +103,7 @@ sources = [
 [[sign]]
 id = "pt-inflated-stakes"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Frames a plain fact as an epoch: num mundo cada vez mais…"
 instead = "Give the date, the number or the change itself."
@@ -121,7 +121,7 @@ sources = [
 [[sign]]
 id = "pt-staged-reveal"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Stages a point before making it: a question it answers at once (E a melhor parte?, O detalhe?), or já parou para pensar…?"
 instead = "State the point; let the fact carry it."
@@ -140,7 +140,7 @@ sources = [
 [[sign]]
 id = "pt-ai-vocabulary"
 category = "word"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Leans on the words Portuguese model prose favours: enfatizando, vamos mergulhar. One alone is ordinary Portuguese."
 instead = "Use the plain word, or the fact the word stands in for."

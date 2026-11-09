@@ -392,9 +392,14 @@ FORMS = [
     ("any-closing-summary", "Em conclusão, mantemos o fornecedor."),
     ("any-flattering-agreement", "Ótima pergunta! Vamos por partes."),
     ("any-flattering-agreement", "Excelente questão! Começo pelo orçamento."),
+    # a formula as English Excel takes it, in a sheet (#66)
+    ("any-formula-separators", "=PROCV(A2,Clientes!A:C,3,FALSO)"),
+    ("any-formula-separators", "| Total | =SE(B9>1000,B9*0,95,B9) |"),
 ]
 
 LEFT_ALONE = [
+    ("any-formula-separators", "=PROCV(A2;Clientes!A:C;3;FALSO)"),
+    ("any-formula-separators", "| Total | =SE(B9>1000;B9*0,95;B9) |"),
     ("pt-staged-reveal", "O resultado da sondagem sai na segunda?"),
     ("pt-staged-reveal", "A senha do wifi? Mando-te por mensagem."),
     ("pt-staged-reveal", "Já parou de chover?"),

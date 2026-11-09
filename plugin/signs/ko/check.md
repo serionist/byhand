@@ -13,7 +13,7 @@ A sign holds for the versions it names: `5.x` is the whole 5 series, `and later`
 - ko-double-hedge (weak): Stacks two hedges on one claim, so the possibility itself becomes possible. Instead: Keep one hedge at the strength you mean; in a negotiation, leave the writer's own care alone.
 - ko-em-dash (weak): Sets off asides with em dashes, sentence after sentence. Instead: Use a comma, brackets or a new sentence.
 - ko-enumeration-preamble (weak): Announces how many parts a list has before giving it. Instead: Give the items.
-- ko-gemini-colon-headings (weak; gemini 2.5 and later; document, post): Breaks heading after heading at a colon, a topic on the left and a catchline on the right. Instead: Write the heading as what the section tells the reader, with no colon.
+- ko-gemini-colon-headings (weak; gemini 2.5 and later; document, post, deck): Breaks heading after heading at a colon, a topic on the left and a catchline on the right. Instead: Write the heading as what the section tells the reader, with no colon.
 - ko-gemini-shift-slogan (weak; gemini 2.5 and later): Sums up a change as a slogan from one quoted label to another, 'X'에서 'Y'로. Instead: Say what changed, for whom, and when.
 - ko-gpt-2024-vocabulary (weak; gpt 4 to 4.x): Uses the verbs of 2024 GPT models in Korean: contribute, explore, emphasise, an important role. Instead: Use the plain verb, or say what was done. Words: 강조하…: say it once; 기여하…: 돕다; 중요한 역할…: say what it does; 탐구하…: 알아보다
 - ko-gpt-meaning-wrap (weak; gpt 5 and later): Closes a summing-up sentence on 'which means that', ~다는 뜻이다. Instead: End on the claim itself, with -다.

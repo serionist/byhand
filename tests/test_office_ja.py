@@ -145,6 +145,10 @@ MACHINE = [
     ("any-chat-tool-markup", "公式サイトによると[web:2]、来期は増収です。"),
     ("any-chat-tool-markup", "ppl-ai-file-upload の資料を参照。"),
     ("any-chat-tool-markup", ":::writing{variant=standard}"),
+    # a deck's titles, weak: one frame on every title, and a count where the point goes (#66)
+    ("any-colon-titles", "## 2. 現状と課題\uff1a受注の半分が電話"),
+    ("ja-count-titles", "## 3. 予約をオンラインに移す3つの理由"),
+    ("ja-count-titles", "## 4. 導入の三つの壁"),
 ]
 
 

@@ -182,6 +182,53 @@ def test_no_sign_that_counts_alone_fires_on_plain_office_text(counted_alone, tex
     assert [sign.id for sign in counted_alone if sign.pattern and sign.pattern.search(text)] == []
 
 
+# Slides and sheets people make, invented, in the outline form `write` drafts them in: from the habits Analyst Academy's
+# count found more often in people's slides than in generated ones (topic titles, 43% against 30%; emoji bullets and
+# icons, 34% against 18%), an agenda, a summary, a thank-you slide, speaker notes, a chart in square brackets, and a
+# sheet's formulas as each Excel takes them (#66).
+DECKS = [
+    "## 1. Office move\nMarch 2027\nNotes: thank everyone for coming in early.\n\n"
+    "## 2. Agenda\n- Why we move\n- The new floor\n- Timeline\n- Questions\n\n"
+    "## 3. Overview\n- 🏢 One floor instead of two\n- 🚲 Bike store in the basement\n"
+    "- 📅 Move weekend: 13 and 14 March\n\n"
+    "## 4. Key dates\n- 1 Feb: packing crates arrive\n- 12 Mar: last day at Mill Road\n"
+    "- 15 Mar: first day at Dock Street\n"
+    "[bar chart, desks per team: Sales 14, Support 9, Finance 5]\n\n"
+    "## 5. Summary\n- One floor, closer to the station\n- Pack your desk by 12 March\n\n"
+    "## 6. Thank you!\nQuestions to Priya or me.",
+    "## 1. Q3 review: Support\n## 2. Tickets\n- 💡 Self-service answered 1 in 5\n"
+    "- ⏱ First reply in 3 hours, down from 5\n"
+    "[line chart, tickets per week: your numbers]\nNotes: the August spike was the billing bug.",
+    "## 1. Results\n- 🚀 Launched in Leeds and York\n- ✅ Both on time\n\n"
+    "## 2. Next Steps\n1. Hire two drivers\n2. Ask the council about parking",
+    "## 1. 概要\n- 📦 新倉庫は4月稼働\n- 🚚 配送は1日2便\n\n## 2. スケジュール\n- 2月 棚の搬入\n- 3月 試験運用",
+    "## 1. Ordre du jour\n- Bilan 2026\n- Budget 2027\n\n"
+    "## 2. Bilan 2026 : les chiffres\n- 📈 Chiffre d'affaires en hausse de 4 %",
+]
+
+SHEETS = [
+    "## Budget 2027\n| Item | Jan | Feb | Mar |\n|---|---|---|---|\n| Rent | 2,400 | 2,400 | 2,400 |\n"
+    "| Total | =SUM(B2:B4) | =ROUND(C2*1.2, 2) | |\nNotes: euros, from the October forecast.",
+    "## Frais de déplacement\n| Date | Trajet | Km | Montant |\n|---|---|---|---|\n"
+    "| 03/02 | Lyon - Grenoble | 112 | =C2*0,32 |\n"
+    "| Total | | =SOMME(C2:C9) | =ARRONDI(SOMME(D2:D9);2) |",
+    '## Vendas\n| Mês | Total | Situação |\n|---|---|---|\n| Janeiro | =SOMA(B2:B9) | =SE(B10>1000;"acima";"ok") |',
+]
+
+
+@pytest.mark.parametrize(("text", "kind"), [*((text, "deck") for text in DECKS), *((text, "sheet") for text in SHEETS)])
+def test_no_sign_that_counts_alone_fires_on_a_plain_deck_or_sheet(counted_alone, reads, weak_hits, text, kind):
+    assert [sign.id for sign in counted_alone if reads(sign, kind) and sign.pattern.search(text)] == []
+    assert weak_hits(text, kind) < signs.WEAK_CLUSTER
+
+
+def test_a_deck_s_emoji_and_topic_titles_are_no_sign(catalogue, reads):
+    # people's slides hold more of both than generated ones, by Analyst Academy's count (#66)
+    for sign in ("any-emoji-markers", "any-stock-headings"):
+        assert not reads(catalogue.signs[sign], "deck"), sign
+    assert catalogue.signs["any-emoji-markers"].pattern.search(DECKS[0])  # it would fire, read for a deck
+
+
 # What each sign exists to catch: a line per branch of its check, so silence above can't come from a sign that finds
 # nothing, or from a branch that stopped finding. A weak sign's term may have a line too (#38).
 MACHINE = [
@@ -324,6 +371,8 @@ MACHINE = [
     ("any-chat-tool-markup", "The board approved the plan.[web:3]"),
     ("any-chat-tool-markup", "See https://ppl-ai-file-upload.example/minutes.pdf"),
     ("any-chat-tool-markup", ':::writing{variant="email"}'),
+    # a deck's titles on one frame, weak (#66)
+    ("any-colon-titles", "## 4. Hiring: Building the Team"),
 ]
 
 

@@ -9,9 +9,15 @@ before `1.0` a minor may break something, under Breaking.
 
 - Finnish signs: 2 of Finnish's own, the long English dash and capitals on every word of a heading. Each
   counts only beside two others, as people write them too.
+- Signs for decks and sheets: a label above every slide's title and a takeaway bar that repeats the slide, in every
+  language; titles built on a colon, figures nobody gave, and Japanese titles that count a slide's items, each
+  counting only beside two others; and commas between a formula's arguments in a French or Portuguese sheet. 49
+  signs that slide text shows, until now read only for posts and documents, read decks too.
 
 ### Changed
 
+- Topic titles ("Challenges and Opportunities") and emoji before list items are no sign in a deck: people's slides
+  hold more of both than generated ones.
 - `/byhand:check` reads less than half as much, in every language: 7 to 15 KB in place of 21 to 32 KB. The
   patterns move to a `scan.md` per language that only the `scan` agent reads, and each language's scan runs only
   its own forms of the shared signs. Text in a language the patterns don't cover is read for every sign.

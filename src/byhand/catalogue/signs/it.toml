@@ -12,7 +12,7 @@
 # mail. Each Italian sign is weak on that evidence (#72): even sentences are a rate over many texts, which one person's
 # text can match; an advert writes staccato fragments; avoid-ai-writing-multilingual counts in un mondo sempre più only
 # twice or beside two other phrases, and a person's speech writes it; and the dash is weak in every language, as
-# people write it. The Italian checks read posts and documents, but the dash, as the set phrases of mail (Cordiali
+# people write it. The Italian checks never read mail or chat, but the dash, as the set phrases of mail (Cordiali
 # saluti, In allegato Le trasmetto, Resto a disposizione) are a person's.
 # Left out, as people write them in office Italian, papers and news: burocratese and the nominal style (al fine di,
 # nell'ambito di, si è proceduto alla verifica), which avoid-ai-writing-multilingual calls no sign alone and on which
@@ -71,7 +71,7 @@ sources = [
 [[sign]]
 id = "it-inflated-stakes"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Frames a plain fact as an epoch: in un mondo sempre più…"
 instead = "Give the date, the number or the change itself."

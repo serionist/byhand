@@ -374,9 +374,14 @@ FORMS = [
     ("fr-hashtag-block", "Merci à tous ! #Équipe #Lyon #Été #Réussite"),
     ("any-closing-summary", "En conclusion, le projet tient ses délais."),
     ("any-closing-summary", "Pour conclure, le budget tient."),
+    # a formula as English Excel takes it, in a sheet (#66)
+    ("any-formula-separators", "=SI(B2>0,B2*2,0)"),
+    ("any-formula-separators", "=SOMME(B2:B9)+ARRONDI(C2,0)"),
 ]
 
 LEFT_ALONE = [
+    ("any-formula-separators", "=SI(B2>0;B2*1,5;0)"),
+    ("any-formula-separators", "=RACINE(B2)*1,5"),
     ("fr-hedge-stack", "Le changement pourrait éventuellement décaler la livraison."),
     ("fr-hedge-stack", "On pourra éventuellement en reparler jeudi."),
     ("fr-false-contrast", "Ce n'est pas la bonne salle, c'est la B12."),

@@ -5,5 +5,5 @@ A weak sign counts only with 3 or more hits of weak signs in a paragraph or sect
 
 - it-dash-pivots (weak): Uses the long dash as a pivot: once in a sentence, before its punchline, or joined to the words on both sides. Italian sets an aside between two dashes and opens dialogue with one. Instead: Use a colon, a comma or a full stop; keep the dash for a real aside or dialogue.
 - it-even-sentences (weak; post): Keeps full sentences close to one length and one shape, where people mix short ones with long ones. Instead: Let a short sentence follow a long one where the thought needs it.
-- it-inflated-stakes (weak; post, document): Frames a plain fact as an epoch: in un mondo sempre più… Instead: Give the date, the number or the change itself. Words: in un mondo sempre più: cut
+- it-inflated-stakes (weak; post, document, deck): Frames a plain fact as an epoch: in un mondo sempre più… Instead: Give the date, the number or the change itself. Words: in un mondo sempre più: cut
 - it-staccato-fragments (weak; post, document): Echoes a sentence with three or more short phrases with no verb, a full stop after each, for a punchy beat. A flyer's, a menu's or a job ad's list of facts, standing on its own, is not one. Instead: Say it in one sentence with a verb; one short phrase may stand alone for stress.

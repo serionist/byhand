@@ -413,7 +413,10 @@ sources = [
 [[sign]]
 id = "any-stock-headings"
 category = "structure"
-kinds = ["any"]
+# Not decks or sheets, whose titles and tabs are labels by habit: Analyst Academy's count found topic titles in 43% of
+# people's slides and 30% of generated ones (analyst-academy-not-ai-decks, Generic titles), so a deck's title form is
+# a style's to say.
+kinds = ["document", "email", "message", "post"]
 models = "any"
 what = "Titles sections with two nouns joined by 'and', or a stock label such as Legacy."
 instead = "Use a heading that says what the section says, or none."
@@ -503,6 +506,8 @@ sources = [
 [[sign]]
 id = "any-emoji-markers"
 category = "formatting"
+# Not decks: Analyst Academy's count found emoji bullets and icons in 34% of people's slides and 18% of generated ones
+# (analyst-academy-not-ai-decks, Emoji bullets and icons in circles).
 kinds = ["email", "document"]
 models = "any"
 what = "Puts an emoji in front of headings or list items; a ✅ or ❌ ticking off a list item, with no bold label, is a person's."
@@ -666,7 +671,7 @@ sources = [
 [[sign]]
 id = "any-assistant-preamble"
 category = "artefact"
-kinds = ["email", "document", "post"]
+kinds = ["email", "document", "post", "deck"]
 models = "any"
 what = "Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'."
 instead = "Delete the line; start with the text itself."
@@ -744,7 +749,7 @@ sources = [
 [[sign]]
 id = "any-assistant-closing-offer"
 category = "artefact"
-kinds = ["document"]
+kinds = ["document", "deck"]
 models = "any"
 what = "Keeps the chatbot's sign-off under a document: a hope that it helped, or an offer to do more."
 instead = "Delete the line; end with the document."
@@ -865,4 +870,97 @@ flags = "The board approved the plan.[attached_file:1]"
 passes = "The board approved the plan (see attached file)."
 sources = [
   { source = "wikipedia-en-markup", where = "Perplexity; Unclassified, revision 1383317735", seen = 2026-11-07 },
+]
+
+# Decks and sheets: what a slide or a sheet holds, read only by them. Analyst Academy's count of 94 generated slides
+# against 100 from consulting firms and banks is the one measure (one scorer, who knew each slide's set): a sign with
+# a wide gap there and a source in a second language is usual, the rest weak. Its counts also clear what people do
+# more than generators (topic titles, emoji bullets, accent colour), and flight-check's quality checks (action titles,
+# a cited source, 3D charts, a leftover [TBD]) give no sign: many people's decks fail them (#66's plan, I2).
+
+[[sign]]
+id = "any-label-above-title"
+category = "layout"
+kinds = ["deck"]
+models = "any"
+what = "Sets a kicker over slide after slide's title: a short label, often in capitals or, in another language's deck, in English, naming the topic the title then states."
+instead = "Open each slide with its title; mark a new part of the talk with a divider slide, not a label on every slide."
+strength = "usual"
+flags = "WHY NOW\nPhone orders fell 30% this year\n\nHOW IT WORKS\nCustomers pick a slot the day before"
+passes = "Phone orders fell 30% this year\n\nCustomers pick a slot the day before"
+sources = [
+  { source = "analyst-academy-not-ai-decks", where = "Visual redesign, 18 Anything above the title: 46% of generated slides, 8% of people's", seen = 2026-11-09 },
+  { source = "plusai-2026-slides", where = "Pattern 2: Colored accent bars and eyebrow text", seen = 2026-11-09 },
+  { source = "lt-slide-skills", where = ".claude/skills/lt-slides/references/compose.md, ステップ 3: 構成（ストーリーアーク）, English kicker labels, commit 202873468ef5", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "any-takeaway-bar"
+category = "layout"
+kinds = ["deck"]
+models = "any"
+what = "Ends slide after slide on a takeaway box or a bar along the bottom that says again what the title or the body has just said."
+instead = "Let the title carry the point; keep a last line only for something new: a number, a decision, or what the next slide answers."
+strength = "usual"
+flags = "## 3. Phone orders are falling\nPhone orders fell from 420 in March to 290 in September.\nKey takeaway: phone orders are falling."
+passes = "## 3. Phone orders are falling\nPhone orders fell from 420 in March to 290 in September.\nNext: what online booking would cost us."
+sources = [
+  { source = "analyst-academy-not-ai-decks", where = "Structure redesign, 29 Takeaway box or bottom banner: 18% of generated slides, 3% of people's", seen = 2026-11-09 },
+  { source = "agent-kit-briefing", where = "plugins/docs/skills/docs/kinds/briefing/review.md, 7 AI 티 나는 문장 점검, the bottom bar, commit 91836f5bd825", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "any-colon-titles"
+category = "formatting"
+kinds = ["deck"]
+models = "any"
+what = "Builds title after title on one frame: a topic, a colon, then a catchline."
+instead = "Write each title as the point its slide makes, in whatever shape that point takes."
+strength = "weak"
+# A slide title in the outline form, `## 2. Growth: …`; a time (`## 9:30 Arrival`) has no space after its colon.
+check.en = '^#{1,6} [^:\n]+: \S'
+# Japanese writes the full-width colon; a time keeps the narrow one.
+check.ja = '^#{1,6} [^：\n]+：'
+flags = "## 2. Growth: The Road Ahead\n## 3. Costs: Where the Money Goes"
+passes = "## 2. Sales grew 12% in the north\n## 3. Rent is half of what we spend"
+sources = [
+  { source = "analyst-academy-not-ai-decks", where = "Content redesign, 12 Same-shape sentences (colon titles, em-dash pivots, even sentences): 40% of generated slides, 19% of people's", seen = 2026-11-09 },
+  { source = "jinba-consulting-pptx", where = "references/slide-rules.md, 2.12: a label and a colon before the title, which plain AI writes on every page, commit 60affb5ea3fe", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "any-invented-figures"
+category = "structure"
+kinds = ["deck", "sheet"]
+models = "any"
+what = "Puts figures nobody gave it on a slide or in a sheet: round percentages and multiples with no source, or sample rows made up to fill a table."
+instead = "Use the user's figures and say where each comes from; where one is missing, leave the cell empty or name it for the user to fill."
+strength = "weak"
+flags = "## 4. Why online booking\n- 40% fewer no-shows\n- 3x more repeat visits\n- 98% of patients prefer it"
+passes = "## 4. Why online booking\n- No-shows fell from 31 to 19 a month in the Leeds pilot\n- Repeat visits: from the August export, once it lands"
+sources = [
+  { source = "analyst-academy-not-ai-decks", where = "Content redesign, 08 Fake stats: figures no named source backs in 80% of generated slides, 53% of people's", seen = 2026-11-09 },
+  { source = "presentations-ai-2026-mistakes", where = "Mistake 4: Trusting AI-generated facts without checking them", seen = 2026-11-09 },
+  { source = "kiyo-2026-ai-slides", where = "４－１．解析結果のメモ, 図・画像: charts with figures the reader doubts, from seven generators", seen = 2026-11-09 },
+  { source = "grossman-2025-spreadsheets", where = "3.3 Results and 3.4 The Failed Spreadsheet Model: given no data, Excel AI left the inputs blank or made up sample data, v1", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "any-formula-separators"
+category = "formatting"
+kinds = ["sheet"]
+models = "any"
+what = "Writes a formula as English Excel takes it, commas between the arguments, in a sheet whose Excel takes semicolons."
+instead = "Use the sheet's own separator, a semicolon in French or Portuguese Excel, unless the user works in an English Excel."
+strength = "weak"
+# French: after a formula's =, with no semicolon on the way, a function whose brackets hold a comma and no semicolon;
+# a decimal comma beside a semicolon passes, as does one outside a function's brackets.
+check.fr = '=[^;]*\w\([^;()]*,[^;()]*\)'
+# Portuguese likewise.
+check.pt = '=[^;]*\w\([^;()]*,[^;()]*\)'
+flags = "| Total TTC | =ARRONDI(B9*1.2,2) |"
+passes = "| Total TTC | =ARRONDI(B9*1,2;2) |"
+sources = [
+  { source = "futura-2023-chatgpt-excel", where = "Une formule de calcul de remboursement de prêt: ChatGPT's first formula was for English Excel, and it had to be told the sheet's Excel was French, which takes semicolons", seen = 2026-11-09 },
+  { source = "hashtag-2024-chatgpt-excel", where = "Exemplo 1 – Usando a função FILTRO; Exemplo 2 – Buscando informações com PROCV e SEERRO: ChatGPT's formulas with commas, where Portuguese Excel takes semicolons", seen = 2026-11-09 },
 ]

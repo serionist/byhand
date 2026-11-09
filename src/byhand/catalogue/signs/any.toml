@@ -1,6 +1,11 @@
 # The signs of every language. A sign here needs sources in at least two languages, a translated page counting as its
 # language; an artefact with a `check` needs one, as a tool's string looks the same in every language. An `any` sign has
-# no `terms`: a word's edge differs between languages, so it writes a `check`.
+# no `terms`: a word's edge differs between languages, so it writes a `check`. A check written in words is a form per
+# language, `check.de = '…'`, under the code of the language it is written in, with that language's note above it: a
+# German scan runs only the German forms and those under `any`. Chinese is one form for both scripts, under `zh`. A
+# chatbot's leftover that turns up in every language's text, its words English or none, is `check.any`, or a plain
+# `check = '…'`. Each form has a machine line in its language's office test (`tests/test_office_<code>.py`, English's
+# in `tests/test_office.py`), which that file's test of its forms holds.
 #
 # [[sign]]
 # id = "any-rule-of-three"
@@ -11,7 +16,8 @@
 # what = "What the text does, in our own words."
 # instead = "What a person writes instead."
 # strength = "usual"            # strong, usual or weak
-# check = "^- \\*\\*"           # optional: a regular expression, case-insensitive, `^` and `$` at each line
+# check = "^- \\*\\*"           # optional: a regular expression, case-insensitive, `^` and `$` at each line; or
+#                               # forms by language, a line each: check.en = '…', check.any = '…'
 # flags = "An invented text the sign flags."
 # passes = "A human text it passes."
 # sources = [{ source = "wikipedia-en", where = "section, revision 1234567890", seen = 2026-11-07 }]
@@ -203,7 +209,12 @@ models = "any"
 what = "Ends a section or the whole text by restating it, often under a heading such as Conclusion."
 instead = "Stop when the point is made; end on the last new thing."
 strength = "weak"
-check = '^\W*(?:em conclusão|em resumo|em suma|en conclusion|en conclusión|en resumen|in conclusion|in summary|pour conclure|zusammenfassend|в заключение|подводя итог)\b'
+check.de = '^\W*zusammenfassend\b'
+check.en = '^\W*(?:in conclusion|in summary)\b'
+check.es = '^\W*(?:en conclusión|en resumen)\b'
+check.fr = '^\W*(?:en conclusion|pour conclure)\b'
+check.pt = '^\W*(?:em conclusão|em resumo|em suma)\b'
+check.ru = '^\W*(?:в заключение|подводя итог)\b'
 flags = "In conclusion, the plan offers clear benefits for everyone involved."
 passes = "So that's the plan. Tell me if Friday doesn't work."
 sources = [
@@ -276,9 +287,10 @@ models = "any"
 what = "Stops to tell the reader which part deserves their attention."
 instead = "State the point; the reader decides what to note."
 strength = "usual"
+check.en = '''\bit(?:['’]s| is) (?:crucial|essential|important|worth) (?:noting|to note)'''
 # Hungarian needs its "hogy", and the phrase at a sentence's start: "fontos kiemelni a határidőt" is a plain request,
 # and "a meghívóban fontos kiemelni, hogy …" or "nem fontos kiemelni, hogy …" a person's (the maintainer, #28).
-check = '''\bit(?:['’]s| is) (?:crucial|essential|important|worth) (?:noting|to note)|(?:[.!?]\s+|^)\W*fontos (?:(?:azonban|itt|még|ugyanakkor|viszont) )?(?:hangsúlyozni|kiemelni|megjegyezni),? hogy\b'''
+check.hu = '(?:[.!?]\s+|^)\W*fontos (?:(?:azonban|itt|még|ugyanakkor|viszont) )?(?:hangsúlyozni|kiemelni|megjegyezni),? hogy\b'
 flags = "It is important to note that results may vary by region."
 passes = "It's important to call them before noon: results vary by region."
 sources = [
@@ -314,9 +326,11 @@ models = "any"
 what = "Says details are scarce in the sources, then writes on as if they were not."
 instead = "Say plainly what you could not find, and write only what you know."
 strength = "usual"
-# The Russian branch needs the search results, or the details called scarce: a teacher writes «в предоставленных
+check.de = 'in den bereitgestellten (?:quellen|suchergebnissen)|spezifische details (?:(?:bleiben|sind) )?(?:begrenzt|rar|spärlich)'
+check.en = 'specific details (?:are|remain) (?:limited|scarce)|in the provided (?:search results|sources)'
+# The Russian form needs the search results, or the details called scarce: a teacher writes «в предоставленных
 # источниках не указаны страницы» to a student.
-check = 'specific details (?:are|remain) (?:limited|scarce)|in the provided (?:search results|sources)|in den bereitgestellten (?:quellen|suchergebnissen)|spezifische details (?:(?:bleiben|sind) )?(?:begrenzt|rar|spärlich)|в предоставленных результатах поиска|(?:ограничен|скудн)\w* в предоставленных источниках'
+check.ru = 'в предоставленных результатах поиска|(?:ограничен|скудн)\w* в предоставленных источниках'
 flags = "Specific details remain scarce, yet the firm probably shaped trade in the region."
 passes = "I couldn't find the 2019 accounts, so I've left that year out."
 sources = [
@@ -351,7 +365,14 @@ models = "any"
 what = "Opens by praising the reader or agreeing with them before it answers."
 instead = "Answer; disagree where the facts do."
 strength = "weak"
-check = '''you(?:['’]re| are) absolutely right|вы абсолютно правы|這是很好的觀察|这是很好的观察|ha(?:ben sie|bt ihr|st du) absolut recht|(?:ausgezeichnete|großartige|hervorragende|tolle) frage!|¡excelente pregunta!|(?:excelente|ótima) (?:pergunta|questão)!|سؤال رائع!|ottima domanda!'''
+check.ar = 'سؤال رائع!'
+check.de = 'ha(?:ben sie|bt ihr|st du) absolut recht|(?:ausgezeichnete|großartige|hervorragende|tolle) frage!'
+check.en = '''you(?:['’]re| are) absolutely right'''
+check.es = '¡excelente pregunta!'
+check.it = 'ottima domanda!'
+check.pt = '(?:excelente|ótima) (?:pergunta|questão)!'
+check.ru = 'вы абсолютно правы'
+check.zh = '[这這]是很好的[观觀]察'
 flags = "You're absolutely right, and that is such an important point to raise."
 passes = "You're right, I missed the date. I'll resend it today."
 sources = [
@@ -408,7 +429,9 @@ models = "any"
 what = "Opens with a stock wish that the message finds the reader well."
 instead = "Start with the reason you are writing."
 strength = "weak"
-check = '(?:the|this) (?:email|letter|mail|message) finds you well|(?:diese|meine) (?:e-mail|mail|nachricht) erreicht (?:dich|euch|sie) (?:bei bester gesundheit|wohlauf)|это сообщение застанет вас'
+check.de = '(?:diese|meine) (?:e-mail|mail|nachricht) erreicht (?:dich|euch|sie) (?:bei bester gesundheit|wohlauf)'
+check.en = '(?:the|this) (?:email|letter|mail|message) finds you well'
+check.ru = 'это сообщение застанет вас'
 flags = "Hope this email finds you well. Quick question on the March invoice."
 passes = "Hi Sam, quick one about the March invoice: it's missing the PO number."
 sources = [
@@ -520,7 +543,8 @@ models = [{ family = "gpt", from = "4" }]
 what = "Leaves ChatGPT's internal citation tokens or search placeholders in the text."
 instead = "Delete the token and cite the source, or cut the claim."
 strength = "strong"
-check = 'contentReference\[oaicite|oaicite:\d|oai_citation|attributableIndex|turn\d+(?:file|image|news|search)\d+|gehe zu suche nr'
+check.any = 'contentReference\[oaicite|oaicite:\d|oai_citation|attributableIndex|turn\d+(?:file|image|news|search)\d+'
+check.de = 'gehe zu suche nr'
 flags = "The bridge opened in 1932. :contentReference[oaicite:3]{index=3}"
 passes = "The bridge opened in 1932 (county archive, box 12)."
 sources = [
@@ -559,22 +583,31 @@ models = "any"
 what = "Says in the text that a language model or a named chatbot wrote it."
 instead = "Delete it and write as the author."
 strength = "strong"
+# Arabic: the role and the lack humanizer-ar names, together, opening a clause (كمساعد ذكاء اصطناعي، لا أملك القدرة
+# على), then what a model says it lacks (إبداء رأي, التنبؤ, الوصول إلى الإنترنت, تصفح). A person's verdict on a tool
+# passes: "كمساعد ذكاء اصطناعي، لا أملك القدرة على تقييمه بعد", as does "نستخدمه كمساعد ذكاء اصطناعي، لا كبديل" (#58's
+# review, F2).
+check.ar = '(?:^|[!,.:;?،؛؟]\s?|\bو?لكن[،,]? )\W*كمساعد ذكاء اصطناعي[،,]?\s?لا أملك القدرة على (?:إبداء|التنبؤ|الوصول إلى ال[إا]نترنت|تصفح)'
+check.de = 'als (?:ein |eine )?(?:großes sprachmodell|ki|ki-assistent|ki-modell|ki-sprachmodell|künstliche intelligenz|sprachmodell),? (?:besitze|bin|darf|habe|kann|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b'
+check.en = 'as an ai language model|as a large language model'
+# Spanish: only the role the source shows, como (gran) modelo de lenguaje, opening a clause, then what a model says it
+# lacks (no tengo acceso, no puedo verificar). "Como IA" and "como asistente de IA" are left out: people say them of the
+# tools they use ("como IA no tengo acceso a ninguna en el trabajo", "como asistente de IA, no como sustituto", "como
+# IA, no puedo pedirle más"), #53's review, rounds 1 to 4.
+check.es = '(?:^|[,.;:!?¡¿]\s?|\bembargo,? |\bpero |\bque )\W*como (?:un )?(?:gran )?modelo de lenguaje(?: de ia)?(?: (?:cread|desarrollad|entrenad)o por \w+)?,?\s?(?:yo )?no (?:cuento con|dispongo de|me es posible|poseo|puedo (?:acceder|ayudar\w*|comprobar|firmar|garantizar|navegar|predecir\w*|proporcionar|verificar)|soy capaz|tengo (?:acceso|creencias|emociones|experiencias|la capacidad|opini(?:ón|ones)|preferencias|sentimientos|un cuerpo))\b'
 # French: only the role a model gives itself, followed by its "je"; "en tant qu'assistante de direction, je" is a
-# person's job. Spanish: only the role the source shows, como (gran) modelo de lenguaje, opening a clause, then
-# what a model says it lacks (no tengo acceso, no puedo verificar). "Como IA" and "como asistente de IA" are left
-# out: people say them of the tools they use ("como IA no tengo acceso a ninguna en el trabajo", "como asistente
-# de IA, no como sustituto", "como IA, no puedo pedirle más"), #53's review, rounds 1 to 4. Portuguese by the same
-# rule: como or enquanto (um, grande) modelo de linguagem, opening a clause, then what a model says it lacks. Arabic:
-# the role and the lack humanizer-ar names, together, opening a clause (كمساعد ذكاء اصطناعي، لا أملك القدرة على), then
-# what a model says it lacks (إبداء رأي, التنبؤ, الوصول إلى الإنترنت, تصفح). A person's verdict on a tool passes:
-# "كمساعد ذكاء اصطناعي، لا أملك القدرة على تقييمه بعد", as does "نستخدمه كمساعد ذكاء اصطناعي، لا كبديل" (#58's review,
-# F2).
-# Italian: two roles humanizer-it names (come modello di intelligenza artificiale, in quanto IA), opening a clause,
-# then the one lack an Italian source shows, non ho accesso (avoid-ai-writing-multilingual). A person's "come
-# responsabile IA, non ho accesso" and a tool's third person ("Copilot, in quanto IA, non ha accesso") pass.
-# The Chinese words of two scripts are one class each, here and in any-assistant-preamble: the same lines match, in
-# fewer bytes of the check budget (#63).
-check = '''as an ai language model|as a large language model|作[为為]一位[机機]器人|[内內]容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智[慧能])\s?(?:助[手理]|[语語]言模型)[，,]\s?我(?:可以|[无無]法|[不会會将將没沒并並只很的]|建[议議]|需要|理解)|als (?:ein |eine )?(?:großes sprachmodell|ki|ki-assistent|ki-modell|ki-sprachmodell|künstliche intelligenz|sprachmodell),? (?:besitze|bin|darf|habe|kann|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b|(?:^|[,.;:!?¡¿]\s?|\bembargo,? |\bpero |\bque )\W*como (?:un )?(?:gran )?modelo de lenguaje(?: de ia)?(?: (?:cread|desarrollad|entrenad)o por \w+)?,?\s?(?:yo )?no (?:cuento con|dispongo de|me es posible|poseo|puedo (?:acceder|ayudar\w*|comprobar|firmar|garantizar|navegar|predecir\w*|proporcionar|verificar)|soy capaz|tengo (?:acceso|creencias|emociones|experiencias|la capacidad|opini(?:ón|ones)|preferencias|sentimientos|un cuerpo))\b|(?:^|[,.;:!?]\s?|\bentanto,? |\bmas |\bporém,? |\bque )\W*(?:como|enquanto) (?:um )?(?:grande )?modelo de linguagem(?: de ia)?(?: (?:criad|desenvolvid|treinad)o (?:pel[ao]|por) \w+)?,?\s?(?:eu )?não (?:consigo (?:aceder|acessar|navegar|verificar)|disponho|me é possível|possuo|posso (?:aceder|acessar|acrescentar|ajudar\w*|assinar|confirmar|fornecer|garantir|navegar|oferecer|prever|verificar)|sou capaz|tenho (?:acesso|crenças|emoções|experiências|opini(?:ão|ões)|preferências|sentimentos|um corpo))\b|(?:^|[!,.:;?،؛؟]\s?|\bو?لكن[،,]? )\W*كمساعد ذكاء اصطناعي[،,]?\s?لا أملك القدرة على (?:إبداء|التنبؤ|الوصول إلى ال[إا]نترنت|تصفح)|(?:^|[,.;:!?]\s?|\bma )\W*(?:come modello di intelligenza artificiale|in quanto ia),?\s?non ho accesso\b'''
+# person's job.
+check.fr = '''en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b'''
+# Italian: two roles humanizer-it names (come modello di intelligenza artificiale, in quanto IA), opening a clause, then
+# the one lack an Italian source shows, non ho accesso (avoid-ai-writing-multilingual). A person's "come responsabile
+# IA, non ho accesso" and a tool's third person ("Copilot, in quanto IA, non ha accesso") pass.
+check.it = '(?:^|[,.;:!?]\s?|\bma )\W*(?:come modello di intelligenza artificiale|in quanto ia),?\s?non ho accesso\b'
+# Portuguese by the Spanish rule: como or enquanto (um, grande) modelo de linguagem, opening a clause, then what a model
+# says it lacks.
+check.pt = '(?:^|[,.;:!?]\s?|\bentanto,? |\bmas |\bporém,? |\bque )\W*(?:como|enquanto) (?:um )?(?:grande )?modelo de linguagem(?: de ia)?(?: (?:criad|desenvolvid|treinad)o (?:pel[ao]|por) \w+)?,?\s?(?:eu )?não (?:consigo (?:aceder|acessar|navegar|verificar)|disponho|me é possível|possuo|posso (?:aceder|acessar|acrescentar|ajudar\w*|assinar|confirmar|fornecer|garantir|navegar|oferecer|prever|verificar)|sou capaz|tenho (?:acesso|crenças|emoções|experiências|opini(?:ão|ões)|preferências|sentimentos|um corpo))\b'
+# The Chinese words of two scripts are one class each, here and in any-assistant-preamble, so one form reads both
+# scripts (#63).
+check.zh = '作[为為]一位[机機]器人|[内內]容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智[慧能])\s?(?:助[手理]|[语語]言模型)[，,]\s?我(?:可以|[无無]法|[不会會将將没沒并並只很的]|建[议議]|需要|理解)'
 flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [
@@ -598,11 +631,16 @@ models = [{ family = "gpt", from = "3.5", to = "4" }]
 what = "Warns that its knowledge stops at a training date."
 instead = "Check the current fact, or give the date of your source."
 strength = "strong"
-# The Russian branches need the moment of the update: «во время обновления моей базы данных» is a person's server.
-# The Spanish one needs the knowledge: "hasta mi última actualización del inventario", or "en marzo", is a person's.
+check.de = 'stand meines letzten wissensupdates|bis zu meinem letzten (?:trainings|wissens)-?update'
+check.en = '(?:as of|up to) my last (?:knowledge|training) update'
+# The Spanish form needs the knowledge: "hasta mi última actualización del inventario", or "en marzo", is a person's.
+check.es = 'hasta mi última actualización de conocimientos?\b'
+check.fr = 'à la date de mes connaissances'
 # The Portuguese one likewise: knowledge or training, in either variety's word for it, ending the phrase or before its
 # date; "atualização de conhecimentos em suporte básico de vida" is a person's course.
-check = '''(?:as of|up to) my last (?:knowledge|training) update|stand meines letzten wissensupdates|bis zu meinem letzten (?:trainings|wissens)-?update|на момент моего обучения|момент (?:последнего )?обновления моей базы данных|мо[её] последнее обновление знаний|à la date de mes connaissances|hasta mi última actualización de conocimientos?\b|até (?:[aà] )?minha última ac?tualização de (?:conhecimentos?|treinamento|treino)(?:\s*[(,.:;—]|\s+(?:de |em (?:\w+ de )?|no \w+ de )\d{4}\b|\s*$)'''
+check.pt = 'até (?:[aà] )?minha última ac?tualização de (?:conhecimentos?|treinamento|treino)(?:\s*[(,.:;—]|\s+(?:de |em (?:\w+ de )?|no \w+ de )\d{4}\b|\s*$)'
+# The Russian forms need the moment of the update: «во время обновления моей базы данных» is a person's server.
+check.ru = 'на момент моего обучения|момент (?:последнего )?обновления моей базы данных|мо[её] последнее обновление знаний'
 flags = "As of my last knowledge update, the company had not announced a merger."
 passes = "As of my last update on Tuesday, the shipment was still in Rotterdam."
 sources = [
@@ -622,36 +660,45 @@ models = "any"
 what = "Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'."
 instead = "Delete the line; start with the text itself."
 strength = "strong"
-# English, by the rule every language follows (#26): a reworked version of the reader's text (of your email, your
-# rewritten post), or a register word after more or less, bare or of a text (a more formal version), or a text in a
-# register for the reader to send (a polite email you can send). The text is the head noun: "your email signature"
-# and "a more neutral version of the logo" pass; after the text, a comma, a dash, a bracket or a linking word lets
-# the line go on ("of your email incorporating your feedback"), and after a register version anything but "of" and
-# an object that is no text. A person's more recent, newer or shorter version of the deck passes,
-# as does a revised version of the contract, a rewrite of the intro, and "your revised offer letter" from HR: a letter
-# is the reader's text only as a cover letter. The opener is an eager yes or an offer to help, then a mark, a comma
-# or a dash, then here's, here is or below is; or a bare below is (#37). Each still needs the reader's text or a
-# register word, so a person's "Below is the revised quote, as agreed:" passes. A text to send keeps the old
-# opener alone: "Below is a friendly message you can share with your team:" is a person's template.
-# French, by the rule the Chinese and Russian branches follow: only a reworked version that names the reader's text (de
-# votre e-mail, de ton message); a person returning a client's devis or courrier passes (#24's review). The French
-# alternations run in alphabetical order, as fr.toml's header says. Spanish, by the same rule: an eager yes, then aquí
-# tienes the reader's text reworked (tu correo corregido, una versión más formal de su mensaje); a person's "aquí tienes
-# la versión corregida del presupuesto" passes. Portuguese likewise: "Claro! Aqui está a versão corrigida do orçamento:"
-# passes. Arabic likewise: بالطبع, then إليك a reworked version of the reader's text (نسخة محسّنة من رسالتك); a person's
-# "بالطبع، إليك نسخة من رسالتك:" (a copy) or "إليك نسخة معدلة من العقد:" passes. Vietnamese likewise, from the line
-# vietnamese-humanizer tells its model not to add: Dưới đây là phiên bản, then the reader's text, called bạn as a model
-# calls the user, right after của and ending the line (của email của bạn:); a person's "phiên bản cuối của hợp đồng", a
-# text of anh's or chị's, or a version made from the reader's mail or sent to it (theo email của bạn, theo nội dung
-# email của bạn, gửi vào email của bạn), passes (#62's review, F1). With a second của such a line fires (theo nội dung
-# của email của bạn), as does a converted copy (phiên bản PDF của văn bản của bạn): accepted, as narrowing the gap
-# would fill the check budget to its last byte and lose model lines with long modifiers (round 2, F5). A colleague who calls the reader bạn and returns their text reworked fires, the cost #24 accepts. It is
-# short, with three texts and no eager yes, as ja/check.md beside any/check.md fills the check budget; the closing offer
-# the same line names (Nếu bạn cần, tôi có thể…) waits for room in it.
-# The English branches that end on the reader's text share its noun list and the linking words after it, written once,
-# the Russian participles share their ending, and the Chinese words of two scripts are one class each: the same lines
-# match, in fewer bytes of the check budget (#63).
-check = '''^\W*(?:(?:absolutely|certainly|happy to help|i['’]d be happy to help|of course|sure|sure thing)(?:[!,.]+ | ?[-–—] ?)(?:below is|here(?:['’]s| is))|below is) (?:(?:(?:(?:a|an|the) (?:[\w-]+,? ){0,2}(?:casual|clearer|concise|condensed|conversational|corrected|courteous|crisper|diplomatic|edited|empathetic|enhanced|formal|friendlier|friendly|improved|informal|less \w+|longer|more \w+|neutral|polished|polite|professional|proofread|punchier|refined|rephrased|respectful|revised|reworded|reworked|rewritten|shortened|shorter|simpler|streamlined|tactful|tightened|tighter|warmer) (?:draft|version)|a rewrite) of (?:your (?:[\w-]+ )?(?:announcement|article|bio|caption|cover letter|cv|e-?mail|essay|intro|introduction|mail|message|paragraph|personal statement|post|reply|response|r[eé]sum[eé]|sentence|speech|text|tweet)|the (?:[\w-]+ )?(?:announcement|article|bio|caption|cover letter|cv|e-?mail|essay|intro|introduction|mail|message|paragraph|personal statement|post|reply|response|r[eé]sum[eé]|sentence|speech|text|tweet) you (?:provided|shared|wrote))|(?:your (?:[\w-]+ )?(?:enhanced|improved|polished|refined|rephrased|revised|reworded|reworked|rewritten|shortened|streamlined|tightened)|(?:a|an) (?:[\w-]+,? (?:and )?){0,2}(?:less|more) (?:casual|concise|conversational|courteous|diplomatic|empathetic|formal|friendly|informal|neutral|polite|professional|respectful|tactful)(?:,? (?:and )?[\w-]+)? (?:draft|version) of (?:that|the|this|your)) (?:[\w-]+ )?(?:announcement|article|bio|caption|cover letter|cv|e-?mail|essay|intro|introduction|mail|message|paragraph|personal statement|post|reply|response|r[eé]sum[eé]|sentence|speech|text|tweet))(?:(?:,| [-–—(]| (?:above|below|that)\b| (?:about|addressed|addressing|aimed|along|as|based|focusing|following|for|from|in|incorporating|keeping|making|now|on|per|ready|reflecting|so|suitable|tailored|to|using|which|while|with|without|you) )[^.!?\n]*)?\s*:\s*$|(?:a|an) (?:[\w-]+,? (?:and )?){0,2}(?:less|more) (?:casual|concise|conversational|courteous|diplomatic|empathetic|formal|friendly|informal|neutral|polite|professional|respectful|tactful)(?:,? (?:and )?[\w-]+)? (?:draft|version)(?:(?:,| [^o.!?\n]| o[^f])[^.!?\n]*| of (?:it|that|the above|this))?\s*:\s*$)|^\W*(?:absolutely|certainly|of course|sure)[!,.]+ here(?:['’]s| is) (?:a|an) (?:[\w-]+,? ){0,2}(?:casual|concise|conversational|courteous|diplomatic|empathetic|formal|friendly|informal|neutral|polite|professional|respectful|tactful),? (?:[\w-]+ )?(?:announcement|e-?mail|letter|message|post|reply) (?:that )?you can (?:copy|post|send|share|use)\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|selbstverständlich|(?:sehr )?gerne)[!,] hier ist (?:eine?|die|der|das) (?:\w+ )?(?:überarbeitete|verbesserte|umformulierte|geglättete|\w+ere)[rs]? (?:entwurf|fassung|text|version) (?:(?-i:Ihre[sr])|deine[sr]|eure[sr])\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|selbstverständlich|(?:sehr )?gerne)[!,] hier ist (?:(?-i:Ihre?)|deine?|eure?) (?:\w+ )?(?:überarbeitete|verbesserte|umformulierte|geglättete|\w+ere)[rs]? (?:entwurf|fassung|text|version)\b[^.!?\n]*:\s*$|^\W*(?:безусловно|конечно)! вот (?:(?:ваш|тво)\w* (?:исправле|переработа|улучше|отредактирова|сокращ[её])нн\w+ (?:абзац|письмо|пост|резюме|сообщение|текст)\b|(?:\w+ )?(?:исправле|переработа|улучше|отредактирова|сокращ[её])нн\w+ (?:вариант|версия|редакция|текст) (?:ваш|тво)\w+ (?:абзац|объявлени|письм|пост|резюме|сообщени|стать|текст)\w*|(?:\w+ )?более (?:вежлив|делов|дружелюбн|кратк|лаконичн|мягк|нейтральн|неформальн|официальн|профессиональн|формальн)\w* (?:вариант|версия)\b)[^.!?\n]*:\s*$|^\W*[当當]然(?:可以)?[!！]\s*(?:下面|以下)[为是為](?:[为為][你您]|根[据據][你您]的(?:意[见見]|要求))?(?:[优優]化|修改|改[写寫]|[润潤]色)[后後]的[文版]本[:：]\s*$|^\W*(?:absolument|avec plaisir|bien sûr|certainement)\s?[!,.]+\s?voici (?:(?:ton|votre) (?:compte rendu|courriel|cv|e-?mail|mail|message|post|rapport|texte) (?:amélioré|reformulé|retravaillé|révisé)|une (?:\w+ )?version (?:améliorée|peaufinée|plus (?:chaleureuse|claire|concise|courte|engageante|fluide|formelle|percutante|professionnelle)(?: et plus \w+)?|reformulée|retravaillée|révisée) de (?:ta|ton|votre) (?:annonce|compte rendu|courriel|cv|e-?mail|lettre|mail|message|post|publication|rapport|texte))\b[^.!?\n]*:\s*$|^\W*(?:claro|claro que sí|con gusto|desde luego|por supuesto)\s?[!,.]+\s?aquí (?:está|tiene|tienes) (?:(?:su|tu) (?:anuncio|carta de presentación|correo|currículum|cv|e-?mail|mail|mensaje|post|publicación|texto) (?:corregid|mejorad|reescrit|reformulad|revisad)[ao]|(?:la|una) (?:\w+ )?versión (?:corregida|más (?:amable|breve|cercana|clara|concisa|corta|formal|profesional)|mejorada|pulida|reescrita|reformulada|revisada) de (?:su|tu) (?:anuncio|carta de presentación|correo|currículum|cv|e-?mail|mail|mensaje|post|publicación|texto))\b[^.!?\n]*:\s*$|^\W*(?:certamente|claro|claro que sim|com certeza)\s?[!,.]+\s?(?:aqui (?:está|tem|tens)|eis) (?:(?:[ao] )?(?:seu|sua|teu|tua) (?:anúncio|carta de apresentação|currículo|cv|e-?mail|mensagem|post|publicação|resposta|texto) (?:corrigid|melhorad|reescrit|reformulad|revisad|revist)[ao]|(?:a|uma) (?:\w+ )?versão (?:corrigida|mais (?:clara|concisa|curta|formal|profissional)(?: e \w+)?|melhorada|reescrita|reformulada|revisada|revista) d[aoe] (?:seu|sua|teu|tua) (?:anúncio|carta de apresentação|currículo|cv|e-?mail|mensagem|post|publicação|resposta|texto))\b[^.!?\n]*:\s*$|^\W*بالطبع\s?[!,.،]+\s?إليك (?:ال)?(?:صيغة|نسخة) (?:ال)?(?:أقصر|أكثر \w+|أوضح|محسّ?نة|مختصرة|معدّ?لة|منقّ?حة) (?:ل|من )(?:بريد|خطاب|رد|رسالت|سيرت|مقال|منشور|نص)كم?\b[^.!?؟\n]*:\s*$|^\W*dưới đây là phiên bản [^:\n]*của (?:email|tin nhắn|văn bản) của bạn:\s*$'''
+# Arabic, by the same rule: بالطبع, then إليك a reworked version of the reader's text (نسخة محسّنة من رسالتك); a
+# person's "بالطبع، إليك نسخة من رسالتك:" (a copy) or "إليك نسخة معدلة من العقد:" passes.
+check.ar = '^\W*بالطبع\s?[!,.،]+\s?إليك (?:ال)?(?:صيغة|نسخة) (?:ال)?(?:أقصر|أكثر \w+|أوضح|محسّ?نة|مختصرة|معدّ?لة|منقّ?حة) (?:ل|من )(?:بريد|خطاب|رد|رسالت|سيرت|مقال|منشور|نص)كم?\b[^.!?؟\n]*:\s*$'
+check.de = '^\W*(?:natürlich|sicherlich|selbstverständlich|(?:sehr )?gerne)[!,] hier ist (?:eine?|die|der|das) (?:\w+ )?(?:überarbeitete|verbesserte|umformulierte|geglättete|\w+ere)[rs]? (?:entwurf|fassung|text|version) (?:(?-i:Ihre[sr])|deine[sr]|eure[sr])\b[^.!?\n]*:\s*$|^\W*(?:natürlich|sicherlich|selbstverständlich|(?:sehr )?gerne)[!,] hier ist (?:(?-i:Ihre?)|deine?|eure?) (?:\w+ )?(?:überarbeitete|verbesserte|umformulierte|geglättete|\w+ere)[rs]? (?:entwurf|fassung|text|version)\b[^.!?\n]*:\s*$'
+# Every language follows English's rule (#26): a reworked version of the reader's text (of your email, your rewritten
+# post), or a register word after more or less, bare or of a text (a more formal version), or a text in a register for
+# the reader to send (a polite email you can send). The text is the head noun: "your email signature" and "a more
+# neutral version of the logo" pass; after the text, a comma, a dash, a bracket or a linking word lets the line go on
+# ("of your email incorporating your feedback"), and after a register version anything but "of" and an object that is no
+# text. A person's more recent, newer or shorter version of the deck passes, as does a revised version of the contract,
+# a rewrite of the intro, and "your revised offer letter" from HR: a letter is the reader's text only as a cover letter.
+# The opener is an eager yes or an offer to help, then a mark, a comma or a dash, then here's, here is or below is; or a
+# bare below is (#37). Each still needs the reader's text or a register word, so a person's "Below is the revised quote,
+# as agreed:" passes. A text to send keeps the old opener alone: "Below is a friendly message you can share with your
+# team:" is a person's template. The branches that end on the reader's text share its noun list and the linking words
+# after it, written once (#63).
+check.en = '''^\W*(?:(?:absolutely|certainly|happy to help|i['’]d be happy to help|of course|sure|sure thing)(?:[!,.]+ | ?[-–—] ?)(?:below is|here(?:['’]s| is))|below is) (?:(?:(?:(?:a|an|the) (?:[\w-]+,? ){0,2}(?:casual|clearer|concise|condensed|conversational|corrected|courteous|crisper|diplomatic|edited|empathetic|enhanced|formal|friendlier|friendly|improved|informal|less \w+|longer|more \w+|neutral|polished|polite|professional|proofread|punchier|refined|rephrased|respectful|revised|reworded|reworked|rewritten|shortened|shorter|simpler|streamlined|tactful|tightened|tighter|warmer) (?:draft|version)|a rewrite) of (?:your (?:[\w-]+ )?(?:announcement|article|bio|caption|cover letter|cv|e-?mail|essay|intro|introduction|mail|message|paragraph|personal statement|post|reply|response|r[eé]sum[eé]|sentence|speech|text|tweet)|the (?:[\w-]+ )?(?:announcement|article|bio|caption|cover letter|cv|e-?mail|essay|intro|introduction|mail|message|paragraph|personal statement|post|reply|response|r[eé]sum[eé]|sentence|speech|text|tweet) you (?:provided|shared|wrote))|(?:your (?:[\w-]+ )?(?:enhanced|improved|polished|refined|rephrased|revised|reworded|reworked|rewritten|shortened|streamlined|tightened)|(?:a|an) (?:[\w-]+,? (?:and )?){0,2}(?:less|more) (?:casual|concise|conversational|courteous|diplomatic|empathetic|formal|friendly|informal|neutral|polite|professional|respectful|tactful)(?:,? (?:and )?[\w-]+)? (?:draft|version) of (?:that|the|this|your)) (?:[\w-]+ )?(?:announcement|article|bio|caption|cover letter|cv|e-?mail|essay|intro|introduction|mail|message|paragraph|personal statement|post|reply|response|r[eé]sum[eé]|sentence|speech|text|tweet))(?:(?:,| [-–—(]| (?:above|below|that)\b| (?:about|addressed|addressing|aimed|along|as|based|focusing|following|for|from|in|incorporating|keeping|making|now|on|per|ready|reflecting|so|suitable|tailored|to|using|which|while|with|without|you) )[^.!?\n]*)?\s*:\s*$|(?:a|an) (?:[\w-]+,? (?:and )?){0,2}(?:less|more) (?:casual|concise|conversational|courteous|diplomatic|empathetic|formal|friendly|informal|neutral|polite|professional|respectful|tactful)(?:,? (?:and )?[\w-]+)? (?:draft|version)(?:(?:,| [^o.!?\n]| o[^f])[^.!?\n]*| of (?:it|that|the above|this))?\s*:\s*$)|^\W*(?:absolutely|certainly|of course|sure)[!,.]+ here(?:['’]s| is) (?:a|an) (?:[\w-]+,? ){0,2}(?:casual|concise|conversational|courteous|diplomatic|empathetic|formal|friendly|informal|neutral|polite|professional|respectful|tactful),? (?:[\w-]+ )?(?:announcement|e-?mail|letter|message|post|reply) (?:that )?you can (?:copy|post|send|share|use)\b[^.!?\n]*:\s*$'''
+# Spanish, by the same rule: an eager yes, then aquí tienes the reader's text reworked (tu correo corregido, una versión
+# más formal de su mensaje); a person's "aquí tienes la versión corregida del presupuesto" passes.
+check.es = '^\W*(?:claro|claro que sí|con gusto|desde luego|por supuesto)\s?[!,.]+\s?aquí (?:está|tiene|tienes) (?:(?:su|tu) (?:anuncio|carta de presentación|correo|currículum|cv|e-?mail|mail|mensaje|post|publicación|texto) (?:corregid|mejorad|reescrit|reformulad|revisad)[ao]|(?:la|una) (?:\w+ )?versión (?:corregida|más (?:amable|breve|cercana|clara|concisa|corta|formal|profesional)|mejorada|pulida|reescrita|reformulada|revisada) de (?:su|tu) (?:anuncio|carta de presentación|correo|currículum|cv|e-?mail|mail|mensaje|post|publicación|texto))\b[^.!?\n]*:\s*$'
+# French, by the rule the Chinese and Russian forms follow: only a reworked version that names the reader's text (de
+# votre e-mail, de ton message); a person returning a client's devis or courrier passes (#24's review). Its alternations
+# run in alphabetical order, as fr.toml's header says.
+check.fr = '^\W*(?:absolument|avec plaisir|bien sûr|certainement)\s?[!,.]+\s?voici (?:(?:ton|votre) (?:compte rendu|courriel|cv|e-?mail|mail|message|post|rapport|texte) (?:amélioré|reformulé|retravaillé|révisé)|une (?:\w+ )?version (?:améliorée|peaufinée|plus (?:chaleureuse|claire|concise|courte|engageante|fluide|formelle|percutante|professionnelle)(?: et plus \w+)?|reformulée|retravaillée|révisée) de (?:ta|ton|votre) (?:annonce|compte rendu|courriel|cv|e-?mail|lettre|mail|message|post|publication|rapport|texte))\b[^.!?\n]*:\s*$'
+# Portuguese likewise: "Claro! Aqui está a versão corrigida do orçamento:" passes.
+check.pt = '^\W*(?:certamente|claro|claro que sim|com certeza)\s?[!,.]+\s?(?:aqui (?:está|tem|tens)|eis) (?:(?:[ao] )?(?:seu|sua|teu|tua) (?:anúncio|carta de apresentação|currículo|cv|e-?mail|mensagem|post|publicação|resposta|texto) (?:corrigid|melhorad|reescrit|reformulad|revisad|revist)[ao]|(?:a|uma) (?:\w+ )?versão (?:corrigida|mais (?:clara|concisa|curta|formal|profissional)(?: e \w+)?|melhorada|reescrita|reformulada|revisada|revista) d[aoe] (?:seu|sua|teu|tua) (?:anúncio|carta de apresentação|currículo|cv|e-?mail|mensagem|post|publicação|resposta|texto))\b[^.!?\n]*:\s*$'
+# The Russian participles share their ending, written once (#63).
+check.ru = '^\W*(?:безусловно|конечно)! вот (?:(?:ваш|тво)\w* (?:исправле|переработа|улучше|отредактирова|сокращ[её])нн\w+ (?:абзац|письмо|пост|резюме|сообщение|текст)\b|(?:\w+ )?(?:исправле|переработа|улучше|отредактирова|сокращ[её])нн\w+ (?:вариант|версия|редакция|текст) (?:ваш|тво)\w+ (?:абзац|объявлени|письм|пост|резюме|сообщени|стать|текст)\w*|(?:\w+ )?более (?:вежлив|делов|дружелюбн|кратк|лаконичн|мягк|нейтральн|неформальн|официальн|профессиональн|формальн)\w* (?:вариант|версия)\b)[^.!?\n]*:\s*$'
+# Vietnamese, from the line vietnamese-humanizer tells its model not to add: Dưới đây là phiên bản, then the reader's
+# text, called bạn as a model calls the user, right after của and ending the line (của email của bạn:); a person's
+# "phiên bản cuối của hợp đồng", a text of anh's or chị's, or a version made from the reader's mail or sent to it (theo
+# email của bạn, theo nội dung email của bạn, gửi vào email của bạn), passes (#62's review, F1). With a second của such
+# a line fires (theo nội dung của email của bạn), as does a converted copy (phiên bản PDF của văn bản của bạn):
+# accepted, as narrowing the gap loses model lines with long modifiers (round 2, F5). A colleague who calls the reader
+# bạn and returns their text reworked fires, the cost #24 accepts. It names three texts and no eager yes: the source's
+# line names neither.
+check.vi = '^\W*dưới đây là phiên bản [^:\n]*của (?:email|tin nhắn|văn bản) của bạn:\s*$'
+# The Chinese words of two scripts are one class each (#63).
+check.zh = '^\W*[当當]然(?:可以)?[!！]\s*(?:下面|以下)[为是為](?:[为為][你您]|根[据據][你您]的(?:意[见見]|要求))?(?:[优優]化|修改|改[写寫]|[润潤]色)[后後]的[文版]本[:：]\s*$'
 flags = "Certainly! Here is a polished version of your announcement:"
 passes = "Sure! Here's the link to the slides from yesterday."
 sources = [
@@ -677,7 +724,11 @@ models = "any"
 what = "Keeps the chatbot's sign-off under a document: a hope that it helped, or an offer to do more."
 instead = "Delete the line; end with the document."
 strength = "strong"
-check = '''^\W*(?:would you like me to (?:convert|expand|reformat|turn) this|let me know if you(?:['’]d| would) like me to (?:adjust|expand|refine|revise|tweak)|is there anything else you(?:['’]d| would) like me to|gibt es noch etwas, (?:bei dem|womit) ich (?:dir |ihnen )?(?:noch )?(?:behilflich sein|helfen) kann|(?:möchten sie|möchtest du),? dass ich (?:daraus|den entwurf|den text|dies|diesen entwurf|diesen text|es|ihn) (?:noch )?(?:\w+ ){0,4}(?:anpasse|ausbaue|ergänze|erstelle|erweitere|formuliere|kürze|kürzer fasse|mache|überarbeite|umformatiere|umformuliere|umschreibe|umwandle)\b|soll ich (?:den entwurf|den text|dies|diesen entwurf|diesen text|es|ihn) (?:noch )?(?:\w+ ){0,4}(?:anpassen|ausbauen|ergänzen|erweitern|formulieren|kürzen|kürzer fassen|überarbeiten|umformatieren|umformulieren|umschreiben|umwandeln)\b|soll ich daraus (?:noch )?(?:\w+ ){0,4}(?:erstellen|machen)\b|lass(?:en sie|t)? mich wissen,? (?:falls|ob|wenn) ich (?:\w+ ){0,5}(?:ändern|anpassen|ergänzen|erweitern|kürzen|kürzer fassen|überarbeiten|umformulieren|umschreiben|umwandeln) soll|сообщите мне, если хотите, чтобы (?:я (?:адаптировал|дополнил|доработал|изменил|переписал|расширил|сократил)|(?:документ|статья|текст) был\w* (?:расширен|сокращ[её]н|доработан|переписан|адаптирован))|(?:quieres|te gustaría) que (?:(?:amplíe|desarrolle) (?:algún|alguna|esta|este)|(?:la|lo|te lo) (?:acorte|adapte|amplíe|desarrolle|resuma))\b|gostaria que eu (?:[ao] )?(?:adaptasse|ampliasse|desenvolvesse|detalhasse|encurtasse|expandisse|resumisse|transformasse)\b|(?:quer|queres) que eu (?:[ao] )?(?:adapte|amplie|desenvolva|detalhe|encurte|expanda|resuma|transforme)\b)'''
+check.de = '^\W*(?:gibt es noch etwas, (?:bei dem|womit) ich (?:dir |ihnen )?(?:noch )?(?:behilflich sein|helfen) kann|(?:möchten sie|möchtest du),? dass ich (?:daraus|den entwurf|den text|dies|diesen entwurf|diesen text|es|ihn) (?:noch )?(?:\w+ ){0,4}(?:anpasse|ausbaue|ergänze|erstelle|erweitere|formuliere|kürze|kürzer fasse|mache|überarbeite|umformatiere|umformuliere|umschreibe|umwandle)\b|soll ich (?:den entwurf|den text|dies|diesen entwurf|diesen text|es|ihn) (?:noch )?(?:\w+ ){0,4}(?:anpassen|ausbauen|ergänzen|erweitern|formulieren|kürzen|kürzer fassen|überarbeiten|umformatieren|umformulieren|umschreiben|umwandeln)\b|soll ich daraus (?:noch )?(?:\w+ ){0,4}(?:erstellen|machen)\b|lass(?:en sie|t)? mich wissen,? (?:falls|ob|wenn) ich (?:\w+ ){0,5}(?:ändern|anpassen|ergänzen|erweitern|kürzen|kürzer fassen|überarbeiten|umformulieren|umschreiben|umwandeln) soll)'
+check.en = '''^\W*(?:would you like me to (?:convert|expand|reformat|turn) this|let me know if you(?:['’]d| would) like me to (?:adjust|expand|refine|revise|tweak)|is there anything else you(?:['’]d| would) like me to)'''
+check.es = '^\W*(?:quieres|te gustaría) que (?:(?:amplíe|desarrolle) (?:algún|alguna|esta|este)|(?:la|lo|te lo) (?:acorte|adapte|amplíe|desarrolle|resuma))\b'
+check.pt = '^\W*(?:gostaria que eu (?:[ao] )?(?:adaptasse|ampliasse|desenvolvesse|detalhasse|encurtasse|expandisse|resumisse|transformasse)\b|(?:quer|queres) que eu (?:[ao] )?(?:adapte|amplie|desenvolva|detalhe|encurte|expanda|resuma|transforme)\b)'
+check.ru = '^\W*сообщите мне, если хотите, чтобы (?:я (?:адаптировал|дополнил|доработал|изменил|переписал|расширил|сократил)|(?:документ|статья|текст) был\w* (?:расширен|сокращ[её]н|доработан|переписан|адаптирован))'
 flags = "The committee meets each spring.\n\nWould you like me to expand this into a one-page handout?"
 passes = "The committee meets each spring.\n\nWould you like me to bring the projector, or will Sam?"
 sources = [
@@ -699,10 +750,16 @@ instead = "Fill it in or cut it before you send."
 strength = "usual"
 # A slot left in a person's own template fires too, on purpose: it is unfilled. Markdown link text, [your account](...),
 # is no slot: a bracket with ( after it passes, in every branch.
+check.any = '\[(?:add|company|describe|insert|recipient|your)\b[^\]\n]*\](?:[^(]|$)|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx'
+check.de = '\[(?:ihre?n?|dein(?:e|en)?)\b[^\]\n]*\](?:[^(]|$)|\[[^\]\n]{1,40} (?:einfügen|eintragen|ergänzen)\](?:[^(]|$)'
+# Spanish likewise: [Tu nombre], [Nombre del cliente], not "[por confirmar]".
+check.es = '\[(?:insert(?:a|ar|e)|nombre (?:de la|del) (?:cliente|destinatari[ao]|empresa)|su (?:cargo|empresa|nombre)|tu (?:cargo|correo|empresa|nombre|teléfono))\b[^\]\n]*\](?:[^(]|$)'
 # French: the slots a model leaves for the sender, not "[date à confirmer]" or "[à compléter]" in a person's notes.
-# Spanish likewise: [Tu nombre], [Nombre del cliente], not "[por confirmar]"; Portuguese: [Seu nome], [O teu nome],
-# [Nome do cliente], not "[a confirmar]".
-check = '''\[(?:your|insert|add|describe|company|recipient|имя|ваш\w*|вставьте|опишите|укажите|ihre?n?|dein(?:e|en)?|insérer|nom (?:de l['’]entreprise|de la société|du destinataire)|vos coordonnées|votre (?:entreprise|fonction|nom|poste|prénom|société)|insert(?:a|ar|e)|nombre (?:de la|del) (?:cliente|destinatari[ao]|empresa)|su (?:cargo|empresa|nombre)|tu (?:cargo|correo|empresa|nombre|teléfono)|descreva|inserir:? \w+|insira:? \w+|nome d[aeo] (?:artista|cliente|destinatári[ao]|empresa)|(?:o )?(?:seu|teu) (?:cargo|contacto|contato|e-?mail|endereço|nome|telefone)|(?:a )?(?:sua|tua) (?:empresa|função))\b[^\]\n]*\](?:[^(]|$)|\[[^\]\n]{1,40} (?:einfügen|eintragen|ergänzen)\](?:[^(]|$)|\b(?:insert|paste)_[a-z0-9_]+_here\b|20\d\d-xx-xx|[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|挿入|記入|貼)[^\]］】\n]{0,6}[\]］】](?:[^(]|$)'''
+check.fr = '''\[(?:insérer|nom (?:de l['’]entreprise|de la société|du destinataire)|vos coordonnées|votre (?:entreprise|fonction|nom|poste|prénom|société))\b[^\]\n]*\](?:[^(]|$)'''
+check.ja = '[\[［【]ここに[^\]］】\n]{0,15}(?:入れ|入力|挿入|記入|貼)[^\]］】\n]{0,6}[\]］】](?:[^(]|$)'
+# Portuguese likewise: [Seu nome], [O teu nome], [Nome do cliente], not "[a confirmar]".
+check.pt = '\[(?:descreva|inserir:? \w+|insira:? \w+|nome d[aeo] (?:artista|cliente|destinatári[ao]|empresa)|(?:o )?(?:seu|teu) (?:cargo|contacto|contato|e-?mail|endereço|nome|telefone)|(?:a )?(?:sua|tua) (?:empresa|função))\b[^\]\n]*\](?:[^(]|$)'
+check.ru = '\[(?:имя|ваш\w*|вставьте|опишите|укажите)\b[^\]\n]*\](?:[^(]|$)'
 flags = "Thanks again, and see you on Friday.\n\n[Your Name]"
 passes = "Thanks again, and see you on Friday.\n\nMarta"
 sources = [

@@ -1,6 +1,7 @@
 """The catalogue: what ships is valid, and each kind of bad sign, source or language is refused with its reason."""
 
 import datetime
+import pathlib
 import shutil
 
 import pytest
@@ -636,6 +637,19 @@ def test_a_language_s_own_sign_holds_one_form(root):
     new = "strength = \"usual\"\ncheck.en = 'numbers'"
     problems = problems_after(root, "signs/en.toml", 'strength = "usual"', new)
     assert any("en-delve: `check` must be text: a en sign's one form is en's" in problem for problem in problems)
+
+
+def test_every_form_s_language_has_an_office_test_that_proves_its_forms():
+    # A form under a code with no office file, or one whose office file never asks, would land with no machine line.
+    found, problems = signs.load()
+    assert problems == []
+    tests = pathlib.Path(__file__).parent
+    codes = {code for sign in found.signs.values() if sign.language == "any" for code in sign.forms} - {"any"}
+    assert len(codes) > 10
+    # English's office test is `test_office.py`, and it proves the forms under `any` too
+    office = {code: tests / f"test_office{'' if code == 'en' else '_' + code.replace('-', '_')}.py" for code in codes}
+    assert [code for code, path in office.items() if not path.is_file()] == []
+    assert [code for code, path in office.items() if f'"{code}") == []' not in path.read_text(encoding="utf-8")] == []
 
 
 def test_a_sign_id_used_twice_is_refused(root):

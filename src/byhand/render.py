@@ -28,13 +28,16 @@ KB = 1024
 
 @dataclass(frozen=True)
 class Budgets:
-    """The bytes each reader may take, set from the catalogue of 2026-11-08 with a margin, and only ever lowered."""
+    """The bytes each reader may take, set from the catalogue of 2026-11-08 with a margin, and only ever lowered.
+    `check` and `scan` were set on 2026-11-09 (#71), once the shared signs' forms moved to each language's scan
+    file: the largest read then, Japanese's check and English's scan, plus at least 512 bytes, rounded up to a whole
+    KB."""
 
     mail: int = 14 * KB  # the short files a mail or a message reads, together
     document: int = 16 * KB  # the short and long files a post or a document reads, together
     layout: int = 16 * KB  # the layout files a deck or a sheet adds, together
-    check: int = 32 * KB  # the check files one check reads: `any`, a variant's base language, the language
-    scan: int = 32 * KB  # the scan files `scan` reads for one check, from the same scopes
+    check: int = 16 * KB  # the check files one check reads: `any`, a variant's base language, the language
+    scan: int = 9 * KB  # the scan files `scan` reads for one check, from the same scopes
 
 
 BUDGETS = Budgets()

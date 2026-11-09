@@ -149,10 +149,15 @@ MACHINE = [
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for_in_japanese(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for_in_japanese(catalogue, read_in, sign, text):
+    # as a Japanese check runs it: the forms under ja and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "ja")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_japanese_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE, "ja") == []
 
 
 def test_colon_replies_and_short_chat_meet_only_weak_signs(catalogue):

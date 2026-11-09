@@ -444,7 +444,7 @@ def test_a_file_of_too_many_lines_fails():
 
 def test_the_budgets_are_the_plans():
     assert (
-        render.Budgets(mail=14 * 1024, document=16 * 1024, layout=16 * 1024, check=32 * 1024, scan=32 * 1024)
+        render.Budgets(mail=14 * 1024, document=16 * 1024, layout=16 * 1024, check=16 * 1024, scan=9 * 1024)
         == render.BUDGETS
     )
 

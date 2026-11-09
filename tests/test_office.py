@@ -188,8 +188,6 @@ MACHINE = [
     ("any-assistant-closing-offer", "Would you like me to convert this into a table?"),
     ("any-assistant-closing-offer", "Let me know if you'd like me to adjust the tone."),
     ("any-assistant-closing-offer", "Is there anything else you'd like me to add?"),
-    ("any-assistant-closing-offer", "Gibt es noch etwas, bei dem ich helfen kann?"),
-    ("any-assistant-closing-offer", "Сообщите мне, если хотите, чтобы я сократил текст."),
     # the English branch fires only on the reader's text, or a register word after more or less (#26)
     ("any-assistant-preamble", "Certainly! Here is a revised draft of your announcement:"),
     ("any-assistant-preamble", "Absolutely! Here's a rewrite of your bio:"),
@@ -250,9 +248,6 @@ MACHINE = [
     ("any-assistant-preamble", "Sure! Here's a more professional version ready to send:"),
     ("any-assistant-preamble", "Sure! Here's a more formal version addressed to the board:"),
     ("any-assistant-preamble", "Sure! Here's a more polite version on the same lines:"),
-    ("any-assistant-preamble", "Gerne! Hier ist eine überarbeitete Version Ihres Textes:"),
-    ("any-assistant-preamble", "Безусловно! Вот более официальная версия:"),
-    ("any-assistant-preamble", "当然可以\uff01以下是润色后的版本\uff1a"),
     ("any-assistant-preamble", "Sure! Here's a professional email you can send to your client:"),
     ("any-assistant-preamble", "Of course! Here is a shorter version of your post:"),
     # the other openers, held to the same rule (#37)
@@ -265,10 +260,6 @@ MACHINE = [
     ("any-assistant-preamble", "Sure\u2013here's a less formal version:"),
     ("any-assistant-preamble", "Sure thing! Here's a more formal version:"),
     ("any-assistant-preamble", "Sure, below is your rewritten intro:"),
-    # the German branch fires only when the line names the reader's text (#23's review, F2)
-    ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung Ihrer Notiz:"),
-    ("any-assistant-preamble", "Конечно! Вот исправленный текст вашего письма:"),
-    ("any-assistant-preamble", "当然可以\uff01以下是修改后的版本\uff1a"),
     ("any-didactic-aside", "It's worth noting that results vary."),
     ("any-didactic-aside", "It is crucial to note the deadline."),
     ("any-emoji-markers", "- 🚀 Launch day"),
@@ -288,21 +279,64 @@ MACHINE = [
     ("any-source-gap-disclaimer", "No such figure appears in the provided sources."),
     ("en-ai-vocabulary", "We want to foster collaboration across the teams."),
     ("en-stock-openers", "In today's digital age, firms must adapt."),
+    # the weak shared signs, which count only in a cluster, and the forms every language's scan runs (#71)
+    ("any-closing-summary", "In conclusion, the plan works for everyone."),
+    ("any-closing-summary", "In summary, the move pays for itself in two years."),
+    ("any-flattering-agreement", "You're absolutely right, and that is such an important point."),
+    ("any-flattering-agreement", "You are absolutely right to raise it."),
+    ("any-letter-boilerplate", "I hope this email finds you well."),
+    ("any-letter-boilerplate", "Hope this message finds you well."),
+    ("any-bold-lead-in-list", "- **Speed:** Pages load faster."),
+    ("any-bold-lead-in-list", "**1. Faster pages**"),
+    ("any-raw-markdown", "Thanks for the update. **Two things** to fix."),
+    ("any-raw-markdown", "## Next steps"),
+    ("any-raw-markdown", "---"),
+    ("any-chatgpt-citation-markup", "The bridge opened in 1932. :contentReference[oaicite:3]{index=3}"),
+    ("any-chatgpt-citation-markup", "The bridge opened in 1932. oaicite:1"),
+    ("any-chatgpt-citation-markup", "The bridge opened in 1932. oai_citation:2"),
+    ("any-chatgpt-citation-markup", "The bridge opened in 1932. attributableIndex"),
+    ("any-chatgpt-citation-markup", "The bridge opened in 1932. turn0search3"),
+    ("any-chatbot-url-tag", "Source: https://example.org/report?utm_source=chatgpt.com"),
+    ("any-chatbot-url-tag", "Source: https://example.org/report?utm_source=openai"),
+    ("any-chatbot-url-tag", "Source: https://example.org/report?utm_source=copilot.com"),
+    ("any-chatbot-url-tag", "Source: https://example.org/report?utm_source=claude.ai"),
+    ("any-chatbot-url-tag", "Source: https://example.org/report?utm_source=perplexity.ai"),
+    ("any-chatbot-url-tag", "Source: https://example.org/report?referrer=grok.com"),
+    ("any-ai-self-reference", "As an AI language model, I have no view on the rota."),
+    ("any-ai-self-reference", "As a large language model, I cannot browse the web."),
+    ("any-knowledge-cutoff", "As of my last knowledge update, the firm had not merged."),
+    ("any-knowledge-cutoff", "Up to my last training update, no merger was announced."),
+    ("any-unfilled-placeholder", "Thanks again,\n\n[Your Name]"),
+    ("any-unfilled-placeholder", "The launch is on [Insert date]."),
+    ("any-unfilled-placeholder", "Call me on [Add phone number]."),
+    ("any-unfilled-placeholder", "[Describe the product in one line]"),
+    ("any-unfilled-placeholder", "[Company] is hiring."),
+    ("any-unfilled-placeholder", "Dear [Recipient],"),
+    ("any-unfilled-placeholder", "Send it to insert_email_here today."),
+    ("any-unfilled-placeholder", "Deadline: 2026-XX-XX"),
+    ("any-gemini-citation-markup", "The bakery moved to Bath in 1998[cite: 4]."),
+    ("any-gemini-citation-markup", "[span_2](start_span)The bakery moved to Bath[span_2](end_span)"),
+    ("any-grok-citation-markup", "The ferry sails at dawn. [](grok_render_citation_card_json={})"),
+    ("any-grok-citation-markup", "The ferry sails at dawn. grok_card"),
+    ("any-grok-citation-markup", 'The ferry sails at dawn. <grok-card data-id="a1"></grok-card>'),
+    ("any-deepseek-citation-markup", "The ferry started in 1987\u301012\u2020L40-44\u3011."),
+    ("any-chat-tool-markup", "The board approved the plan.[attached_file:1]"),
+    ("any-chat-tool-markup", "The board approved the plan.[web:3]"),
+    ("any-chat-tool-markup", "See https://ppl-ai-file-upload.example/minutes.pdf"),
+    ("any-chat-tool-markup", ':::writing{variant="email"}'),
 ]
 
 
-@pytest.fixture(scope="module")
-def every_sign():
-    catalogue, problems = signs.load()
-    assert problems == []
-    return catalogue.signs
-
-
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for(every_sign, sign, text):
-    pattern = every_sign[sign].pattern
+def test_the_signs_still_find_what_they_are_for(catalogue, read_in, sign, text):
+    # as an English check runs it: the forms under en and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "en")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_english_and_every_language_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE, "en") == []
 
 
 def test_a_bold_list_is_weak_and_the_preamble_reads_mail():

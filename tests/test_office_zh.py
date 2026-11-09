@@ -101,6 +101,10 @@ def test_no_sign_that_counts_alone_fires_on_plain_chinese_office_text(counted_al
 # What each sign that counts alone exists to catch in Chinese: a line per branch of its check, so silence above can't
 # come from a sign that finds nothing, or from a branch that stopped finding.
 MACHINE = [
+    ("any-assistant-preamble", "当然可以\uff01以下是修改后的版本\uff1a"),
+    # weak, so it counts only in a cluster; one form reads both scripts
+    ("any-flattering-agreement", "这是很好的观察\uff0c我们先看数据。"),
+    ("any-flattering-agreement", "這是很好的觀察\uff0c我們先看數據。"),
     ("any-assistant-preamble", "当然可以\uff01以下是润色后的版本\uff1a"),
     ("any-assistant-preamble", "当然可以\uff01以下是为你改写后的文本\uff1a"),
     ("any-assistant-preamble", "當然可以\uff01以下是優化後的版本\uff1a"),
@@ -134,10 +138,15 @@ MACHINE += [  # round 2 of the review of #16
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for(catalogue, read_in, sign, text):
+    # as a Chinese check runs it: the forms under zh and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "zh")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_chinese_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE, "zh") == []
 
 
 def test_chinese_word_signs_are_weak():

@@ -47,10 +47,15 @@ def test_no_sign_that_counts_alone_fires_on_plain_finnish_work_text(counted_alon
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for_in_finnish(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for_in_finnish(catalogue, read_in, sign, text):
+    # as a Finnish check runs it: the forms under fi and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "fi")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_finnish_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE + FORMS, "fi") == []
 
 
 @pytest.mark.parametrize(("text", "kind"), KINDS)

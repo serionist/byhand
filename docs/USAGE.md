@@ -32,7 +32,8 @@ with forms alone (`id`) has a `scan.md` and no `check.md`:
 `write`'s files hold no regex: each term prints as plain words, one per alternative, the shortest text it matches,
 with "…" for a run of letters the word needs (`…ként szolgál`). A draft reads at most four short files, six for a
 script variant such as `zh-Hant`, a post or a document as many long ones again, and a deck or a sheet as many
-layout ones. A check of a deck or a sheet reads the `check.layout.md` and `scan.layout.md` files after the others.
+layout ones. A check of a deck or a sheet reads the `check.layout.md` files after the `check.md` ones, and its `scan`
+agent the `scan.layout.md` files after the `scan.md` ones.
 
 The budgets, `Budgets` in `src/byhand/render.py`, set from the catalogue of 8 Nov 2026 with a margin and only ever
 lowered (`check` and `scan` on 9 Nov, the largest read plus at least 512 bytes, rounded up to a whole KB); over any

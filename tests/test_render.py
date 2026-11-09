@@ -266,7 +266,7 @@ def test_every_pattern_prints_as_written_in_nfc():
     printed = {
         (path.split("/")[0], match[1]): match[2]
         for path, text in render.render(found).items()
-        if path.endswith(render.SCAN)
+        if path.rsplit("/", 1)[1] in (render.SCAN, render.SCAN_LAYOUT)
         for match in re.finditer(r"^- (\S+) \([^)]*\): `(.*)`$", text, re.MULTILINE)
     }
     written = {}

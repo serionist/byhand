@@ -2,12 +2,12 @@
 its `scan` agent reads.
 
 The plugin's skills run no command: they read these files. A draft reads only what its kind of writing needs, a mail
-or a message the short files, a post or a document the long ones too, a deck or a sheet the layout ones, so a hundred
-languages cost a draft no more than one. `write`'s and `check`'s files hold no regex, only plain words: a pattern is
-for Grep, which `check` runs through its `scan` agent from the scan files, each holding only its language's forms. The
-signs only a deck or a sheet needs have check and scan files of their own, so a mail's check pays nothing for them.
-Nothing is rendered that a skill doesn't act on, no citation and no example, and nothing here reads the clock, so a
-file can't go stale overnight.
+or a message the short files, a post or a document the long ones too, a deck or a sheet the layout ones too, so a
+hundred languages cost a draft no more than one. `write`'s and `check`'s files hold no regex, only plain words: a
+pattern is for Grep, which `check` runs through its `scan` agent from the scan files, each holding only its language's
+forms. The signs only a deck or a sheet needs have check and scan files of their own, so a mail's check pays nothing
+for them. Nothing is rendered that a skill doesn't act on, no citation and no example, and nothing here reads the
+clock, so a file can't go stale overnight.
 """
 
 from __future__ import annotations

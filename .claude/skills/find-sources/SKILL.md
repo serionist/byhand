@@ -21,7 +21,7 @@ maintainer asks, never on a schedule. `docs/research/2026-11-06-sources.md` is h
    most spoken first,
 
    ```
-   uv run python -c "import tomllib as t; p='src/byhand/catalogue/'; s={c for r in t.load(open(p+'sources.toml','rb'))['source'] for c in r['languages']}; print([l['code'] for l in t.load(open(p+'languages.toml','rb'))['language'] if l['code'] not in s])"
+   uv run python -c "import tomllib as t; p='src/byhand/catalogue/'; s={c for r in t.load(open(p+'sources.toml','rb'))['source'] for c in r['languages']}; d=t.load(open(p+'languages.toml','rb')); print([l['code'] for l in d['language']+d.get('extra',[]) if l['code'] not in s])"
    ```
 
    then those with sources but no `signs/<code>.toml`, then the families in `models.toml` the research calls a gap

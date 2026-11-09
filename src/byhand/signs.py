@@ -88,7 +88,7 @@ class Language:
     code: str
     name: str
     native: str = ""
-    rank: int = 0  # 0 for a script variant, which `of` ties to its base language
+    rank: int = 0  # 0 outside the hundred: an extra, or a script variant, which `of` ties to its base language
     of: str = ""
     spaces: bool = True  # False for a language written without spaces between words
 
@@ -297,19 +297,21 @@ def load_languages(root: Path, catalogue: Catalogue) -> list[str]:
     problems: list[str] = []
     file = "languages.toml"
     data = _read(root / file, problems)
-    problems += _keys(file, data, (), ("language", "variant"))
+    problems += _keys(file, data, (), ("language", "extra", "variant"))
     bases = _rows(file, data, "language", problems)
-    for row in bases:
-        code = _id(file, row, problems, "code")
-        where = f"{file}: {code}"
-        problems += _keys(where, row, ("code", "name", "rank"), ("native", "speakers_millions", "spaces"))
-        problems += _language_problems(where, row, catalogue)
-        native = row.get("native", "")
-        catalogue.languages[code] = Language(
-            code, str(row.get("name", "")), str(native), _rank(row), spaces=row.get("spaces") is not False
-        )
+    # An extra, a language outside the hundred, has no rank.
+    for required, rows in ((("code", "name", "rank"), bases), (("code", "name"), _rows(file, data, "extra", problems))):
+        for row in rows:
+            code = _id(file, row, problems, "code")
+            where = f"{file}: {code}"
+            problems += _keys(where, row, required, ("native", "speakers_millions", "spaces"))
+            problems += _language_problems(where, row, catalogue)
+            native = row.get("native", "")
+            catalogue.languages[code] = Language(
+                code, str(row.get("name", "")), str(native), _rank(row), spaces=row.get("spaces") is not False
+            )
     if len(bases) != LANGUAGE_COUNT:
-        problems.append(f"{file}: {len(bases)} languages; the catalogue holds {LANGUAGE_COUNT}")
+        problems.append(f"{file}: {len(bases)} languages ranked; the list holds the {LANGUAGE_COUNT} most spoken")
     if sorted(_rank(row) for row in bases) != list(range(1, len(bases) + 1)):
         problems.append(f"{file}: the ranks must run from 1 with no gap")
     for row in _rows(file, data, "variant", problems):

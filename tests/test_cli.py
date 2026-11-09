@@ -10,7 +10,7 @@ from byhand import cli, signs
 
 def test_validate_reports_what_ships(capsys):
     assert cli.main(["validate"]) == 0
-    assert "the catalogue is valid: 101 languages" in capsys.readouterr().out
+    assert "the catalogue is valid: 103 languages" in capsys.readouterr().out
 
 
 def test_validate_lists_every_problem_and_fails(capsys, monkeypatch):

@@ -1,4 +1,4 @@
-# The 100 most spoken languages, the set the catalogue's language codes come from: a one-way door (AGENTS.md).
+# The catalogue's language codes: the 100 most spoken, and others with sources. A one-way door (AGENTS.md).
 #
 # Source: Unicode CLDR 49 (cldr-core and cldr-localenames-full 49.0.0, Unicode licence), read on 2026-11-07. A rank
 # sums each territory's population times CLDR's percentage of speakers of the language there, first and second
@@ -699,3 +699,17 @@ code = "zh-Hant"
 name = "Chinese, Traditional"
 of = "zh"
 spaces = false
+
+# An extra is a language outside the hundred, added on the maintainer's word for its sources (#60, 2026-11-09): it has
+# no rank. Its names and speakers are CLDR 49's, read the same way on 2026-11-09.
+[[extra]]
+code = "he"
+name = "Hebrew"
+native = "עברית"
+speakers_millions = 9
+
+[[extra]]
+code = "fi"
+name = "Finnish"
+native = "suomi"
+speakers_millions = 6

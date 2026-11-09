@@ -1,0 +1,312 @@
+# The refresh agent: on the 1st and 15th of each month, when refresh.yml has opened issues labelled `refresh`, a model
+# runs propose-signs on every source they name and one round of review-code, and one draft PR opens that closes them.
+# The maintainer reads it, marks it ready and merges it; nothing here does either. docs/plans/2026-11-09-refresh-agent.md
+# has the design.
+#
+# A fetched page can hold instructions for the model reading it, so the work is split in two jobs. `draft` runs the
+# model with no token that can write, no network tool, and the allows in .github/refresh-agent.json; it hands on a
+# diff and the PR's text. `publish` runs no model: it checks what was handed on, adds the closing lines itself, and
+# opens the PR. A PR opened with the workflow's token waits for the maintainer's "Approve workflows to run" before CI
+# starts on it.
+name: Refresh agent
+
+on:
+  schedule:
+    - cron: "17 7 1,15 * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: refresh-agent
+  cancel-in-progress: false
+
+env:
+  # The CLI's own estimate of one run's spend, the reviewer's and refuters' subagents included. A run over it fails
+  # and publishes nothing. Set from the try by hand to about 1.5M tokens, the cost table's top row; the job summary
+  # records each run's estimate, so the first runs tune it.
+  BUDGET_USD: "25"
+
+jobs:
+  draft:
+    name: Draft
+    # The gate the model runs compares with origin/main, and the PR goes to main.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+    outputs:
+      issues: ${{ steps.todo.outputs.issues }}
+      unread: ${{ steps.fetch.outputs.unread }}
+      handed: ${{ steps.hand.outputs.handed }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The model never reads an issue, whose comments anyone can write: only its number, and the id in a title the
+      # refresh wrote, checked against sources.toml.
+      - name: What to do
+        id: todo
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          if gh pr list --state open --limit 1000 --json headRefName --jq '.[].headRefName' | grep -q '^refresh-agent/'; then
+            echo "The last run's PR is still open: nothing to do until it is merged or closed." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          gh issue list --label refresh --author app/github-actions --state open --limit 1000 --json number,title \
+            > "$RUNNER_TEMP/issues.json"
+          issues=$(python3 - "$RUNNER_TEMP/issues.json" <<'EOF'
+          import json, re, sys, tomllib
+          with open("src/byhand/catalogue/sources.toml", "rb") as f:
+              ids = {source["id"] for source in tomllib.load(f)["source"]}
+          issues = {}
+          with open(sys.argv[1], encoding="utf-8") as f:
+              for issue in json.load(f):
+                  match = re.fullmatch(r"Refresh: (\S+) changed", issue["title"])
+                  if match and match.group(1) in ids:
+                      issues[match.group(1)] = int(issue["number"])
+          print(json.dumps(issues, sort_keys=True) if issues else "")
+          EOF
+          )
+          echo "issues=$issues" >> "$GITHUB_OUTPUT"
+          echo "Open refresh issues: ${issues:-none}" >> "$GITHUB_STEP_SUMMARY"
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        if: steps.todo.outputs.issues != ''
+      # Installed with no token in reach, so the build backend, which the lock doesn't pin, never sees one.
+      - if: steps.todo.outputs.issues != ''
+        run: uv sync --locked
+      - name: Install gitleaks
+        if: steps.todo.outputs.issues != ''
+        # GitHub's release downloads return 504 now and then: retry rather than fail the run.
+        run: |
+          curl -sSfL --retry 5 --retry-all-errors --retry-delay 10 -o /tmp/gitleaks.tgz \
+            https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  /tmp/gitleaks.tgz" | sha256sum -c -
+          sudo tar -xzf /tmp/gitleaks.tgz -C /usr/local/bin gitleaks
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: steps.todo.outputs.issues != ''
+        with:
+          node-version: "24"
+      # The version ci.yml pins: the two move together.
+      - name: Install Claude Code
+        if: steps.todo.outputs.issues != ''
+        run: npm install -g @anthropic-ai/claude-code@2.1.285
+      # The gate's attribution check allows this bot as a commit's author.
+      - name: git's identity
+        if: steps.todo.outputs.issues != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      # No model yet. The token only lifts GitHub's limit of 60 calls an hour; byhand fetch sends it to api.github.com
+      # alone. A source it can't read is left out, and fails the publish job once the PR is open.
+      - name: Fetch the sources
+        id: fetch
+        if: steps.todo.outputs.issues != ''
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ISSUES: ${{ steps.todo.outputs.issues }}
+        run: |
+          ids=$(jq -r 'keys[]' <<<"$ISSUES")
+          # shellcheck disable=SC2086 # one argument per id
+          uv run --locked --no-sync byhand fetch $ids --out .local/sources/ || true
+          read=() unread=()
+          for id in $ids; do
+            if [ -f ".local/sources/$id/revision" ]; then read+=("$id"); else unread+=("$id"); fi
+          done
+          echo "read=${read[*]}" >> "$GITHUB_OUTPUT"
+          echo "unread=${unread[*]}" >> "$GITHUB_OUTPUT"
+          echo "Fetched: ${read[*]:-none}. Not fetched: ${unread[*]:-none}." >> "$GITHUB_STEP_SUMMARY"
+          if [ ${#read[@]} -eq 0 ]; then echo "::error::no source could be fetched"; exit 1; fi
+      # The only step that holds the OAuth token, and no GitHub token at all. The scrub keeps the token out of the
+      # environment of every command the model runs, and on Linux runs them in their own PID namespace, so they can't
+      # read the CLI's own through /proc. An empty CLAUDE_CONFIG_DIR: nothing of a user's set-up loads.
+      - name: The model
+        if: steps.todo.outputs.issues != ''
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"
+          CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude-config
+          DISABLE_AUTOUPDATER: "1"
+          ISSUES: ${{ steps.todo.outputs.issues }}
+          READ: ${{ steps.fetch.outputs.read }}
+        run: |
+          mkdir -p "$CLAUDE_CONFIG_DIR"
+          sources=""
+          for id in $READ; do sources+="- \`$id\`, from issue #$(jq -r --arg id "$id" '.[$id]' <<<"$ISSUES")"$'\n'; done
+          prompt="$(cat .github/refresh-agent.md)
+
+          ## This run
+
+          Today is $(date -u +%F). The sources:
+
+          $sources"
+          # Its JSON goes outside the checkout, and only its numbers reach the log: the repo is public.
+          claude -p "$prompt" \
+            --model opus --restricted --permission-mode dontAsk --strict-mcp-config --max-budget-usd "$BUDGET_USD" \
+            --output-format json --tools "Read,Glob,Grep,Edit,Write,Bash,Agent" --settings .github/refresh-agent.json \
+            > "$RUNNER_TEMP/result.json" || true
+      # The hand-off goes to $RUNNER_TEMP/out, outside the checkout and every folder the model may write, so it can't
+      # plant a file there. Its commit messages stay on the runner: publish writes its own.
+      - name: What it hands on
+        id: hand
+        if: steps.todo.outputs.issues != ''
+        env:
+          TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          result="$RUNNER_TEMP/result.json"
+          {
+            echo "| Turns | Input | Output | Cache read | Cache write | Estimate (USD) | Denials | End |"
+            echo "|---|---|---|---|---|---|---|---|"
+            jq -r '[.num_turns, .usage.input_tokens, .usage.output_tokens, .usage.cache_read_input_tokens,
+              .usage.cache_creation_input_tokens, .total_cost_usd, (.permission_denials | length),
+              ((.subtype // "none") | if test("^[a-z_]+$") then . else "other" end)]
+              | map(tostring) | "| " + join(" | ") + " |"' "$result" || echo "| no result |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$(jq -r '.subtype == "success" and .is_error == false' "$result" 2>/dev/null)" != true ]; then
+            echo "::error::the model's run did not succeed; nothing is published"
+            exit 1
+          fi
+          out="$RUNNER_TEMP/out"
+          mkdir -p "$out"
+          git diff --binary "$GITHUB_SHA"..HEAD > "$out/change.diff"
+          cp .local/pr/title.txt "$out/title.txt"
+          cp .local/pr/body.md "$out/body.md"
+          if [ ! -s "$out/change.diff" ]; then echo "::error::the model committed no change"; exit 1; fi
+          if [ -n "$TOKEN" ] && grep -rqF -- "$TOKEN" "$out"; then
+            echo "::error::the hand-off holds the OAuth token; nothing is published"
+            exit 1
+          fi
+          echo "handed=true" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: steps.hand.outputs.handed == 'true'
+        with:
+          name: refresh-agent
+          path: ${{ runner.temp }}/out/
+          retention-days: 7
+          if-no-files-found: error
+
+  publish:
+    name: Publish
+    needs: draft
+    if: needs.draft.outputs.handed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The gate is standard library only, so it runs without the project's packages (--no-sync), and setup-uv's cache
+      # step would fail on an empty cache folder.
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: false
+      - name: git's identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: refresh-agent
+          path: ${{ runner.temp }}/in
+      - name: Apply the change
+        id: branch
+        run: |
+          branch="refresh-agent/$(date -u +%F)"
+          git switch -c "$branch"
+          git apply --index "$RUNNER_TEMP/in/change.diff"
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
+      # Each check fails the job, and nothing is published. A path outside these folders, or a planted .gitattributes
+      # (which could hide the sign changes in GitHub's diff), a link or a mode but a plain file's; a title on more than
+      # one line; a closing keyword, an @ mention or another repository's issue or PR, which would post there from a
+      # public draft. Then the closing lines, and gate text over all of it, as PR text will run it.
+      - name: Check what was handed on, and write the PR's text
+        env:
+          IN: ${{ runner.temp }}/in
+          ISSUES: ${{ needs.draft.outputs.issues }}
+          UNREAD: ${{ needs.draft.outputs.unread }}
+        run: |
+          git diff --cached --no-renames --raw -z > "$RUNNER_TEMP/raw"
+          python3 - "$RUNNER_TEMP/raw" "$IN" "$RUNNER_TEMP" <<'EOF'
+          import json, os, re, subprocess, sys, tomllib
+          from pathlib import Path
+
+          raw, given, temp = Path(sys.argv[1]).read_bytes(), Path(sys.argv[2]), Path(sys.argv[3])
+          problems = []
+          fields = raw.split(b"\0")
+          entries = list(zip(fields[0::2], fields[1::2]))
+          if not entries:
+              problems.append("the diff changes nothing")
+          for meta, path in entries:
+              new_mode = meta.split()[1].decode()
+              name = path.decode("utf-8", "replace")
+              if not name.startswith(("src/byhand/catalogue/", "plugin/signs/", "docs/reviews/", "docs/research/")):
+                  problems.append(f"{name!r}: outside the folders the refresh agent may change")
+              if any(part.startswith(".git") for part in name.split("/")):
+                  problems.append(f"{name!r}: a git file")
+              if new_mode != "100644":
+                  problems.append(f"{name!r}: mode {new_mode}, not a plain file's 100644")
+
+          title = (given / "title.txt").read_text(encoding="utf-8").strip()
+          body = (given / "body.md").read_text(encoding="utf-8").strip()
+          if not title or "\n" in title or "\r" in title:
+              problems.append("the title is not one line")
+          keyword = re.compile(
+              r"\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\b[\s:]*(?:[\w.-]+/[\w.-]+)?#\d", re.IGNORECASE
+          )
+          other_repo = re.compile(r"[\w.-]+/[\w.-]+#\d|github\.com/[^/\s]+/[^/\s]+/(?:issues|pull|discussions)/\d")
+          for what, text in (("title", title), ("body", body)):
+              if keyword.search(text):
+                  problems.append(f"the {what} holds a closing keyword before an issue")
+              if "@" in text:
+                  problems.append(f"the {what} holds an @")
+              if other_repo.search(text):
+                  problems.append(f"the {what} names an issue or PR of another repository")
+          if problems:
+              print("\n".join(f"::error::{p}" for p in problems))
+              sys.exit(1)
+
+          # Closes for each issue whose source's read_at moved on the branch; Refs for the rest, which stay open.
+          def read_at(text):
+              return {s["id"]: s.get("read_at") for s in tomllib.loads(text)["source"]}
+
+          catalogue = "src/byhand/catalogue/sources.toml"
+          before = read_at(subprocess.run(["git", "show", f"HEAD:{catalogue}"], capture_output=True, text=True,
+                                          encoding="utf-8", check=True).stdout)
+          after = read_at(Path(catalogue).read_text(encoding="utf-8"))
+          issues = json.loads(os.environ["ISSUES"])
+          lines = [f"{'Closes' if before.get(i) != after.get(i) else 'Refs'} #{n}" for i, n in sorted(issues.items())]
+          unread = os.environ.get("UNREAD", "").split()
+          note = f"Not fetched, so left for the next run: {', '.join(f'`{i}`' for i in unread)}.\n\n" if unread else ""
+          (temp / "title.txt").write_text(title + "\n", encoding="utf-8")
+          (temp / "body.md").write_text(f"{body}\n\n{note}" + "\n".join(lines) + "\n", encoding="utf-8")
+          (temp / "message.txt").write_text(f"{title}\n\n" + "\n".join(lines) + "\n", encoding="utf-8")
+          EOF
+          cat "$RUNNER_TEMP/title.txt" "$RUNNER_TEMP/body.md" | uv run --no-sync tools/gate.py text --file -
+      - name: Commit, push and open the draft PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+        run: |
+          git commit -q -F "$RUNNER_TEMP/message.txt"
+          gh auth setup-git
+          git push origin "$BRANCH"
+          gh pr create --draft --base main --head "$BRANCH" \
+            --title "$(cat "$RUNNER_TEMP/title.txt")" --body-file "$RUNNER_TEMP/body.md"
+      # After the PR is open, so the rest are drafted and GitHub mails the maintainer; their issues stay open.
+      - name: Every source fetched
+        env:
+          UNREAD: ${{ needs.draft.outputs.unread }}
+        run: |
+          if [ -n "$UNREAD" ]; then
+            echo "::error::not fetched: $UNREAD; their issues stay open for the next run"
+            exit 1
+          fi

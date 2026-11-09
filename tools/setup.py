@@ -203,6 +203,19 @@ SETTINGS = (
     ),
     ("Dependabot's security updates", "/automated-security-fixes", "enabled", True),
     ("Dependabot alerts", "/vulnerability-alerts", None, True),
+    # refresh-agent.yml's publish job opens its draft PR with the workflow's token; every other job keeps it read-only.
+    (
+        "Actions may open a PR, for refresh-agent.yml",
+        "/actions/permissions/workflow",
+        "can_approve_pull_request_reviews",
+        True,
+    ),
+    (
+        "the workflow token reads only, unless a workflow asks for more",
+        "/actions/permissions/workflow",
+        "default_workflow_permissions",
+        "read",
+    ),
 )
 RULESET_CHECKS = ("CI", "PR text")
 

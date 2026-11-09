@@ -837,11 +837,20 @@ RELEASED = "# Changelog\n\n## Unreleased\n\n## 0.1.0 (2026-11-02)\n\n### Added\n
         ("0.1.0", CHANGELOG, []),
         ("0.2.0", CHANGELOG, []),
         ("0.1.0", RELEASED, []),
-        ("0.2.0", RELEASED, ["CHANGELOG.md has no '## 0.2.0 (YYYY-MM-DD)' section, and 0.1.0 is released"]),
+        ("0.2.0", RELEASED, ["says 0.2.0, and CHANGELOG.md's newest release is 0.1.0"]),
+        ("0.1.0", RELEASED.replace("## 0.1.0", "## 0.2.0 (2026-12-01)\n\n## 0.1.0"), ["says 0.1.0, and"]),
         ("0.1.0", RELEASED.replace("(2026-11-02)", "(soon)"), []),
         (None, CHANGELOG, [f"{gate.PLUGIN_MANIFEST} has no version"]),
     ],
-    ids=["first, unreleased", "bumped before any release", "released", "bumped outside a release", "undated", "none"],
+    ids=[
+        "first, unreleased",
+        "bumped before any release",
+        "released",
+        "bumped outside a release",
+        "dated, not bumped",
+        "undated",
+        "none",
+    ],
 )
 def test_release_problems(version, changelog, expected):
     problems = gate.release_problems(version, changelog)

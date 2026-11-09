@@ -475,15 +475,17 @@ def agent_problems(stem: str, text: str) -> list[str]:
 
 
 def release_problems(version: str | None, changelog: str) -> list[str]:
-    """The version has its dated section in CHANGELOG.md, `## X.Y.Z (YYYY-MM-DD)`, written by the release PR that set
-    it. Until the first release dates one, the version is the one being prepared under Unreleased, and passes."""
+    """The version is CHANGELOG.md's newest dated section, `## X.Y.Z (YYYY-MM-DD)`, written by the release PR that set
+    it: a release dated without the version moved would leave every user on the old one, as Claude Code updates on
+    the version. Until the first release dates one, the version is the one being prepared under Unreleased, and
+    passes."""
     if not version:
         return [f"{PLUGIN_MANIFEST} has no version"]
     released = _RELEASE_HEADING.findall(changelog)
-    if released and version not in released:
+    if released and version != released[0]:
         return [
-            f"CHANGELOG.md has no '## {version} (YYYY-MM-DD)' section, and {released[0]} is released: the release PR "
-            "that sets a version dates its section"
+            f"{PLUGIN_MANIFEST} says {version}, and CHANGELOG.md's newest release is {released[0]}: the release PR "
+            "sets the version and dates its section"
         ]
     return []
 

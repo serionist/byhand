@@ -1,10 +1,7 @@
 # byhand for Claude Code
 
-Write like a person, in your own voice and language: mail, messages, documents and decks without the signs of AI
-writing.
-
-Not released yet. The skills come with the first version, `0.1.0`; the
-[bootstrap plan](https://github.com/serionist/byhand/blob/main/docs/plans/2026-11-06-bootstrap.md) designs them.
+Write like a person, in your own voice and language: mail, messages, posts and documents without the signs of
+AI writing.
 
 ## Install
 
@@ -24,8 +21,8 @@ That's all: no Python, nothing else to install. Its skills read Markdown and run
 | `/byhand:learn` | learns a style from your own samples; lists your styles, sets their defaults, remembers a rule | when you ask it to learn how you write |
 
 `check` hands a file to its `scan` agent, which runs the signs' patterns over it with Grep and reads nothing else.
-Text pasted into the chat gets a reading, without the patterns. The first time a skill runs in a session, Claude Code
-asks you to allow it.
+Text pasted into the chat gets a reading, without the patterns. Claude Code may ask you to allow a skill the first
+time it runs, and saving a style always asks first.
 
 ## Your styles
 
@@ -42,4 +39,8 @@ leaves out any sample that reads as AI-written, shows you the style, and saves i
 
 ## Updating
 
-`/plugin marketplace update byhand`.
+For a new version, run this in your shell, then start a new session:
+
+```text
+claude plugin update byhand@byhand
+```

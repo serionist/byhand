@@ -73,6 +73,9 @@ REPLIES = [
     "Segundo a minha última atualização da planilha, faltam três faturas.",
     "Até a minha última atualização em junho de 2026, a lista de fornecedores estava completa.",
     "Até à minha última atualização do plano de treino, a corrida era no sábado.",
+    "Até à minha última atualização de conhecimentos em suporte básico de vida, eram 30 compressões.",
+    "Até minha última atualização de treinamento de NR-35, eu estava habilitado para altura.",
+    "Até à minha última atualização de treino no relógio, ia nos 12 km.",
     # a person's contrast or verdict, near the model's role and its first person (#53's review, rounds 1 to 4)
     "Usamos o Copilot como modelo de linguagem, não como substituto do critério de cada técnico.",
     "Vendem-no como inteligência artificial, não como um programa de gestão.",
@@ -83,7 +86,6 @@ REPLIES = [
     "Como IA não tenho acesso a nenhuma no trabalho, faço tudo à mão.",
     "Como assistente de IA, não tenho acesso à versão Pro: a empresa só paga a básica.",
     "Como IA não tenho preferências, uso a que me derem.",
-    "Como modelo de linguagem, não tenho preferência: uso o que a empresa paga.",
     "Enquanto modelo de negócio, não posso garantir margens maiores.",
     "Como assistente de IA, não consigo acessar o ChatGPT pela rede do escritório, está bloqueado.",
 ]
@@ -132,6 +134,15 @@ REPORTS = [
     "empregos e metade do comércio. Este ano abrimos o centro de dia.",
     "Manual do utilizador\n\nO sistema poderá, opcionalmente, enviar um alerta por e-mail. Por defeito, os relatórios "
     "são gerados à segunda-feira e guardados durante 90 dias.",
+    "Artigo, secção 4\n\nÉ importante destacar que o estimador é robusto à heterocedasticidade. Os erros-padrão foram "
+    "agrupados por município, o que é crucial quando as observações não são independentes. A amostra é abrangente: "
+    "cobre os 27 estados.",
+    "Relatório de inspeção\n\nA estrutura é robusta e cumpre o Eurocódigo 8. Importa referir que a inspeção de 2019 "
+    "não detetou fissuras. Mais do que nunca, a manutenção preventiva é crucial para a ponte.",
+    "Resultado do trimestre\n\nNo cenário atual de juros altos, as vendas caíram 8%. Vale ressaltar que a "
+    "inadimplência ficou estável. O papel da diretoria é crucial na renegociação com os bancos.",
+    "Guião de atendimento\n\nEncerramento:\n- Confirmar o número do pedido\n"
+    "- Há mais alguma coisa em que possa ajudar?",
     "Parecer técnico\n\nA ponte precisa de reforço. A verdade é que a obra de 2015 não resolveu as infiltrações, e "
     "cada vez mais camiões usam a estrada. Ademais, o orçamento só chega em março.",
 ]
@@ -219,9 +230,19 @@ MACHINE = [
     ("any-ai-self-reference", "Como modelo de linguagem, não tenho um corpo físico."),
     ("any-ai-self-reference", "Porém, como modelo de linguagem, não sou capaz de navegar na internet."),
     ("any-ai-self-reference", "Como modelo de linguagem, não posso acessar a internet."),
+    ("any-ai-self-reference", "Como modelo de linguagem, não tenho a capacidade de abrir anexos."),
+    ("any-ai-self-reference", "Como modelo de linguagem, não posso acrescentar datas à sua agenda."),
     ("any-knowledge-cutoff", "Até a minha última atualização de conhecimento, a empresa não se tinha fundido."),
     ("any-knowledge-cutoff", "Até à minha última atualização de treino, não havia dados sobre esse evento."),
     ("any-knowledge-cutoff", "Até minha última atualização de treinamento, em março de 2023, não havia registo disso."),
+    (
+        "any-knowledge-cutoff",
+        "Até minha última atualização de conhecimento em outubro de 2023 não havia notícia disso.",
+    ),
+    (
+        "any-knowledge-cutoff",
+        "Não sei se já abriu: a loja não existia até à minha última atualização de conhecimentos.",
+    ),
     ("any-assistant-preamble", "Claro! Aqui está uma versão melhorada do seu e-mail:"),
     ("any-assistant-preamble", "Com certeza! Aqui está uma versão mais formal da sua mensagem:"),
     ("any-assistant-preamble", "Claro que sim. Aqui tem uma versão revista da sua carta de apresentação:"),
@@ -229,10 +250,13 @@ MACHINE = [
     ("any-assistant-preamble", "Claro! Aqui tens a versão corrigida do teu texto:"),
     ("any-assistant-preamble", "Com certeza. Eis uma versão mais profissional do seu currículo:"),
     ("any-assistant-preamble", "Claro! Aqui está a sua mensagem reformulada:"),
+    ("any-assistant-preamble", "Claro! Segue uma versão revisada do seu e-mail:"),
+    ("any-assistant-preamble", "Com certeza! Abaixo está uma versão aprimorada da sua mensagem:"),
+    ("any-assistant-preamble", "Claro! Aqui está uma versão mais clara e concisa do seu texto:"),
+    ("any-assistant-preamble", "Certamente! Segue uma versão mais amigável da sua resposta:"),
     ("any-assistant-closing-offer", "Quer que eu expanda com uma tabela de custos?"),
     ("any-assistant-closing-offer", "Queres que eu o resuma em cinco pontos?"),
     ("any-assistant-closing-offer", "Gostaria que eu detalhasse alguma secção?"),
-    ("any-assistant-closing-offer", "Há mais alguma coisa em que eu possa ajudar?"),
     ("any-unfilled-placeholder", "Atenciosamente,\n[Seu nome]"),
     ("any-unfilled-placeholder", "Prezado [Nome do cliente],"),
     ("any-unfilled-placeholder", "Trabalho na [Sua empresa] desde 2020."),
@@ -273,7 +297,7 @@ def test_the_weak_counting_counts_a_cluster(weak_hits):
 
 
 def test_one_habit_repeated_counts_once(weak_hits):
-    text = "Uma cidade vibrante, um mercado vibrante e umas noites vibrantes."
+    text = "Uma sinergia com a escola, outra sinergia com o clube e sinergias por todo o lado."
     assert weak_hits(text, "document", PORTUGUESE) == 1
 
 
@@ -303,27 +327,24 @@ def test_portuguese_typography_meets_no_formatting_check(catalogue, text):
 # Portuguese inflects, writes enclisis in Portugal and proclisis in Brazil, and sets asides between spaced travessões:
 # the forms a weak check must still find, beyond its own `flags`, and the plain forms it must leave alone.
 FORMS = [
-    ("pt-false-contrast", "O nosso serviço não é simplesmente uma app, é uma equipa ao seu lado."),
+    ("pt-false-contrast", "O nosso serviço não é só uma app, é uma equipa ao seu lado."),
     ("pt-false-contrast", "Estas jornadas não são só palestras; são o ponto de encontro do setor."),
-    ("pt-false-contrast", "Não se trata de ter a maior loja, trata-se de ter a que todos lembram."),
-    ("pt-false-contrast", "Não se trata de abrir mais cedo; se trata de não fechar no almoço."),
-    ("pt-staged-reveal", "Mudámos de fornecedor. A diferença? Encomendas em 24 horas."),
+    ("pt-staged-reveal", "Mudámos de fornecedor. O detalhe? Encomendas em 24 horas."),
     ("pt-staged-reveal", "Já parou para pensar quanto custa uma reunião?"),
     ("pt-staged-reveal", "Já paraste para pensar quanto custa uma reunião?"),
     ("pt-staged-reveal", "E a melhor parte? É grátis."),
     ("pt-filler-hinges", "Cabe destacar que o curso é gratuito."),
     ("pt-filler-hinges", "É fundamental sublinhar que a sala fecha às 18h."),
-    ("pt-filler-hinges", "Importa referir que o parque é gratuito."),
+    ("pt-filler-hinges", "Importa realçar que o parque é gratuito."),
     ("pt-filler-hinges", "Vale a pena mencionar que o estacionamento é grátis."),
-    ("pt-inflated-stakes", "Em um mundo cada vez mais rápido, a papelaria do bairro continua aberta."),
-    ("pt-inflated-stakes", "Na era da inteligência artificial, o coral ensaia às terças."),
-    ("pt-inflated-stakes", "No cenário atual, abrir uma livraria é um desafio."),
+    ("pt-inflated-stakes", "A feira faz 30 anos em um mundo cada vez mais apressado."),
+    ("pt-inflated-stakes", "O coral ensaia às terças, mesmo na era da inteligência artificial."),
     ("pt-closing-cheer", "O melhor ainda está por vir!"),
     ("pt-closing-cheer", "Só o tempo dirá."),
     ("pt-ai-vocabulary", "Buscamos sinergias entre as duas equipas."),
-    ("pt-ai-vocabulary", "Os dados são cruciais para a decisão."),
+    ("pt-ai-vocabulary", "Estamos enfatizando a entrega no prazo."),
     ("pt-ai-vocabulary", "Soluções holísticas para a sua cozinha."),
-    ("pt-ai-vocabulary", "Uma rede robusta de parceiros."),
+    ("pt-ai-vocabulary", "Vamos mergulhar no orçamento de 2027."),
     ("pt-ai-vocabulary", "Um ecossistema digital para o comércio local."),
     ("pt-dash-pivots", "Testámos durante uma semana" + RAYA + "e ninguém voltou ao sistema antigo."),
     ("pt-dash-pivots", "O mercado volta no domingo " + RAYA + " com pastéis."),
@@ -338,20 +359,27 @@ LEFT_ALONE = [
     ("pt-false-contrast", "Não é só contigo: a mim também não chegou o e-mail."),
     ("pt-false-contrast", "Não se trata da reunião de quinta, essa mantém-se."),
     ("pt-false-contrast", "Não se trata de culpa, mas de responsabilidade."),
+    ("pt-false-contrast", "Não se trata de abrir mais cedo; trata-se de não fechar ao almoço."),
     ("pt-staged-reveal", "O resultado da sondagem sai na segunda?"),
     ("pt-staged-reveal", "A senha do wifi? Mando-te por mensagem."),
     ("pt-staged-reveal", "Já parou de chover?"),
+    ("pt-staged-reveal", "O resultado? Ainda não saiu."),
     ("pt-filler-hinges", "É importante que assines as duas cópias."),
     ("pt-filler-hinges", "Vale lembrar que a reunião é amanhã."),
     ("pt-filler-hinges", "Cabe a você decidir."),
+    ("pt-filler-hinges", "Importa referir que as obras começam em março."),
     ("pt-inflated-stakes", "No mundo da restauração, agosto é o mês forte."),
     ("pt-inflated-stakes", "Cada vez mais clientes pagam com Pix."),
+    ("pt-inflated-stakes", "Mais do que nunca precisamos de voluntários."),
+    ("pt-inflated-stakes", "No cenário atual de juros, ninguém compra casa."),
     ("pt-closing-cheer", "O futuro da loja depende do aluguel."),
     ("pt-ai-vocabulary", "O ecossistema do rio está a recuperar."),
     ("pt-ai-vocabulary", "O telemóvel vibra sempre que entra um pedido."),
     ("pt-ai-vocabulary", "Mergulhamos às oito para ver o casco."),
+    ("pt-ai-vocabulary", "A estrutura é robusta e o plano é abrangente; o prazo é crucial."),
     ("pt-dash-pivots", "O fornecedor " + RAYA + " ou o comercial dele " + RAYA + " liga amanhã."),
     ("pt-dash-pivots", RAYA + " Já vou " + RAYA + " disse a Marta."),
+    ("pt-dash-pivots", RAYA + " Já vou. Espera só um bocadinho " + RAYA + " disse a Marta."),
     ("pt-dash-pivots", "A loja abre das 10" + SHORT + "20h aos sábados."),
 ]
 

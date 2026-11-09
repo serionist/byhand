@@ -129,7 +129,7 @@ Unreleased, Added (a line per language), this plan's progress log.
 | 4 | hi | #59 | recorded 2026-11-09 as having no source to seed from: SHAKTI's longer model texts stand against human texts of about one sentence, Wang et al. found GPT-4o's Hindi news shorter, and their other cues are held by an `any` sign or clash with office Hindi, Sanskritised, and with Hinglish. No `hi.toml`; the `any` signs carry Hindi. The research record's follow-up has the detail |
 | #60 | vi | #62 | merged 2026-11-09, by these moves under #60 |
 | #60 | it | #63 | merged 2026-11-09 |
-| #60 | id | #64 | recorded 2026-11-09 as having no source to seed from: `humanizer-indonesia` is the only Indonesian source; its light verbs and even sentences are measured only in English and Portuguese, which no language sign cites, and its author's own human writing misses its bars; the other patterns rest on it alone or are held by `any` signs. No `id.toml`; the research record of #61 has the detail and the deferred `any` forms |
+| #60 | id | #64 | recorded 2026-11-09 as having no source to seed from: `humanizer-indonesia` is the only Indonesian source; its light verbs and even sentences are measured only in English and Portuguese, which no language sign cites, and its author's own human writing misses some of its bars; the other patterns rest on it alone or are held by `any` signs. No `id.toml`; the research record of #61 has the detail and the deferred `any` forms |
 
 ## Plan review
 

@@ -1,0 +1,111 @@
+# Italian's signs. A sign here cites a source that covers Italian; the shape of a sign is in `any.toml`. A term is a
+# regular-expression fragment, and `validate` wraps the list in `\b`, so a term starts and ends at a word's edge.
+#
+# Order: every alternation, every term list and every list of examples in a `what` or `instead` runs in alphabetical
+# order of its plain text, accents and case ignored, as in every language (tests/test_order.py).
+#
+# What these rest on: Farrell 2026 asked 69 translators to tell ChatGPT-4o's Italian stories from a person's, and the
+# few who could named low burstiness; Wang et al. 2026 asked an annotator what told GPT-4o's, Llama's and Anita's
+# Italian news from people's; humanizer-it, scrittura-italiana and avoid-ai-writing-multilingual list Italian tells for
+# a rewriting skill, with no measurement of model text: humanizer-it's model texts were written to carry its own
+# markers. So a sign rests on Farrell, or on two of the three lists, and lists only what they name. None measured work
+# mail, and no native speaker has read these yet. So every Italian sign is weak until one does, and a sign that counts
+# alone would have no pattern: the model reads for it. The Italian checks read posts and documents, but the dash, as
+# the set phrases of mail (Cordiali saluti, In allegato Le trasmetto, Resto a disposizione) are a person's.
+# Left out, as people write them in office Italian, papers and news: burocratese and the nominal style (al fine di,
+# nell'ambito di, si è proceduto alla verifica), which avoid-ai-writing-multilingual calls no sign alone and on which
+# humanizer-it's own probe finds people's and model text overlapping; the connectors (inoltre, pertanto, tuttavia);
+# the words English's lists translate (cruciale, fondamentale, innovativo, ottimizzare); the hinges (è importante
+# sottolineare che, va notato che, vale la pena ricordare), which papers write two to a paragraph (#55's review, F16);
+# the closers (in conclusione, in sintesi), which any-closing-summary leaves without an Italian form; non solo… ma
+# anche, ordinary Italian, whose set-up foil any-negative-parallelism holds; vediamo insieme, a meeting's plain
+# phrase; al giorno d'oggi (Manzoni writes it), nel mondo di oggi and nell'era digitale, a talk's or a book's title.
+# A calque of English (gioca un ruolo chiave, basato su, in termini di, a capital after a colon or on a month, Title
+# Case, the possessive adjective Farrell's translators found in two stories, a semantic loan) is translationese, which
+# translators and people write too, Farrell says: no source measures models writing one more, so none has a sign.
+# Missing clitics, intercalari and idioms are an absence, and humanizer-it's probe could not measure them. Wang et al.'s
+# cues are one annotator's, in news alone: a few stock first sentences, and the passive written rarely. Italian
+# typography is no tell either: « », “ ” and straight quotes, the short dash in a range, and an informal keyboard's
+# e' and perche (scrittura-italiana's false positives). tests/test_office_it.py holds plain mail, chat and reports,
+# burocratese and plain alike, against every sign that counts alone, and against a weak cluster.
+
+# Structure: how the text is built.
+
+[[sign]]
+id = "it-even-sentences"
+category = "structure"
+kinds = ["post"]
+models = "any"
+# Posts only: humanizer-it's probe finds sentence length varying no more in people's encyclopedic prose than in model
+# text, and less in Manzoni's and Verga's, so in a document it would accuse a person.
+what = "Keeps full sentences close to one length and one shape, where people mix short ones with long ones."
+instead = "Let a short sentence follow a long one where the thought needs it."
+strength = "weak"
+flags = "Il circolo apre ogni giorno alle nove. Il bar chiude sempre alle sei. Le carte si giocano il martedì sera. Il torneo si tiene a fine mese."
+passes = "Il circolo apre alle nove. Il bar chiude alle sei, tranne il venerdì, quando si gioca a carte fino a tardi e qualcuno porta la torta."
+sources = [
+  { source = "farrell-2026-translators", where = "5.3.2, 5.3.3 and 5.3.4: the translators who told ChatGPT-4o's stories apart named flat, repetitive sentences, low burstiness among the most reliable cues, v5", seen = 2026-11-09 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, 26 and 39, commit 4e5aa4c51230", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "it-staccato-fragments"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Echoes a sentence with three or more short phrases with no verb, a full stop after each, for a punchy beat. A flyer's, a menu's or a job ad's list of facts, standing on its own, is not one."
+instead = "Say it in one sentence with a verb; one short phrase may stand alone for stress."
+strength = "weak"
+flags = "La biblioteca cambia orario da lunedì. Più ore. Più posti. Più silenzio."
+passes = "Da lunedì la biblioteca resta aperta fino alle dieci di sera e ha trenta posti in più."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, 22, commit 4e5aa4c51230", seen = 2026-11-09 },
+  { source = "humanizer-it", where = "skills/humanizer-it/SKILL.md, 49, commit 51f6e3ed3c7c", seen = 2026-11-09 },
+  { source = "scrittura-italiana", where = "references/stile-naturale.md, 77, commit e397599ca3aa", seen = 2026-11-09 },
+]
+
+# Phrases.
+
+[[sign]]
+id = "it-inflated-stakes"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Frames a plain fact as an epoch: in un mondo sempre più…"
+instead = "Give the date, the number or the change itself."
+strength = "weak"
+terms = [
+  { term = '''in un mondo sempre più''', instead = "cut" },
+]
+flags = "In un mondo sempre più frenetico, la palestra di quartiere apre anche la domenica."
+passes = "La palestra di quartiere apre anche la domenica, dalle nove all'una."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, Tier 3, commit 4e5aa4c51230", seen = 2026-11-09 },
+  { source = "humanizer-it", where = "skills/humanizer-it/SKILL.md, HARD BANS and 1, commit 51f6e3ed3c7c", seen = 2026-11-09 },
+  { source = "scrittura-italiana", where = "references/stile-naturale.md, 69, commit e397599ca3aa", seen = 2026-11-09 },
+]
+
+# Formatting: what the text looks like on the page.
+
+[[sign]]
+id = "it-dash-pivots"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Uses the long dash as a pivot: once in a sentence, before its punchline, or joined to the words on both sides. Italian sets an aside between two dashes and opens dialogue with one."
+instead = "Use a colon, a comma or a full stop; keep the dash for a real aside or dialogue."
+strength = "weak"
+# Portuguese's check, as Italian sets the dash the same way: a sentence with one spaced dash and no second one before
+# its end, after whole aside pairs only, so neither an aside nor a line of dialogue is found (humanizer-it's ban fired
+# on Pinocchio's dialogue); nor is speech opened after a colon (Marta disse: — Va bene.). Missed, and accepted for a
+# weak sign: a pivot on a line with no closing stop, which a heading or a signature shares, and a pivot after an aside
+# pair in the same sentence. The sources call the burst the tell and a lone dash Italian; Grep reads a line, not a
+# paragraph's count, so a lone pivot counts here, once, as one weak hit: a native reader's call (#63's review, F2).
+check = '''[^\W\d_]—[^\W\d_]|^(?:(?:[^—\n]|—[^—\n]*—)*[.!?]\s+)?[^—.!?\n]*[^—.!?:\n] — [^—.!?\n]+[.!?](?:\s*$|\s+[^—\s])'''
+flags = "Abbiamo cambiato fornitore di caffè — e nessuno se n'è accorto."
+passes = "Abbiamo cambiato fornitore di caffè — quello di via Verdi — e nessuno se n'è accorto."
+sources = [
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, 20, commit 4e5aa4c51230", seen = 2026-11-09 },
+  { source = "humanizer-it", where = "skills/humanizer-it/SKILL.md, 15; eval/CALIBRATION.md, Takeaways 4: the ban fires on a dialogue dash, commit 51f6e3ed3c7c", seen = 2026-11-09 },
+  { source = "scrittura-italiana", where = "references/stile-naturale.md, 21: the burst and the mix are the tell, and an aside pair is Italian, commit e397599ca3aa", seen = 2026-11-09 },
+]

@@ -21,3 +21,5 @@ before `1.0` a minor may break something, under Breaking.
   others.
 - Vietnamese signs: 2 of Vietnamese's own, and a Vietnamese form in one sign every language shares. Until a native
   speaker reads them, each of Vietnamese's own signs counts only beside two others.
+- Italian signs: 4 of Italian's own, and Italian forms in two signs every language shares. Until a native speaker
+  reads them, each of Italian's own signs counts only beside two others.

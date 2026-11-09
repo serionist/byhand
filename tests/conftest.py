@@ -103,8 +103,8 @@ def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collecti
             # label then count twice, more than the rule, which a guard may. Only a check whose every match overlaps
             # another language's check, a pair no draft loads together, is dropped as the one habit twice.
             # A formatting check finds a mark, one however often it appears; any other check counts each different
-            # phrase it finds, as the rule says. The phrase is the match's text, so one a check takes with the next
-            # word's letter (a staged reveal) counts twice before two different words, more than the rule.
+            # phrase it finds, as the rule says. The phrase is the match's text, so a staged reveal, whose match takes
+            # the next word's first letter, counts twice when two different words follow it: more than the rule.
             base = _base(catalogue, sign.language)
             found = list(sign.pattern.finditer(text))
             elsewhere = [
@@ -129,7 +129,7 @@ def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collecti
 def weak_hits(catalogue: signs.Catalogue) -> Callable[..., int]:
     """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
     Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check counts each
-    different phrase it finds, but a mark (a dash, a bold label) once however often it appears; one phrase two signs
+    different phrase it finds, but a mark (a dash, quotes, bold) once however often it appears; one phrase two signs
     find counts once. Each sign counts on the text on its own, as Grep runs it: a check's match hides no other sign's of
     the same draft. A term has word edges in a language written with spaces, as `validate` gives it. `languages` limits
     the count to the signs a draft in those languages loads; without it, the count is the higher of every language's

@@ -159,7 +159,7 @@ languages = ["de", "fr", "it", "ro", "sv"]
 # GitHub's API reads NOASSERTION; the LICENSE file at 4e5aa4c51230 is MIT, adapted from avoid-ai-writing.
 licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "jurigis/avoid-ai-writing-multilingual", paths = ["SKILL-DE.md", "SKILL-FR.md", "sources"] }
+feed = { api = "github", repo = "jurigis/avoid-ai-writing-multilingual", paths = ["SKILL-DE.md", "SKILL-FR.md", "SKILL-IT.md", "sources"] }
 read_at = { commit = "4e5aa4c51230", date = 2026-11-08 }
 
 [[source]]
@@ -286,7 +286,7 @@ read_at = { date = 2026-11-07 }
 id = "lee-2026-korean"
 url = "https://arxiv.org/abs/2609.07447"
 kind = "paper"
-languages = ["ko"]
+languages = ["ko", "vi"]
 licence = "facts only, with a citation"
 due = "by-hand"
 feed = { api = "none" }
@@ -505,3 +505,75 @@ licence = "facts only, with a citation"
 due = "by-hand"
 feed = { api = "none" }
 read_at = { revision = "v1", date = 2026-11-09 }
+
+[[source]]
+id = "humanizer-it"
+url = "https://github.com/ilyautov/humanizer-it"
+kind = "repo"
+languages = ["it"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "ilyautov/humanizer-it", paths = ["skills/humanizer-it/SKILL.md", "skills/humanizer-it/scripts/humanizer_metrics/markers.py", "eval/CALIBRATION.md"] }
+read_at = { commit = "51f6e3ed3c7c", date = 2026-11-09 }
+
+[[source]]
+id = "scrittura-italiana"
+url = "https://github.com/hypnosdesign/claude-skill-scrittura-italiana"
+kind = "repo"
+languages = ["it"]
+licence = "CC BY-SA 4.0; adapted from Wikipedia's Signs of AI writing and rewritten for Italian, so facts only"
+due = "weekly"
+feed = { api = "github", repo = "hypnosdesign/claude-skill-scrittura-italiana", paths = ["references/stile-naturale.md", "references/cliche-e-parole-alla-moda.md"] }
+read_at = { commit = "e397599ca3aa", date = 2026-11-09 }
+
+[[source]]
+id = "farrell-2026-translators"
+url = "https://arxiv.org/abs/2601.15828"
+kind = "paper"
+languages = ["it"]
+licence = "CC BY-NC-ND 4.0; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { revision = "v5", date = 2026-11-09 }
+
+[[source]]
+id = "bergin-atasoy-2026-turkish"
+url = "https://doi.org/10.5281/zenodo.21986509"
+kind = "paper"
+languages = ["tr"]
+# The article's own notice says CC BY-NC 4.0; its Zenodo record says CC BY 4.0: the stricter holds.
+licence = "CC BY-NC 4.0; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "humanizer-tr"
+url = "https://github.com/kenosdota/humanizer-tr"
+kind = "repo"
+languages = ["tr"]
+# GitHub's API reads NOASSERTION; the LICENSE file at b458fb64dcc2 is MIT, adapted from blader/humanizer.
+licence = "MIT; its framework traces back to Wikipedia (CC BY-SA) through blader/humanizer, so facts only"
+due = "weekly"
+feed = { api = "github", repo = "kenosdota/humanizer-tr", paths = ["SKILL.md", "README.md"] }
+read_at = { commit = "b458fb64dcc2", date = 2026-11-09 }
+
+[[source]]
+id = "vietnamese-humanizer"
+url = "https://github.com/longhang2004/vietnamese-humanizer"
+kind = "repo"
+languages = ["vi"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "longhang2004/vietnamese-humanizer", paths = ["patterns/humanizer.yml", "patterns/translationese.yml", "docs/limitations.md"] }
+read_at = { commit = "2fd7dd05cbd9", date = 2026-11-09 }
+
+[[source]]
+id = "humanizer-indonesia"
+url = "https://github.com/adhiprib/humanizer-indonesia"
+kind = "repo"
+languages = ["id"]
+licence = "MIT; its framework traces back to Wikipedia (CC BY-SA) through blader/humanizer, so facts only"
+due = "weekly"
+feed = { api = "github", repo = "adhiprib/humanizer-indonesia", paths = ["references/id-ai-tells.md", "SKILL.md"] }
+read_at = { commit = "62fe1aed5932", date = 2026-11-09 }

@@ -5,6 +5,8 @@ before `1.0` a minor may break something, under Breaking.
 
 ## Unreleased
 
+## 0.2.0 (2026-11-09)
+
 ### Added
 
 - Finnish signs: 2 of Finnish's own, the long English dash and capitals on every word of a heading. Each

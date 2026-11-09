@@ -286,6 +286,12 @@ def test_the_weak_counting_counts_a_cluster(weak_hits):
     assert weak_hits(text, "post") >= signs.WEAK_CLUSTER
 
 
+def test_another_language_s_dash_check_takes_no_french_check(weak_hits):
+    # de-em-dash's letters beside the dashes overlap both French checks, which a French draft never loads with it (#56)
+    text = "Et si notre synergie pourrait potentiellement — enfin — changer tout ?"
+    assert weak_hits(text, "post") == signs.WEAK_CLUSTER
+
+
 def test_one_habit_repeated_counts_once(weak_hits):
     text = "Notre synergie avec Lyon et notre synergie avec Lille comptent. Les synergies se multiplient."
     assert weak_hits(text, "document") == 1

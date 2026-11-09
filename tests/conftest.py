@@ -65,7 +65,23 @@ def _overlaps(span: tuple[int, int], spans: list[tuple[int, int]]) -> bool:
     return any(span[0] < end and start < span[1] for start, end in spans)
 
 
+def _base(catalogue: signs.Catalogue, code: str) -> str:
+    """The language a sign's draft is in: a script variant's draft loads its base language's signs too."""
+    language = catalogue.languages.get(code)
+    return language.of if language and language.of else code
+
+
 def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Collection[str] | None = None) -> int:
+    if languages is not None:
+        return _count(catalogue, text, kind, languages)
+    # Every language's signs at once overlap where no draft does (a dash two languages' checks find), so the count
+    # is also taken as each language's draft would load it, and the higher one stands.
+    codes = {sign.language for sign in catalogue.signs.values()} - {"any"}
+    each = [_count(catalogue, text, kind, {"any", code, _base(catalogue, code)}) for code in codes]
+    return max(_count(catalogue, text, kind, None), *each)
+
+
+def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collection[str] | None) -> int:
     counted: set[str] = set()
     phrase_spans: list[tuple[int, int]] = []
     marks: dict[str, list[tuple[int, int]]] = {}  # each check's matches, by the language a draft loads it with
@@ -83,12 +99,13 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Coll
         ]
         if not phrases:
             # Grep runs each check on its own, and a dash's match may run from the line's start over other signs'
-            # words and marks, so a check takes no other sign's text. Only another language's check finding the same
-            # mark, a pair no draft loads together, is the one habit twice.
-            base = sign.language.split("-")[0]  # a script variant's draft loads its base language too
+            # words and marks, so a check takes no other sign of its draft's text. Two of `any`'s checks on one bold
+            # label then count twice, more than the rule, which a guard may. Only a check whose every match overlaps
+            # another language's check, a pair no draft loads together, is dropped as the one habit twice.
+            base = _base(catalogue, sign.language)
             found = [match.span() for match in sign.pattern.finditer(text)]
             elsewhere = [
-                span for other, spans in marks.items() if "any" not in (other, base) and other != base for span in spans
+                span for other, spans in marks.items() if base != "any" and other not in ("any", base) for span in spans
             ]
             if any(not _overlaps(span, elsewhere) for span in found):
                 counted.add(sign.id)
@@ -108,7 +125,7 @@ def weak_hits(catalogue: signs.Catalogue) -> Callable[..., int]:
     """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
     Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check is one habit however
     often it fires; one phrase two signs find counts once. Each sign counts on the text on its own, as Grep runs it: a
-    check's match hides no other sign's, but for one mark two languages' checks find. A term has word edges in a
-    language written with spaces, as `validate` gives it. `languages` limits the count to the signs a draft in those
-    languages loads."""
+    check's match hides no other sign's of the same draft. A term has word edges in a language written with spaces, as
+    `validate` gives it. `languages` limits the count to the signs a draft in those languages loads; without it, the
+    count is the higher of every language's signs at once and each language's draft."""
     return partial(_weak_hits, catalogue)

@@ -34,8 +34,9 @@ Each language is the same three moves, with the tools that exist:
    and the language's own style guide (Fundéu for Spanish): what people write, which the plain-text guard starts from.
    What it finds sets the order of the rest, most evidence first.
 2. **Signs:** `propose-signs` on them, structure first, as in Step 4. Until a native speaker reads them:
-   - a language's sign with a `check` is `weak`; a `usual` or `strong` one has no `check` and is for the model's own
-     reading of a draft. A native review can raise one later (Fit Q1, as the de, fr and ko seeds ended);
+   - a language's sign with a pattern (`terms` or a `check`) is `weak`; a `usual` or `strong` one has neither and is
+     for the model's own reading of a draft. A native review can raise one later (Round 1's Q1, as the de, fr and ko
+     seeds ended);
    - a calque of English is translationese, which people write too: no sign without evidence that models write it
      more (the Korean seed's rule);
    - the `any` checks that list each language's forms (`any-ai-self-reference`, `any-knowledge-cutoff`,
@@ -77,10 +78,13 @@ as `zh-Hant` had. New sign ids and files under `plugin/signs/<code>/`; nothing a
    first change.
 2. **Sources for pt, hi and ar:** one `find-sources` run (the pt Wikipedia translation, A7 of the research; B18 a
    pointer until its licence is found; the research's P18 for Arabic and P19 for Hindi).
-3. **#13:** Python reads `\w` and `\b` as Grep does, combining marks as word characters, in a term and in a `check`,
-   in the one place `signs.py` compiles them. Cases in `tests/test_catalogue.py`: `महत्व` not inside
-   `महत्वाकांक्षी`; `बड़ी` found in `यह बड़ी बात है`; a stem's `\w*` across a vowel sign; Bengali `কাজ` not inside
-   `কাজী`; Arabic `شكراً` found in `شكراً لك`. Before hi or ar, whichever comes first.
+3. **#13:** Python reads `\w`, `\W` and `\b` as Rust's regex does, wherever they stand, a class included: combining
+   marks and the joiners ZWJ and ZWNJ as word characters, in a term and in a `check`. Grep gets the pattern as
+   written: only Python's reading changes, kept apart from the text `render` writes, with a test that a rendered
+   `Pattern:` keeps its `\b`. `signs.py` exposes that compile, and the office tests' per-phrase patterns use it.
+   Cases in `tests/test_catalogue.py`, each failing before the fix, Arabic code points written as escapes: `महत्व`
+   not inside `महत्वाकांक्षी`; `बड़ी` found in `यह बड़ी बात है`; `कर\w*ना` found in `करवाना`; Bengali `কাজ` not
+   inside `কাজী`; Arabic `شكراً` (alef, then fathatan) found before ` لك`. Before hi or ar, whichever comes first.
 4. **Each of pt, hi and ar** that step 2 found sources for, most evidence first, a PR each: `propose-signs`, the `any`
    forms, `tests/test_office_<code>.py`. One with none is recorded here as such.
 
@@ -92,7 +96,7 @@ Each step ends with `finish-work`: the gate, `review-code` until clean, a PR.
   of it counting alone, `tests/test_order.py`, the render budgets; #13's cases.
 - By hand, in each language's PR: `/byhand:write` on a mail in it and `/byhand:check` on its `flags` texts, from this
   clone, checking that it read `signs/<code>/`; for es and pt, once more asked in es-MX and pt-BR, to see that the
-  base language's signs load (Fit Q2: a skill line only if they don't).
+  base language's signs load (Round 1's Q2: a skill line only if they don't).
 - What none can show: whether a native reader finds the signs right. `sources.toml` says which languages still need
   that read.
 
@@ -155,3 +159,16 @@ The same agent, 2026-11-09. Verdict: needs-fixes; fixed in place by the author.
 
 Owner calls, answered on the maintainer's word for the night with the reviewer's recommendation: Q1 (checks `weak`
 until a native review) yes; Q2 (a variety's request) try first, a skill line only if it fails. Round 2 reads the fixes.
+
+### Round 2
+
+A fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, on `8f6d145`, which compared Python 3.12's `re`
+with ripgrep 14.1.1 on each case. Verdict: needs-fixes; fixed in place by the author.
+
+| # | Finding | Severity | Fix |
+|---|---|---|---|
+| P9 | Compiling a rewritten pattern would change the `Pattern:` `render` writes, and ripgrep refuses look-around: `scan` would fail on every sign with `\b`; the office tests' own per-phrase patterns would keep Python's reading | major | Step 3: Grep gets the pattern as written, a render test holds it; the office helpers use `signs.py`'s compile |
+| P10 | `\W`, a `\w` in a class, and ZWJ and ZWNJ read differently too | minor | Step 3 names them |
+| P11 | The stem case passed without the fix | minor | `कर\w*ना` in `करवाना`; each case fails before the fix |
+| P12 | Q1 said "with a `check`", but a `terms` sign has a pattern too | minor | "with a pattern (`terms` or a `check`)" |
+| P13 | "Fit Q1" and "Fit Q2" pointed at the wrong section | minor | "Round 1's Q1" and "Q2" |

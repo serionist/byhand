@@ -387,6 +387,7 @@ FORMS = [
         "A feira " + RAYA + " a de agosto " + RAYA + " volta. O mercado abre no domingo " + RAYA + " e com pastéis.",
     ),
     ("pt-dash-pivots", RAYA + " Já vou " + RAYA + " disse a Marta. Depois saiu " + RAYA + " e não voltou."),
+    ("pt-dash-pivots", "Nota: o servidor está em baixo " + RAYA + " volta amanhã."),
     ("any-closing-summary", "Em suma, o projeto chega a tempo."),
     ("any-closing-summary", "Em conclusão, mantemos o fornecedor."),
     ("any-flattering-agreement", "Ótima pergunta! Vamos por partes."),
@@ -417,6 +418,9 @@ LEFT_ALONE = [
     ("pt-dash-pivots", "O fornecedor " + RAYA + " ou o comercial dele " + RAYA + " liga amanhã."),
     ("pt-dash-pivots", RAYA + " Já vou " + RAYA + " disse a Marta."),
     ("pt-dash-pivots", RAYA + " Já vou. Espera só um bocadinho " + RAYA + " disse a Marta."),
+    # speech opened after a colon, as Brazil and Portugal both set it
+    ("pt-dash-pivots", "O gerente respondeu: " + RAYA + " Pode deixar, a gente resolve amanhã."),
+    ("pt-dash-pivots", "A Marta perguntou: " + RAYA + " Já enviaste a fatura?"),
     ("pt-dash-pivots", "A loja abre das 10" + SHORT + "20h aos sábados."),
     ("pt-dash-pivots", "A reunião " + RAYA + " lembras-te? " + RAYA + " passou para quinta."),
     ("pt-dash-pivots", "A obra " + RAYA + " a cargo da Construções Silva, Lda. " + RAYA + " acaba em junho."),

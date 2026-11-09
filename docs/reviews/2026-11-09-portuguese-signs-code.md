@@ -148,3 +148,18 @@ Refuted: the clusters left by the reviewer's own candidate fix (a real contrast 
 class round 4 called contrived); the ta… foils the round-5 check missed (moot now); "[Inserir imagem]" as a button
 (F26's recorded class); "[Inserir_link]" (missed before b4d3514 too); the strong and usual branches on 12 more plain
 lines (only recorded classes fire); comment lines' wrap (taste). Python and ripgrep agree on 82 pairs.
+
+## Round 7
+
+A fresh reviewer, on cfd8b79 (the fixes since 7036648, in 464e1ec). Verdict: needs-fixes. F27 holds by the test's
+count (both summaries 3 at 7036648, 2 now); F28 holds for inserir. The sign with no pattern renders as the others do,
+no test asserts on nothing, and no doc still speaks of a false-contrast check. The PR description matched the head.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F29 | major | `pt.toml`, `pt-false-contrast`'s `what`, as rendered | With no check, the rendered line gave only the bare shape (não é apenas… é…), so a model reading F27's own summary ("não é apenas abusiva, é ainda nula") counts a third hit; round 6's reason sat in a comment, never rendered (F16's class). 5 of 14 plain paragraphs | fixed in 5086400: the sign is cut. `any-negative-parallelism` holds the habit for every language, counts a real foil alone, and leaves out a correction in its own words; the header says so |
+| F30 | minor | `tests/test_office_pt.py`, `MACHINE` | No line had "[Insira", so dropping that branch passed every test | fixed in 5086400: "Cliente: [Insira: nome da empresa]" |
+
+Refuted: the strong and usual branches on 18 more person's lines (2 fire, both a bracketed button, F26's class); one
+paragraph that clusters through `any-raw-markdown` stacked with two tells (the refuted class). Python and ripgrep
+agree on 230 pairs.

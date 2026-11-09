@@ -70,22 +70,26 @@ split by hand in a script, not committed). The main session's files are exact: t
 ```toml
 [[sign]]
 id = "any-closing-summary"
-# ... the other keys, `sources` last of them
-[sign.check]
-en = '^\W*(?:in conclusion|in summary)\b'
-de = '^\W*zusammenfassend\b'
-ru = '^\W*(?:в заключение|подводя итог)\b'
+# ... the other keys, as today; a language's note sits above its own form
+check.en = '^\W*(?:in conclusion|in summary)\b'
+check.de = '^\W*zusammenfassend\b'
+check.ru = '^\W*(?:в заключение|подводя итог)\b'
+flags = "..."
 ```
 
 - A key is a language code from `languages.toml`, a variant's included, or `any` for a form every language reads.
   A form goes under the language it is written in; one written for both scripts (`[为為]`) under the base, `zh`.
+  A chatbot's leftover that turns up in text of every language stays under `any`, even when its words are English:
+  `any-unfilled-placeholder`'s `[Your Name]` branch, `insert_…_here` and `20\d\d-xx-xx`, which the de, hu and ja
+  office tests find in their own mail. It costs every scan about 60 bytes more than The measure counts.
 - A string stays what it is today: one pattern, read in every language. A language-free check (a Markdown artefact,
-  an emoji, a tool's token) is written so and needs no change. `[sign.check]` with only `any` is allowed, not needed.
+  an emoji, a tool's token) is written so and needs no change. `check.any` alone is allowed, not needed.
 - A sign mixing both, `any-chatgpt-citation-markup` with its German `gehe zu suche nr`, has `any` and `de`.
 - A table on a language's own sign is refused: its language is its file's, so its `check` stays one string. A table
   with no form, a form that isn't text, or an unknown key is a problem, as an unknown key is today.
-- A table is written as `[sign.check]` after the sign's other keys: TOML's inline table would put a 2 KB pattern
-  and its neighbours on one line.
+- The forms are dotted keys, `check.en = '…'`, where `check` stands today: `tomllib` reads them as one table, so no
+  key moves, no line holds two forms, and each language's comment stays above its form. An inline table would put a
+  2 KB pattern and its neighbours on one line.
 
 `flags` and `passes` stay one text each, and `validate` checks them against every form: `flags` must be found by the
 forms together, `passes` by none of them. That is today's proof exactly, as today's one alternation is the forms
@@ -94,12 +98,13 @@ together. Per-language examples are left out:
 - the per-language proof is already in `tests/test_office_<code>.py`: a machine line per branch, and plain work text
   in the language that no sign counting alone may find, which is a stronger `passes` than one sentence;
 - after this change those machine lines read each sign through the forms a check in their language runs, so a form
-  under the wrong key fails there;
+  under the wrong key fails there; and a test in each office file holds that every `any` form under its code has a
+  machine line there that the form alone finds, so a new language's forms can't land unproven;
 - per-language `flags` and `passes` would add about 120 texts in eleven languages, rendered nowhere and duplicating
   those tests, and a second table shape in a one-way-door schema for no reader.
 
 The forms with no machine line in their language's office test today get one in this change (13 in the prototype's
-split, most of them weak signs' and English forms').
+split, most of them weak signs' and English forms'): that test fails until they do.
 
 ### The package
 
@@ -110,10 +115,13 @@ split, most of them weak signs' and English forms').
   field for every sign.
 - `Sign.pattern`: Python's reading of every form together, through `as_grep`, as today; `validate`, `copycheck` and
   the tests that name no language use it.
-- `Sign.pattern_in(codes)`: Python's reading, through `as_grep`, of the forms under those keys, or None. The office
-  tests read a sign so, with `{"any", "<code>"}` and a variant's base.
 - Each form passes `_checked` on its own, and a problem names its key: `signs/any.toml: any-x: de: Grep can't run …`.
   Grep gets each form as written, in NFC, as today.
+
+`tests/conftest.py`: a fixture beside `weak_hits` reads a sign as a check in a language runs it, `as_grep` on its
+forms under `render._scopes(catalogue, code)`, or None. The office tests use it, and `weak_hits` given its languages
+too, in place of conftest's hand-built `{"any", code, _base(...)}`: the tests read exactly the scopes `scan_files`
+renders, and the package gains no method only tests call.
 
 `render.py`, under `plugin/signs/<scope>/`, where a scope is `any`, a variant's base or the language (`_scopes`):
 
@@ -178,15 +186,16 @@ read for.
 
 One PR, a commit per step.
 
-1. **The schema and the loader.** `signs.py` (`forms`, `pattern`, `pattern_in`, the rules above), `copycheck.py`'s
+1. **The schema and the loader.** `signs.py` (`forms`, `pattern`, the rules above), `copycheck.py`'s
    `pattern` reading a table's forms, the users of `grep` in the tests moved to `forms`. Render's output does not
    change: every sign still has one form. Proven by `tests/test_catalogue.py`'s new cases and `tests/test_copycheck.py`.
 2. **The files and the plugin.** `render.py` (`check.md` without patterns, `scan.md`, `scan_files`, `Budgets.scan`
    at 32 KB for now), the `check` skill's steps 4 to 6 and the `scan` agent, in one commit, since neither works
    without the other. `any/scan.md` holds every `any` form until step 3. Proven by `tests/test_render.py`.
-3. **The split.** `any.toml`'s multilingual checks into `[sign.check]` forms; the comments that cite the check budget
+3. **The split.** `any.toml`'s multilingual checks into `check.<code>` forms, the leftovers under `any`; the comments that cite the check budget
    (`any-assistant-preamble`'s, the Vietnamese closing offer "waits for room") reworded; a machine line for each form
-   with none; the office tests' machine lines, and `weak_hits` given its languages, read through `pattern_in`. Then
+   with none, and each office file's test that every form under its code has one; the office tests' machine lines,
+   and `weak_hits` given its languages, read through conftest's new fixture. Then
    the budgets: `check` and `scan` from the render by the rule in The measure, 16 KB and 9 KB if it agrees. Proven by
    `byhand validate`, the office tests and `budget_problems`.
 4. **By hand,** then the docs, then `finish-work`: `uv run tools/gate.py full`, `review-code` until clean, a PR.
@@ -197,18 +206,19 @@ One PR, a commit per step.
   - `tests/test_catalogue.py`: a table loads as forms and a string as the `any` form; a table on a language sign, an
     empty one, a form that isn't text and an unknown key are each refused; a form Grep can't run is named with its
     key; `flags` found by one form passes and by none fails; `passes` found by any form fails; `pattern` reads every
-    form and `pattern_in({"any", "de"})` only those; the nukta case reads its pattern from `hi/scan.md`.
+    form; dotted `check.de` keys load as a table; the nukta case reads its pattern from `hi/scan.md`.
   - `tests/test_render.py`: `check.md` holds no pattern; a `de` form renders in `de/scan.md` only, an `any` form in
     `any/scan.md` only; a `zh` form reaches a `zh-Hant` scan through `scan_files`; a `scan.md` line's pattern is its
     form's NFC text; a language with forms and no signs gets `scan.md` alone; `budget_problems` names a scan over
     budget; no form holds a backtick.
-  - `tests/test_office*.py`: every machine line read through its language's forms, the 13 new ones among them.
+  - `tests/test_office*.py`: every machine line read through its language's forms, the 13 new ones among them, and
+    in each file a test that every `any` form under its code has a machine line there that the form alone finds.
   - The gate: `byhand validate`, `byhand render --check`, the budgets.
 - **By hand,** `claude --plugin-dir plugin` from this clone, on the current Claude Code, the main session on Opus
   and `scan` on its Haiku: `/byhand:check` on the `check-en` and `check-ja` cases' pasted texts, and on a file in
   `en`, `de`, `ja` and `zh-Hant`. From each transcript's Read calls: the main session read only `check.md` files,
-  `scan` only `scan.md` ones, `scan` ended with `ran`, and the hits are those `origin/main`'s plugin finds on the same file, but for another language's forms. Then the
-  `learn-from-samples` case, and `learn` on one sample given as a file: its screen starts `scan` with the `scan.md`
+  `scan` only `scan.md` ones, `scan` ended with `ran`, and the hits are those `origin/main`'s plugin finds on the same file, but for another
+  language's forms. Then the `learn-from-samples` case, and `learn` on one sample given as a file: its screen starts `scan` with the `scan.md`
   paths. The eval cases `check-de`, `check-hu`, `check-zh` and `learn-from-samples`, with `claude plugin eval`.
 - **What none can show:** whether a reader of descriptions alone, on pasted text, finds what the patterns found; the
   pasted eval cases are the nearest.
@@ -218,8 +228,9 @@ One PR, a commit per step.
 - `docs/USAGE.md`: the table of files (`check.md` without patterns, `scan.md`) and the budgets (`check` 16 KB, a
   `scan` row).
 - `any.toml`'s header: the example sign's `check` comment names the table of forms.
-- `.claude/skills/propose-signs/SKILL.md`, step 5: an `any` sign's check is a form per language under
-  `[sign.check]`, `any` for one every language shares; a new language's forms go under its code.
+- `.claude/skills/propose-signs/SKILL.md`, step 5: an `any` sign's check is a form per language, `check.<code>`,
+  `check.any` for a chatbot's leftover every language meets; a new language's forms go under its code, each with a
+  machine line in `tests/test_office_<code>.py`.
 - `CHANGELOG.md`, Unreleased, Changed: `/byhand:check` reads less than half as much, in every language.
 - `plugin/README.md` already says `scan` runs the patterns and pasted text gets a reading: no change. `AGENTS.md`: no
   path, command or rule changes. The bootstrap plan's schema table is a dated record and stays.
@@ -237,4 +248,23 @@ One PR, a commit per step.
 
 ## Plan review
 
-None yet.
+### Fit
+
+The plan at `a7d8b7a`, by a fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, with the change's own
+question: does it free the most bytes a session reads, for every language and the 80 to come, with the simplest
+schema and the fewest new parts? It found yes, with I3 and I4 trimming it; the one `flags` and `passes` per sign, the
+`ran` line and the strength in `scan.md` kept. Prior art from the repo's research records only; no live repo or
+Context7 read. Answers by the author on the maintainer's standing word ("take recommended improvements"), 2026-11-09.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I1 | A chatbot's leftover written in English (`[Your Name]`, `insert_…_here`, `20\d\d-xx-xx`) stays under `any`: the de, hu and ja office tests find it in their mail, and under `en` their scans would stop | taken |
+| I2 | A lasting test in each office file, every `any` form under its code with a machine line the form alone finds, in place of a one-off sweep: a new language's forms can't land unproven | taken |
+| I3 | No `Sign.pattern_in`: a conftest fixture reads a sign under `render._scopes`, so the tests read the scopes `scan_files` renders and the package gains no method only tests call | taken |
+| I4 | Dotted keys, `check.en = '…'`, where `check` stands today, in place of a `[sign.check]` sub-table after `sources`: no key moves, and each language's comment stays above its form | taken |
+
+Noticed on the way, for Round 1: `test_office.py`'s `MACHINE` holds German, Russian and Chinese lines that English's
+forms won't find (Steps, Tests); `scan.md`'s "answer `none`" beside the new `ran` line (The plugin); `weak_hits` takes
+its languages from `sign.language`, so a language with forms and no signs of its own gets no count of its own (The
+package); propose-signs' step 5 names no machine line (Docs, moot with I2); `check.any` alone gives one check two
+spellings, with no test of it (The schema).

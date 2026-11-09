@@ -27,7 +27,7 @@ read only what isn't in context yet.
    9.1. An id you can't read: the `any` files alone.
 4. **The style:** Read `${CLAUDE_PROJECT_DIR}/.byhand/styles/index.md`, the project's (missing: none, and don't try
    it again this conversation), then `~/.byhand/styles/index.md`: one list, the project's rows first. Pick:
-   - a style the user names, their own (`~/`) first unless they say the project's;
+   - a style the user names; a name in both folders is the user's own (`~/`) unless they say the project's;
    - else the default for this kind and language (two rows claiming one: the first wins);
    - else the one style in this language that is the default for no kind;
    - else, with several such, ask which;

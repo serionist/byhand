@@ -14,15 +14,15 @@ Round 1 by a fresh reviewer, read only. It checked every new entry against `load
 commits and pages named, the six GitHub paths at their `read_at` commits, and the record's figures against the live
 pages and papers (Analyst Academy's counts, Leinonen et al., both MBABench papers, Grossman et al., the Japanese,
 Chinese and Korean files). Six minors, all on what the record says its sources show; each was checked at its source by
-the main session and fixed in `468e401`. Only minors, so no second round.
+the main session and fixed in `f8e55fd`. Only minors, so no second round.
 
 | # | Sev | Where | Finding | Status |
 |---|---|---|---|---|
-| F1 | minor | the record, Searched | A paragraph between the `ko` and `de` rows cut the table: the rows for ten languages rendered as one run of pipes | fixed: the paragraph sits below the table (`468e401`) |
-| F2 | minor | the record, `poeltl-2026-mbabench-2`, Summary 5, Seeding; the PR body | The "rounded to" label was offered as a sign a sheet's text shows, but the paper's house standard (Appendix G) asks for a "rounded to" note; the habit is its mismatch with formulas that don't round, which no text shows. A person's sheet following such a convention would be flagged. Opus 5 also writes "shown to" | fixed: the mismatch is the habit, the label no sign, Opus 5 named (`468e401`) |
-| F3 | minor | the record, `flight-check`; the PR body | Filler titles ("Overview", "Context") were offered as a sign, against the record's own Summary 2 (topic titles commoner in real decks) and the plan's I2 | fixed: a slide with no finding of its own is the content candidate; the title form gives none (`468e401`) |
-| F4 | minor | the record, `futura-2023-chatgpt-excel`, Summary 7, Seeding | The Portuguese page shows commas with a Portuguese function (FILTRO), not English names; only the French page shows English names, so two languages hold for the separator alone | fixed (`468e401`) |
-| F5 | minor | the record and `sources.toml`, `decksmith-2026-seven-signs` | DEV labels the post "AI-assisted", the reason borncity was dropped, and the record said more about its render checks than the post does | fixed: dropped, with its reason; 17 sources (`468e401`) |
+| F1 | minor | the record, Searched | A paragraph between the `ko` and `de` rows cut the table: the rows for ten languages rendered as one run of pipes | fixed: the paragraph sits below the table (`f8e55fd`) |
+| F2 | minor | the record, `poeltl-2026-mbabench-2`, Summary 5, Seeding; the PR body | The "rounded to" label was offered as a sign a sheet's text shows, but the paper's house standard (Appendix G) asks for a "rounded to" note; the habit is its mismatch with formulas that don't round, which no text shows. A person's sheet following such a convention would be flagged. Opus 5 also writes "shown to" | fixed: the mismatch is the habit, the label no sign, Opus 5 named (`f8e55fd`) |
+| F3 | minor | the record, `flight-check`; the PR body | Filler titles ("Overview", "Context") were offered as a sign, against the record's own Summary 2 (topic titles commoner in real decks) and the plan's I2 | fixed: a slide with no finding of its own is the content candidate; the title form gives none (`f8e55fd`) |
+| F4 | minor | the record, `futura-2023-chatgpt-excel`, Summary 7, Seeding | The Portuguese page shows commas with a Portuguese function (FILTRO), not English names; only the French page shows English names, so two languages hold for the separator alone | fixed (`f8e55fd`) |
+| F5 | minor | the record and `sources.toml`, `decksmith-2026-seven-signs` | DEV labels the post "AI-assisted", the reason borncity was dropped, and the record said more about its render checks than the post does | fixed: dropped, with its reason; 17 sources (`f8e55fd`) |
 | F6 | minor | the PR body | The plan's Step 2 names E6 as entries; uxdesign.cc was dropped without a line in the PR | fixed: the PR body says why |
 
 Refuted, each checked: `lt-slide-skills` listed as MIT (its LICENSE.txt says "MIT License", and a comment records
@@ -37,12 +37,13 @@ did not re-read the dropped pages beyond the record's reasons, uxdesign.cc, or P
 
 Improvements:
 
-- I1, say in the record why a vendor's own translations don't count as other languages: taken (`468e401`).
-- I2, name report-de-ai-voice's Wikipedia lineage in its licence, as `humanizer-ru` does: taken (`468e401`).
+- I1, say in the record why a vendor's own translations don't count as other languages: taken (`f8e55fd`).
+- I2, name report-de-ai-voice's Wikipedia lineage in its licence, as `humanizer-ru` does: taken (`f8e55fd`).
 - I3, the Open line called all three sheet sources finance models, which Grossman's small exercises are not: taken
-  (`468e401`).
+  (`f8e55fd`).
 
 ## Checks
 
-`uv run tools/gate.py full` passed on `368e83c` (3,845 tests); CI passed on `368e83c`; `uv run byhand validate` and
-gate quick passed on `468e401`.
+`uv run tools/gate.py full` passed on `368e83c` (3,845 tests); CI passed on `368e83c`. After a rebase onto `b204931`,
+the fixes are `f8e55fd`; `uv run byhand validate` and
+gate full passed on the rebased branch.

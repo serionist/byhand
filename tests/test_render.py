@@ -213,9 +213,10 @@ def test_a_chinese_form_reaches_a_traditional_chinese_scan():
         ("至[关關]重要|[举舉]足[轻輕]重", ["至关重要", "举足轻重"]),
         (r"поворотн\w+ (?:момент|пункт)", ["поворотн\u2026 пункт"]),
         (r"sieht (?:\w+ )?rosig aus", ["sieht rosig aus"]),  # an optional word leaves no gap
-        (r"[ж-я]{3,} могут", ["\u2026 могут"]),  # a class with a range: any of its letters
+        (r"[ж-яё]{3,} могут", ["\u2026 могут"]),  # a class with a range: any of its letters
         (r"adresse (?:ce |l['\u2019])défi", ["adresse ce défi"]),  # an elided article only where nothing else will do
         (r"là qu(?:['\u2019]|e [^.]{1,40} )entre", ["là qu'entre"]),  # and before a gap
+        (r"noter qu(?:['\u2019]|e)", ["noter que"]),  # in a class too, which Python makes of it
     ],
 )
 def test_a_term_prints_one_plain_word_per_alternative(term, printed):
@@ -270,8 +271,8 @@ def test_every_word_of_the_real_catalogue_matches_its_term():
 
 def test_the_real_catalogue_prints_phrases_a_person_writes():
     # Each was once printed as the shortest text its term matches, with no regard for grammar (#92): "a" before a
-    # vowel, "l'" before a consonant, a noun with no article, a verb that disagrees with its subject, the letter a
-    # class happens to list first, a gap where an optional word may go.
+    # vowel, "l'" before a consonant or nothing, a noun with no article, a verb that disagrees with its subject, the
+    # letter a class happens to list first, a gap where an optional word may go.
     found, problems = signs.load()
     assert problems == []
     printed = {word for item in found.signs.values() for term in item.terms for word in render.words(term.term)}
@@ -280,6 +281,7 @@ def test_the_real_catalogue_prints_phrases_a_person_writes():
         "adresse ce défi",
         "délivre de la valeur",
         "navigue dans la complexité",
+        "il convient de noter que",
         "надеюсь, это поможет",
         "\u2026 могут похвастаться",
         "die zukunft sieht rosig aus",

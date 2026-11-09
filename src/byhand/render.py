@@ -57,6 +57,7 @@ SCAN_LAYOUT = "scan.layout.md"
 SHORT_KINDS = ("email", "message")
 LONG_KINDS = ("document", "post")
 ELLIPSIS = "…"
+APOSTROPHES = ("'", "\u2019")  # an elision's marks, straight and curly
 _ORDER = {strength: n for n, strength in enumerate(signs.STRENGTHS)}
 _SUFFIX = {"short": SHORT, "long": LONG, "layout": LAYOUT}
 
@@ -79,12 +80,12 @@ def parts(sign: Sign) -> tuple[str, ...]:
 def _class(items: list[tuple[Any, Any]]) -> str:
     """A character class's word: its first literal, a space for `\\s`, else the ellipsis. A negated class's literals
     are what it excludes, and a class with a range stands for any letter in it, not its first: both print the
-    ellipsis."""
+    ellipsis. A letter wins over an apostrophe, as an alternative does: Python folds `qu(?:'|e)` into a class."""
     if any(op.name in ("NEGATE", "RANGE") for op, _value in items):
         return ELLIPSIS
-    for op, value in items:
-        if op.name == "LITERAL":
-            return chr(value)
+    literals = [chr(value) for op, value in items if op.name == "LITERAL"]
+    if literals:
+        return next((char for char in literals if char not in APOSTROPHES), literals[0])
     if any(op.name == "CATEGORY" and value.name == "CATEGORY_SPACE" for op, value in items):
         return " "
     return ELLIPSIS
@@ -110,7 +111,7 @@ def _shortest(items: Iterable[tuple[Any, Any]]) -> str:
             out.append(
                 min(
                     (_shortest(branch) for branch in value[1]),
-                    key=lambda word: (ELLIPSIS in word, word.endswith(("'", "\u2019")), len(word)),
+                    key=lambda word: (ELLIPSIS in word, word.endswith(APOSTROPHES), len(word)),
                 )
             )
         elif name in ("MAX_REPEAT", "MIN_REPEAT"):

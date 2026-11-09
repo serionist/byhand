@@ -43,8 +43,8 @@ machine only: an index and one short Markdown file per style, which you can edit
 byhand is two sets of Markdown files and the skills that read them:
 
 - **Signs:** what makes text read as AI-written, per language and per model family and version. English, Chinese
-  (Simplified and Traditional), Japanese, Korean, Russian, German, French, Hungarian, Spanish, Portuguese and Arabic
-  have their own; every language gets the signs all languages share. Each sign says what a person writes instead.
+  (Simplified and Traditional), Japanese, Korean, Russian, German, French, Hungarian, Spanish, Portuguese, Arabic,
+  Italian, Vietnamese and Turkish have their own; every language gets the signs all languages share. Each sign says what a person writes instead.
 - **Styles:** how you write, learned from your own samples.
 
 Each draft loads only the signs for its language, its kind of writing and the model writing it, plus one style: a few

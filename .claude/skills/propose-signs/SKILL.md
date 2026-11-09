@@ -48,7 +48,6 @@ ranks the sources.
    budget: cut word lists first, or merge two signs, rather than raise it.
 8. **Finish** with `finish-work`. The PR lists the signs added, the ones you skipped and why, and any `read_at` moved;
    from a refresh issue, it carries `Closes #<issue>`.
-   A language you can't judge waits for a native speaker: the PR says which signs they should read.
 
 ## Done means
 

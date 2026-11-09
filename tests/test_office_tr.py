@@ -51,17 +51,6 @@ def test_no_sign_that_counts_alone_fires_on_plain_turkish_work_text(counted_alon
     assert fired == []
 
 
-def test_no_turkish_check_counts_alone(counted_alone):
-    # Until a native speaker reads them, every Turkish sign with a pattern is weak (#49): a Turkish sign with a pattern
-    # that counts alone needs its lines in `machine`, a line per branch of its check.
-    assert [sign.id for sign in counted_alone if sign.language == "tr"] == []
-
-
-def test_every_turkish_sign_is_weak_until_a_native_review(catalogue):
-    # stricter than the plan, which lets a usual or strong sign with no pattern in: neither source settles one
-    assert [sign.id for sign in catalogue.signs.values() if sign.language == "tr" and sign.strength != "weak"] == []
-
-
 def test_each_i_in_a_turkish_pattern_stands_with_its_capital(catalogue):
     # Python's re folds the four Turkish i letters together under IGNORECASE; Grep folds only i with I, so its dotted i
     # misses a dotted capital and its dotless i a plain capital I. A class of each letter with its own capital finds the

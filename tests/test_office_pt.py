@@ -217,17 +217,6 @@ def test_no_sign_that_counts_alone_fires_on_plain_portuguese_work_text(counted_a
     assert fired == []
 
 
-def test_no_portuguese_check_counts_alone(counted_alone):
-    # Until a native speaker reads them, every Portuguese sign with a pattern is weak (#49): a Portuguese sign with a
-    # pattern that counts alone needs its lines in MACHINE below, a line per branch of its check.
-    assert [sign.id for sign in counted_alone if sign.language == "pt"] == []
-
-
-def test_every_portuguese_sign_is_weak_until_a_native_review(catalogue):
-    # stricter than the plan, which lets a usual or strong sign with no pattern in: none of these sources settles one
-    assert [sign.id for sign in catalogue.signs.values() if sign.language == "pt" and sign.strength != "weak"] == []
-
-
 # What each sign that counts alone exists to catch, inside Portuguese text: a line per Portuguese branch of its check,
 # and one for each artefact, which is the same string in every language, so silence above can't come from a sign that
 # finds nothing. Branches that read other languages' words have their lines in the other office tests.

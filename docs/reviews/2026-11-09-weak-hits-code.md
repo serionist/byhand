@@ -32,6 +32,28 @@ catalogue.
 |---|---|
 | Make the comment true: say why checks are not deduplicated across signs, or name the one case that is | taken: the comment and the fixture's docstring name it |
 
+## Round 2
+
+**Where:** PR #57 at df57f26 (the fixes since dd566cd, in 67bfae9), one fresh reviewer, read-only; the main session
+reproduced each finding with `_weak_hits`. **Verdict:** clean. F1's three lines count 3 at df57f26 and 2 at dd566cd,
+each worked through by the reviewer; F2's reason holds (one check finding two phrases is not one sign taking another's
+text, and the ja asides and hu dashes rest on a check counting once).
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F3 | minor | `tests/conftest.py`, `_weak_hits`, another language's checks | With every language loaded, as the fr, de, hu and ja guards call it, a check whose every match overlaps another language's check is dropped, even when it finds something else. "Et si notre synergie pourrait potentiellement — enfin — changer tout ?" counted 2: `de-em-dash`'s letters beside the dashes overlap `fr-hedge-stack` and `fr-engagement-lines`. A French draft counts 3. The comment said "the same mark" | fixed in c208375: a call without `languages` takes the higher of every language at once and each language's own draft (`any`, the language, its base), so it is never below a draft's count and stays as strict as before; `test_another_language_s_dash_check_takes_no_french_check`, which counts 2 at 2786619 and at df57f26. The comment says "overlaps" |
+| F4 | minor | `tests/conftest.py`, `_weak_hits`, the checks of one draft | `any-bold-lead-in-list` and `any-raw-markdown` on one label now count twice: "- **Prazo:** sexta-feira — antes do almoço." counts 3, the plugin 2 ("one phrase two signs find counts once") | wontfix: more than the rule is what #56 allows ("at least what the plugin counts"), and no office line in a weak count has a bold label in a list. A containment rule would merge the dash pivot with the label it runs over, F1 again. The comment names the overcount |
+
+| Improvement | Answer |
+|---|---|
+| Pass each draft's `languages` in the de, fr, hu and ja guards instead, and drop the other-language rule | left: those guards would stop counting other languages' signs, looser than before; F3's fix keeps both counts |
+| Take the base language from `Language.of`, not by splitting the code | taken: `_base` |
+| Write the condition as `base != "any" and other not in ("any", base)` | taken |
+| Record the gate on the fixes | taken: below |
+
+Every `weak_hits` call in the suite was counted at 2786619, at df57f26 and at c208375: only the new tests' five lines
+differ, none of them lower. The review ends with this round: only minors were found, each fixed or answered here.
+
 ## Checks
 
-`uv run tools/gate.py full` on dd566cd passed, and CI on it.
+`uv run tools/gate.py full` passed on dd566cd, df57f26 and c208375; CI passed on dd566cd and df57f26.

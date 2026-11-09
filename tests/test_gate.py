@@ -870,6 +870,68 @@ def test_check_version_says_whether_the_version_is_released(tmp_path):
     assert gate.check_version(gate.Scope([]), root=tmp_path).detail == "CHANGELOG.md is missing"
 
 
+SHIPPED = (
+    "# Changelog\n\n## 0.2.0 (2026-11-09)\n\n### Added\n\n- Signs.\n\n## 0.1.0 (2026-11-02)\n\n- The write skill.\n"
+)
+NEXT = "## 0.2.1 (2026-11-10)\n\n### Changed\n\n- The signs for German.\n\n"
+
+
+@pytest.mark.parametrize(
+    ("base", "changelog", "expected"),
+    [
+        (SHIPPED, SHIPPED, []),
+        (SHIPPED, SHIPPED.replace("## 0.2.0", NEXT + "## 0.2.0"), []),
+        (SHIPPED, SHIPPED.replace("- Signs.\n", "- Signs.\n- The signs for German.\n"), ["0.2.0 is released"]),
+        (SHIPPED, SHIPPED.replace("(2026-11-09)", "(2026-11-10)"), ["0.2.0 is released"]),
+        (SHIPPED, SHIPPED.replace("- The write skill.", "- The write skill, reworded."), ["0.1.0 is released"]),
+        (
+            SHIPPED.replace("## 0.2.0", NEXT + "## 0.2.0"),
+            SHIPPED.replace("## 0.2.0", NEXT + "## 0.2.0").replace("- Signs.\n", "- Signs.\n- More.\n"),
+            ["0.2.0 is released"],
+        ),
+        (SHIPPED, "# Changelog\n", []),
+        (CHANGELOG, CHANGELOG + "- More.\n", []),
+    ],
+    ids=[
+        "unchanged",
+        "a new section above",
+        "a line under it",
+        "redated",
+        "an older one",
+        "under an older one, a newer released since",
+        "gone",
+        "none released",
+    ],
+)
+def test_frozen_problems(base, changelog, expected):
+    problems = gate.frozen_problems(base, changelog)
+    assert len(problems) == len(expected)
+    assert all(want in got for want, got in zip(expected, problems, strict=True))
+
+
+def test_a_branch_rewords_its_own_section_but_not_mains(tmp_path):
+    run = new_repo(tmp_path)
+    (tmp_path / gate.PLUGIN_MANIFEST).parent.mkdir(parents=True)
+    (tmp_path / gate.PLUGIN_MANIFEST).write_text('{"version": "0.2.0"}', encoding="utf-8")
+    (tmp_path / "CHANGELOG.md").write_text(SHIPPED, encoding="utf-8")
+    run("add", "-A")
+    run("commit", "-qm", "Release 0.2.0")
+    run("update-ref", "refs/remotes/origin/main", "HEAD")
+    (tmp_path / gate.PLUGIN_MANIFEST).write_text('{"version": "0.2.1"}', encoding="utf-8")
+    (tmp_path / "CHANGELOG.md").write_text(SHIPPED.replace("## 0.2.0", NEXT + "## 0.2.0"), encoding="utf-8")
+    run("add", "-A")
+    run("commit", "-qm", "Add a German sign, pushed")
+    pushed = run("rev-parse", "HEAD")
+    for scope in (gate.Scope([f"{pushed}..HEAD"]), gate.Scope(["origin/main..HEAD"])):  # pre-push's, and CI's
+        reworded = SHIPPED.replace("## 0.2.0", NEXT.replace("German", "German and French") + "## 0.2.0")
+        (tmp_path / "CHANGELOG.md").write_text(reworded, encoding="utf-8")
+        assert gate.check_version(scope, root=tmp_path).status == "pass"
+        (tmp_path / "CHANGELOG.md").write_text(reworded.replace("- Signs.\n", "- Signs, and more.\n"), encoding="utf-8")
+        result = gate.check_version(scope, root=tmp_path)
+        assert result.status == "FAIL"
+        assert "0.2.0 is released" in result.output or "0.2.0 is released" in result.detail
+
+
 @pytest.mark.parametrize(
     ("readme", "expected"),
     [

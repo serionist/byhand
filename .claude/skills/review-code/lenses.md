@@ -73,7 +73,8 @@ Name what would run without asking, or what a user would lose.
 - Does each skill's `allowed-tools` name only `Read`, `Glob` and `Grep`? The gate checks it; a way around it (a hook,
   a key in `plugin.json`, a file under `plugin/` the gate doesn't read) is a blocker.
 - Do the skills' and agents' names stay as they were? A rename is a one-way door.
-- Does the version move only in a release PR?
+- Does a change to the plugin move the version, with its own dated section? (A refresh agent's draft: its publish
+  job moves it after the review.)
 - Does each skill run no command, and need nothing but the plugin? The gate refuses the usual spellings; a way around
   them is a blocker.
 - Does each skill's description still start it where it says (mail, messages, documents, decks) and not elsewhere?

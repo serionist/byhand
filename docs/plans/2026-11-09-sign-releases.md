@@ -60,6 +60,10 @@ a new version's section, with plugin.json moved". So a line added to a released 
 resolved the wrong way (below), fails CI instead of merging under a version users already have. The refresh agent's
 model never edits `CHANGELOG.md`, and the publish job only adds a section above, so neither trips it.
 
+Built (review-code F1, 2026-11-09): every section released on main is frozen, not only the newest. CI's `base.sha` is
+main's tip when the run starts, not the head's merge base as Round 1's refutation had it, so a PR that forked before
+another's release, with no hooks, merges a line under the older section without a conflict.
+
 ### Two PRs open at once
 
 Both set `0.2.1` and both put a section at the same place, above `## 0.2.0`. Once one merges, the other conflicts in

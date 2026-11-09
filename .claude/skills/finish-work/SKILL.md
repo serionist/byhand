@@ -15,7 +15,8 @@ feels complete. `main` takes PRs only, and the maintainer squash-merges them (`A
 ## Steps
 
 1. **Docs in the same change.** Check each thing that describes the change moved with it: `README.md` and
-   `plugin/README.md` for what users see, `CHANGELOG.md` under Unreleased when users notice it, `AGENTS.md` for a
+   `plugin/README.md` for what users see, `plugin.json`'s version and its dated `CHANGELOG.md` section for a
+   change to what a user's session reads (`docs/releasing.md`: a patch, or a minor by hand), `AGENTS.md` for a
    changed path, command or rule, and the plan when the work departed from it (where and why). A plan with a progress
    log gets the step's row. Write them the way `AGENTS.md` asks.
 2. **The gate:** `uv run tools/gate.py full`. Fix every failure; never weaken a test, a check or an ignore to pass.
@@ -60,4 +61,4 @@ feels complete. `main` takes PRs only, and the maintainer squash-merges them (`A
 - Mark a `REVIEW.md` question yes without its evidence.
 - Add AI co-author trailers, "Generated with" lines or session links: commits, PR titles, PR bodies.
 - Push to `main`, merge without the maintainer's word, or push to someone else's branch.
-- Bump `plugin.json`'s version outside the PR that dates the release in `CHANGELOG.md`.
+- Move `plugin.json`'s version without dating its section in `CHANGELOG.md`, or add a line under a released one.

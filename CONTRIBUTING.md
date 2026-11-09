@@ -54,7 +54,8 @@ asked for.
 ## Open the pull request
 
 1. Fork, and branch from `main` as `<issue>-<slug>`, such as `42-hungarian-signs`.
-2. Make the change with its tests and docs: the READMEs, a line in [CHANGELOG.md](CHANGELOG.md) when users notice it,
+2. Make the change with its tests and docs: the READMEs; for a change to the plugin, its version and a dated section
+   in [CHANGELOG.md](CHANGELOG.md) ([docs/releasing.md](docs/releasing.md));
    AGENTS.md when a path, a command or a rule changes.
 3. Commit with a plain imperative subject that says what changed, and a body that says why. No AI co-author
    trailers, "Generated with" lines or session links, and you, not a tool, as author and committer: `commit-msg`

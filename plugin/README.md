@@ -40,7 +40,9 @@ leaves out any sample that reads as AI-written, shows you the style, and saves i
 
 ## Updating
 
-For a new version, run this in your shell, then start a new session:
+New signs come as new versions as they are merged, often. To get them without a command, turn on auto-update:
+`/plugin`, Marketplaces, `byhand`, Enable auto-update. Or, for a new version, run this in your shell, then start a
+new session:
 
 ```text
 claude plugin update byhand@byhand

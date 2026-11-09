@@ -36,17 +36,17 @@ styles, and the skills that read them. It is for the user's own writing, sent un
 | `.claude-plugin/`, `plugin/` | the repo as a Claude Code marketplace (`marketplace.json`) of one plugin: `plugin/.claude-plugin/plugin.json`, `plugin/skills/<name>/` (`SKILL.md` and the Markdown it reads), `plugin/agents/<name>.md` (`scan`: the patterns over a file), `plugin/signs/` (rendered: never edited by hand), `plugin/evals/`, `plugin/README.md` |
 | `tests/` | pytest; `test_gate.py`, the harness's own |
 | `tools/` | `gate.py` (the gate), `hooks.py` (behind `.githooks/`), `setup.py` (once per clone; `link` for skills; `settings` compares the GitHub repo's settings with the house's), `copycheck.py` (by hand: sign text against downloaded sources), standard library only |
-| `docs/` | `USAGE.md` (the commands, the budgets), `releasing.md` (how a release is cut); `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
+| `docs/` | `USAGE.md` (the commands, the budgets), `releasing.md` (each PR that changes the plugin is a release); `plans/`, `reviews/`, `research/`: plans of non-trivial changes, with the template; review records; the research a plan rests on. Dated records, never current truth |
 | `.claude/` | `CLAUDE.md` (imports this file), `settings.json` (no attribution; allows the repo's own checks and read-only git and gh, each named whole but the git ones `tests/test_gate.py` sweeps and gh's reads), `skills/` (below) |
 | `.agents/` | `skills/`: links to `.claude/skills/<name>` for Codex, written into git's index by `uv run tools/setup.py link` |
-| `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and 3.14, macOS 3.14; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `refresh.yml` (daily: `byhand refresh`, an issue labelled `refresh` per changed source), `refresh-agent.yml` (the 1st and 15th: a model drafts those issues' signs, one draft PR; its prompt `refresh-agent.md`, its allows `refresh-agent.json`), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
+| `.github/` | `workflows/`: `ci.yml` (gate quick; the tests on Linux 3.12 to 3.14, Windows 3.12 and 3.14, macOS 3.14; its `CI` job), `pr-text.yml` (gate text on a PR's title and description; its `PR text` job), `refresh.yml` (daily: `byhand refresh`, an issue labelled `refresh` per changed source), `refresh-agent.yml` (the 1st and 15th: a model drafts those issues' signs, one draft PR; its prompt `refresh-agent.md`, its allows `refresh-agent.json`), `release.yml` (on each push to `main`: tags and releases a version that has no release), `codeql.yml`, `dependabot-auto-merge.yml`; `CI` and `PR text` are the required checks; `dependabot.yml`, the issue forms, the PR template, `CODEOWNERS` |
 | `.githooks/` | `commit-msg` refuses attribution, `pre-push` runs gate quick on what the push sends, `post-checkout` and `post-merge` name changed AI setup files |
 | `AGENTS.md`, `REVIEW.md` | this file; what a review finding is, and the questions every review answers |
 | `.mcp.json` | Context7 over HTTP; `.claude/settings.local.json.example` turns it on |
 | `pyproject.toml`, `uv.lock`, `.python-version` | the build (hatchling), the settings of ruff, basedpyright, pytest, coverage and import-linter, every package pinned exactly; the lock; Python 3.12 for development |
 | `.gitleaks.toml` | the secret scan: gitleaks' own rules, and any exception with its reason |
 | `.editorconfig`, `.gitattributes`, `.gitignore`, `.git-blame-ignore-revs` | UTF-8 and LF everywhere; what git ignores; the reformat commits `git blame` skips |
-| `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `LICENSE` | for users; what changed, under Unreleased; a first contribution's short path; how to report a vulnerability, and what counts; MIT |
+| `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `LICENSE` | for users; what changed, a dated section per version; a first contribution's short path; how to report a vulnerability, and what counts; MIT |
 
 A new top-level file or folder adds its row in the same change.
 
@@ -93,7 +93,7 @@ This repo's own text is held to its catalogue: write it as a person would.
 - Plain words. No "ensure", "robust", "comprehensive", "leverage", "seamless" or "delve"; spaced hyphens, never em
   dashes; no rule-of-three lists built for rhythm; British spelling (behaviour, licence).
 - A comment says why, not what the next line does, and says it in its own words, not only as a plan or review id.
-- Docs move in the same change: the READMEs, `CHANGELOG.md` when users notice, this file for a changed path, command
+- Docs move in the same change: the READMEs, `CHANGELOG.md` and the version for a change to the plugin (`docs/releasing.md`), this file for a changed path, command
   or rule.
 
 ## Commits and PRs

@@ -123,8 +123,10 @@ Unreleased, Added (a line per language), this plan's progress log.
 |---|---|---|---|
 | 1 | es | #53 | merged 2026-11-09 |
 | 2 | sources for pt, hi, ar | #52 | merged 2026-11-09; the order, from its research record: pt, ar, hi |
-| 3 | #13 | #54 | draft; a `\W` in a negated class, `[^\W\d_]` in `es-dash-pivots` and `fr-hashtag-block`, is read as Grep reads it, not refused as I8 had it: refusing it would change two signs' patterns |
-| 4 | pt, hi, ar | | |
+| 3 | #13 | #54 | merged 2026-11-09; a `\W` in a negated class, `[^\W\d_]` in `es-dash-pivots` and `fr-hashtag-block`, is read as Grep reads it, not refused as I8 had it: refusing it would change two signs' patterns |
+| 4 | pt | #55 | merged 2026-11-09 |
+| 4 | ar | #58 | merged 2026-11-09 |
+| 4 | hi | #59 | recorded 2026-11-09 as having no source to seed from: SHAKTI's longer model texts stand against human texts of about one sentence, Wang et al. found GPT-4o's Hindi news shorter, and their other cues are held by an `any` sign or clash with office Hindi, Sanskritised, and with Hinglish. No `hi.toml`; the `any` signs carry Hindi. The research record's follow-up has the detail |
 
 ## Plan review
 

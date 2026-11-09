@@ -3,11 +3,12 @@ fires on any of these accuses a person of writing like a machine. Russian office
 в целях, осуществлять) is how many people write mail, minutes, reports and official letters, and the тире and «ёлочки»
 are standard punctuation: none of them is a sign. A weak sign may fire: it counts only in a cluster."""
 
-import re
-
 import pytest
 
 from byhand import signs
+
+# What a Russian draft loads: the `any` signs and Russian's, never another language's.
+RUSSIAN = ("any", "ru")
 
 
 def _text(*lines: str) -> str:
@@ -178,18 +179,8 @@ OFFICE = [
 ]
 
 
-@pytest.fixture(scope="module")
-def catalogue():
-    found, problems = signs.load()
-    assert problems == []
-    return found
-
-
-@pytest.fixture(scope="module")
-def counted_alone(catalogue):
-    found = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength != "weak"]
-    assert any(sign.language == "ru" for sign in found)
-    return found
+def test_a_russian_check_counts_alone(counted_alone):
+    assert any(sign.language == "ru" for sign in counted_alone)
 
 
 def test_the_lists_hold_enough():
@@ -327,32 +318,6 @@ def test_the_terms_leave_plain_russian_alone(catalogue, sign, text):
     assert not found.pattern.search(text), sign
 
 
-def _reads(sign: signs.Sign, kind: str) -> bool:
-    """A sign a Russian draft of this kind loads: the `any` signs and Russian's, never another language's."""
-    return sign.language in ("any", "ru") and bool({"any", kind} & set(sign.kinds))
-
-
-def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
-    """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
-    A term is one phrase however its endings vary, and a check one habit however often it fires; one phrase two signs
-    find counts once."""
-    counted: set[str] = set()
-    spans: list[tuple[int, int]] = []
-    for sign in catalogue.signs.values():
-        if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
-            continue
-        phrases = [
-            (term.term, re.compile(rf"\b(?:{term.term})\b", re.IGNORECASE | re.MULTILINE)) for term in sign.terms
-        ]
-        for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
-            for found in pattern.finditer(text):
-                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
-                    continue
-                counted.add(phrase)
-                spans.append(found.span())
-    return len(counted)
-
-
 WEAK_CASES = [
     (REPORT, "document"),
     *((report, "document") for report in REPORTS),
@@ -368,24 +333,28 @@ WEAK_CASES = [
 
 
 @pytest.mark.parametrize(("text", "kind"), WEAK_CASES)
-def test_plain_mail_reports_and_letters_are_no_weak_cluster(catalogue, text, kind):
-    assert _weak_hits(catalogue, text, kind) < signs.WEAK_CLUSTER
+def test_plain_mail_reports_and_letters_are_no_weak_cluster(weak_hits, text, kind):
+    assert weak_hits(text, kind, RUSSIAN) < signs.WEAK_CLUSTER
 
 
 @pytest.mark.parametrize("text", CHAT)
-def test_no_weak_sign_that_reads_chat_fires_on_business_chat(catalogue, text):
+def test_no_weak_sign_that_reads_chat_fires_on_business_chat(catalogue, text, reads):
     fired = [
         sign.id
         for sign in catalogue.signs.values()
-        if sign.pattern and sign.strength == "weak" and _reads(sign, "message") and sign.pattern.search(text)
+        if sign.pattern
+        and sign.strength == "weak"
+        and sign.language in RUSSIAN
+        and reads(sign, "message")
+        and sign.pattern.search(text)
     ]
     assert fired == []
 
 
-def test_no_sign_reads_the_dash_or_the_quotes(catalogue):
+def test_no_sign_reads_the_dash_or_the_quotes(weak_hits):
     # the тире and «ёлочки» are Russian punctuation: not even a weak sign may count them
     for kind in signs.KINDS:
-        assert _weak_hits(catalogue, DASHES_AND_QUOTES, kind) == 0, kind
+        assert weak_hits(DASHES_AND_QUOTES, kind, RUSSIAN) == 0, kind
 
 
 def test_office_register_is_for_the_models_read_of_posts_and_documents(catalogue):

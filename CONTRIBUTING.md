@@ -25,6 +25,9 @@ feature request with the form's "A sign" area. Say what the text does, in which 
 model writes it; give a short invented example that shows it, a line a person would write instead, and where you saw
 it named (a link). Write it in your own words: a sentence copied from a source can break its licence.
 
+A language with signs but no source of kind `review` in `src/byhand/catalogue/sources.toml` has had no native speaker
+read them: if it is yours, read `src/byhand/catalogue/signs/<language>.toml` and say in an issue which signs are wrong.
+
 ## Build and test
 
 You need [uv](https://docs.astral.sh/uv/) (it brings Python), git and [gitleaks](https://github.com/gitleaks/gitleaks).

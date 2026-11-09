@@ -113,6 +113,8 @@ REPORTS = [
     "Nếu bạn cần, tôi có thể chỉnh sửa lại hợp đồng trước thứ Sáu.",
     "Nếu bạn cần, tôi có thể chỉnh sửa nội dung hợp đồng.",
     "Nếu bạn cần, tôi có thể viết lại văn bản đề nghị gửi sở.",
+    "Nếu bạn cần, tôi có thể chỉnh sửa văn bản thành lập công ty.",
+    "Nếu bạn cần, tôi có thể chỉnh sửa văn bản theo dõi công nợ.",
     "Tóm tắt\n\n"
     "Bài viết này phân tích tác động của làm việc từ xa đến năng suất của 312 nhân viên ngân hàng tại TP.HCM. Kết quả "
     "nhấn mạnh vai trò của người quản lý trực tiếp trong việc giữ tiến độ.",

@@ -552,10 +552,11 @@ strength = "strong"
 check.any = 'contentReference\[oaicite|oaicite:\d|oai_citation|attributableIndex|turn\d+(?:file|image|news|search)\d+'
 check.de = 'gehe zu suche nr'
 # Finnish: ChatGPT's source chips pasted as text, a name of up to three words with +1 to +9 glued on, right after a
-# sentence's full stop, as wikipedia-fi shows each one (keväällä. Oulun kaupunki+1). A sign-up list, a score or code
-# (Matti+1, HIFK+3, count+1) has no full stop before the name, and passes; so do C++, Disney+, Erasmus+-hanke, 2+1
-# and +358.
-check.fi = '\.\s(?:[^\W\d_]+\s){0,2}[^\W\d_]{2,}\+[1-9](?:\D|$)'
+# sentence's full stop, after a word or a year, as wikipedia-fi shows each one (keväällä. Oulun kaupunki+1). A sign-up
+# list, a score or code (Matti+1, HIFK+3, count+1) has no such full stop before the name, nor does a numbered list,
+# a date or a time (1. Matti+1, la 12.10. Matti+1, klo 9. Tiimi+2), and each passes; so do C++, Disney+,
+# Erasmus+-hanke, 2+1 and +358. A + glued to a name after an abbreviation (esim. Matti+1) still fires: rare.
+check.fi = '(?:[^\W\d_]|\d{4})\.\s(?:[^\W\d_]+\s){0,2}[^\W\d_]{2,}\+[1-9](?:\D|$)'
 flags = "The bridge opened in 1932. :contentReference[oaicite:3]{index=3}"
 passes = "The bridge opened in 1932 (county archive, box 12)."
 sources = [
@@ -714,7 +715,7 @@ check.pt = '^\W*(?:certamente|claro|claro que sim|com certeza)\s?[!,.]+\s?(?:aqu
 check.ru = '^\W*(?:безусловно|конечно)! вот (?:(?:ваш|тво)\w* (?:исправле|переработа|улучше|отредактирова|сокращ[её])нн\w+ (?:абзац|письмо|пост|резюме|сообщение|текст)\b|(?:\w+ )?(?:исправле|переработа|улучше|отредактирова|сокращ[её])нн\w+ (?:вариант|версия|редакция|текст) (?:ваш|тво)\w+ (?:абзац|объявлени|письм|пост|резюме|сообщени|стать|текст)\w*|(?:\w+ )?более (?:вежлив|делов|дружелюбн|кратк|лаконичн|мягк|нейтральн|неформальн|официальн|профессиональн|формальн)\w* (?:вариант|версия)\b)[^.!?\n]*:\s*$'
 # Turkish likewise, from humanizer-tr's Elbette! and İşte …: (23), the reader's text reworked or in a register word:
 # "Elbette, işte sözleşmenin imzalı hâli:" and "Elbette, işte e-postanızın orijinal hali:" pass.
-check.tr = '^\W*elbette\s?[!,.]+\s?[iİ]şte (?:(?:e-?posta|mesaj[ıI]|yaz[ıI])n[ıI]z[ıI]n|metn[iİ]n[iİ]z[iİ]n) (?:daha (?:k[ıI]sa|naz[iİ]k|net|profesyonel|resm[iİ]|sade|sam[iİ]m[iİ]) |düzelt[iİ]lm[iİ]ş |düzenlenm[iİ]ş |k[ıI]salt[ıI]lm[ıI]ş |yen[iİ]den yaz[ıI]lm[ıI]ş )(?:hal[iİ]|hâl[iİ]|sürümü|vers[iİ]yonu):\s*$'
+check.tr = '^\W*elbette\s?[!,.]+\s?[iİ]şte (?:(?:e-?posta|mesaj[ıI]|yaz[ıI])n[ıI]z[ıI]n|metn[iİ]n[iİ]z[iİ]n) (?:daha (?:k[ıI]sa|naz[iİ]k|net|profesyonel|resm[iİ]|sade|sam[iİ]m[iİ]) (?:b[iİ]r )?|düzelt[iİ]lm[iİ]ş |(?:yen[iİ]den )?düzenlenm[iİ]ş |gözden geç[iİ]r[iİ]lm[iİ]ş |[iİ]y[iİ]leşt[iİ]r[iİ]lm[iİ]ş |k[ıI]salt[ıI]lm[ıI]ş |yen[iİ]den yaz[ıI]lm[ıI]ş )(?:hal[iİ]|hâl[iİ]|sürümü|vers[iİ]yonu):\s*$'
 # Vietnamese, from the line vietnamese-humanizer tells its model not to add: Dưới đây là phiên bản, then the reader's
 # text, called bạn as a model calls the user, right after của and ending the line (của email của bạn:); a person's
 # "phiên bản cuối của hợp đồng", a text of anh's or chị's, or a version made from the reader's mail or sent to it (theo
@@ -761,9 +762,10 @@ check.es = '^\W*(?:quieres|te gustaría) que (?:(?:amplíe|desarrolle) (?:algún
 check.pt = '^\W*(?:gostaria que eu (?:[ao] )?(?:adaptasse|ampliasse|desenvolvesse|detalhasse|encurtasse|expandisse|resumisse|transformasse)\b|(?:quer|queres) que eu (?:[ao] )?(?:adapte|amplie|desenvolva|detalhe|encurte|expanda|resuma|transforme)\b)'
 check.ru = '^\W*сообщите мне, если хотите, чтобы (?:я (?:адаптировал|дополнил|доработал|изменил|переписал|расширил|сократил)|(?:документ|статья|текст) был\w* (?:расширен|сокращ[её]н|доработан|переписан|адаптирован))'
 # Vietnamese, from the line vietnamese-humanizer tells its model not to add (Nếu bạn cần, tôi có thể…): an offer to
-# rework the text, as English's: the verb, then the text (đoạn, bài viết, nội dung, văn bản). A person's offer of data
-# or of another document (gửi thêm số liệu gốc, bổ sung thêm số liệu, chỉnh sửa lại hợp đồng) passes.
-check.vi = '^\W*nếu bạn cần,? tôi có thể (?:chỉnh sửa|mở rộng|rút gọn|viết lại) (?:lại )?(?:bài viết|nội dung|văn bản|đoạn)\b'
+# rework the text, as English's: the verb, then the text (đoạn, bài viết, nội dung, văn bản) as the whole object,
+# ending there or at này, trên or cho. A person's offer of data or of another document (gửi thêm số liệu gốc, bổ sung
+# thêm số liệu, chỉnh sửa lại hợp đồng, chỉnh sửa nội dung hợp đồng, viết lại văn bản đề nghị) passes.
+check.vi = '^\W*nếu bạn cần,? tôi có thể (?:chỉnh sửa|mở rộng|rút gọn|viết lại) (?:lại )?(?:bài viết|nội dung|văn bản|đoạn(?: văn)?)(?: (?:cho|này|trên)\b|\s*[!,.:;?]|\s*$)'
 flags = "The committee meets each spring.\n\nWould you like me to expand this into a one-page handout?"
 passes = "The committee meets each spring.\n\nWould you like me to bring the projector, or will Sam?"
 sources = [

@@ -111,6 +111,8 @@ REPORTS = [
     "Phụ lục\n\nBảng 3 chỉ có số liệu quý III.\nNếu bạn cần, tôi có thể gửi thêm số liệu gốc.",
     "Nếu bạn cần, tôi có thể bổ sung thêm số liệu quý 3.",
     "Nếu bạn cần, tôi có thể chỉnh sửa lại hợp đồng trước thứ Sáu.",
+    "Nếu bạn cần, tôi có thể chỉnh sửa nội dung hợp đồng.",
+    "Nếu bạn cần, tôi có thể viết lại văn bản đề nghị gửi sở.",
     "Tóm tắt\n\n"
     "Bài viết này phân tích tác động của làm việc từ xa đến năng suất của 312 nhân viên ngân hàng tại TP.HCM. Kết quả "
     "nhấn mạnh vai trò của người quản lý trực tiếp trong việc giữ tiến độ.",
@@ -192,6 +194,7 @@ MACHINE = [
     ("any-assistant-preamble", "Dưới đây là phiên bản đã chỉnh sửa của email của bạn:"),
     ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể viết lại đoạn này ngắn gọn hơn."),
     ("any-assistant-closing-offer", "Nếu bạn cần tôi có thể rút gọn bài viết này."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể mở rộng đoạn văn."),
     ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể chỉnh sửa lại nội dung cho trang trọng hơn."),
     ("any-assistant-preamble", "Dưới đây là phiên bản trang trọng hơn của tin nhắn của bạn:"),
     ("any-assistant-preamble", "Dưới đây là phiên bản ngắn gọn của văn bản của bạn:"),

@@ -15,8 +15,9 @@ Users never run these. They build and check the catalogue in this repo.
 
 ## What a skill reads
 
-`byhand render` writes two sets under `plugin/signs/<language>/`, where `<language>` or `<family>` is `any` for the
-signs of every language or model, and only languages that have signs get a folder:
+`byhand render` writes these files under `plugin/signs/<language>/`, where `<language>` or `<family>` is `any` for the
+signs of every language or model, and only languages that have signs, or forms of the shared ones, get a folder; one
+with forms alone (`id`) has a `scan.md` and no `check.md`:
 
 | File | Holds | Read by |
 |---|---|---|

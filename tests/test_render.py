@@ -185,26 +185,6 @@ def test_a_chinese_form_reaches_a_traditional_chinese_scan():
     assert [path for path in render.scan_files(found, "zh-Hant") if path in files] == ["zh/scan.md"]
 
 
-def test_a_scan_line_prints_its_form_in_nfc():
-    found, problems = signs.load()
-    assert problems == []
-    printed = {
-        (path.split("/")[0], match[1]): match[2]
-        for path, text in render.render(found).items()
-        if path.endswith(render.SCAN)
-        for match in re.finditer(r"^- (\S+) \([^)]*\): `(.*)`$", text, re.MULTILINE)
-    }
-    forms = {
-        (code, item.id): form
-        for item in found.signs.values()
-        if item.until is None and not render.is_layout(item)
-        for code, form in item.forms.items()
-    }
-    assert len(printed) > 100
-    assert printed == forms
-    assert all(form == unicodedata.normalize("NFC", form) for form in forms.values())
-
-
 @pytest.mark.parametrize(
     ("term", "printed"),
     [

@@ -46,5 +46,5 @@ Then, on their own lines, `rejected	<id>	<Grep's message>` for any pattern Grep 
 ran	<id>,<id>,…
 ```
 
-the ids of every pattern Grep ran, with a hit or without, each once; never one it rejected. A file with no hit
-answers with its `ran` line alone.
+the ids of every pattern Grep ran, with a hit or without, each once; never one it rejected, even when another of
+its patterns ran. A file with no hit answers with its `ran` line alone.

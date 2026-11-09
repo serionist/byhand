@@ -46,3 +46,18 @@ every kind: 11,970 comparisons, no difference.
 Whether a native speaker finds the signs right; the plugin sessions, which the main session ran. The "4 of 30 model
 texts" behind `es-service-script` was unclear: the main session counted the apology for the inconvenience (lamentamos,
 inconvenientes, sentimos las molestias), and the citation now says so.
+
+## Round 2
+
+A fresh reviewer, on 8d22e0a (the fixes since 220f326). Verdict: needs-fixes. F2 to F5 and both improvements hold; F1
+held only in part.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F1 | major | `any.toml`, `any-ai-self-reference`, the Spanish branch | Still open: the branch started anywhere in a line, so a person's comma splice after a verb fired ("Lo venden como IA, no puedo creer que sea solo un buscador", "La contratamos como asistente de IA, no tengo queja de ella") | fixed: the role opens a sentence or follows "pero"; three such lines in `REPLIES` |
+| N1 | minor | the PR body | Stale on F1, F3, F5 and F6, and its Review section empty, while round 1 called F6 fixed | fixed: the body is updated |
+| N2 | minor | `tests/test_office_es.py`, `FORMS` | The rewritten `es-false-contrast` line used a semicolon, so no test held the comma, the usual way to write it | fixed: the line has its comma, and a semicolon line beside it |
+| N3 | minor | `any-ai-self-reference`, the Spanish branch | It missed "como modelo de lenguaje de IA", "Como IA no puedo" without the comma, and no poseo, no cuento con, no me es posible | fixed: all in the branch, each with a `MACHINE` line |
+
+Refuted: that the round-1 swaps in `LEFT_ALONE` made a test weaker (they test the same edges, or stricter ones); a
+Grep incompatibility in the new branch (ripgrep 14.1.1 agrees with Python).

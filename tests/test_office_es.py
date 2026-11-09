@@ -67,6 +67,9 @@ REPLIES = [
     "Usamos Copilot como asistente de IA, no como sustituto del criterio de cada técnico.",
     "Lo venden como inteligencia artificial, no como un programa de gestión.",
     "Como modelo de lenguaje, no está mal, pero se inventa las fechas.",
+    "Lo venden como IA, no puedo creer que sea solo un buscador.",
+    "Nos lo vendieron como inteligencia artificial, no tengo claro qué hace de verdad.",
+    "La contratamos como asistente de IA, no tengo queja de ella.",
 ]
 CHAT = [
     "ok, lo veo y te digo",
@@ -178,6 +181,9 @@ MACHINE = [
     ("any-ai-self-reference", "Como una inteligencia artificial, no dispongo de tus cifras."),
     ("any-ai-self-reference", "Como asistente de IA, no tengo acceso a tu calendario."),
     ("any-ai-self-reference", "Como gran modelo de lenguaje, yo no puedo comprobar ese enlace."),
+    ("any-ai-self-reference", "Lo siento, pero como modelo de lenguaje de IA, no poseo datos de tu empresa."),
+    ("any-ai-self-reference", "¿La fusión? Como IA no me es posible predecirla."),
+    ("any-ai-self-reference", "Como inteligencia artificial, no cuento con acceso a internet."),
     ("any-knowledge-cutoff", "Hasta mi última actualización de conocimientos, la empresa no se había fusionado."),
     ("any-assistant-preamble", "¡Claro! Aquí tienes una versión mejorada de tu correo:"),
     ("any-assistant-preamble", "¡Por supuesto! Aquí tienes una versión más formal de tu mensaje:"),
@@ -259,7 +265,8 @@ def test_spanish_typography_meets_no_formatting_check(catalogue, text):
 FORMS = [
     ("es-false-contrast", "Nuestro servicio no es simplemente una app, es un equipo a tu lado."),
     ("es-false-contrast", "Estas jornadas no son solo charlas; son el punto de encuentro del sector."),
-    ("es-false-contrast", "No se trata de tener la tienda más grande; se trata de tener la que todos recuerdan."),
+    ("es-false-contrast", "No se trata de tener la tienda más grande, se trata de tener la que todos recuerdan."),
+    ("es-false-contrast", "No se trata de abrir antes; se trata de no cerrar a mediodía."),
     ("es-false-contrast", "Sin colas. Sin papeleo. Solo tu café."),
     ("es-staged-reveal", "Cambiamos de proveedor. ¿La diferencia? Pedidos en 24 horas."),
     ("es-staged-reveal", "La buena noticia es que el local ya tiene licencia."),

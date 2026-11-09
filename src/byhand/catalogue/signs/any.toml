@@ -543,9 +543,10 @@ what = "Says in the text that a language model or a named chatbot wrote it."
 instead = "Delete it and write as the author."
 strength = "strong"
 # French: only the role a model gives itself, followed by its "je"; "en tant qu'assistante de direction, je" is a
-# person's job. Spanish: the same role, then a comma and its first person, no puedo or no tengo; "como asistente
-# virtual" is a person's job too, and "como asistente de IA, no como sustituto" a person's contrast.
-check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智慧|人工智能)\s?(?:助手|助理|語言模型|语言模型)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:großes sprachmodell|ki|ki-assistent|ki-modell|ki-sprachmodell|künstliche intelligenz|sprachmodell),? (?:besitze|bin|darf|habe|kann|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b|\bcomo (?:una? )?(?:asistente de ia|gran modelo de lenguaje|ia|inteligencia artificial|modelo de lenguaje),\s?(?:yo )?no (?:dispongo|puedo|soy|tengo)\b'''
+# person's job. Spanish: the same role, opening a sentence or after "pero", then its first person (no puedo, no
+# tengo); "como asistente virtual" is a person's job too, "como asistente de IA, no como sustituto" a person's
+# contrast, and "lo venden como IA, no puedo creerlo" a person's comma splice (#53's review, F1).
+check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智慧|人工智能)\s?(?:助手|助理|語言模型|语言模型)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:großes sprachmodell|ki|ki-assistent|ki-modell|ki-sprachmodell|künstliche intelligenz|sprachmodell),? (?:besitze|bin|darf|habe|kann|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b|(?:^|[,.;:!?¡¿]\s?|\bpero )\W*como (?:una? )?(?:asistente de ia|gran modelo de lenguaje|ia|inteligencia artificial|modelo de lenguaje)(?: de ia)?,?\s?(?:yo )?no (?:cuento con|dispongo|me es posible|poseo|puedo|soy|tengo)\b'''
 flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [

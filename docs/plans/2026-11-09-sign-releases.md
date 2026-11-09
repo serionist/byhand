@@ -32,11 +32,11 @@ that any plugin change moved the version (Alternatives).
 
 One rule for every PR, by hand or from the refresh agent:
 
-| The PR changes | Version | `CHANGELOG.md` |
+| Of what a user's session reads (`plugin/`, but `plugin/evals/` and `plugin/README.md`), the PR changes | Version | `CHANGELOG.md` |
 |---|---|---|
-| `plugin/signs/` only, or fixes a skill | patch, `0.2.0` to `0.2.1` | a new `## <version> (<date>)` section above the newest, with its lines |
-| what a skill or agent does, or a one-way door (a minor may break one in `0.x`) | minor, by hand | the same |
-| nothing a user's session reads (`src/` alone, tests, docs, `plugin/evals/`, `plugin/README.md`) | none | none |
+| sign files only, or fixes a skill or an agent | patch, `0.2.0` to `0.2.1` | a new `## <version> (<date>)` section above the newest, with its lines |
+| anything else: what a skill or agent does, `plugin.json`, or a one-way door (a minor may break one in `0.x`) | minor, by hand | the same |
+| nothing (the package, tests, docs, the catalogue's sources alone) | none | none |
 
 `## Unreleased` goes: every line users would read lands in the section of the version that ships it. With an
 Unreleased section kept beside sign patches, a sign PR would ship whatever skill change waited there to existing users
@@ -51,9 +51,11 @@ The date is the day the PR sets it; a PR that waits keeps it, as the release PRs
 such PR writes. Its docstring loses the Unreleased sentence; the no-dated-section case still passes, for a repo before
 its first release.
 
-`check_version` gains one guard (Fit I1): a released section is frozen. At each range's fork point, read as
-`check_coverage_floor` reads its base (`fork_points`, `tree_has`), it takes the base's newest dated section; if the
-working tree still has a section for that version and its text differs, it fails: "0.2.0 is released: its lines go in
+`check_version` gains one guard (Fit I1): a released section is frozen. For each range it reads `CHANGELOG.md` where
+the range's fork point meets `origin/main` (`git merge-base <fork point> origin/main`), as `check_sign_ids` reads its
+ids, through one helper the two share (Round 1, I6), not at the fork point itself as `check_coverage_floor` does: pre-push's range starts at the branch's last push,
+whose newest section is the PR's own, not yet released (Round 1, P1). It takes that commit's newest dated section; if
+the working tree still has a section for that version and its text differs, it fails: "0.2.0 is released: its lines go in
 a new version's section, with plugin.json moved". So a line added to a released section, by habit or by a conflict
 resolved the wrong way (below), fails CI instead of merging under a version users already have. The refresh agent's
 model never edits `CHANGELOG.md`, and the publish job only adds a section above, so neither trips it.
@@ -76,15 +78,16 @@ date and the languages in each line, that is not a case worth a check.
 
 - **On** every `push` to `main`, no `paths` filter, and nothing else (Fit I3).
 - **Permissions:** `contents: write` in its one job, nothing at the top; `concurrency: release`, never cancelled.
-- **Steps:** check out the pushed commit (`persist-credentials: false`); read the version from `plugin.json`; if
-  `gh release view "v$version"` finds one, say so in the summary and stop; otherwise take the lines below
+- **Steps:** check out the pushed commit (`persist-credentials: false`); with `GH_TOKEN: ${{ github.token }}` in
+  the step's env (Round 1, I5), read the version from `plugin.json`; if `gh release view "v$version"` finds one, say so in the summary and stop; otherwise take the lines below
   `## <version> (` up to the next `## ` heading into a notes file, fail if there is no such section, and
   `gh release create "v$version" --target "$GITHUB_SHA" --title "byhand $version" --notes-file <notes>`, the command
   `docs/releasing.md` has the maintainer run today.
 
 A push by the maintainer's squash merge starts it. A push that doesn't move the version finds its release and stops
-in a few seconds. A run that failed (GitHub down) heals on the next push to `main`, which tags that head: the same
-files users get, since the marketplace serves the head. A push made with the workflow's token, as Dependabot's merges
+in a few seconds. A run that failed (GitHub down) is re-run from its page ("Re-run failed jobs" keeps its
+`GITHUB_SHA`, so the tag lands on the commit that set the version); left alone, the next push that keeps the version
+tags its own head, the same files users get, and one that moves it leaves the failed version untagged (Round 1, P2). A push made with the workflow's token, as Dependabot's merges
 are, starts no run; the next maintainer merge does.
 
 ### The refresh agent
@@ -97,8 +100,11 @@ The publish job, which runs no model, moves the version after its checks pass an
   `plugin/signs/`: the patch moved in `plugin.json` (the one `"version": "<old>"` string replaced, so the file's
   layout stays), and above the first `## ` heading of `CHANGELOG.md`, `## <new> (<today>)`, `### Changed` and one line
   the job writes from the paths: the `plugin/signs/<code>/` folders the diff touches, named from
-  `git show HEAD:src/byhand/catalogue/languages.toml` (the base's, not the model's tree), `any` as every language,
-  in alphabetical order: `- The signs for French and German, from the refresh of 2026-11-15.` Both files are staged
+  `git show HEAD:src/byhand/catalogue/languages.toml` (the base's, not the model's tree: its `[[language]]`,
+  `[[extra]]` and `[[variant]]` tables, a name "X, Y" written "Y X", so `zh-Hant` reads "Traditional Chinese"), in
+  alphabetical order, with `any` last as "the ones every language shares" (Round 1, I4): `- Signs for French and
+  German, and the ones every language shares, from the refresh of 2026-11-15.` A folder whose code the base doesn't
+  name fails the job, and nothing is published (Round 1, P3). Both files are staged
   with the rest; the commit and the PR go on as today. The PR body already lists each sign for the maintainer.
 
 A run that moved only `read_at` touches nothing under `plugin/`, and releases nothing.
@@ -136,13 +142,15 @@ workflow that may create tags and releases.
 1. **`release.yml`.** Test: it runs only on `main` (Step 7); before the merge, its notes extract, run by hand on this
    repo's `CHANGELOG.md` for `0.2.0`, gives that section's lines.
 2. **The refresh agent's publish job:** the bump and the line from the paths. Test: the step's Python run by hand on a
-   scratch branch with a staged change, once to `plugin/signs/de/` and `plugin/signs/any/` (the version moves, the
-   section reads "the signs for every language and German", `uv run tools/gate.py quick` passes the version check)
-   and once to `sources.toml` alone (nothing moves).
+   scratch branch with a staged change, once to `plugin/signs/de/`, `plugin/signs/zh-Hant/` and `plugin/signs/any/`
+   (the version moves, the line reads "Signs for German and Traditional Chinese, and the ones every language shares",
+   `uv run tools/gate.py quick` passes the version check), once to a folder `plugin/signs/xx/` (the job fails), and
+   once to `sources.toml` alone (nothing moves).
 3. **`tools/gate.py`:** the frozen-section guard in `check_version`, and `release_problems`' docstring. Test:
    `tests/test_gate.py`, a parametrised test of the guard's pure part (base and head changelogs: unchanged, a new
    section above, a line added under the released one, the released one gone), and `check_version` over a scratch
-   git repo, as the coverage floor's tests read a base.
+   git repo with an `origin/main`: a branch whose last push holds its own new section, reworded since, passes (the
+   pre-push range); a line added under `origin/main`'s newest section fails.
 4. **`CHANGELOG.md`:** `## Unreleased` removed.
 5. **The docs** (below).
 6. **finish-work:** `uv run tools/gate.py full`, `review-code` until clean, the PR.
@@ -166,7 +174,8 @@ workflow that may create tags and releases.
 - `AGENTS.md`: the `.github/` row gains `release.yml`; the `CHANGELOG.md` row says a dated section per version; within
   its 150 lines.
 - `.claude/skills/finish-work/SKILL.md`: step 1 and Never, for the rule.
-- `.claude/skills/propose-signs/SKILL.md`: step 8, the patch and its section.
+- `.claude/skills/propose-signs/SKILL.md`: step 8, the patch and its section, "from the refresh agent, its publish
+  job does this", since the agent's model reads this skill and may not edit either file (Round 1, P5).
 - `.claude/skills/review-code/lenses.md`: "Does the version move only in a release PR?" becomes "Does a change to the
   plugin move the version, with its own dated section?".
 - `.github/workflows/refresh-agent.yml`: its header comment names the bump.
@@ -181,7 +190,7 @@ workflow that may create tags and releases.
 |---|---|
 | Two PRs take the same version | the second conflicts in `CHANGELOG.md` and is rebased to the next patch; a wrong rebase fails the gate. Resolved |
 | A plugin PR forgets the bump | existing users wait for the next version, as they do today; a line added under the released version fails the gate. Accepted |
-| `release.yml` fails (GitHub down) | the version is on `main` and users update anyway; the next push to `main` tags it. Accepted |
+| `release.yml` fails (GitHub down) | the version is on `main` and users update anyway; GitHub mails the maintainer, who re-runs the failed run. Accepted |
 | A PR's date is its opening day, not its merge's | the same as the release PRs; the maintainer may change it. Accepted |
 
 ## Plan review
@@ -207,3 +216,35 @@ Noticed on the way, for Round 1: GitHub's conflict editor wouldn't move `plugin.
 at once); `review-code`'s lens "Does the version move only in a release PR?" contradicts the rule and wasn't in Docs;
 the rule's table placed no row for `plugin/README.md`; "a 12-character sha" and "a docs commit included" overstate
 the docs for a relative-path plugin (Alternatives).
+
+### Round 1
+
+**How:** a fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, read only, on the plan at `14c86bd`; it
+read CI's logs for how `base.sha` moves after a rebase, `gh release list`, and tried the guard's ranges in a scratch
+repo. P1 went to a fresh refuter on the same model, which reproduced it with the real pre-push stdin line and
+`hooks.push_ranges`, kept it major, and checked the fix in every place the gate runs. **Verdict:** needs-fixes.
+**Now:** every finding below fixed in the plan; Round 2 reads the edits.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P1 | major | The frozen-section guard, read at the range's fork point as the coverage floor is, refuses a PR's second push after its own changelog line is reworded: pre-push's range starts at the last push, whose newest section is the PR's own; the way past is `--no-verify`, and every plugin PR now dates a section | fixed: the guard reads `merge-base(<fork point>, origin/main)`, as `check_sign_ids` does; Step 3's test has a pre-push-shaped range |
+| P2 | minor | A failed `release.yml` run doesn't heal on the next push when that push moves the version: the failed one stays untagged | fixed: "Re-run failed jobs", which keeps the run's `GITHUB_SHA`; the Risks row says so |
+| P3 | minor | The publish job's line misses `zh-Hant`, a `[[variant]]` named "Chinese, Traditional", and says nothing of a folder code the base doesn't know | fixed: `[[language]]`, `[[extra]]` and `[[variant]]` read, "X, Y" written "Y X", an unknown code fails the job; Step 2 tests both |
+| P4 | minor | The rule's rows don't fit a normal sign PR, which touches the catalogue and tests too, and give an agent fix or a `plugin.json` change no row | fixed: the column reads "of what a user's session reads, the PR changes"; rows for signs or a fix, anything else, nothing |
+| P5 | minor | `propose-signs` step 8 would tell the refresh agent's model to bump a version it may not edit | fixed: the step says the publish job does it for the refresh agent |
+
+Refuted: a stale `base.sha` in CI (it is the head's merge base, and moves with a rebase, from this repo's runs); the
+guard in the draft job's shallow checkout (`origin/main` is its `GITHUB_SHA`, as `check_sign_ids` already reads it);
+the guard on CI's push to `main`; the publish job's bump (`git apply --index` leaves `HEAD` the base, and the path
+check refuses a model change to `plugin.json`); this PR's own merge releasing `v0.2.0` again (it exists); a release
+created twice (one release per tag, `concurrency: release`); Dependabot's merges starting a run; `claude plugin update`
+missing a new version; a check that every plugin change moves the version (in Alternatives, with its reason). The
+Fit's "Noticed on the way": each real, each fixed by the Fit's edits or accepted with its reason (identical sections).
+
+Owner calls: none.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I4 | The `any` folder as "the ones every language shares", as `CHANGELOG.md` words it, not "every language" | taken |
+| I5 | `GH_TOKEN` in `release.yml`'s step env, named, since `persist-credentials: false` leaves `gh` none and the slip would show only after the merge | taken |
+| I6 | One helper for main's base per range, shared by `check_sign_ids` and the guard (the refuter's) | taken |

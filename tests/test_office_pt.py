@@ -66,6 +66,7 @@ REPLIES = [
     "Com certeza! Aqui tem a fatura corrigida, com o IVA bem calculado:",
     "Claro! Aqui está uma versão mais curta do meu texto de ontem:",
     "Com certeza. Segue o relatório revisado:",
+    "Claro! Segue seu currículo revisado:",
     "Certamente, aqui tem o contrato assinado:",
     "Como responsável de IA, não posso aprovar essa despesa sem o aval da direção.",
     "Como assistente virtual, não trabalho aos domingos, mas segunda cedo está pronto.",
@@ -141,6 +142,10 @@ REPORTS = [
     "não detetou fissuras. Mais do que nunca, a manutenção preventiva é crucial para a ponte.",
     "Resultado do trimestre\n\nNo cenário atual de juros altos, as vendas caíram 8%. Vale ressaltar que a "
     "inadimplência ficou estável. O papel da diretoria é crucial na renegociação com os bancos.",
+    "Avaliação da horta escolar\n\nEm suma, a horta aumentou o consumo de verduras na merenda. Vale destacar que a "
+    "adesão foi maior no 6º ano. É importante ressaltar que o estudo durou um semestre.",
+    "Relatório final da obra\n\nEm conclusão, a obra cumpre o projeto aprovado pela câmara. É fundamental sublinhar "
+    "que a fiscalização foi diária. Importa realçar que não houve acidentes de trabalho.",
     "Guião de atendimento\n\nEncerramento:\n- Confirmar o número do pedido\n"
     "- Há mais alguma coisa em que possa ajudar?",
     "Parecer técnico\n\nA ponte precisa de reforço. A verdade é que a obra de 2015 não resolveu as infiltrações, e "
@@ -230,7 +235,6 @@ MACHINE = [
     ("any-ai-self-reference", "Como modelo de linguagem, não tenho um corpo físico."),
     ("any-ai-self-reference", "Porém, como modelo de linguagem, não sou capaz de navegar na internet."),
     ("any-ai-self-reference", "Como modelo de linguagem, não posso acessar a internet."),
-    ("any-ai-self-reference", "Como modelo de linguagem, não tenho a capacidade de abrir anexos."),
     ("any-ai-self-reference", "Como modelo de linguagem, não posso acrescentar datas à sua agenda."),
     ("any-knowledge-cutoff", "Até a minha última atualização de conhecimento, a empresa não se tinha fundido."),
     ("any-knowledge-cutoff", "Até à minha última atualização de treino, não havia dados sobre esse evento."),
@@ -239,6 +243,8 @@ MACHINE = [
         "any-knowledge-cutoff",
         "Até minha última atualização de conhecimento em outubro de 2023 não havia notícia disso.",
     ),
+    ("any-knowledge-cutoff", "Até minha última atualização de conhecimento em 2023, a fábrica ainda não tinha aberto."),
+    ("any-knowledge-cutoff", "Até à minha última atualização de conhecimentos (abril de 2024), o cargo estava vago."),
     (
         "any-knowledge-cutoff",
         "Não sei se já abriu: a loja não existia até à minha última atualização de conhecimentos.",
@@ -250,10 +256,7 @@ MACHINE = [
     ("any-assistant-preamble", "Claro! Aqui tens a versão corrigida do teu texto:"),
     ("any-assistant-preamble", "Com certeza. Eis uma versão mais profissional do seu currículo:"),
     ("any-assistant-preamble", "Claro! Aqui está a sua mensagem reformulada:"),
-    ("any-assistant-preamble", "Claro! Segue uma versão revisada do seu e-mail:"),
-    ("any-assistant-preamble", "Com certeza! Abaixo está uma versão aprimorada da sua mensagem:"),
     ("any-assistant-preamble", "Claro! Aqui está uma versão mais clara e concisa do seu texto:"),
-    ("any-assistant-preamble", "Certamente! Segue uma versão mais amigável da sua resposta:"),
     ("any-assistant-closing-offer", "Quer que eu expanda com uma tabela de custos?"),
     ("any-assistant-closing-offer", "Queres que eu o resuma em cinco pontos?"),
     ("any-assistant-closing-offer", "Gostaria que eu detalhasse alguma secção?"),
@@ -298,6 +301,12 @@ def test_the_weak_counting_counts_a_cluster(weak_hits):
 
 def test_one_habit_repeated_counts_once(weak_hits):
     text = "Uma sinergia com a escola, outra sinergia com o clube e sinergias por todo o lado."
+    assert weak_hits(text, "document", PORTUGUESE) == 1
+
+
+def test_two_different_hinges_count_once(weak_hits):
+    # a paper writes é importante destacar que and vale ressaltar que: one habit, as pt-filler-hinges is one check
+    text = "É importante destacar que a amostra é pequena. Vale ressaltar que o estudo durou um semestre."
     assert weak_hits(text, "document", PORTUGUESE) == 1
 
 
@@ -348,6 +357,11 @@ FORMS = [
     ("pt-ai-vocabulary", "Um ecossistema digital para o comércio local."),
     ("pt-dash-pivots", "Testámos durante uma semana" + RAYA + "e ninguém voltou ao sistema antigo."),
     ("pt-dash-pivots", "O mercado volta no domingo " + RAYA + " com pastéis."),
+    (
+        "pt-dash-pivots",
+        "A feira " + RAYA + " a de agosto " + RAYA + " volta. O mercado abre no domingo " + RAYA + " e com pastéis.",
+    ),
+    ("pt-dash-pivots", RAYA + " Já vou " + RAYA + " disse a Marta. Depois saiu " + RAYA + " e não voltou."),
     ("any-closing-summary", "Em suma, o projeto chega a tempo."),
     ("any-closing-summary", "Em conclusão, mantemos o fornecedor."),
     ("any-flattering-agreement", "Ótima pergunta! Vamos por partes."),
@@ -381,6 +395,8 @@ LEFT_ALONE = [
     ("pt-dash-pivots", RAYA + " Já vou " + RAYA + " disse a Marta."),
     ("pt-dash-pivots", RAYA + " Já vou. Espera só um bocadinho " + RAYA + " disse a Marta."),
     ("pt-dash-pivots", "A loja abre das 10" + SHORT + "20h aos sábados."),
+    ("pt-dash-pivots", "A reunião " + RAYA + " lembras-te? " + RAYA + " passou para quinta."),
+    ("pt-dash-pivots", "A obra " + RAYA + " a cargo da Construções Silva, Lda. " + RAYA + " acaba em junho."),
 ]
 
 

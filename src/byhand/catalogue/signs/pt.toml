@@ -119,13 +119,9 @@ models = "any"
 what = "Hangs a sentence on a hinge that only announces it: cabe ressaltar que, é importante destacar que, vale ressaltar que."
 instead = "Cut the hinge; the sentence says the same without it."
 strength = "weak"
-terms = [
-  { term = '''cabe (?:destacar|ressaltar|salientar) que''', instead = "cut" },
-  { term = '''é (?:essencial|fundamental|importante) (?:destacar|mencionar|ressaltar|salientar|sublinhar) que''', instead = "cut" },
-  { term = '''importa realçar que''', instead = "cut" },
-  { term = '''vale (?:destacar|mencionar|ressaltar) que''', instead = "cut" },
-  { term = '''vale a pena (?:destacar|mencionar|referir|ressaltar) que''', instead = "cut" },
-]
+# One check, not terms: a check is one habit however many hinges it finds, and a paper or a report that writes two
+# of them is still a person's (Andrade et al. write two).
+check = '''\b(?:cabe (?:destacar|ressaltar|salientar)|é (?:essencial|fundamental|importante) (?:destacar|mencionar|ressaltar|salientar|sublinhar)|importa realçar|vale (?:a pena )?(?:destacar|mencionar|ressaltar)|vale a pena referir) que\b'''
 flags = "Sobre a mudança de escritório, cabe ressaltar que as chaves novas chegam na segunda."
 passes = "Sobre a mudança de escritório: as chaves novas chegam na segunda e ficam com a Joana."
 sources = [
@@ -192,7 +188,7 @@ passes = "A cidade tem dois teatros, um cinema ao ar livre no verão e mercado �
 sources = [
   { source = "andrade-2026-portuguese", where = "3.1, Tabela 4: enfatizando among the ten most distinctive machine terms", seen = 2026-11-09 },
   { source = "evitar-escrita-ia", where = "SKILL.md, 1 Léxico, Nível 1A, commit a4b596e6f8b0", seen = 2026-11-09 },
-  { source = "humanizer-pt-br", where = "patterns/abordagem-holistica.yaml, adjetivo-robusto.yaml, ecossistema-metafora.yaml, sinergia.yaml and vamos-mergulhar.yaml, commit a18e130ad39e", seen = 2026-11-09 },
+  { source = "humanizer-pt-br", where = "patterns/abordagem-holistica.yaml, ecossistema-metafora.yaml, sinergia.yaml and vamos-mergulhar.yaml, commit a18e130ad39e", seen = 2026-11-09 },
 ]
 
 # Formatting: what the text looks like on the page.
@@ -205,9 +201,10 @@ models = "any"
 what = "Uses the long dash as a pivot: once in a sentence, before its punchline, or joined to the words on both sides. Portuguese sets an aside between two spaced travessões and opens dialogue with one."
 instead = "Use a colon, a comma or a full stop; keep the travessão for a real aside or dialogue."
 strength = "weak"
-# A sentence with one spaced dash and no second one before its end, on a line with no dash before it: an aside has
-# two, and a line of dialogue starts with one, so neither is found.
-check = '''[^\W\d_]—[^\W\d_]|^(?:[^—\n]*[.!?]\s+)?[^—.!?\n]+ — [^—.!?\n]+[.!?]'''
+# A sentence with one spaced dash and no second one before its end, after whole aside pairs only: an aside has two
+# (one may close after a ? or an abbreviation's full stop), and a line of dialogue starts with one, so neither is
+# found.
+check = '''[^\W\d_]—[^\W\d_]|^(?:(?:[^—\n]|—[^—\n]*—)*[.!?]\s+)?[^—.!?\n]+ — [^—.!?\n]+[.!?](?:\s*$|\s+[^—\s])'''
 flags = "A feira volta no domingo — e desta vez com pastéis de nata."
 passes = "A feira — que esteve fechada em agosto — volta no domingo, e desta vez com pastéis de nata."
 sources = [

@@ -286,7 +286,7 @@ model, which corrected its list of signs. Verdict: needs-fixes; fixed in place b
 | P8 | minor | A quotation no doc holds | fixed: a plain statement |
 | P9 | minor | The E6 row listed a look-only tell and topic-label headlines, which I2 rules out | fixed: the row says neither gives a sign |
 | P10 | minor | `scan` takes one to three check files; a deck's check passes up to six | fixed: Step 4 |
-| P11 | minor | The Read grader's pattern took no doubled backslash, as JSON gives a Windows path | fixed: `(?:/|\\)` in single-quoted YAML |
+| P11 | minor | The Read grader's pattern took no doubled backslash, as JSON gives a Windows path | fixed: a slash or two backslashes, in single-quoted YAML |
 | P12 | minor | `any` and `en` sharing a PR was cited to a plan that allows no such thing | fixed: its own reason |
 
 Refuted: a `[TBD]` check matching the outline's brackets (the plan gives no `[TBD]` sign, and no `any` pattern hits

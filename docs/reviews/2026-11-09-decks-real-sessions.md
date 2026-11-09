@@ -1,7 +1,7 @@
 ---
 subject: "Decks and sheets step 4, the skills tried in real sessions"
 base: main (f3ba1b4)
-head: 66-skills
+head: 66-skills (PR #91)
 date: 2026-11-09
 round: 1
 tier: by hand (Claude Code 2.1.319, Opus 5.5, Windows 11), headless sessions; the maintainer's own session still to come

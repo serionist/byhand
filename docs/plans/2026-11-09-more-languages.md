@@ -121,9 +121,9 @@ Unreleased, Added (a line per language), this plan's progress log.
 
 | Step | What | PR | State |
 |---|---|---|---|
-| 1 | es | | |
-| 2 | sources for pt, hi, ar | | |
-| 3 | #13 | | |
+| 1 | es | #53 | merged 2026-11-09 |
+| 2 | sources for pt, hi, ar | #52 | merged 2026-11-09; the order, from its research record: pt, ar, hi |
+| 3 | #13 | this PR | draft; a `\W` in a negated class, `[^\W\d_]` in `es-dash-pivots` and `fr-hashtag-block`, is read as Grep reads it, not refused as I8 had it: refusing it would change two signs' patterns |
 | 4 | pt, hi, ar | | |
 
 ## Plan review

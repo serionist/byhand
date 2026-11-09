@@ -161,9 +161,7 @@ def test_an_open_range_has_no_to(root):
 def test_a_signs_own_check_wins_over_its_terms(root):
     new = 'strength = "usual"\ncheck = "numbers"'
     assert problems_after(root, "signs/en.toml", 'strength = "usual"', new) == []
-    pattern = signs.load(root)[0].signs["en-delve"].pattern
-    assert pattern is not None
-    assert pattern.pattern == "numbers"
+    assert signs.load(root)[0].signs["en-delve"].grep == "numbers"
 
 
 def test_a_check_runs_line_by_line(root):
@@ -200,6 +198,68 @@ def test_text_compares_in_nfc(root):
     sign = sign.replace("The dog delved no holes; shelves delved nothing.", "Ez fontos.")
     (root / "signs" / "en.toml").write_text(sign, encoding="utf-8")
     assert signs.load(root)[1] == []
+
+
+INDIC = """
+[[source]]
+id = "wiki-indic"
+url = "https://hi.wikipedia.org/wiki/Example"
+kind = "wiki"
+languages = ["hi", "bn", "ar"]
+licence = "CC BY-SA 4.0"
+due = "weekly"
+feed = { api = "mediawiki", site = "hi.wikipedia.org", title = "Example" }
+read_at = { revision = "321", date = 2026-11-07 }
+"""
+NUKTA = "\u093c"
+SHUKRAN = "\u0634\u0643\u0631\u0627\u064b"  # alef, then the mark fathatan
+# Grep's regex counts a combining mark as a letter, Python's re doesn't (#13): a vowel sign or tanween at a term's edge,
+# or after its stem, reads otherwise. Each case: what it shows, the language, the term, a text it finds, one it doesn't.
+# Each failed before Python read a word as Grep does. The nukta and the Arabic are escapes, so no editor folds them.
+MARKS = [
+    ("no edge before a vowel sign", "hi", "महत्व", "यह महत्व की बात है।", "वह महत्वाकांक्षी है।"),
+    ("an edge after a vowel sign", "hi", f"बड{NUKTA}ी", f"यह बड{NUKTA}ी बात है।", "यह छोटी बात है।"),
+    ("a vowel sign in a stem", "hi", r"कर\w*ना", "उसे काम करवाना है।", "उसे काम है।"),
+    ("a vowel sign in a class", "hi", r"कर[\w-]*ना", "उसे काम करवाना है।", "उसे काम है।"),
+    ("a vowel sign in a negated class", "hi", r"कर[^\W\d_]*ना", "उसे काम करवाना है।", "उसे काम है।"),
+    ("a vowel sign in a class of words", "hi", r"कर[^\W]*ना", "उसे काम करवाना है।", "उसे काम है।"),
+    ("a vowel sign is no non-word", "hi", r"महत्व\W", "यह महत्व की बात है।", "वह महत्वाकांक्षी है।"),
+    ("no edge before a Bengali vowel sign", "bn", "কাজ", "এটা ভালো কাজ।", "তিনি কাজী।"),
+    ("an edge after tanween", "ar", SHUKRAN, f"{SHUKRAN} \u0644\u0643", "\u0645\u0631\u062d\u0628\u0627"),
+]
+
+
+def write_sign(root, language, term, flags, passes):
+    """en-delve, moved to another language with its own term and texts."""
+    (root / "sources.toml").write_text(SOURCES + INDIC, encoding="utf-8")
+    sign = (
+        SIGN.replace("en-delve", f"{language}-delve")
+        .replace("delv(?:e|es|ing)", term.replace("\\", "\\\\"))
+        .replace("Let us delve into the numbers.", flags)
+        .replace("The dog delved no holes; shelves delved nothing.", passes)
+        .replace('source = "wiki-en"', 'source = "wiki-indic"')
+    )
+    (root / "signs" / f"{language}.toml").write_text(sign, encoding="utf-8")
+    (root / "signs" / "en.toml").unlink()
+
+
+@pytest.mark.parametrize("case", MARKS, ids=[case[0] for case in MARKS])
+def test_a_term_reads_combining_marks_as_grep_does(root, case):
+    write_sign(root, *case[1:])
+    assert signs.load(root)[1] == []
+
+
+def test_a_check_file_prints_the_pattern_as_written_in_nfc(root):
+    # Grep gets the text, never Python's reading of it: Grep refuses the look-around `\b` becomes (#13). U+095C, the
+    # letter with its nukta in one, is in NFC the letter and then the nukta, as `flags` is.
+    write_sign(root, "hi", "ब\u095cी", f"यह बड{NUKTA}ी बात है।", "हाँ।")
+    found, problems = signs.load(root)
+    assert problems == []
+    sign = found.signs["hi-delve"]
+    assert sign.grep == rf"\b(?:(?:बड{NUKTA}ी))\b"
+    assert f"Pattern: `{sign.grep}`" in render.render(found)["hi/check.md"]
+    assert sign.pattern is not None
+    assert "(?<" in sign.pattern.pattern
 
 
 # Each case: the file, the text replaced in it, its replacement, what the problem says.
@@ -415,6 +475,7 @@ PYTHON_ONLY = [
     (r"delve \—", r"\—"),
     (r"[\—-]? delve", r"[\—-]"),
     (r"[\b]delve", r"[\b]"),
+    (r"[\W]delve", r"[\W]"),
     ("del{\N{ARABIC-INDIC DIGIT ONE}}ve", "{"),  # a digit, but not one a count takes
 ]
 # What both read alike on one line, the scoped and global flags the catalogue uses among them; each finds `flags` and

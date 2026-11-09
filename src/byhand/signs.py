@@ -8,6 +8,7 @@ misspelt `untill` would otherwise retire nothing, and a misspelt `[[signs]]` wou
 from __future__ import annotations
 
 import datetime
+import functools
 import re
 import tomllib
 import unicodedata
@@ -44,7 +45,8 @@ _SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 # against these flags.
 _FLAGS = re.IGNORECASE | re.MULTILINE
 # A check also runs through Claude Code's Grep, which is ripgrep: the Rust regex crate, not Python's re. A check uses
-# only what both read alike, and `_python_only` refuses the rest. Part of the schema.
+# only what both read alike, and `_python_only` refuses the rest, but for a word's letters and edges, which Python is
+# given as Grep reads them (`as_grep`). Part of the schema.
 #
 # A pattern in the pieces where the two differ, and anything else one character at a time. A class is read as Python
 # reads it: to its first `]` that isn't escaped or first in it.
@@ -68,8 +70,15 @@ _COUNT = re.compile(r"\{[0-9]+(?:,[0-9]*)?\}")
 # character outside ASCII, such as `\—`, which Python reads as the character.
 _PYTHON_ESCAPES = frozenset(("\\b{", *(f"\\{c}" for c in "ZN<>0123456789")))
 # In a class, Grep reads a `[` as a class within it, and `&&`, `--` and `~~` as operations on two classes. It refuses
-# `\b` there, which Python reads as a backspace.
+# `\b` there, which Python reads as a backspace. A `\W` there is refused too, but in a negated class: Python's would
+# take in every mark, and only `[^\W...]`, a word character but those listed, has a reading for Python.
 _CLASS_OPERATORS = ("[", "&&", "--", "~~")
+# Grep's word characters that Python's `\w` leaves out: the combining marks (an Indic vowel sign, the nukta, Arabic
+# tanween), every connector punctuation, not only `_`, and the joiners ZWNJ and ZWJ. Python's re has no `\p{M}`, so
+# `_word_extra` lists them from `unicodedata`. Grep's `\w` also leaves out `No` (², ½) and takes a few `So` (Ⓐ): no
+# sign has a term against them.
+_WORD_CATEGORIES = ("Mn", "Mc", "Me", "Pc")
+_JOINERS = (0x200C, 0x200D)
 
 Table = dict[str, Any]
 
@@ -108,7 +117,8 @@ class Sign:
     strength: str
     flags: str
     passes: str
-    pattern: re.Pattern[str] | None  # None for a sign only the model's own read can find
+    pattern: re.Pattern[str] | None  # None for a sign only the model's own read can find; else `grep`, read as Grep
+    grep: str = ""  # the pattern as written, in NFC: what Grep runs, and what a check file prints
     terms: tuple[Term, ...] = ()
     until: datetime.date | None = None  # set, the sign is retired: it keeps its id and renders nowhere
 
@@ -186,7 +196,8 @@ def _python_set(piece: str) -> bool:
     escapes = re.findall(r"\\.", piece)
     # An escape stands as one plain character, so `[-\d-]` doesn't read as `--`.
     rest = re.sub(r"\\.", "e", piece[1:])
-    return any(_python_escape(escape) or escape == r"\b" for escape in escapes) or any(
+    refused = (r"\b",) if piece.startswith("[^") else (r"\b", r"\W")
+    return any(_python_escape(escape) or escape in refused for escape in escapes) or any(
         op in rest for op in _CLASS_OPERATORS
     )
 
@@ -208,18 +219,74 @@ def _python_only(pattern: str) -> str | None:
     return None
 
 
-def _compile(where: str, pattern: str) -> tuple[re.Pattern[str] | None, list[str]]:
-    """Python first: what it can't read is its error, not Grep's. Its warning on a class such as `[[` goes unshown, as
-    `_python_only` refuses that class with a problem of its own."""
+@functools.cache
+def _word_extra() -> str:
+    """The ranges, inside a class beside `\\w`, of Grep's word characters that Python's leaves out. Each is the
+    character itself: none of them is `]`, `\\`, `^` or `-`. Found once, from every code point."""
+    found = [n for n in range(0x110000) if unicodedata.category(chr(n)) in _WORD_CATEGORIES or n in _JOINERS]
+    ranges: list[list[int]] = []
+    for n in found:
+        if ranges and ranges[-1][1] == n - 1:
+            ranges[-1][1] = n
+        else:
+            ranges.append([n, n])
+    return "".join(chr(low) if low == high else f"{chr(low)}-{chr(high)}" for low, high in ranges)
+
+
+@functools.cache
+def _as_grep_escapes() -> dict[str, str]:
+    """What Python is given for each escape it reads otherwise than Grep. Its `\\b` is look-around, which Grep refuses:
+    only Python ever compiles it, and the check files print the pattern as written."""
+    word = rf"[\w{_word_extra()}]"
+    return {
+        r"\w": word,
+        r"\W": rf"[^\w{_word_extra()}]",
+        r"\b": rf"(?:(?<!{word})(?={word})|(?<={word})(?!{word}))",
+    }
+
+
+def _in_class(escape: re.Match[str]) -> str:
+    return {r"\w": rf"\w{_word_extra()}", r"\W": ""}.get(escape.group(), escape.group())
+
+
+def _as_grep_class(piece: str) -> str:
+    """A class as Grep reads it. A `\\W` stands only in a negated class, as `_python_set` holds: `[^\\W\\d_]` is a
+    word character but a digit or `_`, which Python reads as one that the class without its `\\W` lets through."""
+    read = re.sub(r"\\.", _in_class, piece)
+    if r"\W" not in re.findall(r"\\.", piece):
+        return read
+    word = _as_grep_escapes()[r"\w"]
+    return word if read == "[^]" else f"(?:(?={word}){read})"
+
+
+def as_grep(pattern: str) -> re.Pattern[str]:
+    """A pattern Grep runs, compiled for Python to read as Grep does: in NFC, with the schema's flags, and with `\\w`,
+    `\\W` and `\\b` taking marks and joiners as word characters wherever they stand, a class included. `validate` and
+    the tests search with this, on patterns `validate` passes."""
+    pieces = []
+    for match in _PIECE.finditer(_nfc(pattern)):
+        piece = match.group()
+        if match.lastgroup == "escape":
+            piece = _as_grep_escapes().get(piece, piece)
+        elif match.lastgroup == "set":
+            piece = _as_grep_class(piece)
+        pieces.append(piece)
+    return re.compile("".join(pieces), _FLAGS)
+
+
+def _checked(where: str, pattern: str) -> tuple[str | None, list[str]]:
+    """The pattern in NFC, as Grep gets it, or None and why not. Python first: what it can't read is its error, not
+    Grep's. Its warning on a class such as `[[` goes unshown, as `_python_only` refuses that class with a problem of its
+    own."""
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", FutureWarning)
-            compiled = re.compile(_nfc(pattern), _FLAGS)
+            re.compile(_nfc(pattern), _FLAGS)
     except re.error as exc:
         return None, [f"{where}: not a regular expression: {exc}"]
     if piece := _python_only(pattern):
         return None, [f"{where}: Grep can't run `{piece}` as Python's re does: {pattern}"]
-    return compiled, []
+    return _nfc(pattern), []
 
 
 def load_languages(root: Path, catalogue: Catalogue) -> list[str]:
@@ -388,7 +455,7 @@ def _models(where: str, models: object, catalogue: Catalogue) -> tuple[tuple[Mod
     return tuple(ranges), problems
 
 
-def _terms(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Pattern[str] | None, list[str]]:
+def _terms(where: str, row: Table, language: str, spaces: bool) -> tuple[str | None, list[str]]:
     """The one pattern a sign's terms make. In a language written with spaces a term stands as a word of its own, so
     `delve` doesn't match inside another word; in one written without, there is no such edge to look for. An `any` sign
     has no one edge, so it writes its own `check`."""
@@ -410,10 +477,10 @@ def _terms(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Patt
     if problems:
         return None, sorted(set(problems))
     body = "|".join(f"(?:{term['term']})" for term in terms)
-    return _compile(where, rf"\b(?:{body})\b" if spaces else body)
+    return _checked(where, rf"\b(?:{body})\b" if spaces else body)
 
 
-def _pattern(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Pattern[str] | None, list[str]]:
+def _pattern(where: str, row: Table, language: str, spaces: bool) -> tuple[str | None, list[str]]:
     """A sign's own `check`, which wins over its terms: it is how a term that can't stand alone is matched."""
     built, problems = _terms(where, row, language, spaces)
     category = row.get("category")
@@ -425,7 +492,7 @@ def _pattern(where: str, row: Table, language: str, spaces: bool) -> tuple[re.Pa
         return built, problems
     if not isinstance(row["check"], str):
         return None, [*problems, f"{where}: `check` must be text"]
-    own, wrong = _compile(where, row["check"])
+    own, wrong = _checked(where, row["check"])
     return own, problems + wrong
 
 
@@ -517,7 +584,8 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
     problems += _text(where, row, "what") + _text(where, row, "instead")
     models, wrong = _models(where, row.get("models"), catalogue)
     entry = catalogue.languages.get(language)
-    pattern, wrong_pattern = _pattern(where, row, language, entry.spaces if entry else True)
+    grep, wrong_pattern = _pattern(where, row, language, entry.spaces if entry else True)
+    pattern = None if grep is None else as_grep(grep)
     problems += wrong + wrong_pattern + _examples(where, row, pattern)
     problems += _sign_sources(where, row, language, catalogue) + _dates(where, row)
     kinds = row.get("kinds")
@@ -533,6 +601,7 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
         str(row.get("flags", "")),
         str(row.get("passes", "")),
         pattern,
+        grep or "",
         _term_list(row),
         row.get("until") if _is_date(row.get("until")) else None,
     )

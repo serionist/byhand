@@ -299,13 +299,11 @@ def test_hungarian_alternations_run_in_alphabetical_order(catalogue, alternative
         (sign.id, term.term) for sign in catalogue.signs.values() if sign.language == "hu" for term in sign.terms
     ]
     regexes += [
-        (sign.id, sign.pattern.pattern)
+        (sign.id, sign.grep)
         for sign in catalogue.signs.values()
         if sign.language == "hu" and sign.pattern and not sign.terms
     ]
-    didactic = catalogue.signs["any-didactic-aside"].pattern
-    assert didactic is not None
-    regexes.append(("any-didactic-aside", didactic.pattern))
+    regexes.append(("any-didactic-aside", catalogue.signs["any-didactic-aside"].grep))
     assert sum(len(_groups(regex)) for _, regex in regexes) >= 15  # the parse finds the groups, so the test can fail
     wrong = [(sign, items) for sign, regex in regexes for items in _misordered(regex, alternatives)]
     assert wrong == []

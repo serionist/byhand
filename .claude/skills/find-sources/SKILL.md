@@ -75,4 +75,4 @@ maintainer asks, never on a schedule. `docs/research/2026-11-06-sources.md` is h
 |---|---|---|
 | A paper's own notice said CC BY-ND; its ACL Anthology page said CC BY | the first run, 2026-11-09 | Read the licence on the work itself; when two differ, the stricter holds |
 | A repo's NOTICE hid a zero-width watermark in its text | the first run | Copy nothing from a page but its URL, title, licence and revision |
-| A script printing a Spanish page title crashed on the Windows console (cp1252) | the first run | Set `PYTHONIOENCODING=utf-8` (PowerShell: `$env:PYTHONIOENCODING = "utf-8"`) for a script that prints fetched text |
+| A script printing a Spanish page title crashed on the Windows console (cp1252) | the first run | Set `PYTHONIOENCODING=utf-8` (PowerShell: `$env:PYTHONIOENCODING = "utf-8"`) for a script that prints fetched text; under `python -I`, which ignores it, pass `-X utf8` (the pt, hi and ar run) |

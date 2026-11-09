@@ -459,15 +459,33 @@ id = "ja-count-titles"
 category = "structure"
 kinds = ["deck"]
 models = "any"
-what = "Titles a slide by how many items it holds, three reasons or five steps, where the title could state the point."
+what = "Titles a slide by how many items it holds, five steps or three reasons, where the title could state the point."
 instead = "Title the slide with what its items show; keep a number only when the number is the point: an amount, a share, a span of time."
 strength = "weak"
-# A slide title in the outline form; 3割, 3月 and 3点 are figures, not a count of the slide's items.
-check = '^#{1,6} .*[1-9１-９一二三四五六七八九]つの'
-flags = "## 2. 予約をオンラインに移す3つの理由"
+# A slide title in the outline form; 3割, 3月 and 3点 are figures, not a count of the slide's items, and 一つの is a
+# single one.
+check = '^#{1,6} .*[2-9２-９二三四五六七八九]つの'
+flags = "## 2. 窓口を減らすための4つの施策"
 passes = "## 2. 電話予約は半年で3割減った"
 sources = [
   { source = "jinba-consulting-pptx", where = "references/slide-rules.md, 2.4: AI puts the count of a slide's items in its title; 4.103: its check fails a deck with three titles bundled by a count, commit 60affb5ea3fe", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "ja-emoji-titles"
+category = "formatting"
+kinds = ["deck"]
+models = "any"
+what = "Opens slide titles with an emoji or a tick, as decoration."
+instead = "Let the title's words stand alone."
+strength = "weak"
+# A slide title in the outline form, its number before the emoji or none. Emoji on bullets are no sign in a deck:
+# people's slides hold more of them (any-emoji-markers' note).
+check = '^#{1,6} (?:[0-9]+\. )?[\U0001F300-\U0001FAFF✅❌✨⚡⭐]'
+flags = "## 1. 🚀 新しい受付の流れ\n## 2. 📊 先月の待ち時間"
+passes = "## 1. 新しい受付の流れ\n## 2. 先月の待ち時間\n- 📦 4月から稼働"
+sources = [
+  { source = "jinba-consulting-pptx", where = "references/ai-smell-lexicon.md, 0. 実際にレビューで直された核 and 3. トーン・締め（尻尾を消す）: emoji before headings, which reviewers marked as AI-like, commit 60affb5ea3fe", seen = 2026-11-09 },
 ]
 
 # Tied to a model family.

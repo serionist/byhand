@@ -170,7 +170,7 @@ def test_no_sign_that_counts_alone_fires_on_plain_german_work_text(counted_alone
     assert fired == []
 
 
-def test_a_service_desk_s_closing_line_meets_a_sign_that_reads_only_documents(catalogue):
+def test_a_service_desk_s_closing_line_meets_a_sign_that_reads_only_documents_and_decks(catalogue):
     # the maintainer's call on #23: the chatbot's line and the service desk's are the same words, so the sign stays
     # strong for documents, where no person writes it, and never reads mail; a slide's text is no service desk's (#66)
     offer = catalogue.signs["any-assistant-closing-offer"]

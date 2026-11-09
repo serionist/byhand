@@ -886,8 +886,8 @@ models = "any"
 what = "Sets a kicker over slide after slide's title: a short label, often in capitals or, in another language's deck, in English, naming the topic the title then states."
 instead = "Open each slide with its title; mark a new part of the talk with a divider slide, not a label on every slide."
 strength = "usual"
-flags = "WHY NOW\nPhone orders fell 30% this year\n\nHOW IT WORKS\nCustomers pick a slot the day before"
-passes = "Phone orders fell 30% this year\n\nCustomers pick a slot the day before"
+flags = "## 1. Phone orders fell 30% this year\nWHY NOW, above the title\n\n## 2. Customers pick a slot the day before\nHOW IT WORKS, above the title"
+passes = "## 1. Phone orders fell 30% this year\n\n## 2. Customers pick a slot the day before"
 sources = [
   { source = "analyst-academy-not-ai-decks", where = "Visual redesign, 18 Anything above the title: 46% of generated slides, 8% of people's", seen = 2026-11-09 },
   { source = "plusai-2026-slides", where = "Pattern 2: Colored accent bars and eyebrow text", seen = 2026-11-09 },
@@ -900,7 +900,7 @@ category = "layout"
 kinds = ["deck"]
 models = "any"
 what = "Ends slide after slide on a takeaway box or a bar along the bottom that says again what the title or the body has just said."
-instead = "Let the title carry the point; keep a last line only for something new: a number, a decision, or what the next slide answers."
+instead = "Let the title carry the point; keep a last line only for something new: a decision, a number, or what the next slide answers."
 strength = "usual"
 flags = "## 3. Phone orders are falling\nPhone orders fell from 420 in March to 290 in September.\nKey takeaway: phone orders are falling."
 passes = "## 3. Phone orders are falling\nPhone orders fell from 420 in March to 290 in September.\nNext: what online booking would cost us."
@@ -933,7 +933,7 @@ id = "any-invented-figures"
 category = "structure"
 kinds = ["deck", "sheet"]
 models = "any"
-what = "Puts figures nobody gave it on a slide or in a sheet: round percentages and multiples with no source, or sample rows made up to fill a table."
+what = "Puts figures nobody gave it on a slide or in a sheet: multiples and round percentages with no source, or sample rows made up to fill a table."
 instead = "Use the user's figures and say where each comes from; where one is missing, leave the cell empty or name it for the user to fill."
 strength = "weak"
 flags = "## 4. Why online booking\n- 40% fewer no-shows\n- 3x more repeat visits\n- 98% of patients prefer it"
@@ -953,8 +953,9 @@ models = "any"
 what = "Writes a formula as English Excel takes it, commas between the arguments, in a sheet whose Excel takes semicolons."
 instead = "Use the sheet's own separator, a semicolon in French or Portuguese Excel, unless the user works in an English Excel."
 strength = "weak"
-# French: after a formula's =, with no semicolon on the way, a function whose brackets hold a comma and no semicolon;
-# a decimal comma beside a semicolon passes, as does one outside a function's brackets.
+# French: after a formula's =, with no semicolon on the way, a function whose brackets hold a comma and no semicolon.
+# A decimal comma outside a function's brackets passes, as does one in brackets a semicolon shares; one inside a
+# function of one argument, =RACINE(B2*1,5), is flagged, as English Excel would read two arguments: accepted, as weak.
 check.fr = '=[^;]*\w\([^;()]*,[^;()]*\)'
 # Portuguese likewise.
 check.pt = '=[^;]*\w\([^;()]*,[^;()]*\)'

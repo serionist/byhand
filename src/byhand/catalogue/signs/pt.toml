@@ -1,0 +1,220 @@
+# Portuguese's signs, for Brazil, Portugal and the rest alike: a variety is no sign of AI (wikipedia-pt says so), and a
+# sign that held for one variety only would be left out. A sign here cites a source that covers Portuguese; the shape
+# of a sign is in `any.toml`. A term is a regular-expression fragment, and `validate` wraps the list in `\b`, so a term
+# starts and ends at a word's edge. Portuguese inflects for gender, number and person, so a term lists its forms.
+#
+# Order: every alternation, every term list and every list of examples in a `what` or `instead` runs in alphabetical
+# order of its plain text, accents and case ignored, as in every language (tests/test_order.py).
+#
+# What these rest on: Andrade et al. 2026 measured Sabiá-3's Brazilian fake news against people's; Resende and
+# Castilho 2026 measured GPT-4o's Brazilian story; evitar-escrita-ia (European) and humanizer-pt-br (Brazilian) list
+# tells for a rewriting skill, with no evidence of their own: humanizer-pt-br's counts are of texts Grok was asked to
+# fill with tells, so a list item of either is used only beside a second source. None measured work mail, and no native
+# speaker has read these yet. So every Portuguese sign is weak until one does, and a sign that counts alone would have
+# no pattern: the model reads for it. The Portuguese checks read posts and documents, but the dash, as the set phrases
+# of mail (Fico à disposição, Qualquer dúvida, é só dizer, Sem mais para o momento) are a person's.
+# A calque of English (a full stop after a list label, alavancar, endereçar um problema, Espero que esta mensagem o
+# encontre bem, Title Case) is translationese, which people write too: no source measures models writing one more than
+# people, so none has a sign. Brazilian forms in text for Portugal, or European ones in Brazil, are a variety, not a
+# sign. Portuguese typography is no tell either: the travessão before dialogue and around a spaced aside, « » and “ ”.
+# tests/test_office_pt.py holds plain mail, chat and reports from both varieties against every sign that counts alone,
+# and against a weak cluster.
+
+# Structure: how the text is built.
+
+[[sign]]
+id = "pt-false-contrast"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+# any-negative-parallelism says what the habit is; this sign holds its Portuguese forms and their check. "Não só X,
+# mas também Y" and "não se trata de X, mas de Y" are ordinary Portuguese and the check leaves them alone.
+what = "The Portuguese forms of a set-up contrast: não é apenas… é…, or não se trata de… trata-se de…"
+instead = "Say what the thing is or does, with a figure or an example; drop the foil."
+strength = "weak"
+check = '''\bnão (?:é|são) (?:apenas|meramente|simplesmente|só|somente) [^.!?;:\n]{1,60}[,;:]\s*(?:é|são)\b|\bnão se trata (?:apenas |só )?de [^.!?;\n]{1,60}[,.;]\s*(?:se trata|trata-se) de\b'''
+flags = "A biblioteca municipal não é apenas um sítio de livros, é a sala de estar da vila."
+passes = "A biblioteca municipal não é só para sócios: qualquer morador pode requisitar livros ao sábado."
+sources = [
+  { source = "evitar-escrita-ia", where = "SKILL.md, 2 Sintaxe e construções, commit a4b596e6f8b0", seen = 2026-11-09 },
+  { source = "wikipedia-pt", where = "Paralelismos negativos, revision 73274816", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "pt-modifier-load"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Loads nouns with adjectives and intensifiers, in longer and rarer words than people use, with fewer verbs and pronouns."
+instead = "Keep the adjective that tells something; let a verb, a number or a name carry the rest."
+strength = "weak"
+flags = "Uma iniciativa extraordinariamente ambiciosa e profundamente inovadora para uma feira tradicional, acolhedora e singular."
+passes = "A associação pede duas bancas novas para a feira de domingo e um toldo para quando chove."
+sources = [
+  { source = "andrade-2026-portuguese", where = "3.1, Tabela 4: intensifying adverbs and adjectives among the most distinctive machine terms; 3.2: 2.39 against 2.17 syllables a word; 3.3: more adjectives, fewer verbs and pronouns; Sabiá-3 against people's fake news", seen = 2026-11-09 },
+  { source = "resende-castilho-2026-style", where = "3.1: GPT-4o's Brazilian original denser in content words (0.540 against 0.485) and in rarer ones", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "pt-even-sentences"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Keeps sentences close to one length, where people mix short ones with long ones."
+instead = "Let a short sentence follow a long one where the thought needs it."
+strength = "weak"
+flags = "O armazém fecha às seis da tarde. As entregas chegam sempre de manhã. O inventário faz-se ao fim do mês. A equipa tem agora oito pessoas."
+passes = "O armazém fecha às seis. As entregas chegam de manhã, quase sempre antes das nove, e o inventário faz-se no último sábado do mês, com a equipa toda, que agora são oito."
+sources = [
+  { source = "andrade-2026-portuguese", where = "3.2, Tabela 5: syllables a sentence vary far more in people's texts (standard deviation 32.97 against 9.93); 3.4, Tabela 8: so do rules a sentence", seen = 2026-11-09 },
+  { source = "evitar-escrita-ia", where = "SKILL.md, 6 Ritmo e estrutura, commit a4b596e6f8b0", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "pt-stacked-connectors"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+what = "Opens sentence after sentence with ademais, adicionalmente, além disso or outrossim; one of them is ordinary Portuguese."
+instead = "Join the facts with e or também, or let their order carry the link."
+strength = "weak"
+flags = "O pavilhão reabre em janeiro. Além disso, o ginásio tem piso novo. Ademais, os balneários foram renovados. Outrossim, a mensalidade não muda."
+passes = "O pavilhão reabre em janeiro com piso novo no ginásio e balneários renovados; a mensalidade não muda."
+sources = [
+  { source = "humanizer-pt-br", where = "patterns/conectivo-empilhado.yaml, commit a18e130ad39e", seen = 2026-11-09 },
+  { source = "evitar-escrita-ia", where = "SKILL.md, 3 Transições e conectores, commit a4b596e6f8b0", seen = 2026-11-09 },
+  { source = "wikipedia-pt", where = "Indícios que não funcionam: a lone connector is a weak sign, revision 73274816", seen = 2026-11-09 },
+]
+
+# Phrases.
+
+[[sign]]
+id = "pt-closing-cheer"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Ends on a cheer that says nothing: o céu é o limite, o futuro é promissor, só o tempo dirá."
+instead = "End on the next step or the last fact."
+strength = "weak"
+terms = [
+  { term = '''o céu é o limite''', instead = "cut" },
+  { term = '''o futuro é promissor''', instead = "cut" },
+  { term = '''o melhor ainda está por vir''', instead = "name what comes next" },
+  { term = '''só o tempo dirá''', instead = "cut" },
+]
+flags = "A loja nova abre na sexta, com café para todos. O futuro é promissor!"
+passes = "A loja nova abre na sexta às nove, com café para quem chegar cedo."
+sources = [
+  { source = "humanizer-pt-br", where = "patterns/fechamento-motivacional.yaml, commit a18e130ad39e", seen = 2026-11-09 },
+  { source = "evitar-escrita-ia", where = "SKILL.md, 1 Léxico, Nível 1A; 4 Aberturas e fechos, Fecho genérico, commit a4b596e6f8b0", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "pt-filler-hinges"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Hangs a sentence on a hinge that only announces it: cabe ressaltar que, é importante destacar que, vale salientar que."
+instead = "Cut the hinge; the sentence says the same without it."
+strength = "weak"
+terms = [
+  { term = '''cabe (?:destacar|ressaltar|salientar) que''', instead = "cut" },
+  { term = '''é (?:essencial|fundamental|importante) (?:destacar|mencionar|ressaltar|salientar|sublinhar) que''', instead = "cut" },
+  { term = '''importa (?:realçar|referir|sublinhar) que''', instead = "cut" },
+  { term = '''vale (?:a pena )?(?:destacar|mencionar|referir|ressaltar|salientar) que''', instead = "cut" },
+]
+flags = "Sobre a mudança de escritório, cabe ressaltar que as chaves novas chegam na segunda."
+passes = "Sobre a mudança de escritório: as chaves novas chegam na segunda e ficam com a Joana."
+sources = [
+  { source = "humanizer-pt-br", where = "patterns/importante-destacar.yaml and vale-ressaltar.yaml, commit a18e130ad39e", seen = 2026-11-09 },
+  { source = "evitar-escrita-ia", where = "SKILL.md, 3 Transições e conectores, commit a4b596e6f8b0", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "pt-inflated-stakes"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Frames a plain fact as an epoch or a turning point: mais do que nunca, na era digital, num mundo cada vez mais…, um divisor de águas."
+instead = "Give the date, the number or the change itself."
+strength = "weak"
+terms = [
+  { term = '''divisor de águas''', instead = "say what changed" },
+  { term = '''(?:em um|num) mundo cada vez mais''', instead = "cut" },
+  { term = '''mais do que nunca''', instead = "cut, or give the date" },
+  { term = '''na era (?:da ia|da inteligência artificial|digital)''', instead = "cut" },
+  { term = '''no (?:cenário|mundo) atual''', instead = "cut" },
+]
+flags = "Na era digital, a papelaria do bairro foi um divisor de águas para quem ainda escreve à mão."
+passes = "A papelaria do bairro abre às nove e vende cadernos pautados a dois euros."
+sources = [
+  { source = "humanizer-pt-br", where = "patterns/abertura-cada-vez-mais.yaml, abertura-mundo-atual.yaml and mais-do-que-nunca.yaml, commit a18e130ad39e", seen = 2026-11-09 },
+  { source = "evitar-escrita-ia", where = "SKILL.md, 1 Léxico, Nível 1A; 4 Aberturas e fechos, commit a4b596e6f8b0", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "pt-staged-reveal"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Stages a point before making it: a question it answers at once (O resultado?), or já parou para pensar…?"
+instead = "State the point; let the fact carry it."
+strength = "weak"
+check = '''\b(?:[ao] (?:detalhe|diferença|resultado|segredo)|e a melhor parte)\?\s+\S|\bjá (?:paraste|parou) para pensar\b'''
+flags = "Trocámos de fornecedor de café. O resultado? A sala de reuniões está sempre cheia."
+passes = "Trocámos de fornecedor de café e a sala de reuniões anda mais cheia. O resultado da votação sai amanhã?"
+sources = [
+  { source = "evitar-escrita-ia", where = "SKILL.md, 8 Dialeto LinkedIn e Instagram, Ganchos de infomercial, commit a4b596e6f8b0", seen = 2026-11-09 },
+  { source = "humanizer-pt-br", where = "patterns/pergunta-retorica.yaml, commit a18e130ad39e", seen = 2026-11-09 },
+]
+
+# Words.
+
+[[sign]]
+id = "pt-ai-vocabulary"
+category = "word"
+kinds = ["post", "document"]
+models = "any"
+what = "Leans on the words Portuguese model prose favours: abrangente, crucial, enfatizando, holístico, robusto, sinergia, vibrante. One alone is ordinary Portuguese."
+instead = "Use the plain word, or the fact the word stands in for."
+strength = "weak"
+terms = [
+  { term = '''abrangentes?''', instead = "say what it covers" },
+  { term = '''crucia(?:is|l)''', instead = "say why it matters" },
+  { term = '''ecossistema (?:de inovação|digital)''', instead = "name the parts" },
+  { term = '''enfatizando''', instead = "cut, or say it plainly" },
+  { term = '''holístic[ao]s?''', instead = "say what it covers" },
+  { term = '''robust[ao]s?''', instead = "solid, or say what it withstands" },
+  { term = '''sinergias?''', instead = "say who does what together" },
+  { term = '''vamos mergulhar''', instead = "cut" },
+  { term = '''vibrantes?''', instead = "lively, or the fact" },
+]
+flags = "Vamos mergulhar numa cidade vibrante, com uma oferta cultural abrangente e uma sinergia única entre bairros."
+passes = "A cidade tem dois teatros, um cinema ao ar livre no verão e mercado às quintas."
+sources = [
+  { source = "andrade-2026-portuguese", where = "3.1, Tabela 4: cruciais and enfatizando among the ten most distinctive machine terms", seen = 2026-11-09 },
+  { source = "evitar-escrita-ia", where = "SKILL.md, 1 Léxico, Nível 1A, commit a4b596e6f8b0", seen = 2026-11-09 },
+  { source = "humanizer-pt-br", where = "patterns/abordagem-holistica.yaml, adjetivo-robusto.yaml, ecossistema-metafora.yaml, sinergia.yaml and vamos-mergulhar.yaml, commit a18e130ad39e", seen = 2026-11-09 },
+  { source = "wikipedia-pt", where = "Alta densidade de palavras do chamado vocabulário de IA, revision 73274816", seen = 2026-11-09 },
+]
+
+# Formatting: what the text looks like on the page.
+
+[[sign]]
+id = "pt-dash-pivots"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Uses the long dash as a pivot: once in a sentence, before its punchline, or joined to the words on both sides. Portuguese sets an aside between two spaced travessões and opens dialogue with one."
+instead = "Use a colon, a comma or a full stop; keep the travessão for a real aside or dialogue."
+strength = "weak"
+# A sentence with one spaced dash and no second one before its end: an aside has two, and a line of dialogue starts
+# with one, so neither is found.
+check = '''[^\W\d_]—[^\W\d_]|(?:^|[.!?]\s+)[^—.!?\n]+ — [^—.!?\n]+[.!?]'''
+flags = "A feira volta no domingo — e desta vez com pastéis de nata."
+passes = "A feira — que esteve fechada em agosto — volta no domingo, e desta vez com pastéis de nata."
+sources = [
+  { source = "resende-castilho-2026-style", where = "3.3: no em dashes in the human Brazilian original or translation, 9.5 and 27.3 per 1,000 tokens in GPT-4o's", seen = 2026-11-09 },
+  { source = "evitar-escrita-ia", where = "SKILL.md, 5 Formatação, Travessão, commit a4b596e6f8b0", seen = 2026-11-09 },
+  { source = "wikipedia-pt", where = "Uso excessivo de travessões, de 2022 a setembro de 2026, revision 73274816", seen = 2026-11-09 },
+]

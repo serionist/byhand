@@ -1,0 +1,67 @@
+# Finnish's signs. A sign here cites a source that covers Finnish; the shape of a sign is in `any.toml`. Finnish is
+# written with spaces, so `validate` would wrap a sign's terms in `\b`. It is agglutinative, and a suffix can change the
+# stem's consonants as well as its vowels (tehdä, teen; kirja, kirjan; luku, luvun), so a term is a stem cut before the
+# first letter a suffix may change, with `\w*` after it.
+#
+# Finnish typography is a person's, never a sign: the same closing mark on both sides of a quote (”…”), » « and
+# straight quotes, the spaced short dash (–) as a dash and the unspaced one in a range (klo 9–17), the decimal comma, a
+# space between thousands, dates as 9.11.2026 and times as klo 14.00.
+#
+# Order: every alternation, every term list and every list of examples in a `what` or `instead` runs in alphabetical
+# order of its plain text, accents and case ignored, as in every language (tests/test_order.py).
+#
+# What these rest on: wikipedia-fi quotes model text found on Finnish Wikipedia, sign by sign, with no counts and with
+# the warning that people write like this too; finnish-humanizer lists twelve Finnish patterns and fifteen that follow
+# English Wikipedia's list, with no evidence or test on human text behind any. Each sign is as strong as these let it
+# be (#72): both are weak, as neither source measures how often people do them, and de and hu hold the same two habits
+# weak.
+#
+# Left out: finnish-humanizer's Finnish patterns, each on its word alone and each written by people. Office and official
+# Finnish write light verbs (suorittaa tarkistuksen, tehdä päätös), officialese (edellä mainittu, kyseinen, mikäli), the
+# passive, genitive chains and long sentences with joka and jotka; the source itself calls the passive natural Finnish,
+# and missing particles, needless pronouns and stacked adjectives a matter of degree. Its English word order and English
+# politeness are calques, which need evidence that models write them more (the Korean seed's rule); its avoided
+# consonant gradation it says is no systematic error. Its quotes rule says Finnish writes straight quotes, where Finnish
+# typography writes ”…”. Of wikipedia-fi's own: wrong inflection in translated text is one word in one example, with no
+# pattern, and reportage in place of an encyclopaedia's register is Wikipedia's matter, not a user's mail. The rest of
+# both is held by signs every language shares, with no Finnish pattern: "ei ole vain X, vaan Y" and "ei pelkästään…
+# vaan myös" (any-negative-parallelism), the rule of three (any-rule-of-three), promotional tone (any-promotional-tone),
+# unnamed places and people (any-generic-over-specific, any-vague-authority), needless lists with • or emoji
+# (any-emoji-markers, any-overstructured-note), "Haasteista huolimatta" (any-challenges-formula). The Finnish forms for
+# the `any` checks wait for room in the check budget: the research record of #75 lists them.
+# tests/test_office_fi.py holds plain mail, chat, notices and reports against every sign that counts alone, and against
+# a weak cluster.
+
+# Formatting.
+
+[[sign]]
+id = "fi-em-dash"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Sets off a clause with the long English dash (—), where Finnish writes the spaced short dash (–)."
+instead = "Use a comma, a colon or a full stop, or the spaced short dash."
+strength = "weak"
+# Text on both sides, so a line of dashes under a signature is no clause, nor a dash opening a line of dialogue; and
+# nothing after a comma or a full stop, so a price written 20,— € is none either.
+check = '[^\s—.,] ?— ?[^\s—]'
+flags = "Remontti valmistuu maaliskuussa — jos tarvikkeet tulevat ajoissa."
+passes = "Remontti valmistuu maaliskuussa – jos tarvikkeet tulevat ajoissa."
+sources = [
+  { source = "finnish-humanizer", where = "finnish-humanizer/references/patterns.md, Tyylimerkinnät: the long dash for the short one SFS 4175 sets, commit 7a151e26b263", seen = 2026-11-09 },
+  { source = "wikipedia-fi", where = "Pintapuolinen analyysi, the second example of model text: a list set off between spaced long dashes, which the page quotes for its vagueness, not for the dash, revision 23993692", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "fi-title-case-headings"
+category = "formatting"
+kinds = ["document", "deck", "post"]
+models = "any"
+what = "Capitalises every word of a heading, as English titles do; Finnish capitalises only the first word and names."
+instead = "Capitalise the first word and names: ## Kevään koulutukset Tampereella"
+strength = "weak"
+flags = "## Vuoden 2027 Budjetti Ja Hankinnat"
+passes = "## Vuoden 2027 budjetti ja hankinnat"
+sources = [
+  { source = "wikipedia-fi", where = "Anglismit ja käännösvirheet: capitals on the subheadings of model-written articles, after English titling, with an example article's five subheadings, revision 23993692", seen = 2026-11-09 },
+]

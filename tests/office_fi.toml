@@ -1,0 +1,160 @@
+# Plain Finnish work text, invented, for tests/test_office_fi.py; it lives here, not in the test, as ruff reads the short
+# dash as a confusable hyphen, and Finnish writes it in every range and as its dash.
+#
+# Office and official Finnish run on what finnish-humanizer would rewrite: the passive, light verbs (suorittaa
+# tarkistuksen, tehdä päätös), officialese (edellä mainittu, kyseinen, mikäli), "tulee" for must, and set phrases in
+# mail (Pahoittelemme häiriötä, Terveisin, Ystävällisin terveisin). People write "ei ole vain X, vaan myös Y" before a
+# fact, lists of three that are three things, "Haasteista huolimatta" before a number, "On syytä huomata", "Hyvä
+# kysymys" and "Viimeisimpien tietojeni mukaan" in their own voice, the particles the source misses (-han, -pa, kyllä,
+# vaan), and English laced through office Finnish (deadline, feedback). Chat is often typed with no ä or ö (paase,
+# siirtaa). They are a person's, never a sign.
+#
+# Finnish typography is how people write: the same closing mark on both sides of a quote (”…”), » » and straight quotes,
+# the spaced short dash as a dash and to open a line of dialogue, the unspaced short dash in a range, a spaced hyphen
+# as a dash, the decimal comma, a space between thousands, % after a space, dates as 9.11.2026 and klo 14.00.
+
+mail = [
+  "Hei Laura,\n\nLiitteenä lokakuun lasku numero 4512. Eräpäivä on 30.11.2026.\n\nJos tulee kysyttävää, soita minulle numeroon 040 123 4567.\n\nTerveisin\nMikko Virtanen",
+  "Kasvatuksen ja koulutuksen toimiala\n\nPäätös 12.10.2026\n\nAsia: Koulukuljetus lukuvuodelle 2026–2027\n\nKyseinen hakemus on käsitelty, ja oppilaalle myönnetään koulukuljetus ajalle 1.1.–31.5.2027. Mikäli olosuhteet muuttuvat, tulee huoltajan ilmoittaa siitä koulun rehtorille.\n\nPäätökseen tyytymätön voi hakea siihen oikaisua 14 päivän kuluessa tiedoksisaannista.",
+  "Moi Antti,\n\nLaitoin tarjouksen liitteeksi. Ehditkö vilkaista sen ennen maanantaita? Jos se näyttää hyvältä, lähetetään se asiakkaalle.\n\nTerkuin\nJussi",
+  "Hyvä henkilöstö,\n\nToimisto suljetaan perjantaina klo 14.00 sähkötöiden vuoksi. Pahoittelemme häiriötä.\n\nYstävällisin terveisin\nHallinto",
+  "Hei Sanna,\n\nVoitaisiinko pitää huomenna lyhyt palaveri? Haluaisin saada feedbackia esityksestä, deadline on perjantaina.\n\nKiitos!\nEero",
+  "Arvoisa vastaanottaja,\n\nViitaten puhelinkeskusteluumme 3.11. lähetän liitteenä sopimuksen allekirjoitettavaksi. Pyydän palauttamaan sen 20.11.2026 mennessä.\n\nYstävällisin terveisin\nAnna Laine\nLakiasiaintoimisto Laine Oy",
+  "Hei kaikki,\n\nMatkalaskut tulee jättää 15.12. mennessä, ja alkuperäiset kuitit liitetään mukaan. Edellä mainittu koskee myös joulukuun matkoja.\n\nTerveisin\nHenkilöstöhallinto",
+  "Hei Kalle,\n\nToivottavasti viikko on lähtenyt hyvin käyntiin. Varastotilan tarjous on liitteenä, ja hinnat ovat voimassa vuoden loppuun.\n\nYstävällisin terveisin\nNelli Koskinen",
+  "Hyvä asiakkaamme,\n\nPahoittelemme toimituksen viivästymistä. Pakettinne toimitetaan torstaina 12.11.\n\nKiitos kärsivällisyydestänne.\nAsiakaspalvelu",
+  "Moi Aino,\n\nViimeisimmän inventaarion mukaan varastossa on 12 laatikkoa A4-paperia. Tilaan tammikuulle 20 lisää.\n\nNähdään,\nOlli",
+  "Hyvä professori Heikkinen,\n\nHaluaisin sopia tapaamisen gradusuunnitelmani läpikäymiseksi. Minulle sopisi keskiviikko tai torstai aamupäivällä.\n\nYstävällisin terveisin\nEmma Niemi\nopiskelijanumero 2023104",
+  "Aihe: Vuosilomahakemus\n\nHyvä esihenkilö,\n\nHaen vuosilomaa ajalle 22.–26.7.2027.\n\nTerveisin\nMatti Mäkinen",
+  "Hei tiimi,\n\nIso kiitos kaikille, jotka osallistuivat tilinpäätöksen tekemiseen. Luvut esitellään hallitukselle perjantaina.\n\nTerveisin\nSelma",
+  "Hei,\n\nUusi järjestelmä suorittaa tilausten tarkistuksen automaattisesti joka yö. Laskut lähetetään jatkossa sähköpostitse.\n\nYstävällisin terveisin\nTietohallinto",
+  "Hei,\n\nViimeisimpien tietojeni mukaan taulukossa oli 40 avointa pyyntöä; tänään niitä on 12.\n\nTerveisin\nTuula",
+  "Hei Pekka,\n\nOn syytä huomata, että vuokrasopimus päättyy jo 31.3. Tehdään päätös jatkosta ennen helmikuuta.\n\nTerveisin\nRiikka",
+  "Hei Jari,\n\nKiitos eilisestä! Alla vielä sovitut asiat:\n- tarjous asiakkaalle perjantaina\n- seuraava palaveri 18.11. klo 9.30\n\nTerveisin\nMinna",
+]
+
+replies = [
+  # a person's eager yes returning a document, a role, a verdict, near the model's preamble and self-reference
+  "Totta kai, tässä allekirjoitettu sopimus:",
+  "Tässä eilisen palaverin muistio Hannan korjauksilla:",
+  "Mielelläni! Tässä ilmoituksen viimeinen versio:",
+  "Tekoälyvastaavana en voi hyväksyä tätä hankintaa ilman johdon lupaa.",
+  "Käytämme Copilotia tekoälyavustajana, emme asiantuntijan korvikkeena.",
+  "Hyvä kysymys, en oikeastaan tiedä.",
+  "Erinomainen huomio, korjaan sen.",
+  "Olet aivan oikeassa, päivämäärä oli väärin.",
+]
+
+chat = [
+  "ok, puhutaan myöhemmin",
+  "myöhästyn 10 min, aloittakaa vaan 🙏",
+  "Hyvä kysymys! Katson ja palaan asiaan.",
+  "onks kellään palaverin linkkiä?",
+  "Onko huomenna palaveria?",
+  "Sovitaan näin 👍",
+  "tuliko paketti jo?",
+  "mikset kysy Jarilta?",
+  "Selvä! Lähetän heti.",
+  "no, puhutaan maanantaina",
+  "Laitoin sen jaettuun kansioon.",
+  "Esitys on hyvä, suurenna vaan kaavion fonttia.",
+  "Se kirjoitti ”käy”, eli voidaan sanoa että ok.",
+  "Kiitti tosi paljon!! Laitan huomenna asiakkaankin version",
+  "en paase huomenna, voidaanko siirtaa palaveria?",
+  "Onhan se hyvä idea, mutta aikataulu on vaan tiukka.",
+  "Katsopa liitettä, kyllä siitä selviää.",
+]
+
+notes = [
+  "Koordinaatiopalaverin muistio – 6.11.\nOsallistujat: A. Virtanen, B. Korhonen, C. Nieminen\n- Vuoden 2027 budjetti hyväksyttiin\n- Rekrytointi: 2 avointa paikkaa\n- Seuraava palaveri: 4.12.",
+  "Muistiinpanot:\n- soita notaarille\n- lähetä sopimus Hannulle [vahvistetaan]\n- tarkista toimituspäivä [tarkistetaan]",
+  "Tehtävät:\n1. Kuukauden päättäminen\n2. Toimittajamaksut\n3. Vuokrasopimuksen uusiminen",
+  "Kassan aukioloajat: ma–pe 9.00–12.30 ja 13.30–17.00.",
+  "**Tärkeää**: maanantaista alkaen kulkukortti on näytettävä ovella.",
+  "Yövuoro 3./4.11.\n\nEi poikkeamia. Pysäköintialueella ei tarvittu toimenpiteitä.",
+  "TIEDOTE\n\nTYÖTURVALLISUUSKOULUTUS PIDETÄÄN 14.11. OSALLISTUMINEN ON PAKOLLISTA.",
+  "Ilmoitus: Pizzeria Kulma. Puu-uunissa paistettu. Auki myös lounasaikaan.",
+]
+
+reports = [
+  "Lokakuun toimintakatsaus\n\nLiikevaihto nousi 1,2 miljoonaan euroon, 4 % enemmän kuin syyskuussa. Turun toimipiste teki tappiota toisen neljänneksen peräkkäin.\n\nHenkilöstössä aloitti kaksi asentajaa. On myös syytä mainita, että vuokra nousee tammikuussa.",
+  "Asiakirjojen tarkastuksessa todettiin, että toimitetut liitteet ovat täydelliset. Asia käsitellään lautakunnan kokouksessa 20.11.",
+  "Eduskunta hyväksyi lakiesityksen, ja laki tulee voimaan 1.1.2027.",
+  "Tulokset\n\nAineisto koodattiin kahden tutkijan toimesta toisistaan riippumatta. Koodaajien yhtäpitävyys oli 91 %. Otoksen pienuus on kuitenkin otettava huomioon.",
+  "Yhteenveto\n\nHanke etenee aikataulussa. Tämän vuoksi nykyisen toimittajan kanssa ehdotetaan jatkettavaksi myös vuonna 2027.",
+  "Kirjasto ei ole vain lainaamo, vaan myös nuorten iltapäiväpaikka: viime vuonna 400 nuorta kävi läksykerhossa.",
+  "Projektin loppuraportti\n\nUusi varastojärjestelmä mahdollistaa tilausten lähettämisen samana päivänä. Kiitos kaikille siirtoon osallistuneille. Palautusaika lyheni keskimäärin neljästä päivästä kahteen.",
+  "Haasteista huolimatta myymälä teki voittoa: kassavirta parani toisella vuosipuoliskolla 8 %.",
+  "Ohje\n\nValitse editorissa [Lisää] ja sitten Taulukko. Järjestelmä voi lähettää ilmoituksen sähköpostitse. Raportit luodaan oletuksena maanantaisin, ja niitä säilytetään 90 päivää.",
+  "Hakemukset otetaan vastaan sähköisesti 30.11. mennessä. Puutteellisia hakemuksia ei käsitellä.",
+  "Saimaa on Suomen suurin järvi, ja sen pinta-ala on noin 4 400 neliökilometriä. Järvi tunnetaan saimaannorpasta.",
+  "Osastokokous\n\nKatsotaan yhdessä neljänneksen luvut: myynti laski 8 %, palautukset pysyivät ennallaan. Budjetti tarkistetaan siis tammikuussa.",
+  "Nykyään lähes kaikki myymälän maksut tehdään kortilla: lokakuussa käteisen osuus laski 31 prosenttiin.",
+  "Tilaisuudessa käsitellään kolme asiaa: budjetti, rekrytoinnit ja toimitilat.",
+  "Muuttoon liittyvät kysymykset tulee osoittaa kiinteistöpäällikölle. Kyseinen henkilö vastaa myös avaimista.",
+  "Toimintasuunnitelma 2027\n\n## Tavoitteet\n\nAsiakasmäärä kasvaa 10 %, ja uusi myymälä avataan Lahteen.\n\n## Resurssit\n\nRekrytoimme kaksi myyjää keväällä.",
+]
+
+speeches = [
+  "Hyvät jäsenet,\n\nOsuuskuntamme piti torin auki tänäkin vuonna joka lauantai. Kausi päättyi 212 tuottajan voimin. Kiitos kaikille.",
+  "Hyvä Pertti,\n\nKaipaamme sinua kirjanpidossa; kolmekymmentäkaksi vuotta on pitkä aika. Nauti mökkipäivistä.",
+]
+
+posts = [
+  "Kuuden vuoden jälkeen on aika sanoa hei Logistiikka Pohjoiselle. Kiitos Iinalle ja Pasille sunnuntain inventaarioista. 2.12. alkaen olen Vihreällä Reitillä. #Tampere #logistiikka",
+  "Avaamme lauantaina uuden myymälän osoitteessa Hämeenkatu 14: klo 10–13 kahvit ja pullat talon puolesta. Tervetuloa!",
+  "Lauantain taimien istutus meni hienosti: 40 vapaaehtoista, 300 taimea. Kiitos kaikille!",
+  "Kuuden vuoden matkan jälkeen uusi osoitteeni on Jyväskylä. Liityn osuuskuntaan, joka tekee töitä laajan joukon paikallisten tuottajien kanssa ja valitsee tuotteensa huolella.",
+]
+
+typography = [
+  "Palaveri on Tampereella klo 10.00.",
+  "Lähden huomenna Ouluun, palaan torstaina.",
+  "Asiakas sanoi ”allekirjoitetaan ensi viikolla”, mutta en ole varma.",
+  "Kirjoita lomakkeeseen \"avoin\" ja jätä päivämäärä tyhjäksi.",
+  "»Tulen ihan kohta», Aino sanoi.",
+  "– Tulen ihan kohta, Aino sanoi.\n– Odota vähän, otan takin.",
+  "Toimittaja – tai oikeastaan myyntiedustaja – soittaa huomenna.",
+  "Hinta: 1 250,50 € (sis. alv 25,5 %). Toimitus: 3–5 arkipäivää.",
+  "Myynti kasvoi 12 %; tavoite oli 15 %.",
+  "Palaveri - jos muistat - siirtyi torstaille.",
+  "Viimeinen hakupäivä: 30.11.2026 klo 16.15.",
+  "Puh. +358 40 123 4567, sähköposti etunimi.sukunimi@yritys.fi",
+]
+
+# What each sign that counts alone exists to catch, inside Finnish text: a line for each artefact, which is the same
+# string in every language. No `any` check has a Finnish branch yet: its lines come with the branch.
+machine = [
+  { sign = "any-emoji-markers", text = "- 🚀 Uusi koulutusohjelma" },
+  { sign = "any-emoji-markers", text = "## 📊 Kuukauden luvut" },
+  { sign = "any-unfilled-placeholder", text = "Ilmoittautuminen: insert_link_here" },
+  { sign = "any-chatgpt-citation-markup", text = "Liikevaihto kasvoi. :contentReference[oaicite:0]{index=0}" },
+  { sign = "any-chatgpt-citation-markup", text = "Liikevaihto kasvoi. turn0search4" },
+  { sign = "any-chatbot-url-tag", text = "Lähde: https://esimerkki.fi/raportti?utm_source=chatgpt.com" },
+  { sign = "any-gemini-citation-markup", text = "Tehdas avattiin vuonna 1998 [cite: 3]." },
+  { sign = "any-grok-citation-markup", text = "Tehdas avattiin vuonna 1998. grok_card" },
+  { sign = "any-deepseek-citation-markup", text = "Tehdas avattiin vuonna 1998【4†source】." },
+  { sign = "any-chat-tool-markup", text = "Liitteen mukaan[attached_file:1] kate laskee." },
+]
+
+# The forms fi-em-dash must still find, beyond its own `flags`: no spaces, one space, capitals.
+forms = [
+  { sign = "fi-em-dash", text = "Kokous siirtyy—jälleen—ensi viikolle." },
+  { sign = "fi-em-dash", text = "Kokous siirtyy — jälleen — ensi viikolle." },
+  { sign = "fi-em-dash", text = "Tavoite on selvä — kasvu." },
+  { sign = "fi-em-dash", text = "KOKOUS SIIRTYY — JÄLLEEN." },
+]
+
+# The plain forms it must leave alone: Finnish's own dashes, and the long dash where it sets off no clause.
+left_alone = [
+  { sign = "fi-em-dash", text = "Kokous siirtyy – jälleen – ensi viikolle." },
+  { sign = "fi-em-dash", text = "Avoinna klo 9–17." },
+  { sign = "fi-em-dash", text = "— Tule tänne, hän sanoi." },
+  { sign = "fi-em-dash", text = "Hän sanoi. — Nyt mennään." },
+  { sign = "fi-em-dash", text = "Hinta 20,— €" },
+  { sign = "fi-em-dash", text = "Terveisin\nMatti Mäkinen\n————————" },
+]
+
+# Three different weak habits in one paragraph of a document, and one habit three times.
+cluster = "## Tilanne\nMuutto alkaa perjantaina — jos avaimet tulevat ajoissa.\n- **Vastuu:** Mikko"
+repeated = "Muutto alkaa — ehkä — perjantaina, ja avaimet tulevat — toivottavasti — torstaina."

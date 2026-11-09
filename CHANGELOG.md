@@ -5,6 +5,11 @@ before `1.0` a minor may break something, under Breaking.
 
 ## Unreleased
 
+### Added
+
+- Finnish signs: 2 of Finnish's own, the long English dash and capitals on every word of a heading. Each
+  counts only beside two others, as people write them too.
+
 ### Changed
 
 - `/byhand:check` and the sign files say plainly how weak signs add up: two different phrases one sign finds count as

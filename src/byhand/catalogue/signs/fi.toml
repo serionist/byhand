@@ -40,7 +40,7 @@ category = "formatting"
 kinds = ["any"]
 models = "any"
 what = "Sets off a clause with the long English dash (—), where Finnish writes the spaced short dash (–)."
-instead = "Use a comma, a colon or a full stop, or the spaced short dash."
+instead = "Write the spaced short dash, or end the sentence and start another."
 strength = "weak"
 # Text on both sides, so a line of dashes under a signature is no clause, nor a dash opening a line of dialogue; and
 # nothing after a comma or a full stop, so a price written 20,— € is none either.

@@ -17,7 +17,7 @@ before `1.0` a minor may break something, under Breaking.
 ### Changed
 
 - `/byhand:write` reads one more file on the first draft of a conversation: the project's index, or, with none, a
-  failed read of about 230 bytes. Its own file grows from 4,581 to 5,091 bytes.
+  failed read of about 230 bytes. Its own file grows from 4,581 to 5,137 bytes.
 
 ## 0.2.0 (2026-11-09)
 

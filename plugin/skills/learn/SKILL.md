@@ -11,7 +11,8 @@ allowed-tools: Read
 
 A style is how one person writes one kind of text, learned from their own samples, never from AI-written text. The
 user's own live in `~/.byhand/styles/`, on their machine; a project's in `${CLAUDE_PROJECT_DIR}/.byhand/styles/`,
-which goes where the project goes.
+which goes where the project goes. Read both indexes, `${CLAUDE_PROJECT_DIR}/.byhand/styles/index.md` (missing, or
+the home folder itself: no project styles) and `~/.byhand/styles/index.md`.
 
 Read each file named here by its path with the Read tool, one call per file: never a command, Glob or a listing, which
 ask the user or are missing on some machines.
@@ -35,7 +36,8 @@ Each folder's `index.md` lists its styles. A style file its index doesn't name i
 - `Style`: the file's name without `.md`: lowercase letters, digits and hyphens.
 - `Language`: the language code (`en`, `hu`, `zh-Hant`).
 - `Default for`: the kinds (`message`, `email`, `post`, `document`, `deck`, `sheet`) it is the default for in its
-  language, or `-`. One default per kind and language: setting one takes it from the style that held it.
+  language, or `-`. One default per kind and language in each index: setting one takes it from the style in that
+  index that held it. A project's default leaves the user's own in place.
 
 `<style>.md`, beside its index, under 4 KB:
 
@@ -86,9 +88,6 @@ habits, words they like and words they never use.
    index starts with the header above). Write nothing else into a project.
 
 ## Other requests
-
-Read both indexes, `${CLAUDE_PROJECT_DIR}/.byhand/styles/index.md` (missing: no project styles) and
-`~/.byhand/styles/index.md`.
 
 - **List:** show both, the project's marked as this project's.
 - **A default:** set or clear it in the index that holds the style; a name in both: ask which.

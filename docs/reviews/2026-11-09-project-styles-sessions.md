@@ -39,7 +39,7 @@ wording passed every other case 3 of 3 too.
 
 Name clash, mine: the first wording, "their own (`~/`) first unless they say the project's", passed 2 of 3. The
 bullet now reads "a name in both folders is the user's own (`~/`) unless they say the project's", which passed 22 of
-24. The one miss traced read the project's index, then `C:/Users/serio/.byhand/styles/index.md`, the maintainer's
+24. The one miss traced (the other, with the same grader result, was not kept) read the project's index, then `C:/Users/serio/.byhand/styles/index.md`, the maintainer's
 real path and not the run's home: the model expanded `~` from the paths it could see. That file doesn't exist (the
 real `styles/` is empty), so only the project's `work-mail` was left, and the draft used it with the note. An
 artefact of the eval's isolation on Windows, not of the pick: in a user's session `~` is their own home.
@@ -76,18 +76,25 @@ the answer. The `write-fr-sheet` miss is the answer's shape, not the read.
 
 ## What a draft reads
 
-An English mail on a Claude model, in bytes. `write`'s SKILL.md from 4,581 to 5,091; `learn`'s from 4,355 to 5,278.
+An English mail on a Claude model, in bytes. `write`'s SKILL.md from 4,581 to 5,137; `learn`'s from 4,355 to 5,386.
 The sign files `any/any`, `en/any` and `en/claude` are 9,410; the seeded indexes 116 each.
 
 | | Before | Now |
 |---|---|---|
-| `write`'s SKILL.md, every draft | 4,581 | 5,091, plus the project path's length less 21 for `${CLAUDE_PROJECT_DIR}` |
+| `write`'s SKILL.md, every draft | 4,581 | 5,137, plus the project path's length less 21 for `${CLAUDE_PROJECT_DIR}` |
 | no project folder, first draft | nothing | one failed Read: the call, 102, and "File does not exist. Note: your current working directory is ...", 123, for the eval's 61-character path |
 | a project folder, first draft | nothing | its index (116 here) and its call |
-| a later draft in the conversation | the skill text | the skill text, 510 more; no index read again |
+| a later draft in the conversation | the skill text | the skill text, 556 more; no index read again |
 
-About 0.73 KB more on a first draft with no project folder, of some 14.1 KB before the style: 5%. The plan
-estimated 0.6 KB; the skill came out 120 bytes over its guess, most of it the clearer name rule.
+About 0.78 KB more on a first draft with no project folder, of some 14.1 KB before the style: 5.5%. The plan
+estimated 0.6 KB; the skill came out 167 bytes over its guess: the clearer name rule, and the review's two fixes
+(`docs/reviews/2026-11-09-project-styles-code.md`).
+
+## Live run, after the review's fixes
+
+The six `write` cases and `learn`, for this project, asked, three runs each on the fixed skills: 21 of 21. The real
+`~/.byhand/styles/` stayed empty. A session started in the home folder, which F2 fixes, can't be staged in an eval
+run, whose workspace is a folder below its home: not tried.
 
 ## Not covered
 

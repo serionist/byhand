@@ -179,9 +179,10 @@ still hold: byhand's own repo is the plugin's, has no project voice to commit, a
 
 As built (2026-11-09, `docs/reviews/2026-11-09-project-styles-sessions.md`): `write`'s name rule reads "a name in
 both folders is the user's own (`~/`) unless they say the project's", clearer after a miss on the first wording; the
-skill is 5,091 bytes, not about 4,970. The two `learn` saves and the minor's empty-session try did not run: an eval
-run's model at times expands `~` to the real home, so a granted Write could reach the maintainer's `~/.byhand/`, and
-the probes that would have narrowed it were refused.
+skill is 5,137 bytes, not about 4,970. Started in the home folder, both skills read no project styles, and a
+project's default leaves the user's own in place (the code review's F2 and F1). The two `learn` saves and the minor's
+empty-session try did not run: an eval run's model at times expands `~` to the real home, so a granted Write could
+reach the maintainer's `~/.byhand/`, and the probes that would have narrowed it were refused.
 
 ## Tests
 

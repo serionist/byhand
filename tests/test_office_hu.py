@@ -233,7 +233,7 @@ def test_plain_hungarian_work_text_makes_no_weak_cluster(weak_hits, text, kind):
 
 def test_weak_hits_count_as_the_rule_does(weak_hits):
     # three different words are a cluster; one word twice is a habit, and counts once, but a term counts each different
-    # text it matches, so átfogóbb is another (#84)
+    # text it matches, so átfogóbb is another, more than the rule (#84)
     three = "Az átfogó terv kulcsfontosságú lépései elengedhetetlenek."
     again = "Átfogó felmérés, átfogó jelentés, átfogóbb terv."
     assert weak_hits(three, "document") == 3

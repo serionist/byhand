@@ -27,8 +27,8 @@ def counted_alone(catalogue: signs.Catalogue) -> list[signs.Sign]:
     return found
 
 
-# Each weak count would compile every weak pattern again, and there are more of them than `re` keeps (512): uncached,
-# a count takes about a second, and the office tests make thousands.
+# `re` keeps 512 patterns, and the weak phrases (423 now) come near it: past it, each count would compile them all
+# again, about a second, and the office tests make thousands.
 @functools.cache
 def _compiled(pattern: str) -> re.Pattern[str]:
     return signs.as_grep(pattern)

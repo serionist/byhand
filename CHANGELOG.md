@@ -14,5 +14,5 @@ before `1.0` a minor may break something, under Breaking.
   their lines and what a person writes instead. No score. A file's patterns run through its `scan` agent.
 - Spanish signs: 11 of Spanish's own, and Spanish forms in seven signs every language shares. Until a native speaker
   reads them, each of Spanish's own signs counts only beside two others.
-- Portuguese signs, for Brazil and Portugal alike: 9 of Portuguese's own, and Portuguese forms in seven signs every
+- Portuguese signs, for Brazil and Portugal alike: 8 of Portuguese's own, and Portuguese forms in seven signs every
   language shares. Until a native speaker reads them, each of Portuguese's own signs counts only beside two others.

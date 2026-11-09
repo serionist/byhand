@@ -291,6 +291,7 @@ MACHINE = [
     ("any-unfilled-placeholder", "Com os melhores cumprimentos,\n[O teu nome]"),
     ("any-unfilled-placeholder", "Mais informações: [Inserir link]"),
     ("any-unfilled-placeholder", "Morada: [Inserir: morada completa]"),
+    ("any-unfilled-placeholder", "Cliente: [Insira: nome da empresa]"),
     ("any-unfilled-placeholder", "Escreva para [Seu endereço de e-mail]."),
     ("any-unfilled-placeholder", "[Descreva a secção a editar]"),
     ("any-unfilled-placeholder", "Inscrições: insert_link_here"),

@@ -17,7 +17,7 @@ before `1.0` a minor may break something, under Breaking.
   its own forms of the shared signs. Text in a language the patterns don't cover is read for every sign.
 - The shared signs find more chatbot lines: Italian, Turkish and Indonesian openers above a reworked text, an
   Italian knowledge cut-off with its date and a third Italian self-reference, a Vietnamese offer to rework the
-  text, Finnish and Turkish praise for a question, and ChatGPT's source chips pasted into Finnish text.
+  text, and Finnish and Turkish praise for a question.
 - `/byhand:check` and the sign files say plainly how weak signs add up: two different phrases one sign finds count as
   two, and a mark such as a dash counts once however often it appears.
 - The Spanish, Portuguese, Arabic, Vietnamese, Italian and Turkish signs no longer wait for a native speaker's read:

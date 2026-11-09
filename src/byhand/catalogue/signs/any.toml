@@ -551,13 +551,6 @@ instead = "Delete the token and cite the source, or cut the claim."
 strength = "strong"
 check.any = 'contentReference\[oaicite|oaicite:\d|oai_citation|attributableIndex|turn\d+(?:file|image|news|search)\d+'
 check.de = 'gehe zu suche nr'
-# Finnish: ChatGPT's source chips pasted as text, two or more glued in a row, a name with +1 to +9 and the next name
-# with no space (Suomi+5RakennusFakta+5NCC+5, kaupunki+2Oulun), as wikipedia-fi shows four of its six. A lone chip
-# (keväällä. Oulun kaupunki+1) is left out: it is a person's sign-up list or score in every shape round 1 to 3 of #86's
-# review tried (Matti+1, 1. Matti+1, Kiitos kutsusta. Matti+1 tulee., HIFK+3, count+1). A name standing on its own
-# and a next one of three letters or more, so a unit sum written without spaces (10km+5km, 20min+5min, 6kpl+2kpl,
-# VPN+2FA:n) passes, as do C++, Disney+, Erasmus+-hanke, 2+1 and +358.
-check.fi = '(?:^|\W)[^\W\d_]{2,}\+[1-9][^\W\d_]{3}'
 flags = "The bridge opened in 1932. :contentReference[oaicite:3]{index=3}"
 passes = "The bridge opened in 1932 (county archive, box 12)."
 sources = [
@@ -566,7 +559,6 @@ sources = [
   { source = "wikipedia-en-markup", where = "ChatGPT: turn0search0, revision 1383317735", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Gehe zu Suche Nr., revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "turn0search0, revision 95337857", seen = 2026-11-07 },
-  { source = "wikipedia-fi", where = "Virheelliset tai erikoiset viitteet, revision 23993692", seen = 2026-11-09 },
 ]
 
 [[sign]]
@@ -764,10 +756,11 @@ check.pt = '^\W*(?:gostaria que eu (?:[ao] )?(?:adaptasse|ampliasse|desenvolvess
 check.ru = '^\W*сообщите мне, если хотите, чтобы (?:я (?:адаптировал|дополнил|доработал|изменил|переписал|расширил|сократил)|(?:документ|статья|текст) был\w* (?:расширен|сокращ[её]н|доработан|переписан|адаптирован))'
 # Vietnamese, from the line vietnamese-humanizer tells its model not to add (Nếu bạn cần, tôi có thể…): an offer to
 # rework the text, as English's: the verb, then the text (đoạn, bài viết, nội dung, văn bản) as the whole object,
-# ending there or at a word that goes on about the rework (này, cho, với, để, xuống, trên, hoặc; thành một or bản;
-# theo giọng or phong cách), so văn bản thành lập công ty and văn bản theo dõi công nợ, other documents, pass. A person's offer of data or of another document (gửi thêm số liệu gốc, bổ sung
+# ending there or at a word that goes on about the rework (này, cho, với, để, xuống, trên, hoặc; thành before a
+# form, một, bản, dạng, các or tiếng; theo before a manner, giọng, phong cách, văn phong, cách, hướng or yêu cầu),
+# so văn bản thành lập công ty and văn bản theo dõi công nợ, other documents, pass. A person's offer of data or of another document (gửi thêm số liệu gốc, bổ sung
 # thêm số liệu, chỉnh sửa lại hợp đồng, chỉnh sửa nội dung hợp đồng, viết lại văn bản đề nghị) passes.
-check.vi = '^\W*nếu bạn cần,? tôi có thể (?:chỉnh sửa|mở rộng|rút gọn|viết lại) (?:lại )?(?:bài viết|nội dung|văn bản|đoạn(?: văn)?)(?: (?:cho|hoặc|này|thành (?:bản|một)|theo (?:giọng|phong cách)|trên|với|xuống|để)\b|\s*[!,.:;?]|\s*$)'
+check.vi = '^\W*nếu bạn cần,? tôi có thể (?:chỉnh sửa|mở rộng|rút gọn|viết lại) (?:lại )?(?:bài viết|nội dung|văn bản|đoạn(?: văn)?)(?: (?:cho|hoặc|này|thành (?:bản|các|dạng|một|tiếng)|theo (?:cách|giọng|hướng|phong cách|văn phong|yêu cầu)|trên|với|xuống|để)\b|\s*[!,.:;?]|\s*$)'
 flags = "The committee meets each spring.\n\nWould you like me to expand this into a one-page handout?"
 passes = "The committee meets each spring.\n\nWould you like me to bring the projector, or will Sam?"
 sources = [

@@ -29,9 +29,10 @@
 # unnamed places and people (any-generic-over-specific, any-vague-authority), chat-style lists with emoji
 # (any-emoji-markers; the • bullet the page names is wiki markup pasted from a chat, and a person's mail writes it),
 # "Haasteista huolimatta" (any-challenges-formula). Of the Finnish forms for the `any` checks the research record of
-# #75 lists, any.toml holds the flattering opener and ChatGPT's source chips (#71); Viimeisimpien tietojeni mukaan and
-# On syytä huomata are left out, as people write both. tests/test_office_fi.py holds plain mail, chat, notices and reports
-# against every sign that counts alone, and against a weak cluster.
+# #75 lists, any.toml holds the flattering opener (#71). ChatGPT's source chips (Oulun kaupunki+1) are left out: five
+# rounds of #86's review found a person's line in each form tried (Matti+1, 10km+5km, 4h+k+khh+2kph+s). Viimeisimpien
+# tietojeni mukaan and On syytä huomata are left out, as people write both. tests/test_office_fi.py holds plain mail,
+# chat, notices and reports against every sign that counts alone, and against a weak cluster.
 
 # Formatting.
 

@@ -43,18 +43,20 @@ machine only: an index and one short Markdown file per style, which you can edit
 byhand is two sets of Markdown files and the skills that read them:
 
 - **Signs:** what makes text read as AI-written, per language and per model family and version. English, Chinese
-  (Simplified and Traditional), Japanese, Korean, Russian, German, French and Hungarian have their own; every language
-  gets the signs all languages share. Each sign says what a person writes instead.
+  (Simplified and Traditional), Japanese, Korean, Russian, German, French, Hungarian, Spanish, Portuguese and Arabic
+  have their own; every language gets the signs all languages share. Each sign says what a person writes instead.
 - **Styles:** how you write, learned from your own samples.
 
 Each draft loads only the signs for its language, its kind of writing and the model writing it, plus one style: a few
 thousand tokens, never the whole catalogue. A model newer than the catalogue gets its family's current signs.
 
+The catalogue stays current: a daily job checks the sources it cites and opens an issue when one changes, and the new
+signs come as a pull request a person reads.
+
 ## Next
 
-- **Staying current:** a scheduled job that reads the sources the catalogue lists and opens an issue when one changes;
-  the new signs come as a pull request a person reads (`0.2.0`).
-- **More languages** (`0.3.0`), **decks and sheets** (`0.4.0`), **learning from your edits** (`0.5.0`).
+- **More languages,** each from sources in its own language (`0.3.0`), **decks and sheets** (`0.4.0`), **learning
+  from your edits** (`0.5.0`).
 
 ## Contributing
 

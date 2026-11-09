@@ -86,16 +86,11 @@ LIMIT = [
 ]
 
 
-def _weak_hits(catalogue: signs.Catalogue, paragraph: str) -> list[str]:
-    weak = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength == "weak"]
-    return [sign.id for sign in weak if sign.pattern and sign.pattern.search(paragraph)]
-
-
 @pytest.mark.parametrize("text", OFFICE + LIMIT)
-def test_plain_korean_work_text_makes_no_weak_cluster(catalogue, text):
+def test_plain_korean_work_text_makes_no_weak_cluster(weak_hits, text):
+    # counted as the rule does, each different phrase, under every kind: the texts are mail, chat and notes alike
     for paragraph in text.split("\n\n"):
-        hits = _weak_hits(catalogue, paragraph)
-        assert len(hits) < signs.WEAK_CLUSTER, hits
+        assert max(weak_hits(paragraph, kind) for kind in signs.KINDS) < signs.WEAK_CLUSTER, paragraph
 
 
 def test_no_korean_check_counts_alone(counted_alone):

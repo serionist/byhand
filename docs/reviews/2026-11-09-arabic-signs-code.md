@@ -47,3 +47,29 @@ humanizer-ar. The main session reproduced F1 and F2 before fixing them.
 
 Whether a native speaker finds the signs and the person's lines natural; the plugin sessions, which the main session
 ran; `gate.py full` on the reviewer's side (CI passed on 40b5d5c).
+
+## Round 2
+
+A fresh reviewer, on 0fbb45c (the fixes since 40b5d5c, in d54a6f8). Verdict: clean. F1 to F6 hold: each line the
+fixes added fails on the 40b5d5c catalogue and passes now (the conclusion in `LEFT_ALONE` for F1, the three verdicts in
+`REPLIES` for F2, the two clitics in `FORMS` for F6), and the rewritten office lines share no shape with humanizer-ar's
+examples. Python and ripgrep 14.1.1 agree on all 33 probe lines for each Arabic pattern.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F7 | minor | `ar.toml`, `ar-shed-light`, the past-tense branch | F6's two-letter clitic let in ال, so the town of al-Salt before "the green light" fired: "منحت وزارة التربية مدارس السلط الضوء الأخضر…" | fixed in 6c5e988: one letter there, two only before تسليط; the line is in `LEFT_ALONE` |
+| F8 | minor | `CHANGELOG.md` | Still "four" shared signs after F1 | fixed in 6c5e988: three |
+| F9 | minor | PR #58's description | Stale on the closing summary, the self-reference, the clitics, the citation, the counts and the try | fixed: the description is rewritten for the head, and the check try ran again |
+| F10 | minor | `ar.toml`'s header | humanizer-ar's padded three (6) and tacked-on clauses (4, مما يعكس) were not accounted for | fixed in 6c5e988: both named, with `any-rule-of-three` and `any-tacked-on-analysis` |
+
+Refuted: the self-reference on a person's verdict that uses a listed lack ("…لا أملك القدرة على إبداء رأي فيه قبل أن
+أجربه"), the trade-off #53 and #55 accept; a quoted bot reply (by design); the preamble on a colleague returning the
+reader's text (the accepted class); two of 13 fresh paragraphs reaching 3 by stacking two formatting tells with one
+`ar-shed-light`, the class #55 refuted, and 3 on 40b5d5c too; the render's "Words:" display (display only).
+
+| Improvement | Answer |
+|---|---|
+| Read الانترنت without its hamza in the self-reference | taken in 6c5e988, with a `MACHINE` line |
+| Name all four lacks in the self-reference's comment | taken in 6c5e988 |
+
+The review ends here: no blocker or major is open.

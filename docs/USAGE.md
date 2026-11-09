@@ -12,6 +12,7 @@ Users never run these. They build and check the catalogue in this repo.
 | `byhand render` | write the catalogue as the plugin's sign files |
 | `byhand render --check` | write nothing; exit 1 when the files differ from the catalogue |
 | `byhand refresh --out <dir>` | read each source whose `due` has come round since `read_at` (a day, a week, 30 or 90 days); write `<dir>/<id>.md`, an issue body of ids and links, for each changed one; exit 1 if any source couldn't be read. It reads `GITHUB_TOKEN`, if set, and sends it to api.github.com only: without one, GitHub allows 60 calls an hour. `refresh.yml` runs it daily and opens the issues |
+| `byhand fetch <id>... [--out <dir>]` | download each source's text as it is now into `<dir>/<id>/new/` (a wiki page's wikitext, a repo's files under its `paths`, a dataset's card), a unified diff of its text at `read_at` against now into `<dir>/<id>/change.diff`, where reading starts, and the revision now into `<dir>/<id>/revision`, the value `read_at` moves to. `<dir>` is `.local/sources` unless named, where `copycheck` reads. A source with no feed, an id not in `sources.toml` or a source that can't be read is named with its reason, and the others are still fetched; exit 1 if any was. `GITHUB_TOKEN`, as for `refresh`. `propose-signs` reads from it, and `refresh-agent.yml` runs it before its model starts |
 
 ## What a skill reads
 

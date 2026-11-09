@@ -5,8 +5,10 @@ import datetime as dt
 import http.client
 import io
 import json
+import tarfile
 import urllib.error
 import urllib.parse
+from pathlib import Path
 
 import pytest
 
@@ -224,15 +226,18 @@ def test_one_unreadable_source_fails_the_run_after_the_rest(tmp_path, capsys):
     assert "1 changed, 0 unchanged, 1 unreadable" in capsys.readouterr().out
 
 
+@pytest.mark.parametrize("getter", ["get_json", "get_bytes"])
 @pytest.mark.parametrize(
     ("url", "sent"),
     [
         ("https://api.github.com/repos/a/b/compare/x...HEAD", True),
         ("https://xx.example.org/w/api.php", False),
         ("https://api.github.com.example.org/x", False),
+        ("https://codeload.github.com/a/b/tar.gz/abc", False),
+        ("https://huggingface.co/datasets/a/b/resolve/abc/README.md", False),
     ],
 )
-def test_the_token_goes_to_github_only(monkeypatch, url, sent):
+def test_the_token_goes_to_github_only(monkeypatch, getter, url, sent):
     seen = []
 
     def urlopen(request, timeout):
@@ -241,8 +246,10 @@ def test_the_token_goes_to_github_only(monkeypatch, url, sent):
 
     monkeypatch.setenv("GITHUB_TOKEN", "t0ken")
     monkeypatch.setattr(refresh.urllib.request, "urlopen", urlopen)
-    assert refresh.get_json(url) == {"ok": True}
+    assert getattr(refresh, getter)(url) in ({"ok": True}, b'{"ok": true}')
     assert (seen[0].get_header("Authorization") == "Bearer t0ken") is sent
+    # urllib copies a request's headers onto a redirect, but never its unredirected ones.
+    assert "Authorization" not in seen[0].headers
     assert seen[0].get_header("User-agent") == refresh.USER_AGENT
 
 
@@ -251,3 +258,170 @@ def test_the_command_runs_the_refresh(monkeypatch, tmp_path):
     monkeypatch.setattr(refresh, "run", lambda out, today: asked.append(out) or 1)
     assert cli.main(["refresh", "--out", str(tmp_path)]) == 1
     assert asked == [tmp_path]
+
+
+# `byhand fetch`, with the network replaced: a URL's answer is found by a part of it, and each URL asked is kept.
+
+
+class Files:
+    def __init__(self, **replies):
+        self.replies = replies
+        self.asked = []
+
+    def __call__(self, url):
+        self.asked.append(url)
+        for part, reply in self.replies.items():
+            if part in url:
+                if isinstance(reply, Exception):
+                    raise reply
+                return reply if isinstance(reply, bytes) else json.dumps(reply).encode()
+        raise urllib.error.URLError(f"no reply for {url}")
+
+
+def wikitext(revid, text):
+    return {"query": {"pages": [{"revisions": [{"revid": revid, "slots": {"main": {"content": text}}}]}]}}
+
+
+def tarball(top, files, links=()):
+    """A gzipped tarball as codeload serves one: every member under one top folder."""
+    buffer = io.BytesIO()
+    with tarfile.open(fileobj=buffer, mode="w:gz") as tar:
+        for name, data in files.items():
+            info = tarfile.TarInfo(name if name.startswith("/") or not top else f"{top}/{name}")
+            info.size = len(data)
+            tar.addfile(info, io.BytesIO(data))
+        for name, target in links:
+            info = tarfile.TarInfo(f"{top}/{name}")
+            info.type, info.linkname = tarfile.SYMTYPE, target
+            tar.addfile(info)
+    return buffer.getvalue()
+
+
+def fetch(tmp_path, toml, files, ids):
+    root = tmp_path / "catalogue"
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "sources.toml").write_text(toml, encoding="utf-8")
+    out = tmp_path / "out"
+    return refresh.fetch(ids, out, files, root), out
+
+
+def test_fetch_a_wiki_page(tmp_path, capsys):
+    files = Files(**{"revids=100": wikitext(100, "Intro\nOld line\n"), "titles=": wikitext(105, "Intro\nNew line ő\n")})
+    code, out = fetch(tmp_path, WIKI, files, ["wiki-x"])
+    assert code == 0
+    assert (out / "wiki-x" / "new" / "page.wikitext").read_text(encoding="utf-8") == "Intro\nNew line ő\n"
+    assert (out / "wiki-x" / "revision").read_text(encoding="utf-8") == "105\n"
+    diff = (out / "wiki-x" / "change.diff").read_text(encoding="utf-8")
+    assert "-Old line\n+New line ő\n" in diff
+    assert "--- a/page.wikitext" in diff
+    assert "wiki-x: fetched at 105" in capsys.readouterr().out
+    old, now = (urllib.parse.parse_qs(urllib.parse.urlsplit(url).query) for url in files.asked)
+    assert old["revids"] == ["100"]
+    assert now["titles"] == ["Wikipédia:Jelek_ő"]
+    assert now["redirects"] == ["1"]
+    assert now["rvprop"] == old["rvprop"] == ["ids|content"]
+    assert now["rvslots"] == ["main"]
+
+
+def test_fetch_a_repo_keeps_only_the_watched_paths(tmp_path):
+    old = tarball("repo-x-aaaa", {"evals/a.md": b"one\n", "SKILL.md": b"same\n", "README.md": b"x\n"})
+    new = tarball(
+        "repo-x-bbbb",
+        {"evals/a.md": b"two\n", "evals/b.png": b"\x89PNG\0", "SKILL.md": b"same\n", "README.md": b"y\n"},
+        links=[("evals/link.md", "../../outside.txt")],
+    )
+    files = Files(**{"commits/HEAD": {"sha": NEW}, f"tar.gz/{OLD}": old, f"tar.gz/{NEW}": new})
+    code, out = fetch(tmp_path, REPO.replace("aaaaaaaaaaaa", OLD), files, ["repo-x"])
+    assert code == 0
+    folder = out / "repo-x"
+    listed = sorted(p.relative_to(folder / "new").as_posix() for p in (folder / "new").rglob("*") if p.is_file())
+    # README.md is outside `paths`, and a link is no regular file.
+    assert listed == ["SKILL.md", "evals/a.md", "evals/b.png"]
+    assert (folder / "revision").read_text(encoding="utf-8") == f"{NEW[:12]}\n"
+    diff = (folder / "change.diff").read_text(encoding="utf-8")
+    assert "--- a/evals/a.md\n+++ b/evals/a.md\n" in diff
+    assert "-one\n+two\n" in diff
+    assert "Binary file evals/b.png differs" in diff
+    assert "SKILL.md" not in diff
+    assert files.asked == [
+        "https://api.github.com/repos/someone/repo-x/commits/HEAD",
+        f"https://codeload.github.com/someone/repo-x/tar.gz/{OLD}",
+        f"https://codeload.github.com/someone/repo-x/tar.gz/{NEW}",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("top", "name"),
+    [("repo-x-bbbb", "evals/../../../escape.md"), ("", "/evals/escape.md"), ("repo-x-bbbb", "evals/..\\x.md")],
+    ids=["dot-dot", "absolute", "backslash"],
+)
+def test_fetch_refuses_a_tarball_that_names_a_path_outside(tmp_path, capsys, top, name):
+    bad = tarball(top, {name: b"x\n"})
+    files = Files(**{"commits/HEAD": {"sha": NEW}, "tar.gz/": bad})
+    code, out = fetch(tmp_path, REPO, files, ["repo-x"])
+    assert code == 1
+    assert "repo-x: unreadable (UnreadableError: the tarball names a path outside its folder" in capsys.readouterr().out
+    assert not (out / "repo-x" / "new").exists()
+    assert not list(tmp_path.rglob("escape.md"))
+
+
+@pytest.mark.parametrize(
+    "cut", [lambda t: t[: len(t) // 2], lambda t: t[:10] + b"x" * 40], ids=["cut short", "garbled"]
+)
+def test_fetch_a_broken_tarball_is_unreadable_and_the_rest_are_fetched(tmp_path, capsys, cut):
+    whole = tarball("repo-x-bbbb", {f"evals/{n}.md": f"{n}\n".encode() * 500 for n in range(20)})
+    wiki = {"revids=": wikitext(100, "a\n"), "titles=": wikitext(101, "b\n")}
+    files = Files(**{"commits/HEAD": {"sha": NEW}, "tar.gz/": cut(whole), **wiki})
+    code, out = fetch(tmp_path, REPO + WIKI, files, ["repo-x", "wiki-x"])
+    assert code == 1
+    assert "repo-x: unreadable" in capsys.readouterr().out
+    assert (out / "wiki-x" / "revision").exists()
+
+
+def test_fetch_a_dataset_card(tmp_path):
+    files = Files(
+        **{
+            "api/datasets": {"sha": NEW},
+            "resolve/aaaaaaaaaaaa/": b"---\nlicense: x\n---\nOld\n",
+            f"resolve/{NEW}/": b"---\nlicense: x\n---\nNew",
+        }
+    )
+    code, out = fetch(tmp_path, DATA, files, ["data-x"])
+    assert code == 0
+    assert (out / "data-x" / "new" / "README.md").read_bytes() == b"---\nlicense: x\n---\nNew"
+    diff = (out / "data-x" / "change.diff").read_text(encoding="utf-8")
+    assert "-Old\n+New\n\\ No newline at end of file\n" in diff
+    assert (out / "data-x" / "revision").read_text(encoding="utf-8") == f"{NEW[:12]}\n"
+
+
+def test_fetch_names_each_source_it_could_not_read_and_fetches_the_rest(tmp_path, capsys):
+    none = '[[source]]\nid = "by-hand"\nurl = "u"\nfeed = { api = "none" }\nread_at = { date = 2020-01-01 }\n'
+    files = Files(**{"xx.example.org": urllib.error.URLError("down"), "api/datasets": {"sha": NEW}, "resolve/": b"x\n"})
+    out = tmp_path / "out"
+    # What an earlier fetch left of a source it can't read now goes, so no old diff is read as this one.
+    (out / "wiki-x" / "new").mkdir(parents=True)
+    (out / "wiki-x" / "change.diff").write_text("old\n", encoding="utf-8")
+    code, _ = fetch(tmp_path, WIKI + DATA + none, files, ["wiki-x", "missing", "by-hand", "data-x"])
+    assert code == 1
+    printed = capsys.readouterr().out
+    assert "wiki-x: unreadable (URLError" in printed
+    assert "missing: not fetched (not in sources.toml)" in printed
+    assert "by-hand: not fetched (the feed 'none' has no fetcher: a person reads it)" in printed
+    assert "1 fetched, 3 not" in printed
+    assert not list((out / "wiki-x").iterdir())
+    assert (out / "data-x" / "revision").exists()
+
+
+def test_fetch_refuses_a_wiki_revision_with_no_text(tmp_path, capsys):
+    hidden = {"query": {"pages": [{"revisions": [{"revid": 100, "slots": {"main": {"texthidden": True}}}]}]}}
+    code, _ = fetch(tmp_path, WIKI, Files(**{"revids=": hidden}), ["wiki-x"])
+    assert code == 1
+    assert "no text for revision 100" in capsys.readouterr().out
+
+
+def test_the_command_fetches(monkeypatch, tmp_path):
+    asked = []
+    monkeypatch.setattr(refresh, "fetch", lambda ids, out: asked.append((ids, out)) or 0)
+    assert cli.main(["fetch", "a", "b", "--out", str(tmp_path)]) == 0
+    assert cli.main(["fetch", "c"]) == 0
+    assert asked == [(["a", "b"], tmp_path), (["c"], Path(".local/sources"))]

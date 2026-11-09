@@ -61,9 +61,16 @@ def main(argv: list[str] | None = None) -> int:
     write.add_argument("--check", action="store_true", help="write nothing; exit 1 when the files differ")
     sources = commands.add_parser("refresh", help="check the sources that are due; write an issue body per changed one")
     sources.add_argument("--out", type=Path, default=Path("refresh"), help="where the issue bodies go")
+    download = commands.add_parser(
+        "fetch", help="download sources' text now and its diff from read_at, to read by hand"
+    )
+    download.add_argument("ids", nargs="+", help="the sources' ids in sources.toml")
+    download.add_argument("--out", type=Path, default=Path(".local/sources"), help="where <id>/ goes")
     args = parser.parse_args(argv)
     if args.command == "refresh":
         return refresh.run(args.out, dt.datetime.now(dt.UTC).date())
+    if args.command == "fetch":
+        return refresh.fetch(args.ids, args.out)
     return render_signs(args.check) if args.command == "render" else validate()
 
 

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
+  "permissions": {
+    "blockReadsOutsideWorkingDirectories": true,
+    "allow": [
+      "Edit(src/byhand/catalogue/**)",
+      "Edit(docs/reviews/**)",
+      "Edit(docs/research/**)",
+      "Edit(.local/**)",
+      "Bash(uv run byhand validate)",
+      "Bash(uv run byhand render)",
+      "Bash(uv run tools/copycheck.py)",
+      "Bash(uv run tools/gate.py quick)",
+      "Bash(uv run tools/gate.py full)",
+      "Bash(git add -A)",
+      "Bash(git commit -F .local/commit.txt)"
+    ]
+  }
+}

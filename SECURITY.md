@@ -21,6 +21,9 @@ unless you ask not to be named.
   error message, or sent anywhere but the model you run Claude Code with.
 - Text from a page the refresh reads reaching the catalogue or a skill without a person merging it, or being followed
   as an instruction.
+- A page the refresh reads reaching the refresh agent's token or permissions (`refresh-agent.yml`): its OAuth token
+  leaving the job, a GitHub token in the model's reach, a file written outside the folders it may edit, or a PR it
+  opens that closes, mentions or links where it shouldn't.
 - A plugin skill that runs a command or writes a file without Claude Code asking you first.
 - A secret written where it shouldn't be: a key or token in the catalogue, a report or a log.
 

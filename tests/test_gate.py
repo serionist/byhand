@@ -8,6 +8,7 @@ import subprocess
 import sys
 from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import gate
 import hooks
@@ -1331,6 +1332,11 @@ def test_identities_come_from_git_with_the_author_a_commit_was_given(tmp_path, m
 # to its rule with fnmatchcase, the nearest the standard library has.
 
 SETTINGS = json.loads((Path(__file__).resolve().parents[1] / ".claude" / "settings.json").read_text(encoding="utf-8"))
+# What refresh-agent.yml's model may do: the whole of it, since `--restricted` loads no other settings file.
+AGENT_SETTINGS = json.loads(
+    (Path(__file__).resolve().parents[1] / ".github" / "refresh-agent.json").read_text(encoding="utf-8")
+)
+AGENT_EDITS = ["Edit(src/byhand/catalogue/**)", "Edit(docs/reviews/**)", "Edit(docs/research/**)", "Edit(.local/**)"]
 # The only allows a ` *` may end: git commands whose options and paths are swept for reading a file outside the
 # repository (below), and gh commands that only read from GitHub. Any other allow names its whole command.
 SPACED_STAR_ALLOWS = {
@@ -1350,18 +1356,35 @@ SPACED_STAR_ALLOWS = {
 }
 
 
-def _rules(kind: str) -> list[str]:
+def _rules(settings: dict[str, Any], kind: str) -> list[str]:
     prefix = "Bash("
-    return [rule[len(prefix) : -1] for rule in SETTINGS["permissions"][kind] if rule.startswith(prefix)]
+    return [rule[len(prefix) : -1] for rule in settings["permissions"][kind] if rule.startswith(prefix)]
 
 
-def test_every_allow_is_exact_or_a_swept_command():
+@pytest.mark.parametrize("settings", [SETTINGS, AGENT_SETTINGS], ids=["repo", "refresh agent"])
+def test_every_allow_is_exact_or_a_swept_command(settings):
     # A `*` glued to a word lets git read more into the command than the rule meant: `git diff origin/main...HEAD*`
     # took a path that left the repository (simready-forge #19). A ` *` is kept for the commands the sweep below covers.
-    for rule in _rules("allow"):
+    for rule in _rules(settings, "allow"):
         if "*" in rule:
             assert rule in SPACED_STAR_ALLOWS, f"{rule}: name the whole command, or sweep it and list it"
+
+
+def test_the_repo_allows_only_commands():
     assert all(rule.startswith("Bash(") for rule in SETTINGS["permissions"]["allow"] if "(" in rule)
+
+
+def test_the_refresh_agent_edits_four_folders_and_reads_only_the_checkout():
+    # Its fetched pages are data a stranger wrote: every write it may make is one of these, and the built-in read-only
+    # commands can't read a runner file outside the checkout into its public PR.
+    permissions = AGENT_SETTINGS["permissions"]
+    assert [rule for rule in permissions["allow"] if not rule.startswith("Bash(")] == AGENT_EDITS
+    assert permissions["blockReadsOutsideWorkingDirectories"] is True
+    assert AGENT_SETTINGS["attribution"] == SETTINGS["attribution"]
+    # Nothing else: `--settings` would load hooks, env, a key helper or another directory as readily, and a hook runs
+    # a command no allow names.
+    assert set(AGENT_SETTINGS) == {"$schema", "attribution", "permissions"}
+    assert set(permissions) == {"allow", "blockReadsOutsideWorkingDirectories"}
 
 
 # What keeps a ` *` must print nothing of a file outside the repository, whatever follows it. A throwaway repository
@@ -1528,11 +1551,25 @@ def test_the_house_settings_pass():
     [
         ({**HOUSE, "auto-merge, which dependabot-auto-merge.yml turns on": False}, MAIN_RULES, "auto-merge"),
         ({**HOUSE, "Dependabot alerts": False}, MAIN_RULES, "Dependabot alerts"),
+        ({**HOUSE, "Actions may open a PR, for refresh-agent.yml": False}, MAIN_RULES, "Actions may open a PR"),
+        (
+            {**HOUSE, "the workflow token reads only, unless a workflow asks for more": "write"},
+            MAIN_RULES,
+            "expected 'read', GitHub says 'write'",
+        ),
         (HOUSE, MAIN_RULES[1:], "a PR is required, squash-merged only"),
         (HOUSE, MAIN_RULES[:1], "the check 'CI' is not required"),
         ({}, [], "squash merges only"),
     ],
-    ids=["auto-merge off", "alerts off", "no PR rule", "no required checks", "nothing read"],
+    ids=[
+        "auto-merge off",
+        "alerts off",
+        "Actions can't open a PR",
+        "token writes",
+        "no PR rule",
+        "no required checks",
+        "nothing read",
+    ],
 )
 def test_a_setting_that_differs_is_named(answers, rules, expected):
     assert any(expected in problem for problem in setup.settings_problems(answers, rules))

@@ -651,16 +651,6 @@ feed = { api = "none" }
 read_at = { date = 2026-11-09 }
 
 [[source]]
-id = "decksmith-2026-seven-signs"
-url = "https://dev.to/decksmith/seven-signs-a-slide-deck-was-made-by-ai-1828"
-kind = "vendor"
-languages = ["en"]
-licence = "unstated; facts only, with a citation"
-due = "by-hand"
-feed = { api = "none" }
-read_at = { date = 2026-11-09 }
-
-[[source]]
 id = "leinonen-2026-slides"
 url = "https://arxiv.org/abs/2605.13532"
 kind = "paper"
@@ -767,7 +757,8 @@ id = "report-de-ai-voice"
 url = "https://github.com/ashleyw57/report-de-ai-voice"
 kind = "repo"
 languages = ["zh"]
-licence = "unstated (no LICENSE file); facts only, with a citation"
+# Its long-text scene follows Wikipedia's Signs of AI writing through Humanizer-zh; the PPT scene is its own.
+licence = "unstated (no LICENSE file), and part of it follows Wikipedia's Signs of AI writing (CC BY-SA), so facts only, with a citation"
 due = "weekly"
 feed = { api = "github", repo = "ashleyw57/report-de-ai-voice", paths = ["SKILL.zh.md"] }
 read_at = { commit = "fd1503eb8fab", date = 2026-11-09 }

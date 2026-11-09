@@ -14,8 +14,19 @@ before `1.0` a minor may break something, under Breaking.
   an emoji, each counting only beside two others; and commas between a formula's arguments in a French or
   Portuguese sheet. 49 signs that slide text shows, read for posts and documents but not decks until now, read decks
   too.
+- Decks and sheets: ask for one ("make me a deck about the office move") and `/byhand:write` starts first and writes
+  its text, slide by slide or tab by tab, with the sign files for decks and sheets; whatever makes files in your
+  session (Anthropic's `pptx` or `xlsx` skill, a tool, a script) then makes the file from it, adding no slide, title
+  or figure of its own. byhand makes no file: with nothing that can, you get the outline. It doesn't start on code
+  that builds a deck or a sheet.
+- `/byhand:check` reads a deck or a sheet as an outline, a PDF or a CSV, or a `.pptx` or an `.xlsx` through whatever
+  in the session reads one, and `/byhand:learn` learns a style from your decks and sheets and makes one the default
+  for `deck` or `sheet`.
 
 ### Changed
+
+- The text of a slide is a deck now, not a document: it no longer uses your `document` default style. Make a style
+  the default for `deck` (say "make work-decks my default for decks") to have one.
 
 - Topic titles ("Challenges and Opportunities") and emoji before list items or titles are no sign in a deck, but
   in Japanese, where an emoji before a title is a weak one: people's slides hold more topic titles and emoji than

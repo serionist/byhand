@@ -5,6 +5,11 @@ before `1.0` a minor may break something, under Breaking.
 
 ## Unreleased
 
+### Changed
+
+- `/byhand:check` and the sign files say plainly how weak signs add up: two different phrases one sign finds count as
+  two, and a mark such as a dash counts once however often it appears.
+
 ## 0.1.0 (2026-11-09)
 
 ### Added

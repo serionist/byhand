@@ -41,7 +41,8 @@ for `byhand:check` first. The grant to read the plugin's files lasts only the tu
    their Words and Pattern. Then go through the hits and drop those inside code, a quoted reply (lines starting `>`,
    or a forwarded message) or a link's address: the user didn't write those.
 7. **Count.** A strong or usual sign counts alone. A weak sign counts only where 3 or more different weak words or
-   phrases meet in one paragraph or section: the same phrase twice, or one phrase two signs find, counts once.
+   phrases meet in one paragraph or section, two that one sign finds as well: the same phrase twice, a mark such as a
+   dash however often it appears, or one phrase two signs find, counts once.
 
 ## Answer
 

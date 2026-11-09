@@ -340,6 +340,12 @@ def test_a_dash_pivot_takes_no_other_sign_s_words(weak_hits, text):
     assert weak_hits(text, "post", PORTUGUESE) == signs.WEAK_CLUSTER
 
 
+def test_a_check_counts_each_different_phrase_it_finds(weak_hits):
+    # pt-staged-reveal finds two different reveals, and enfatizando is a third: the plugin counts three (#70)
+    text = "Já parou para pensar no domingo? E a melhor parte? A entrada é livre, enfatizando as lojas."
+    assert weak_hits(text, "post", PORTUGUESE) == signs.WEAK_CLUSTER
+
+
 def test_one_habit_repeated_counts_once(weak_hits):
     text = "Vamos mergulhar no orçamento, vamos mergulhar nas contas e vamos mergulhar outra vez."
     assert weak_hits(text, "document", PORTUGUESE) == 1

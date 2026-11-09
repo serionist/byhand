@@ -173,7 +173,8 @@ def _file(title: str, found: list[Sign], line: Callable[[Sign], str]) -> str:
     if any(sign.strength == "weak" for sign in found):
         lines.append(
             f"A weak sign counts only with {signs.WEAK_CLUSTER} or more hits of weak signs in a paragraph or section, "
-            "each a different word or phrase: the same one repeated, or one phrase two signs find, counts once."
+            "each a different word or phrase, two that one sign finds as well: the same one repeated, a mark such as "
+            "a dash however often it appears, or one phrase two signs find, counts once."
         )
     if any(sign.models for sign in found):
         lines.append(

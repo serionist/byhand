@@ -102,14 +102,19 @@ def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collecti
             # words and marks, so a check takes no other sign of its draft's text. Two of `any`'s checks on one bold
             # label then count twice, more than the rule, which a guard may. Only a check whose every match overlaps
             # another language's check, a pair no draft loads together, is dropped as the one habit twice.
+            # A formatting check finds a mark, one however often it appears; any other check counts each different
+            # phrase it finds, as the rule says. The phrase is the match's text, so one a check takes with the next
+            # word's letter (a staged reveal) counts twice before two different words, more than the rule.
             base = _base(catalogue, sign.language)
-            found = [match.span() for match in sign.pattern.finditer(text)]
+            found = list(sign.pattern.finditer(text))
             elsewhere = [
                 span for other, spans in marks.items() if base != "any" and other not in ("any", base) for span in spans
             ]
-            if any(not _overlaps(span, elsewhere) for span in found):
-                counted.add(sign.id)
-            marks.setdefault(base, []).extend(found)
+            for match in found:
+                if not _overlaps(match.span(), elsewhere):
+                    phrase = " ".join(match.group().casefold().split())
+                    counted.add(sign.id if sign.category == "formatting" else phrase)
+            marks.setdefault(base, []).extend(match.span() for match in found)
             continue
         for phrase, pattern in phrases:
             for found in pattern.finditer(text):
@@ -123,9 +128,10 @@ def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collecti
 @pytest.fixture(scope="session")
 def weak_hits(catalogue: signs.Catalogue) -> Callable[..., int]:
     """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
-    Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check is one habit however
-    often it fires; one phrase two signs find counts once. Each sign counts on the text on its own, as Grep runs it: a
-    check's match hides no other sign's of the same draft. A term has word edges in a language written with spaces, as
-    `validate` gives it. `languages` limits the count to the signs a draft in those languages loads; without it, the
-    count is the higher of every language's signs at once and each language's draft."""
+    Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check counts each
+    different phrase it finds, but a mark (a dash, a bold label) once however often it appears; one phrase two signs
+    find counts once. Each sign counts on the text on its own, as Grep runs it: a check's match hides no other sign's of
+    the same draft. A term has word edges in a language written with spaces, as `validate` gives it. `languages` limits
+    the count to the signs a draft in those languages loads; without it, the count is the higher of every language's
+    signs at once and each language's draft."""
     return partial(_weak_hits, catalogue)

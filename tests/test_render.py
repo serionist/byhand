@@ -141,15 +141,68 @@ def test_a_line_holds_plain_words_and_no_regex():
     assert "(?:" not in files["en/any.short.md"]
 
 
-def test_a_check_line_adds_the_pattern_grep_runs():
+def test_a_check_line_holds_no_pattern_and_a_scan_line_holds_its_form():
     grep = r"\b(?:delv(?:e|es))\b"
     terms = (Term("delv(?:e|es)", "look at"),)
     files = render.render(catalogue(sign(terms=terms, pattern=signs.as_grep(grep), forms={"en": grep})))
     assert lines(files["en/check.md"]) == [
-        r"- en-a (usual): Does a thing. Instead: Says it plainly. Words: delve: look at Pattern: `\b(?:delv(?:e|es))\b`"
+        "- en-a (usual): Does a thing. Instead: Says it plainly. Words: delve: look at"
     ]
-    assert "Grep runs on a file, case-insensitive and line by line" in files["en/check.md"]
-    assert "Grep runs" not in files["en/any.short.md"]
+    assert "Pattern" not in files["en/check.md"]
+    assert lines(files["en/scan.md"]) == [r"- en-a (usual): `\b(?:delv(?:e|es))\b`"]
+    assert "Grep runs on a file, case-insensitive and line by line" in files["en/scan.md"]
+    assert "Grep runs" not in files["en/check.md"] + files["en/any.short.md"]
+
+
+def shared(**forms):
+    """An `any` sign of email and documents, for GPT 5 and later, with a form under each key given."""
+    return sign(
+        "any-a",
+        "any",
+        kinds=("email", "document"),
+        models=(ModelRange("gpt", Version(5)),),
+        pattern=signs.as_grep(signs.together(forms.values())),
+        forms=forms,
+    )
+
+
+def test_a_form_renders_only_in_the_scan_file_of_its_language():
+    files = render.render(catalogue(shared(de="^zusammenfassend", any="oaicite")))
+    assert lines(files["de/scan.md"]) == ["- any-a (usual; gpt 5 and later; email, document): `^zusammenfassend`"]
+    assert lines(files["any/scan.md"]) == ["- any-a (usual; gpt 5 and later; email, document): `oaicite`"]
+    assert "any-a" in files["any/check.md"]
+    assert "zusammenfassend" not in files["any/check.md"] + files["any/scan.md"]
+
+
+def test_a_language_with_forms_and_no_signs_gets_a_scan_file_alone():
+    files = render.render(catalogue(shared(en="^in conclusion")))
+    assert sorted(files) == ["any/check.md", "any/gpt.short.md", "en/scan.md"]
+
+
+def test_a_chinese_form_reaches_a_traditional_chinese_scan():
+    found = catalogue(shared(zh="[这這]是"))
+    files = render.render(found)
+    assert [path for path in render.scan_files(found, "zh-Hant") if path in files] == ["zh/scan.md"]
+
+
+def test_a_scan_line_prints_its_form_in_nfc():
+    found, problems = signs.load()
+    assert problems == []
+    printed = {
+        (path.split("/")[0], match[1]): match[2]
+        for path, text in render.render(found).items()
+        if path.endswith(render.SCAN)
+        for match in re.finditer(r"^- (\S+) \([^)]*\): `(.*)`$", text, re.MULTILINE)
+    }
+    forms = {
+        (code, item.id): form
+        for item in found.signs.values()
+        if item.until is None and not render.is_layout(item)
+        for code, form in item.forms.items()
+    }
+    assert len(printed) > 100
+    assert printed == forms
+    assert all(form == unicodedata.normalize("NFC", form) for form in forms.values())
 
 
 @pytest.mark.parametrize(
@@ -218,18 +271,20 @@ def test_every_pattern_prints_as_written_in_nfc():
     found, problems = signs.load()
     assert problems == []
     printed = {
-        match[1]: match[2]
-        for text in render.render(found).values()
-        for match in re.finditer(r"^- (\S+) .* Pattern: `(.*)`$", text, re.MULTILINE)
+        (path.split("/")[0], match[1]): match[2]
+        for path, text in render.render(found).items()
+        if path.endswith(render.SCAN)
+        for match in re.finditer(r"^- (\S+) \([^)]*\): `(.*)`$", text, re.MULTILINE)
     }
     written = {}
     for path in (signs.CATALOGUE / "signs").glob("*.toml"):
         language = found.languages.get(path.stem)
         for row in tomllib.loads(path.read_text(encoding="utf-8"))["sign"]:
             body = "|".join(f"(?:{term['term']})" for term in row.get("terms", ()))
-            text = row.get("check") or (rf"\b(?:{body})\b" if language and language.spaces else body)
-            if ("check" in row or body) and "until" not in row:
-                written[row["id"]] = unicodedata.normalize("NFC", text)
+            check = row.get("check") or (rf"\b(?:{body})\b" if language and language.spaces else body)
+            forms = check if isinstance(check, dict) else {path.stem: check}
+            if ("check" in row or body) and "until" not in row and "deck" not in row["kinds"]:
+                written |= {(code, row["id"]): unicodedata.normalize("NFC", text) for code, text in forms.items()}
     assert len(printed) > 100
     assert printed == written
 
@@ -302,6 +357,8 @@ def test_what_a_check_reads():
     found = catalogue()
     assert render.check_files(found, "en") == ["any/check.md", "en/check.md"]
     assert render.check_files(found, "zh-Hant") == ["any/check.md", "zh/check.md", "zh-Hant/check.md"]
+    assert render.scan_files(found, "en") == ["any/scan.md", "en/scan.md"]
+    assert render.scan_files(found, "zh-Hant") == ["any/scan.md", "zh/scan.md", "zh-Hant/scan.md"]
 
 
 def files_of(sizes):
@@ -309,7 +366,7 @@ def files_of(sizes):
 
 
 def budgets(**kept):
-    return render.Budgets(**{"mail": 10**9, "document": 10**9, "layout": 10**9, "check": 10**9, **kept})
+    return render.Budgets(**{"mail": 10**9, "document": 10**9, "layout": 10**9, "check": 10**9, "scan": 10**9, **kept})
 
 
 def test_a_mail_within_its_budget_passes():
@@ -367,6 +424,13 @@ def test_a_check_reads_its_scopes_check_files_together():
     ]
 
 
+def test_a_scan_reads_its_scopes_scan_files_together():
+    files = files_of({"any/scan.md": 40, "zh/scan.md": 40, "zh-Hant/scan.md": 40, "zh/check.md": 40})
+    assert render.budget_problems(files, catalogue(), budgets(scan=100)) == [
+        "a scan reads 120 bytes, over its 100: any/scan.md, zh-Hant/scan.md, zh/scan.md"
+    ]
+
+
 def test_a_check_at_its_budget_passes():
     files = files_of({"any/check.md": 50, "en/check.md": 50})
     assert render.budget_problems(files, catalogue(), budgets(check=100)) == []
@@ -379,7 +443,10 @@ def test_a_file_of_too_many_lines_fails():
 
 
 def test_the_budgets_are_the_plans():
-    assert render.Budgets(mail=14 * 1024, document=16 * 1024, layout=16 * 1024, check=32 * 1024) == render.BUDGETS
+    assert (
+        render.Budgets(mail=14 * 1024, document=16 * 1024, layout=16 * 1024, check=32 * 1024, scan=32 * 1024)
+        == render.BUDGETS
+    )
 
 
 def test_write_then_stale_says_nothing(tmp_path):
@@ -460,7 +527,7 @@ def test_every_sign_file_a_plugin_skill_names_is_one_render_writes():
     ]
     named = [name for text in texts for name in re.findall(r"(?:any|<language>)/[\w<>-]+(?:\.[a-z]+)?\.md", text)]
     assert len(named) >= 5  # the skills name their sign files, so the test can fail
-    suffixes = (render.SHORT, render.LONG, render.LAYOUT, "/" + render.CHECK)
+    suffixes = (render.SHORT, render.LONG, render.LAYOUT, "/" + render.CHECK, "/" + render.SCAN)
     assert [name for name in named if not name.endswith(suffixes)] == []
 
 

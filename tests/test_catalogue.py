@@ -255,7 +255,7 @@ def test_a_term_reads_combining_marks_as_grep_does(root, case):
     assert signs.load(root)[1] == []
 
 
-def test_a_check_file_prints_the_pattern_as_written_in_nfc(root):
+def test_a_scan_file_prints_the_pattern_as_written_in_nfc(root):
     # Grep gets the text, never Python's reading of it: Grep refuses the look-around `\b` becomes (#13). U+095C, the
     # letter with its nukta in one, is in NFC the letter and then the nukta, as `flags` is.
     write_sign(root, "hi", "ब\u095cी", f"यह बड{NUKTA}ी बात है।", "हाँ।")
@@ -263,7 +263,7 @@ def test_a_check_file_prints_the_pattern_as_written_in_nfc(root):
     assert problems == []
     sign = found.signs["hi-delve"]
     assert sign.forms == {"hi": rf"\b(?:(?:बड{NUKTA}ी))\b"}
-    assert f"Pattern: `{sign.forms['hi']}`" in render.render(found)["hi/check.md"]
+    assert f": `{sign.forms['hi']}`" in render.render(found)["hi/scan.md"]
     assert sign.pattern is not None
     assert "(?<" in sign.pattern.pattern
 
@@ -695,8 +695,15 @@ def test_terms_and_until_reach_the_rendered_files(root):
     assert problems == []
     files = render.render(found)
     # any-rule-of-three has an `until`, so it is retired
-    assert sorted(files) == ["en/check.md", "en/gpt.short.md", "zh/any.short.md", "zh/check.md"]
+    assert sorted(files) == [
+        "en/check.md",
+        "en/gpt.short.md",
+        "en/scan.md",
+        "zh/any.short.md",
+        "zh/check.md",
+        "zh/scan.md",
+    ]
     assert "Words: delve: look at" in files["en/gpt.short.md"]
-    assert "Pattern: `" in files["en/check.md"]
+    assert "- en-delve (usual; gpt 4 to 4.5): `" in files["en/scan.md"]
     assert found.signs["any-rule-of-three"].until == datetime.date(2030, 1, 1)
     assert found.signs["en-delve"].until is None

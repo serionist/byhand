@@ -133,3 +133,18 @@ forms, counts, the review's tallies).
 Refuted: clusters only the rendered rule counts, through the dash (F18's gap, and each stacks the dash with two other
 tells); two stock cheers in one sentence; the bold label list (a probe artefact, counting one label twice); the strong
 branches on 14 more plain lines (only the recorded classes fire). Python and ripgrep agree on 78 pairs.
+
+## Round 6
+
+A fresh reviewer, on 7036648 (the fixes since b4c5a99, in b4d3514). Verdict: needs-fixes. F24, F25 and F26 hold, each
+line round 5 added failing on the b4c5a99 catalogue and passing now.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F27 | major | `pt.toml`, `pt-false-contrast` | F25's ending fired on clauses that add or explain (é ainda, é que, é preciso), so a plain summary with Em suma and enfatizando reached 3 in 9 of 14 paragraphs, against 0 at b4c5a99 | fixed in 464e1ec: the sign keeps no check. Portuguese writes one shape to add, to correct and as a model's foil, and the checks of rounds 1, 4 and 5 each missed one or fired on another; `any-negative-parallelism` has no check either. Two of the summaries are in `REPORTS`; the sign's `FORMS` and `LEFT_ALONE` lines go with its pattern |
+| F28 | minor | `any.toml`, `any-unfilled-placeholder` | F26's fix lost "[Inserir: morada completa]" and "[Insira: nome da empresa]" | fixed in 464e1ec: an optional colon after the verb; a `MACHINE` line |
+
+Refuted: the clusters left by the reviewer's own candidate fix (a real contrast stacked with a cheer or enfatizando, the
+class round 4 called contrived); the ta… foils the round-5 check missed (moot now); "[Inserir imagem]" as a button
+(F26's recorded class); "[Inserir_link]" (missed before b4d3514 too); the strong and usual branches on 12 more plain
+lines (only recorded classes fire); comment lines' wrap (taste). Python and ripgrep agree on 82 pairs.

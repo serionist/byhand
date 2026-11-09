@@ -48,16 +48,15 @@ on its text. Whatever makes the file in the session makes it.
 | Not on | code-adjacent writing | the same, and code that builds a deck or a sheet (a `python-pptx` script, an `openpyxl` builder) |
 | Kinds (step 1) | `message`, `email`, `post`, `document` ("the text of a slide" is a document) | adds `deck` (slides, a presentation, the text of a slide) and `sheet` (a spreadsheet's tabs, headers, labels, notes) |
 | Reads (step 5) | short files; a post or a document the long ones too | a deck or a sheet: the short files and the `.layout.md` ones |
-| Drafts (step 6) | prose | for a deck, a `## <n>. <title>` heading per slide as it shows, its text, `Notes:` for speaker notes, and in square brackets what goes there that isn't text (`[bar chart: tickets closed per month]`); for a sheet, a heading per tab, a Markdown table of its headers and labels with the user's numbers or empty cells, never invented ones, and its notes |
-| Answers (step 8) | the draft and nothing else | the same when nothing in the session makes the file. When something does (another skill, a script, a tool the user named), go on to it with this text: it keeps the words, the order and what goes on each slide, and adds no slide, title or label of its own, and no picture, icon or chart the square brackets don't name; how the file looks (fonts, colours, where things sit) is its call |
+| Drafts (step 6) | prose | for a deck, a `## <n>. <title>` heading per slide as it shows, its text, `Notes:` for speaker notes, and in square brackets what goes there that isn't text, a chart with the user's numbers (`[bar chart, tickets closed: Jan 180, Feb 210]`) or none (`[bar chart, tickets closed per month: your numbers]`); for a sheet, a heading per tab and a Markdown table, each row starting `\|`, of its headers and labels with the user's numbers or empty cells, never invented ones, and its notes. A single slide's text for the user is its title on a line and its text, with no heading marks |
+| Answers (step 8) | the draft and nothing else | for a file, the session goes on to make it as it would without byhand (another skill, a tool the user named, a script of its own) with this text: it keeps the words, the order and what goes on each slide, and adds no slide, title, label or number the text doesn't give, and no picture, icon or chart the square brackets don't name; how the file looks (fonts, colours, where things sit) is its call. When the session can't make the file, the draft and nothing else, as now |
 
 The outline form is the one place a deck's text is plain text: `check` and `scan` read it as a Markdown file, and
 `learn` takes it as a sample. A document made as a file needs no form: its text is prose.
 
 The description gains one clause and stays under the 1,536 characters Claude Code shows of a skill's description
-(code.claude.com/docs/en/skills, frontmatter reference). Claude Code documents no order between two skills that
-match one request ("Any ordering you rely on would be prompt wording": none of the skills docs covers it), so the
-description says to start before the skill that makes the file, and Step 4 tries it beside Anthropic's
+(code.claude.com/docs/en/skills, frontmatter reference). The skills docs give no order between two skills that
+match one request, so the description says to start before the skill that makes the file, and Step 4 tries it beside Anthropic's
 `document-skills` plugin by hand: its `pptx` skill's description starts on any mention of a deck, slides or a
 presentation.
 
@@ -69,15 +68,18 @@ Today `render.draft_files` gives a deck the layout files alone, so a Hungarian d
 - a sign renders into each file a reader of its kinds reads: the short file when its kinds hold `any`, `message` or
   `email`; else the long file when they hold `post` or `document`, and the layout file when they hold `deck` or
   `sheet`, both when both (`part` becomes `parts`; a sign in two families already renders twice);
-- a deck or a sheet reads the short files and the layout files: every sign whose kinds hold it, and none of the 67
+- a deck or a sheet reads the short files and the layout files: every sign whose kinds hold it, and none of the 82
   post-and-document signs it would skip by kind;
-- the post-and-document signs a slide's text shows too (headings, promotional words, a structure announced:
-  `fr-english-headings`, `ja-structure-announcements`) gain `deck` in Step 3, as `hu-title-case-headings` has it
-  already: slide text read them as a `document` until now. They are in `check.md` already, so a check pays nothing
-  more, and the long files are 5.2 KB at most (`fr`).
+- every sign whose kinds name `document` and not `deck`, 76 in the short and long files, is a sign slide text read
+  as a `document` until now, and a deck drops it by kind. Step 3 goes through them and adds `deck` to those a slide's
+  text shows, as `hu-title-case-headings` has it already: in the short files `any-assistant-preamble` (strong),
+  `any-emoji-markers` (usual), `hu-parenthetical-gloss` and `hu-explicit-subject-repeat`; in the long files
+  `any-assistant-closing-offer`, `zh-leaked-request`, `fr-english-headings`, `ja-structure-announcements` and the
+  others like them. `any-raw-markdown` stays off: its pattern finds `## `, which the outline form is built of. They
+  are in `check.md` already, so a check pays nothing more, and the long files are 5.2 KB at most (`fr`).
 
-A check reads every family's signs with their patterns. `any/check.md` and a language's `check.md` come to 31.0 KB
-for `zh-Hant` and 32.3 KB for `ja` today, against a 32 KB budget, so the layout-only signs go to `check.layout.md`,
+A check reads every family's signs with their patterns. `any/check.md` and a language's `check.md` come to 31,027 bytes
+for `zh-Hant` and 32,274 for `ja` today, against a budget of 32,768, so the layout-only signs go to `check.layout.md`,
 one per scope, which a check reads only for a deck or a sheet. The `layout` budget, 16 KB, holds a draft's layout
 files together and a check's together: one constant, two sums.
 
@@ -88,7 +90,7 @@ From sources, as every sign is; the research found few (`docs/research/2026-11-0
 | Source | What it shows | Use |
 |---|---|---|
 | `analystacademy/flight-check` (B23), MIT | six deck checks: topic-label headlines, vague claims, numbers that disagree across slides, a leftover `[TBD]`, 3D charts, AI prose | a source, read through its repo |
-| plusai, uxdesign.cc, presentations.ai (E6), all rights reserved | identical card grids, a coloured bar by every text box, text overload, topic-label headlines; opinion, not measured | facts only, with a citation, `by-hand` |
+| plusai, uxdesign.cc, presentations.ai (E6), all rights reserved | identical card grids, a coloured bar by every text box, text overload, topic-label headlines; opinion, not measured | facts only, with a citation, `by-hand`, for what the text shows (identical cards, text overload); topic-label headlines are a style's to say and a coloured bar is look, so neither gives a sign |
 | SlideAudit (arXiv 2508.03630) | design flaws in 2,400 slides, not AI origin | dropped: it says nothing of who made a slide |
 | spreadsheets | none found | Step 2 searches again |
 
@@ -104,7 +106,8 @@ the catalogue's rules, unchanged:
   authorship check. Its checks of a deck's quality give none (action titles, a cited source, 3D charts, a leftover
   `[TBD]`): many people's own decks have topic titles, and a sign would push `write` above the user's level. Those
   are a style's to say;
-- no source for sheets: recorded here as having none, as Hindi was, and a sheet reads the short files only.
+- no source for sheets: recorded here as having none, as Hindi was. A sheet still reads the layout files, as Step 1
+  gives it, but only the short files' signs apply to it until a sign names `sheet`.
 
 ### `check` and `learn`
 
@@ -133,12 +136,12 @@ Bytes, as the Step 7 record counted them (no API key counts tokens); 16 KB is ab
 
 | A deck or a sheet reads | Today | Budget |
 |---|---|---|
-| the short files, as a mail does | 6.5 to 12.8 KB (`vi`, `zh-Hant`) | 14 KB (`mail`) |
+| the short files, as a mail does | 6,533 to 12,834 bytes (`vi`, `zh-Hant`) | 14 KB (`mail`) |
 | its layout files | none yet: Step 3's seed | 16 KB (`layout`), lowered in Step 3 to the seed's largest read plus 4 KB |
 | a style | under 4 KB | `learn` holds it |
-| a check: `check.md` files, then `check.layout.md` ones | 22.1 to 32.3 KB | 32 KB (`check`), and `layout` |
+| a check: `check.md` files, then `check.layout.md` ones | 20,991 bytes (a language with no signs of its own) to 32,274 (`ja`) | 32 KB (`check`), and `layout` |
 
-So a deck's draft reads what a mail reads plus its layout files: 12.8 KB at most today, about 3,200 tokens, plus
+So a deck's draft reads what a mail reads plus its layout files: 12,834 bytes at most today, about 3,200 tokens, plus
 the seed's layout files, and under 30 KB (some 7,500 tokens) at the caps. Step 4's record gives the bytes per seed
 language, as Step 7's did. A deck's PDF read by `check` or `learn` costs
 its pages' images too: the user chose that deck, and 20 pages is one read.
@@ -147,8 +150,8 @@ its pages' images too: the user chose that deck, and 20 pages is one read.
 
 - **byhand makes the file** (#66's option 3): it would need a tool that runs a command, which the plugin pre-approves
   for none; the maintainer chose not to.
-- **A deck reads the long files too:** one line in `draft_files`, but up to 6 KB more a deck (`fr`, `ja`) for 67
-  signs it skips by kind, to reach one sign.
+- **A deck reads the long files too:** one line in `draft_files`, but up to 6 KB more a deck (`fr`, `ja`) for 82
+  signs it would mostly skip by kind.
 - **Layout signs in `check.md`:** every mail's check would pay for them, and `ja` is at its budget already.
 - **A stub file-making skill in the eval suite,** to grade the order with `tool_order`: the suite loads only the
   plugin under test (code.claude.com/docs/en/plugin-evals), and a case's `plugins:` field is documented only as
@@ -162,7 +165,8 @@ No one-way door changes: the kinds `deck` and `sheet` and the `layout` category 
 skills keep their names, and a style's format and folders are as they are; `Default for` takes kinds it always could.
 
 What users notice: a request for "the text of a slide" is a `deck` now, not a `document`, so it reads the short and
-layout files instead of the short and long ones. A new file, `check.layout.md`, under `plugin/signs/`. `write` starts
+layout files instead of the short and long ones, with the `document` signs a slide shows kept by Step 3, and no longer uses the user's `document` default style: `learn`
+makes a style the default for `deck`, as CHANGELOG says. A new file, `check.layout.md`, under `plugin/signs/`. `write` starts
 on deck and sheet requests it may have missed. CHANGELOG says so under Unreleased.
 
 ## Steps
@@ -175,13 +179,14 @@ on deck and sheet requests it may have missed. CHANGELOG says so under Unrelease
    are unchanged but `hu/any.layout.md` (from `hu-title-case-headings`).
 2. **Sources.** One `find-sources` run for decks and sheets: B23 and E6 as entries, the search in the seed languages'
    own words, a research record. Proven by `byhand validate`.
-3. **Signs.** `propose-signs` on Step 2's sources, and `deck` added to the post-and-document signs a slide's text
-   shows, a PR per language, or one for `any` and `en` when the sources are
-   few, as `docs/plans/2026-11-09-more-languages.md` allows; `layout` lowered to the largest read plus 4 KB. Sheets
-   with no source: a progress-log line. Proven by `byhand validate` (each sign's `flags` and `passes`) and the render
-   budgets.
+3. **Signs.** `propose-signs` on Step 2's sources, and `deck` added to the signs naming `document` that a slide's
+   text shows, the four short-file ones above among them, a PR per language, or one for `any` and `en` when the sources are
+   few, as one English reader reviews both; `layout` lowered to the largest read plus 4 KB. Sheets
+   with no source: a progress-log line. Proven by `byhand validate` (each sign's `flags` and `passes`), the render
+   budgets, and a render test that a deck's files carry `any-assistant-preamble` and `any-emoji-markers` and not
+   `any-raw-markdown`.
 4. **The skills.** `write` (description, kinds, the files, the outline, the hand-off), `check` (the forms, the layout
-   check files, a file read through what the session has), `scan` (the kinds), `learn` (the kinds, the samples); the evals; the docs. Proven by the gate's
+   check files, a file read through what the session has), `scan` (the kinds, and up to six check files, `check.layout.md` among them), `learn` (the kinds, the samples); the evals; the docs. Proven by the gate's
    plugin and skills checks, the eval suite and the tries by hand under Tests, recorded in
    `docs/reviews/<date>-decks-real-sessions.md`.
 
@@ -189,11 +194,14 @@ Each step ends with `finish-work`: the gate, `review-code` until clean, a PR.
 
 ## Tests
 
-- **Unit (CI):** Step 1's render tests; `byhand validate` on every layout sign's `flags` and `passes`; the budgets.
+- **Unit (CI):** Step 1's render tests; `byhand validate` on every layout sign's `flags` and `passes`; the budgets;
+  an invented plain deck outline in the office test of each language with a layout sign that has a `check`
+  (`tests/test_office.py` for `any` and `en`), holding that no layout check counts alone on it.
 - **The eval suite** (`claude plugin eval --ablation none --threshold 1.0`, three runs a case, every text invented):
   - 6 deck and sheet requests, each graded `tool_used: Skill` on `write` and never `check`: a deck in en, hu, de and
     ja ("make me a deck about…", "készíts egy prezentációt…"), a sheet in en and fr; the en ones also graded
-    `tool_used: Read` on `signs[\\/](any|en)[\\/]any\.layout\.md` once Step 3 seeds them. A run loads only the
+    `tool_used: Read` on `'signs(?:/|\\\\)(?:any|en)(?:/|\\\\)any\.layout\.md'` (single-quoted YAML: the
+    input is matched as JSON, where a backslash is doubled) once Step 3 seeds them. A run loads only the
     plugin and allows only `Read` and `Skill`, so nothing makes a file: each deck case is also graded by a `regex` on
     `last_message`, `^## 1\.` with `flags: m`, and each sheet case by `^\|`, the outline answered.
     `write-en-slide-text` stays. Bar: 6 of 6.
@@ -204,9 +212,12 @@ Each step ends with `finish-work`: the gate, `review-code` until clean, a PR.
   `document-skills` installed: 3 deck requests and 2 sheet requests. Bar: `write` starts on all 5, before the skill
   that makes the file on 4, and each file's slide titles and headers are `write`'s. Also: `check` on a deck's PDF and
   on a sheet's CSV and on a `.pptx` read through `pptx`, `learn` from an invented deck PDF, and slides holding an
-  element the outline doesn't name, counted.
+  element the outline doesn't name, counted. Then 2 deck requests in a session with no maker installed: what the
+  session does with the text (a script of its own, or the outline answered), and whether the file's words are
+  `write`'s.
 - **The maintainer,** in their own session: a deck style learned from their own decks, and two decks, in English and
-  Hungarian, read as theirs. The record holds counts and verdicts, never a deck or a style.
+  Hungarian, read as theirs. Its makers (claude.ai's synced `pptx`, `xlsx` and `docx`, and any tool its system
+  prompt puts first for a deck) are counted apart: whether `write` started, and whether it started first. The record holds counts and verdicts, never a deck or a style.
 - **What none can show:** whether a reader takes a deck as the user's beyond the maintainer's two; and whether a
   maker keeps the words in sessions other than the ones tried.
 
@@ -220,10 +231,10 @@ the hand-off), `docs/USAGE.md` (the files table: `check.layout.md`; what a deck 
 
 | Risk | Answer |
 |---|---|
-| The maker starts first and writes its own text, so `write` never starts or its text is dropped | The description says to start first, and the hand-off says to keep the words; the try by hand measures it on the real `document-skills`; accepted, the description tuned if it misses |
+| The maker starts first and writes its own text, so `write` never starts or its text is dropped | The description says to start first, and the hand-off says to keep the words; the tries by hand measure it on the real `document-skills` and in the maintainer's session; accepted, the description tuned if it misses |
 | The maker adds text of its own (a "Key takeaways" slide, a chart title) | The hand-off says to add none; accepted: what a later skill does is outside byhand |
 | Few or no sources for layout signs, none for sheets | No sign without one; a sheet reads the short files; recorded, as Hindi was; accepted |
-| A layout sign flags a plain human deck (three bullets, a title slide) | Each has a `passes` outline, and a weak one counts only in a cluster, as for prose |
+| A layout sign flags a plain human deck (three bullets, a title slide) | Each has a `passes` outline, a weak one counts only in a cluster, as for prose, and the office tests' plain deck outline holds that no layout check counts alone |
 | A deck PDF costs many tokens to read | Only for a check or a sample the user gives; 20 pages a read; accepted |
 | `write` starts on code that builds a deck | The description names it; 4 eval cases |
 
@@ -256,3 +267,43 @@ Which files a deck reads); a quote on skill ordering with no source in the skill
 the E6 row lists look-only tells that Out of scope excludes (The layout signs); a `[TBD]` check would match the
 outline's own square brackets (The layout signs); `scan` takes "one to three paths of `check.md` files", and a deck's
 check passes up to six (Step 4).
+
+### Round 1
+
+A fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, on `6da748a`, which computed the sizes against
+`byhand.render` and ran the `any` patterns over an invented outline; P1 confirmed by a fresh refuter on the same
+model, which corrected its list of signs. Verdict: needs-fixes; fixed in place by the author.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P1 | major | Slide text as a `deck` drops every sign naming `document` and not `deck`, the short-file ones too: a deck with an emoji before each title, or an "Absolutely! Here's…" preamble, passes clean of `any-emoji-markers` and `any-assistant-preamble` | fixed: Which files a deck reads names the 76 signs Step 3 goes through and the four short-file ones; `any-raw-markdown` stays off; a render test |
+| P2 | minor | A user's `document` default style no longer reaches slide text, and Compatibility didn't say | fixed: Compatibility and CHANGELOG say to make a style the default for `deck` |
+| P3 | minor | No try of a session with no maker, where Claude may write its own script | fixed: 2 deck requests by hand with no maker installed; Q1 |
+| P4 | minor | The makers tried were not the maintainer's (claude.ai's synced skills, a tool the system prompt puts first) | fixed: counted apart in the maintainer's session |
+| P5 | minor | A chart bracket with no numbers invites the maker to invent them | fixed: a chart carries the user's numbers or says they are the user's to add; the hand-off adds no number |
+| P6 | minor | One slide's text for the user would carry `## 1.` scaffolding to paste | fixed: a single slide is its title on a line and its text |
+| P7 | minor | Sizes mixed decimal and binary KB; 67 post-and-document signs were 82 | fixed: bytes; 82 |
+| P8 | minor | A quotation no doc holds | fixed: a plain statement |
+| P9 | minor | The E6 row listed a look-only tell and topic-label headlines, which I2 rules out | fixed: the row says neither gives a sign |
+| P10 | minor | `scan` takes one to three check files; a deck's check passes up to six | fixed: Step 4 |
+| P11 | minor | The Read grader's pattern took no doubled backslash, as JSON gives a Windows path | fixed: `(?:/|\\)` in single-quoted YAML |
+| P12 | minor | `any` and `en` sharing a PR was cited to a plan that allows no such thing | fixed: its own reason |
+
+Refuted: a `[TBD]` check matching the outline's brackets (the plan gives no `[TBD]` sign, and no `any` pattern hits
+the outline); `check` running a command through another skill (the command is that skill's, under the user's
+permissions; `check` pre-approves `Read` alone); the sandbox loading other skills (it loads only the plugin); a
+`regex` grader without `flags` (an existing case uses `flags: im`); the 1,536-character figure; `tool_order` with a
+stub maker (the `plugins:` field is documented only as under test); `check.layout.md` breaking the test of sign files
+a skill names (it ends in `.layout.md`).
+
+| # | Question | Recommendation | Answer |
+|---|---|---|---|
+| Q1 | With nothing in the session that makes files, does `write` answer the outline and stop, or does the session go on as it would without byhand (a script of its own), under the hand-off's rules? | go on as the session would: "whatever makes the file in that session makes it" | the recommendation, on the maintainer's standing word: the Answers row says so |
+
+| # | Improvement | Answer |
+|---|---|---|
+| I6 | Say a sheet reads the layout files but only the short files' signs apply until a sign names `sheet`, as Step 1's code gives it | taken |
+| I7 | An invented plain deck outline in the office tests, so no layout check counts alone on a human deck | taken |
+| I8 | The sheet form's table rows start with `\|`, so the sheet grader's `^\|` holds | taken |
+
+Round 2 reads the fixes.

@@ -61,9 +61,30 @@ def alternatives() -> Callable[[str], list[str]]:
     return _alternatives
 
 
+def _overlaps(span: tuple[int, int], spans: list[tuple[int, int]]) -> bool:
+    return any(span[0] < end and start < span[1] for start, end in spans)
+
+
+def _base(catalogue: signs.Catalogue, code: str) -> str:
+    """The language a sign's draft is in: a script variant's draft loads its base language's signs too."""
+    language = catalogue.languages.get(code)
+    return language.of if language and language.of else code
+
+
 def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Collection[str] | None = None) -> int:
+    if languages is not None:
+        return _count(catalogue, text, kind, languages)
+    # Every language's signs at once overlap where no draft does (a dash two languages' checks find), so the count
+    # is also taken as each language's draft would load it, and the higher one stands.
+    codes = {sign.language for sign in catalogue.signs.values()} - {"any"}
+    each = [_count(catalogue, text, kind, {"any", code, _base(catalogue, code)}) for code in codes]
+    return max(_count(catalogue, text, kind, None), *each)
+
+
+def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collection[str] | None) -> int:
     counted: set[str] = set()
-    spans: list[tuple[int, int]] = []
+    phrase_spans: list[tuple[int, int]] = []
+    marks: dict[str, list[tuple[int, int]]] = {}  # each check's matches, by the language a draft loads it with
     for sign in catalogue.signs.values():
         if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
             continue
@@ -76,12 +97,26 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Coll
             for term in sign.terms
             for phrase in _alternatives(term.term)
         ]
-        for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
+        if not phrases:
+            # Grep runs each check on its own, and a dash's match may run from the line's start over other signs'
+            # words and marks, so a check takes no other sign of its draft's text. Two of `any`'s checks on one bold
+            # label then count twice, more than the rule, which a guard may. Only a check whose every match overlaps
+            # another language's check, a pair no draft loads together, is dropped as the one habit twice.
+            base = _base(catalogue, sign.language)
+            found = [match.span() for match in sign.pattern.finditer(text)]
+            elsewhere = [
+                span for other, spans in marks.items() if base != "any" and other not in ("any", base) for span in spans
+            ]
+            if any(not _overlaps(span, elsewhere) for span in found):
+                counted.add(sign.id)
+            marks.setdefault(base, []).extend(found)
+            continue
+        for phrase, pattern in phrases:
             for found in pattern.finditer(text):
-                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
+                if phrase not in counted and _overlaps(found.span(), phrase_spans):
                     continue
                 counted.add(phrase)
-                spans.append(found.span())
+                phrase_spans.append(found.span())
     return len(counted)
 
 
@@ -89,6 +124,8 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Coll
 def weak_hits(catalogue: signs.Catalogue) -> Callable[..., int]:
     """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
     Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check is one habit however
-    often it fires; one phrase two signs find counts once. A term has word edges in a language written with spaces, as
-    `validate` gives it. `languages` limits the count to the signs a draft in those languages loads."""
+    often it fires; one phrase two signs find counts once. Each sign counts on the text on its own, as Grep runs it: a
+    check's match hides no other sign's of the same draft. A term has word edges in a language written with spaces, as
+    `validate` gives it. `languages` limits the count to the signs a draft in those languages loads; without it, the
+    count is the higher of every language's signs at once and each language's draft."""
     return partial(_weak_hits, catalogue)

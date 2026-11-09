@@ -159,7 +159,7 @@ languages = ["de", "fr", "it", "ro", "sv"]
 # GitHub's API reads NOASSERTION; the LICENSE file at 4e5aa4c51230 is MIT, adapted from avoid-ai-writing.
 licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "jurigis/avoid-ai-writing-multilingual", paths = ["SKILL-DE.md", "SKILL-FR.md", "SKILL-IT.md", "sources"] }
+feed = { api = "github", repo = "jurigis/avoid-ai-writing-multilingual", paths = ["SKILL-DE.md", "SKILL-FR.md", "SKILL-IT.md", "SKILL-RO.md", "SKILL-SV.md", "sources"] }
 read_at = { commit = "4e5aa4c51230", date = 2026-11-08 }
 
 [[source]]
@@ -531,6 +531,7 @@ id = "farrell-2026-translators"
 url = "https://arxiv.org/abs/2601.15828"
 kind = "paper"
 languages = ["it"]
+# arXiv says CC BY-NC-ND 4.0; the PDF's own notice says CC BY-ND 4.0: the stricter holds.
 licence = "CC BY-NC-ND 4.0; facts only, with a citation"
 due = "by-hand"
 feed = { api = "none" }

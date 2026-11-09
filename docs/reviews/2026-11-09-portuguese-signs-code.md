@@ -5,7 +5,7 @@ head: 5562141
 date: 2026-11-09
 round: 1
 tier: standard (one fresh reviewer; findings checked against the code by the main session)
-verdict: clean (round 8)
+verdict: needs-fixes
 ---
 
 # Seed the Portuguese signs: code review

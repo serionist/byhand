@@ -423,3 +423,85 @@ licence = "CC BY-ND 4.0; facts only, with a citation"
 due = "by-hand"
 feed = { api = "none" }
 read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "wikipedia-pt"
+url = "https://pt.wikipedia.org/wiki/Wikip%C3%A9dia:Sinais_de_texto_gerado_por_intelig%C3%AAncia_artificial"
+kind = "wiki"
+languages = ["pt"]
+licence = "CC BY-SA 4.0"
+due = "weekly"
+feed = { api = "mediawiki", site = "pt.wikipedia.org", title = "Wikipédia:Sinais_de_texto_gerado_por_inteligência_artificial" }
+read_at = { revision = "73274816", date = 2026-11-09 }
+
+[[source]]
+id = "evitar-escrita-ia"
+url = "https://github.com/mariorabeloneto/evitar-escrita-ia"
+kind = "repo"
+languages = ["pt"]
+# GitHub's API reads NOASSERTION; the LICENSE file at a4b596e6f8b0 is MIT, adapted from avoid-ai-writing.
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "mariorabeloneto/evitar-escrita-ia", paths = ["SKILL.md"] }
+read_at = { commit = "a4b596e6f8b0", date = 2026-11-09 }
+
+[[source]]
+id = "humanizer-pt-br"
+url = "https://github.com/eurafaeldecarvalho/humanizer-pt-br"
+kind = "repo"
+languages = ["pt"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "eurafaeldecarvalho/humanizer-pt-br", paths = ["patterns", "eval/RESULTS.md"] }
+read_at = { commit = "a18e130ad39e", date = 2026-11-09 }
+
+[[source]]
+id = "andrade-2026-portuguese"
+url = "https://aclanthology.org/2026.propor-2.22/"
+kind = "paper"
+languages = ["pt"]
+# The paper itself says only "©2026 Association for Computational Linguistics"; the Anthology's footer says CC BY 4.0.
+licence = "©2026 ACL; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "al-shaibani-2025-arabic"
+url = "https://arxiv.org/abs/2505.23276"
+kind = "paper"
+languages = ["ar"]
+licence = "CC BY-NC-SA 4.0; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { revision = "v2", date = 2026-11-09 }
+
+[[source]]
+id = "humanizer-ar"
+url = "https://github.com/hazemshan1-rgb/humanizer-ar"
+kind = "repo"
+languages = ["ar"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "hazemshan1-rgb/humanizer-ar", paths = ["README.md", "skills/humanizer-ar/references/patterns.md"] }
+read_at = { commit = "5289d4a60aa5", date = 2026-11-09 }
+
+[[source]]
+id = "wang-2026-human-detection"
+url = "https://arxiv.org/abs/2502.11614"
+kind = "paper"
+languages = ["ar", "hi", "zh", "en", "it", "ja", "kk", "ru", "vi"]
+licence = "CC BY 4.0; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { revision = "v3", date = 2026-11-09 }
+
+[[source]]
+id = "agrahari-2026-shakti"
+url = "https://arxiv.org/abs/2610.41232"
+kind = "paper"
+languages = ["hi"]
+licence = "facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { revision = "v1", date = 2026-11-09 }

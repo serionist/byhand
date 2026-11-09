@@ -133,8 +133,8 @@ REPORTS = [
     "logística. As três áreas entregam os dados até dia 20.",
     "Relatório anual da associação\n\nO fecho da fábrica em 2019 foi um divisor de águas para o bairro: perdemos 300 "
     "empregos e metade do comércio. Este ano abrimos o centro de dia.",
-    "Manual do utilizador\n\nO sistema poderá, opcionalmente, enviar um alerta por e-mail. Por defeito, os relatórios "
-    "são gerados à segunda-feira e guardados durante 90 dias.",
+    "Manual do utilizador\n\nNo editor, clique em [Inserir] e escolha Tabela. O sistema poderá, opcionalmente, enviar "
+    "um alerta por e-mail. Por defeito, os relatórios são gerados à segunda-feira e guardados durante 90 dias.",
     "Artigo, secção 4\n\nÉ importante destacar que o estimador é robusto à heterocedasticidade. Os erros-padrão foram "
     "agrupados por município, o que é crucial quando as observações não são independentes. A amostra é abrangente: "
     "cobre os 27 estados.",
@@ -154,6 +154,10 @@ REPORTS = [
     "do parque, em 2000, foi um divisor de águas para o centro histórico.",
     "Recensão\n\nEm suma, a obra discute a proteção de dados na era digital, enfatizando o papel da autoridade "
     "nacional.",
+    "Resumo da dissertação\n\nEm suma, a dissertação analisa o ensino da escrita na era da inteligência artificial, "
+    "enfatizando o papel do professor.",
+    "Nota de política\n\nEm conclusão, a diretiva reforça a concorrência no ecossistema digital europeu, enfatizando "
+    "as plataformas de grande dimensão.",
     "Guião de atendimento\n\nEncerramento:\n- Confirmar o número do pedido\n"
     "- Há mais alguma coisa em que possa ajudar?",
     "Parecer técnico\n\nA ponte precisa de reforço. A verdade é que a obra de 2015 não resolveu as infiltrações, e "
@@ -312,7 +316,7 @@ def test_plain_portuguese_work_text_makes_no_weak_cluster(weak_hits, text, kind)
 
 def test_the_weak_counting_counts_a_cluster(weak_hits):
     # so the test above can fail: three different weak phrases in one paragraph of a post
-    text = "Num mundo cada vez mais digital, vamos mergulhar no ecossistema digital do bairro."
+    text = "Num mundo cada vez mais digital, vamos mergulhar no bairro, enfatizando as lojas."
     assert weak_hits(text, "post", PORTUGUESE) == signs.WEAK_CLUSTER
 
 
@@ -349,17 +353,18 @@ def test_portuguese_typography_meets_no_formatting_check(catalogue, text):
 FORMS = [
     ("pt-false-contrast", "O nosso serviço não é só uma app, é uma equipa ao seu lado."),
     ("pt-false-contrast", "Estas jornadas não são só palestras; são o ponto de encontro do setor."),
+    ("pt-false-contrast", "Não são apenas números, são histórias de vida."),
+    ("pt-false-contrast", "Liderança não é apenas sobre resultados, é sobre pessoas."),
+    ("pt-false-contrast", "O nosso banco não é só um banco, é seu parceiro de todos os dias."),
     ("pt-staged-reveal", "Mudámos de fornecedor. O detalhe? Encomendas em 24 horas."),
     ("pt-staged-reveal", "Já parou para pensar quanto custa uma reunião?"),
     ("pt-staged-reveal", "Já paraste para pensar quanto custa uma reunião?"),
     ("pt-staged-reveal", "E a melhor parte? É grátis."),
     ("pt-inflated-stakes", "A feira faz 30 anos em um mundo cada vez mais apressado."),
-    ("pt-inflated-stakes", "O coral ensaia às terças, mesmo na era da inteligência artificial."),
     ("pt-closing-cheer", "O melhor ainda está por vir!"),
     ("pt-closing-cheer", "Só o tempo dirá."),
     ("pt-ai-vocabulary", "Estamos enfatizando a entrega no prazo."),
     ("pt-ai-vocabulary", "Vamos mergulhar no orçamento de 2027."),
-    ("pt-ai-vocabulary", "Um ecossistema digital para o comércio local."),
     ("pt-dash-pivots", "Testámos durante uma semana" + RAYA + "e ninguém voltou ao sistema antigo."),
     ("pt-dash-pivots", "O mercado volta no domingo " + RAYA + " com pastéis."),
     (
@@ -389,6 +394,7 @@ LEFT_ALONE = [
     ("pt-inflated-stakes", "Mais do que nunca precisamos de voluntários."),
     ("pt-inflated-stakes", "Em 2000, o parque tecnológico foi um divisor de águas para o centro."),
     ("pt-inflated-stakes", "A obra discute a proteção de dados na era digital."),
+    ("pt-inflated-stakes", "O congresso debate o jornalismo na era da inteligência artificial."),
     ("pt-inflated-stakes", "No cenário atual de juros, ninguém compra casa."),
     ("pt-closing-cheer", "O futuro da loja depende do aluguel."),
     ("pt-ai-vocabulary", "O ecossistema do rio está a recuperar."),
@@ -397,6 +403,7 @@ LEFT_ALONE = [
     ("pt-ai-vocabulary", "A abordagem holística do paciente reduziu as reinternações."),
     ("pt-ai-vocabulary", "A fusão deve gerar sinergias de R$ 400 milhões por ano."),
     ("pt-ai-vocabulary", "O ecossistema de inovação de Recife reúne 400 empresas."),
+    ("pt-ai-vocabulary", "A diretiva reforça a concorrência no ecossistema digital europeu."),
     ("pt-ai-vocabulary", "A estrutura é robusta e o plano é abrangente; o prazo é crucial."),
     ("pt-dash-pivots", "O fornecedor " + RAYA + " ou o comercial dele " + RAYA + " liga amanhã."),
     ("pt-dash-pivots", RAYA + " Já vou " + RAYA + " disse a Marta."),

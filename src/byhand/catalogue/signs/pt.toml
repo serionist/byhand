@@ -11,8 +11,9 @@
 # tells for a rewriting skill, with no evidence of their own: humanizer-pt-br's counts are of texts Grok was asked to
 # fill with tells. So a sign from either rests on both, or on another source beside it, and lists only what a source
 # names. Left out, as Portuguese reports, papers and news are full of them: a word English's lists translate
-# (abrangente, crucial, robusto), a field's term (ecossistema de inovação, holístico, sinergia), a phrase people use
-# (divisor de águas, mais do que nunca, na era digital, no cenário atual), and the hinges both skills list (cabe
+# (abrangente, crucial, robusto), a field's term (ecossistema de inovação, ecossistema digital, holístico, sinergia), a
+# phrase people use (divisor de águas, mais do que nunca, na era da inteligência artificial, na era digital, no cenário
+# atual), and the hinges both skills list (cabe
 # ressaltar que, é importante destacar que), which papers write two to a paragraph, Andrade et al.'s among them. None
 # measured work mail, and no native speaker has read these yet. So every Portuguese sign is weak until one does, and a sign that counts alone would have
 # no pattern: the model reads for it. The Portuguese checks read posts and documents, but the dash, as the set phrases
@@ -36,8 +37,8 @@ models = "any"
 what = "The Portuguese form of a set-up contrast: não é apenas… é…, não é só… é…."
 instead = "Say what the thing is or does, with a figure or an example; drop the foil."
 strength = "weak"
-# The second é or são opens a noun phrase: "não é só para iniciantes, é também para quem já programa" adds, and passes.
-check = '''\bnão (?:é|são) (?:apenas|só) [^.!?;:\n]{1,60}[,;:]\s*(?:é|são) (?:a|as|o|os|um|uma|umas|uns)\b'''
+# The second é or são must not start ta…: "não é só para iniciantes, é também para quem já programa" adds, and passes.
+check = '''\bnão (?:é|são) (?:apenas|só) [^.!?;:\n]{1,60}[,;:]\s*(?:é|são) (?:[^t\s]|t[^a])'''
 flags = "A biblioteca municipal não é apenas um sítio de livros, é a sala de estar da vila."
 passes = "A biblioteca municipal não é só para sócios: qualquer morador pode requisitar livros ao sábado."
 sources = [
@@ -119,12 +120,11 @@ id = "pt-inflated-stakes"
 category = "phrase"
 kinds = ["post", "document"]
 models = "any"
-what = "Frames a plain fact as an epoch: na era da inteligência artificial, num mundo cada vez mais…"
+what = "Frames a plain fact as an epoch: num mundo cada vez mais…"
 instead = "Give the date, the number or the change itself."
 strength = "weak"
 terms = [
   { term = '''(?:em um|num) mundo cada vez mais''', instead = "cut" },
-  { term = '''na era da inteligência artificial''', instead = "cut" },
 ]
 flags = "Num mundo cada vez mais apressado, o centro de saúde passa a abrir ao sábado."
 passes = "O centro de saúde abre agora às oito, também ao sábado, e as consultas marcam-se por telefone."
@@ -157,20 +157,19 @@ id = "pt-ai-vocabulary"
 category = "word"
 kinds = ["post", "document"]
 models = "any"
-what = "Leans on the words Portuguese model prose favours: ecossistema digital, enfatizando, vamos mergulhar. One alone is ordinary Portuguese."
+what = "Leans on the words Portuguese model prose favours: enfatizando, vamos mergulhar. One alone is ordinary Portuguese."
 instead = "Use the plain word, or the fact the word stands in for."
 strength = "weak"
 terms = [
-  { term = '''ecossistema digital''', instead = "name the parts" },
   { term = '''enfatizando''', instead = "cut, or say it plainly" },
   { term = '''vamos mergulhar''', instead = "cut" },
 ]
-flags = "Vamos mergulhar no ecossistema digital da cidade, enfatizando os bairros."
+flags = "Vamos mergulhar na nova loja, enfatizando os produtos da região."
 passes = "A cidade tem dois teatros, um cinema ao ar livre no verão e mercado às quintas."
 sources = [
   { source = "andrade-2026-portuguese", where = "3.1, Tabela 4: enfatizando among the ten most distinctive machine terms", seen = 2026-11-09 },
   { source = "evitar-escrita-ia", where = "SKILL.md, 1 Léxico, Nível 1A, commit a4b596e6f8b0", seen = 2026-11-09 },
-  { source = "humanizer-pt-br", where = "patterns/ecossistema-metafora.yaml and vamos-mergulhar.yaml, commit a18e130ad39e", seen = 2026-11-09 },
+  { source = "humanizer-pt-br", where = "patterns/vamos-mergulhar.yaml, commit a18e130ad39e", seen = 2026-11-09 },
 ]
 
 # Formatting: what the text looks like on the page.

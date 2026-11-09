@@ -75,3 +75,19 @@ counts; F1 held only in part again.
 
 On the round-3 reviewer's own probes the branch now finds 10 of its 16 model lines and none of its 25 person's lines,
 and ripgrep 14.1.1 agrees with Python on each.
+
+## Round 4
+
+A fresh reviewer, on f3ab1a5 (the fixes since 2c940d5). Verdict: needs-fixes. R3-2 and R3-3 hold; R3-1 held only in
+part.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| N4-1 | major | `any.toml`, `any-ai-self-reference`, the Spanish branch | Spanish says "como IA" for "as for AI", of the tools people use at work, and the objects the branch listed are what they say of them: "Como IA no tengo acceso a ninguna en el trabajo", "Como asistente de IA, no tengo acceso a la versión Pro", "Como IA no tengo preferencias, uso la que me pongan" | fixed: the branch keeps only the role the source shows, como (un, gran) modelo de lenguaje; "como IA" and "como asistente de IA" are out, and four such lines are in `REPLIES` |
+| N4-2 | minor | the same branch | The listed verbs dropped stock refusals: no puedo proporcionar, no puedo garantizar, no tengo experiencias, creencias, un cuerpo | fixed: in the branch, with `MACHINE` lines |
+
+Four rounds narrowed this branch, each finding a person's line the last one let through. It now finds the source's
+role and nothing wider: on every probe line of rounds 3 and 4, 2 of 65 person's lines fire (a quoted bot reply, which
+fires by design in every language, and the contrived "Como modelo de lenguaje, no dispongo de tiempo para probarlo"),
+and 10 of 36 model lines. "Como IA, no puedo…" from a model is missed, and accepted: a strong sign counts alone, so
+precision comes first. ripgrep 14.1.1 agrees with Python on every probe.

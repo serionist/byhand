@@ -39,6 +39,10 @@ ranks the sources.
    - `terms` for a word list, as stems in an inflecting language (`kulcsfontosság\w*`), or a `check`. Each must be what
      Grep can run as Python does: no look-around, no backreference, nothing only Python reads, such as `\Z`, `*+` or
      `(?x)`; `validate` names any it finds.
+   - An `any` sign's `check` is a form per language, `check.<code> = '…'`, under the language it is written in, with
+     its note above it; `check.any` for a chatbot's leftover every language meets. A new language's forms go under
+     its code, each with a machine line in `tests/test_office_<code>.py` (English's in `tests/test_office.py`),
+     whose `unproven` test holds them; `tests/test_catalogue.py` holds that the file exists.
    - `flags`, an invented text the sign finds, and `passes`, an invented text a person would write, near to it. Never
      real text. `passes` is the harder one: it is what keeps a sign from accusing plain writing.
    - `sources`: the source id, the section and revision or commit, the date.

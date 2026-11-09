@@ -67,6 +67,11 @@ MAIL = [
 ]
 REPLIES = [
     "Certo! Ecco la versione corretta del preventivo:",
+    "Certo, ecco la versione aggiornata della presentazione:",
+    "Certo! Ecco la versione rivista del tuo preventivo, con i prezzi nuovi:",
+    "Secondo le mie conoscenze aggiornate al corso HACCP, la temperatura va annotata ogni mattina.",
+    "Fino al mio ultimo aggiornamento del file mancavano tre fatture.",
+    "In qualità di referente IA, non ho accesso ai log di produzione.",
     "Certamente, ecco il contratto firmato:",
     "Con piacere! Ecco il verbale di ieri, con le correzioni di Paolo:",
     "Volentieri, ecco la mia bozza dell'annuncio:",
@@ -212,6 +217,12 @@ def test_no_sign_that_counts_alone_fires_on_plain_italian_work_text(counted_alon
 # nothing. Branches that read other languages' words have their lines in the other office tests.
 MACHINE = [
     ("any-ai-self-reference", "In quanto IA, non ho accesso al listino del fornitore."),
+    ("any-ai-self-reference", "In qualità di IA, non ho accesso a internet."),
+    ("any-assistant-preamble", "Certo! Ecco una versione più formale della tua email:"),
+    ("any-assistant-preamble", "Certamente! Ecco la versione corretta del tuo curriculum:"),
+    ("any-assistant-preamble", "Con piacere! Ecco a te una versione più breve del tuo post, senza ripetizioni:"),
+    ("any-knowledge-cutoff", "Secondo le mie conoscenze aggiornate a ottobre 2023, la fusione non era conclusa."),
+    ("any-knowledge-cutoff", "Secondo le mie conoscenze aggiornate al 2021, il marchio apparteneva al gruppo."),
     ("any-ai-self-reference", "Come modello di intelligenza artificiale, non ho accesso al tuo calendario."),
     ("any-ai-self-reference", "Mi dispiace, ma in quanto IA non ho accesso a internet."),
     ("any-ai-self-reference", "Come modello di intelligenza artificiale non ho accesso al web."),
@@ -230,10 +241,15 @@ MACHINE = [
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for_in_italian(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for_in_italian(catalogue, read_in, sign, text):
+    # as a Italian check runs it: the forms under it and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "it")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_italian_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE + FORMS, "it") == []
 
 
 @pytest.mark.parametrize(("text", "kind"), KINDS)

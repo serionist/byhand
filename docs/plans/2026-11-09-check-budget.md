@@ -324,3 +324,14 @@ Owner calls: none.
 Approved on the maintainer's standing word ("take recommended improvements and answer owner calls with the
 recommended option; once a round has no blocker or major, approve"): Round 1 found no blocker or major, and every
 improvement and finding has its answer. The code waits for the maintainer to merge this plan's PR.
+
+## Built
+
+PR #86, 2026-11-09. Departures from the steps above, each asked for when the work was handed over:
+
+- The deferred forms of the shared signs for it, vi, tr, id and fi, which Out of scope left to later PRs, came in
+  this one, each where a source backs it, with its machine line and a person's line; the PR lists those left out.
+  Indonesian, with forms and no signs of its own, gets `tests/test_office_id.py` and a `scan.md` alone.
+- The English office test needed 14 new machine lines, not 13: Finnish joined after the prototype.
+- `unproven` counts each office file's `FORMS` lines too, and Russian's `WEAK_MACHINE`, where weak forms had theirs;
+  `tests/test_catalogue.py` also holds that each form key's office file calls it.

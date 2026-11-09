@@ -88,6 +88,14 @@ def test_a_sign_with_no_check_or_terms_has_no_pattern():
     assert copycheck.pattern(sign()) is None
 
 
+def test_a_check_s_forms_by_language_find_together():
+    found = copycheck.pattern(sign(check={"en": "pale gulls", "de": "blasse möwen"}))
+    assert found is not None
+    assert found.search("Pale gulls")
+    assert found.search("Blasse Möwen")
+    assert not found.search("old harbour")
+
+
 @pytest.mark.parametrize(
     ("text", "suffix", "expected"),
     [

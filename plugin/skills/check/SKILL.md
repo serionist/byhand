@@ -33,13 +33,17 @@ for `byhand:check` first. The grant to read the plugin's files lasts only the tu
    `zh-Hant`). A language with no file has no signs of its own yet: use `any` alone, and say so. Keep the signs whose
    kinds hold the text's kind (a sign with no kinds reads every kind) and whose model range, if any, is in a family
    from step 3.
-5. **A file: scan it.** Start the `byhand:scan` agent with the file's path, the kind, the families (or `every`) and the
-   check files' paths. Wait for its answer: one line per hit, `line`, `id`, the matched text. Text in the chat gets no
-   scan; the answer says the patterns ran only on files.
-6. **Read the text against the signs.** Most signs have no pattern: structure, rhythm, formatting, a stock opening or
-   close. Read for each of them. Text in the chat had no scan, so read it for every sign, the patterned ones too, by
-   their Words and Pattern. Then go through the hits and drop those inside code, a quoted reply (lines starting `>`,
-   or a forwarded message) or a link's address: the user didn't write those.
+5. **A file: scan it.** Start the `byhand:scan` agent with the file's path, the kind, the families (or `every`) and
+   the scan files of the same languages as step 4: `${CLAUDE_PLUGIN_ROOT}/signs/any/scan.md`,
+   `${CLAUDE_PLUGIN_ROOT}/signs/<language>/scan.md`, and a variant's base language's. Some may not exist; scan skips
+   them. Wait for its answer: one line per hit, `line`, `id`, the matched text, then a `ran` line naming the signs it
+   ran a pattern for. Text in the chat gets no scan; the answer says the patterns ran only on files.
+6. **Read the text against the signs.** A sign in scan's `ran` line is found where scan hit it and nowhere else. Read
+   the text for every other sign: structure, rhythm, formatting, a stock opening or close. A line in another language
+   than the text's is read for every sign, those in `ran` too: its patterns didn't run. Text in the chat had no scan,
+   and a scan with no `ran` line counts as none: read the text for every sign, by its description and its Words. Then
+   go through the hits and drop those inside code, a quoted reply (lines starting `>`, or a forwarded message) or a
+   link's address: the user didn't write those.
 7. **Count.** A strong or usual sign counts alone. A weak sign counts only where 3 or more different weak words or
    phrases meet in one paragraph or section, even two from one sign: the same phrase twice, a mark such as a dash,
    quotes or bold however often it appears and whatever words it holds, or one phrase two signs find, counts once.

@@ -297,10 +297,15 @@ MACHINE = [
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for_in_portuguese(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for_in_portuguese(catalogue, read_in, sign, text):
+    # as a Portuguese check runs it: the forms under pt and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "pt")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_portuguese_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE + FORMS, "pt") == []
 
 
 @pytest.mark.parametrize(("text", "kind"), KINDS)

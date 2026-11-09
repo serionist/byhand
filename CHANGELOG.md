@@ -12,6 +12,12 @@ before `1.0` a minor may break something, under Breaking.
 
 ### Changed
 
+- `/byhand:check` reads less than half as much, in every language: 7 to 15 KB in place of 21 to 32 KB. The
+  patterns move to a `scan.md` per language that only the `scan` agent reads, and each language's scan runs only
+  its own forms of the shared signs. Text in a language the patterns don't cover is read for every sign.
+- The shared signs find more chatbot lines: Italian, Turkish and Indonesian openers above a reworked text, an
+  Italian knowledge cut-off with its date and a third Italian self-reference, a Vietnamese offer to rework the
+  text, and Finnish and Turkish praise for a question.
 - `/byhand:check` and the sign files say plainly how weak signs add up: two different phrases one sign finds count as
   two, and a mark such as a dash counts once however often it appears.
 - The Spanish, Portuguese, Arabic, Vietnamese, Italian and Turkish signs no longer wait for a native speaker's read:

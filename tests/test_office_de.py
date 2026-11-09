@@ -188,6 +188,12 @@ def test_no_german_check_counts_alone(counted_alone):
 # can't come from a sign that finds nothing, or from a branch that stopped finding. Branches that read only English,
 # Russian, Chinese or Japanese words have their lines in the other office tests.
 MACHINE = [
+    ("any-assistant-closing-offer", "Gibt es noch etwas, bei dem ich helfen kann?"),
+    ("any-assistant-preamble", "Gerne! Hier ist eine überarbeitete Version Ihres Textes:"),
+    ("any-assistant-preamble", "Natürlich! Hier ist eine kürzere Fassung Ihrer Notiz:"),
+    # the weak shared signs' German forms, which count only in a cluster
+    ("any-closing-summary", "Zusammenfassend lässt sich sagen, dass der Plan allen nützt."),
+    ("any-letter-boilerplate", "Ich hoffe, diese Nachricht erreicht Sie wohlauf."),
     ("any-assistant-preamble", "Gerne! Hier ist eine überarbeitete Version Ihres Anschreibens:"),
     ("any-assistant-preamble", "Natürlich, hier ist der umformulierte Text deiner Bewerbung:"),
     ("any-assistant-preamble", "Sicherlich! Hier ist eine etwas förmlichere Fassung Ihrer E-Mail:"),
@@ -259,10 +265,15 @@ MACHINE = [
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for_in_german(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for_in_german(catalogue, read_in, sign, text):
+    # as a German check runs it: the forms under de and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "de")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_german_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE + FORMS, "de") == []
 
 
 @pytest.mark.parametrize(("text", "kind"), KINDS)

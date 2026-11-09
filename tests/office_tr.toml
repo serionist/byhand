@@ -38,6 +38,9 @@ replies = [
   # a person's role, contrast or verdict, near the model's role (#53's review, rounds 1 to 4), and the eager yes of a
   # colleague returning a document
   "Elbette, işte sözleşmenin imzalı hâli:",
+  "Elbette, işte e-postanızın orijinal hali:",
+  "Elbette! İşte mesajınızın ilk hali:",
+  "Elbette, işte e-postanızın daha önceki hali:",
   "Tabii, işte dünkü toplantının tutanağı, Hakan'ın düzeltmeleriyle:",
   "Memnuniyetle! İşte ilan metninin son hâli:",
   "Yapay zekâ sorumlusu olarak bu harcamayı yönetimin onayı olmadan onaylayamam.",
@@ -128,9 +131,19 @@ typography = [
   "Son başvuru: 30.11.2026, saat 17.00.",
 ]
 
-# What each sign that counts alone exists to catch, inside Turkish text: a line for each artefact, which is the same
-# string in every language. No `any` check has a Turkish branch yet: its lines come with the branch.
+# What each sign exists to catch, inside Turkish text: a line for each Turkish form of an `any` check, and one for
+# each artefact, which is the same string in every language.
 machine = [
+  { sign = "any-assistant-preamble", text = "Elbette! İşte e-postanızın daha resmi hâli:" },
+  { sign = "any-assistant-preamble", text = "Elbette! İşte metninizin düzeltilmiş versiyonu:" },
+  { sign = "any-assistant-preamble", text = "Elbette, işte mesajınızın kısaltılmış hali:" },
+  { sign = "any-assistant-preamble", text = "Elbette! İşte e-postanızın daha profesyonel bir hali:" },
+  { sign = "any-assistant-preamble", text = "Elbette! İşte yazınızın gözden geçirilmiş hali:" },
+  { sign = "any-assistant-preamble", text = "Elbette! İşte metninizin iyileştirilmiş versiyonu:" },
+  { sign = "any-assistant-preamble", text = "Elbette! İşte mesajınızın yeniden düzenlenmiş hali:" },
+  { sign = "any-flattering-agreement", text = "Harika bir soru! Bu konu son yıllarda çok tartışılıyor." },
+  { sign = "any-flattering-agreement", text = "Harika soru! Önce rakamlara bakalım." },
+  { sign = "any-flattering-agreement", text = "Kesinlikle haklısın! Rakamları yeniden kontrol ettim." },
   { sign = "any-emoji-markers", text = "- 🚀 Yeni eğitim programı" },
   { sign = "any-emoji-markers", text = "## 📊 Ayın rakamları" },
   { sign = "any-unfilled-placeholder", text = "Kayıt: insert_link_here" },

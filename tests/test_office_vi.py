@@ -108,6 +108,13 @@ NOTES = [
     "1. Chốt sổ tháng 10\n2. Thanh toán nhà cung cấp\n3. Gia hạn hợp đồng thuê kho",
 ]
 REPORTS = [
+    "Phụ lục\n\nBảng 3 chỉ có số liệu quý III.\nNếu bạn cần, tôi có thể gửi thêm số liệu gốc.",
+    "Nếu bạn cần, tôi có thể bổ sung thêm số liệu quý 3.",
+    "Nếu bạn cần, tôi có thể chỉnh sửa lại hợp đồng trước thứ Sáu.",
+    "Nếu bạn cần, tôi có thể chỉnh sửa nội dung hợp đồng.",
+    "Nếu bạn cần, tôi có thể viết lại văn bản đề nghị gửi sở.",
+    "Nếu bạn cần, tôi có thể chỉnh sửa văn bản thành lập công ty.",
+    "Nếu bạn cần, tôi có thể chỉnh sửa văn bản theo dõi công nợ.",
     "Tóm tắt\n\n"
     "Bài viết này phân tích tác động của làm việc từ xa đến năng suất của 312 nhân viên ngân hàng tại TP.HCM. Kết quả "
     "nhấn mạnh vai trò của người quản lý trực tiếp trong việc giữ tiến độ.",
@@ -187,6 +194,19 @@ def test_no_sign_that_counts_alone_fires_on_plain_vietnamese_work_text(counted_a
 # finds nothing. Branches that read other languages' words have their lines in the other office tests.
 MACHINE = [
     ("any-assistant-preamble", "Dưới đây là phiên bản đã chỉnh sửa của email của bạn:"),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể viết lại đoạn này ngắn gọn hơn."),
+    ("any-assistant-closing-offer", "Nếu bạn cần tôi có thể rút gọn bài viết này."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể mở rộng đoạn văn."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể rút gọn văn bản xuống còn 200 từ."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể mở rộng bài viết thành một bài dài hơn."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể chỉnh sửa nội dung theo phong cách trang trọng hơn."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể viết lại bài viết với giọng điệu thân thiện hơn."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể chỉnh sửa bài viết để phù hợp hơn với độc giả."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể rút gọn nội dung hoặc bổ sung thêm ví dụ."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể viết lại đoạn văn thành tiếng Anh."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể chỉnh sửa bài viết theo hướng trang trọng hơn."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể rút gọn nội dung thành các ý chính."),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể chỉnh sửa lại nội dung cho trang trọng hơn."),
     ("any-assistant-preamble", "Dưới đây là phiên bản trang trọng hơn của tin nhắn của bạn:"),
     ("any-assistant-preamble", "Dưới đây là phiên bản ngắn gọn của văn bản của bạn:"),
     ("any-emoji-markers", "- 🚀 Chương trình đào tạo mới"),
@@ -203,10 +223,15 @@ MACHINE = [
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for_in_vietnamese(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for_in_vietnamese(catalogue, read_in, sign, text):
+    # as a Vietnamese check runs it: the forms under vi and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "vi")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_vietnamese_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE + FORMS, "vi") == []
 
 
 @pytest.mark.parametrize(("text", "kind"), KINDS)

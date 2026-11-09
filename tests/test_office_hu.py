@@ -214,10 +214,15 @@ MACHINE = [
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for_in_hungarian(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for_in_hungarian(catalogue, read_in, sign, text):
+    # as a Hungarian check runs it: the forms under hu and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "hu")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_hungarian_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE + FORMS, "hu") == []
 
 
 @pytest.mark.parametrize(("text", "kind"), KINDS)
@@ -299,11 +304,12 @@ def test_hungarian_alternations_run_in_alphabetical_order(catalogue, alternative
         (sign.id, term.term) for sign in catalogue.signs.values() if sign.language == "hu" for term in sign.terms
     ]
     regexes += [
-        (sign.id, sign.grep)
+        (sign.id, form)
         for sign in catalogue.signs.values()
         if sign.language == "hu" and sign.pattern and not sign.terms
+        for form in sign.forms.values()
     ]
-    regexes.append(("any-didactic-aside", catalogue.signs["any-didactic-aside"].grep))
+    regexes += [("any-didactic-aside", form) for form in catalogue.signs["any-didactic-aside"].forms.values()]
     assert sum(len(_groups(regex)) for _, regex in regexes) >= 15  # the parse finds the groups, so the test can fail
     wrong = [(sign, items) for sign, regex in regexes for items in _misordered(regex, alternatives)]
     assert wrong == []

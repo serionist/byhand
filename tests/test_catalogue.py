@@ -1,6 +1,7 @@
 """The catalogue: what ships is valid, and each kind of bad sign, source or language is refused with its reason."""
 
 import datetime
+import pathlib
 import shutil
 
 import pytest
@@ -163,7 +164,7 @@ def test_an_open_range_has_no_to(root):
 def test_a_signs_own_check_wins_over_its_terms(root):
     new = 'strength = "usual"\ncheck = "numbers"'
     assert problems_after(root, "signs/en.toml", 'strength = "usual"', new) == []
-    assert signs.load(root)[0].signs["en-delve"].grep == "numbers"
+    assert signs.load(root)[0].signs["en-delve"].forms == {"en": "numbers"}
 
 
 def test_a_check_runs_line_by_line(root):
@@ -255,15 +256,15 @@ def test_a_term_reads_combining_marks_as_grep_does(root, case):
     assert signs.load(root)[1] == []
 
 
-def test_a_check_file_prints_the_pattern_as_written_in_nfc(root):
+def test_a_scan_file_prints_the_pattern_as_written_in_nfc(root):
     # Grep gets the text, never Python's reading of it: Grep refuses the look-around `\b` becomes (#13). U+095C, the
     # letter with its nukta in one, is in NFC the letter and then the nukta, as `flags` is.
     write_sign(root, "hi", "ब\u095cी", f"यह बड{NUKTA}ी बात है।", "हाँ।")
     found, problems = signs.load(root)
     assert problems == []
     sign = found.signs["hi-delve"]
-    assert sign.grep == rf"\b(?:(?:बड{NUKTA}ी))\b"
-    assert f"Pattern: `{sign.grep}`" in render.render(found)["hi/check.md"]
+    assert sign.forms == {"hi": rf"\b(?:(?:बड{NUKTA}ी))\b"}
+    assert f": `{sign.forms['hi']}`" in render.render(found)["hi/scan.md"]
     assert sign.pattern is not None
     assert "(?<" in sign.pattern.pattern
 
@@ -552,6 +553,105 @@ sources = [{ source = "wiki-en", where = "Markup", seen = 2026-11-07 }]
     assert any("any-tool-token: an any sign needs sources in at least two languages" in p for p in signs.load(root)[1])
 
 
+CLOSING = """
+[[sign]]
+id = "any-closing"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Ends by restating the text."
+instead = "Stop when the point is made."
+strength = "weak"
+# a language's note sits above its form
+check.en = '^in conclusion'
+check.de = '^zusammenfassend'
+flags = "In conclusion, the plan works."
+passes = "So that's the plan."
+sources = [
+  { source = "wiki-en", where = "Summaries", seen = 2026-11-07 },
+  { source = "wiki-de", where = "Fazit", seen = 2026-11-07 },
+]
+"""
+
+
+def closing(root, old="", new=""):
+    """The problems of a catalogue with an `any` sign whose check is a form per language, changed as asked."""
+    (root / "signs" / "any.toml").write_text(STRUCTURE + CLOSING.replace(old, new, 1), encoding="utf-8")
+    return signs.load(root)
+
+
+def test_an_any_sign_s_check_holds_a_form_per_language(root):
+    found, problems = closing(root)
+    assert problems == []
+    sign = found.signs["any-closing"]
+    assert sign.forms == {"en": "^in conclusion", "de": "^zusammenfassend"}
+    assert sign.pattern is not None
+    # the pattern reads every form: `validate` and the tests that name no language use it
+    assert sign.pattern.search("Zusammenfassend lässt sich sagen")
+    assert sign.pattern.search("In conclusion, yes")
+
+
+def test_an_any_sign_s_one_check_is_every_language_s_form(root):
+    found, problems = closing(
+        root, "check.en = '^in conclusion'\ncheck.de = '^zusammenfassend'", "check = '^in conclusion'"
+    )
+    assert problems == []
+    assert found.signs["any-closing"].forms == {"any": "^in conclusion"}
+
+
+def test_a_check_any_form_beside_the_languages_is_read_by_every_language(root):
+    found, problems = closing(root, "check.de", "check.any")
+    assert problems == []
+    assert found.signs["any-closing"].forms == {"en": "^in conclusion", "any": "^zusammenfassend"}
+
+
+@pytest.mark.parametrize(
+    ("old", "new", "expected"),
+    [
+        ("check.de = '^zusammenfassend'", "check.xx = '^zusammenfassend'", "`check` has an unknown key `xx`"),
+        ("check.de = '^zusammenfassend'", "check.de = 3", "any-closing: de: a form must be text"),
+        ("check.de = '^zusammenfassend'", "check.de = '(?<!x)zusammenfassend'", "any-closing: de: Grep can't run"),
+        ("check.en = '^in conclusion'\ncheck.de = '^zusammenfassend'", "check = {}", "`check` holds no form"),
+        ("check.en = '^in conclusion'\ncheck.de = '^zusammenfassend'", "check = 3", "`check` must be text"),
+        ("check.de = '^zusammenfassend'", "check.de = '(?s)^zusammenfassend'", "can't be read together"),
+    ],
+    ids=["an unknown key", "a form that isn't text", "a form Grep can't run", "no form", "no text", "a global flag"],
+)
+def test_a_bad_form_is_refused_with_its_key(root, old, new, expected):
+    problems = closing(root, old, new)[1]
+    assert any(expected in problem for problem in problems), problems
+
+
+def test_flags_found_by_one_form_passes_and_by_none_fails(root):
+    assert closing(root, "In conclusion, the plan works.", "Zusammenfassend: der Plan geht.")[1] == []
+    problems = closing(root, "In conclusion, the plan works.", "To sum up, the plan works.")[1]
+    assert "signs/any.toml: any-closing: its check doesn't find `flags`" in problems
+
+
+def test_passes_found_by_any_form_fails(root):
+    problems = closing(root, "So that's the plan.", "Zusammenfassend: der Plan geht.")[1]
+    assert "signs/any.toml: any-closing: its check finds `passes`, a human text" in problems
+
+
+def test_a_language_s_own_sign_holds_one_form(root):
+    new = "strength = \"usual\"\ncheck.en = 'numbers'"
+    problems = problems_after(root, "signs/en.toml", 'strength = "usual"', new)
+    assert any("en-delve: `check` must be text: a en sign's one form is en's" in problem for problem in problems)
+
+
+def test_every_form_s_language_has_an_office_test_that_proves_its_forms():
+    # A form under a code with no office file, or one whose office file never asks, would land with no machine line.
+    found, problems = signs.load()
+    assert problems == []
+    tests = pathlib.Path(__file__).parent
+    codes = {code for sign in found.signs.values() if sign.language == "any" for code in sign.forms} - {"any"}
+    assert len(codes) > 10
+    # English's office test is `test_office.py`, and it proves the forms under `any` too
+    office = {code: tests / f"test_office{'' if code == 'en' else '_' + code.replace('-', '_')}.py" for code in codes}
+    assert [code for code, path in office.items() if not path.is_file()] == []
+    assert [code for code, path in office.items() if f'"{code}") == []' not in path.read_text(encoding="utf-8")] == []
+
+
 def test_a_sign_id_used_twice_is_refused(root):
     german = SIGN.replace("en-delve", "de-delve").replace('source = "wiki-en"', 'source = "wiki-de"')
     (root / "signs" / "de.toml").write_text(german, encoding="utf-8")
@@ -609,8 +709,15 @@ def test_terms_and_until_reach_the_rendered_files(root):
     assert problems == []
     files = render.render(found)
     # any-rule-of-three has an `until`, so it is retired
-    assert sorted(files) == ["en/check.md", "en/gpt.short.md", "zh/any.short.md", "zh/check.md"]
+    assert sorted(files) == [
+        "en/check.md",
+        "en/gpt.short.md",
+        "en/scan.md",
+        "zh/any.short.md",
+        "zh/check.md",
+        "zh/scan.md",
+    ]
     assert "Words: delve: look at" in files["en/gpt.short.md"]
-    assert "Pattern: `" in files["en/check.md"]
+    assert "- en-delve (usual; gpt 4 to 4.5): `" in files["en/scan.md"]
     assert found.signs["any-rule-of-three"].until == datetime.date(2030, 1, 1)
     assert found.signs["en-delve"].until is None

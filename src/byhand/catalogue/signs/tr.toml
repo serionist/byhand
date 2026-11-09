@@ -17,6 +17,11 @@
 # students wrote yanı sıra too, office reports write rol oynamak, and both idioms' strings in their literal sense, and
 # humanizer-tr's native reader found kilit rol oynamak natural alone. None reads mail or chat.
 #
+# Forms of the `any` checks (#71): any.toml holds the preamble (Elbette! İşte, the reader's text reworked) and the
+# flattering opener (Harika bir soru!, Kesinlikle haklısın!). Left out: Bir yapay zekâ olarak, as humanizer-tr names
+# no lack after it and the role alone is what people say of a tool; Son güncellememe kadar, a person's own update
+# (tests/office_tr.toml); Başka bir şey ister misin? and Umarım yardımcı olur!, which people write.
+#
 # Left out, as office Turkish writes them: the other idioms the model wrote far more (katkıda bulunmak, neden olmak,
 # olanak sağlamak, teşvik etmek, yol açmak), which reports and official letters write too, each a hit of its own in a
 # plain report; humanizer-tr's translationese (gerçekleştirmek, -mektedir, olarak twice in a sentence, sahip olmak,

@@ -50,6 +50,26 @@ chat = [
   "ok, puhutaan myöhemmin",
   "myöhästyn 10 min, aloittakaa vaan 🙏",
   "Hyvä kysymys! Katson ja palaan asiaan.",
+  "Ilmoittautuneet: Matti+1, Liisa, Pekka+2",
+  "Tulossa: minä+1. Kiitos kutsusta! Mä+1 tullaan.",
+  "Sarjataulukko: HIFK+3, Tappara+1",
+  "Ilmoittautuneet:\n1. Matti+1\n2. Liisa",
+  "Juhlat la 12.10. Matti+1 ja Liisa+1 tulevat.",
+  "Aamupalaveri klo 9. Tiimi+2 aloittaa.",
+  "Kiitos kutsusta. Matti+1 tulee.",
+  "Mökki varattu. Matti+1",
+  "Väkiluku kasvoi 3 %. Tilastokeskus+1",
+  "Lenkki tänään: 10km+5km kävelyä.",
+  "Paista uunissa 20min+5min foliossa.",
+  "Taikinaan 3dl+1dl jauhoja.",
+  "Penkki nousi 80kg+2kg.",
+  "Irtisanomisaika 1kk+1kk.",
+  "Pakkaus 6kpl+2kpl kaupan päälle.",
+  "Etäyhteys vaatii VPN+2FA:n.",
+  "Tilattiin paitoja koossa XL+2XL.",
+  "Myydään omakotitalo 6h+k+khh+2kph+s, 180 m².",
+  "Telakka: VGA+2xHDMI, liitännät HDMI+2xUSB.",
+  "Korjaa silmukka niin, että indeksi on count+1.",
   "onks kellään palaverin linkkiä?",
   "Onko huomenna palaveria?",
   "Sovitaan näin 👍",
@@ -123,11 +143,17 @@ typography = [
   "Palaveri - jos muistat - siirtyi torstaille.",
   "Viimeinen hakupäivä: 30.11.2026 klo 16.15.",
   "Puh. +358 40 123 4567, sähköposti etunimi.sukunimi@yritys.fi",
+  "Taustajärjestelmä on kirjoitettu C++:lla, käyttöliittymä TypeScriptillä.",
+  "Erasmus+-hanke alkaa syyskuussa, ja Disney+ maksetaan yhteiseltä kortilta.",
+  "Kahvilan tarjous 2+1 on voimassa perjantaihin.",
+  "Korjasin n+1-kyselyn, joka hidasti tilauslistaa.",
 ]
 
-# What each sign that counts alone exists to catch, inside Finnish text: a line for each artefact, which is the same
-# string in every language. No `any` check has a Finnish branch yet: its lines come with the branch.
+# What each sign exists to catch, inside Finnish text: a line for each Finnish form of an `any` check, and one for
+# each artefact, which is the same string in every language.
 machine = [
+  { sign = "any-flattering-agreement", text = "Hyvä kysymys! Tämä on yksi tärkeimmistä aiheista juuri nyt." },
+  { sign = "any-flattering-agreement", text = "Erinomainen huomio! Katsotaan asiaa tarkemmin." },
   { sign = "any-emoji-markers", text = "- 🚀 Uusi koulutusohjelma" },
   { sign = "any-emoji-markers", text = "## 📊 Kuukauden luvut" },
   { sign = "any-unfilled-placeholder", text = "Ilmoittautuminen: insert_link_here" },

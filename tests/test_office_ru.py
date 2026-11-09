@@ -198,6 +198,8 @@ def test_no_sign_that_counts_alone_fires_on_plain_russian_work_text(counted_alon
 # What each sign that counts alone exists to catch, inside Russian text: a line per branch of its check, so silence
 # above can't come from a sign that finds nothing, or from a branch that stopped finding.
 MACHINE = [
+    ("any-assistant-closing-offer", "Сообщите мне, если хотите, чтобы я сократил текст."),
+    ("any-assistant-preamble", "Конечно! Вот исправленный текст вашего письма:"),
     ("ru-title-case-headings", "## Сроки И Бюджет Проекта"),
     ("ru-title-case-headings", "# Права И Обязанности Подрядчика"),
     ("ru-title-case-headings", "### Итоги Года Для Отдела Продаж"),
@@ -235,10 +237,15 @@ MACHINE = [
 
 
 @pytest.mark.parametrize(("sign", "text"), MACHINE)
-def test_the_signs_still_find_what_they_are_for_in_russian(counted_alone, sign, text):
-    pattern = {found.id: found.pattern for found in counted_alone}[sign]
+def test_the_signs_still_find_what_they_are_for_in_russian(catalogue, read_in, sign, text):
+    # as a Russian check runs it: the forms under ru and any, never another language's
+    pattern = read_in(catalogue.signs[sign], "ru")
     assert pattern is not None
     assert pattern.search(text), sign
+
+
+def test_every_russian_form_of_a_shared_sign_has_a_machine_line(unproven):
+    assert unproven(MACHINE + WEAK_MACHINE + FORMS, "ru") == []
 
 
 # What the weak checks are for, a line each, so a check that stops finding is caught.
@@ -252,15 +259,20 @@ WEAK_MACHINE = [
     ("ru-tacked-on-participles", "Продажи выросли, демонстрируя силу бренда."),
     ("ru-calques", "Обновление адресует эту проблему."),
     ("ru-chat-residue", "Надеюсь, мой ответ был полезен."),
+    ("any-closing-summary", "\u0412 заключение, план выгоден всем участникам."),
+    ("any-closing-summary", "Подводя итог, переезд окупится за два года."),
+    ("any-letter-boilerplate", "Надеюсь, это сообщение застанет вас в добром здравии."),
+    ("any-flattering-agreement", "Вы абсолютно правы, это важный вопрос."),
 ]
 
 
 @pytest.mark.parametrize(("sign", "text"), WEAK_MACHINE)
-def test_the_weak_signs_find_what_they_are_for(catalogue, sign, text):
+def test_the_weak_signs_find_what_they_are_for(catalogue, read_in, sign, text):
     found = catalogue.signs[sign]
     assert found.strength == "weak"
-    assert found.pattern is not None
-    assert found.pattern.search(text), sign
+    pattern = read_in(found, "ru")
+    assert pattern is not None
+    assert pattern.search(text), sign
 
 
 # Terms are stems: each must still find its case and verb forms behind the word edge `render` gives it.

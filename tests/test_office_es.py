@@ -31,7 +31,8 @@ MAIL = [
     "Estimada Lic. Hernández:\n\nPor medio de la presente le confirmo la recepción de los documentos. Una vez "
     "revisados los mismos, le enviaré el contrato. No dude en contactarme si tiene alguna duda.\n\nSin otro "
     "particular, reciba un cordial saludo.\nIng. Jorge Ramírez",
-    "Qué pena con usted, don Álvaro, ya le reenvío la factura con el NIT correcto.\n\nCordialmente,\nPaola",
+    "Don Álvaro, qué pena la demora: hoy mismo le mando la cuenta de cobro con el NIT bien puesto.\n\nCordialmente,"
+    "\nPaola",
     "Buenas tardes:\n\nEn base a lo hablado en la reunión, les paso el calendario de entregas de acuerdo a lo "
     "acordado con el cliente. Cualquier cambio, me avisan.\n\nUn abrazo,\nNacho",
     "Estimados todos:\n\nOs recuerdo que el plazo para entregar las hojas de gastos termina el 15 de diciembre. Los "
@@ -46,8 +47,8 @@ MAIL = [
     "mes.\n\nSaludos,\nMariana",
     "Estimado Ing. Torres:\n\nLe comento que el material llegó incompleto: faltan 40 piezas del pedido 3312. Quedo "
     "atento a sus comentarios.\n\nSaludos cordiales,\nRicardo Fuentes",
-    "Hola, Lucía:\n\nTe paso el presupuesto mañana por la mañana, que hoy no me da tiempo. ¿Te viene bien que te "
-    "llame a mediodía?\n\nUn beso,\nEva",
+    "Hola, Lucía:\n\nEl presupuesto de la reforma no lo tengo hasta el jueves, que el fontanero no ha pasado. ¿Te "
+    "llamo el viernes y lo vemos?\n\nUn beso,\nEva",
 ]
 REPLIES = [
     "¡Claro! Aquí tienes la versión corregida del presupuesto:",
@@ -61,6 +62,11 @@ REPLIES = [
     "Como asistente de dirección, no tengo acceso a esa agenda; pregúntale a Inés.",
     "Como IA lead del proyecto, te confirmo la fecha del piloto.",
     "Según mi última actualización del Excel, faltan tres facturas por cobrar.",
+    "Hasta mi última actualización en junio de 2026, la lista de proveedores estaba completa.",
+    # a person's contrast, near the model's role and its first person (#53's review, F1)
+    "Usamos Copilot como asistente de IA, no como sustituto del criterio de cada técnico.",
+    "Lo venden como inteligencia artificial, no como un programa de gestión.",
+    "Como modelo de lenguaje, no está mal, pero se inventa las fechas.",
 ]
 CHAT = [
     "ok, lo veo y te digo",
@@ -72,12 +78,12 @@ CHAT = [
     "dale, quedamos así 👍",
     "Gracias!! Mañana te paso lo del cliente",
     "jajaja sí, el café de la máquina está imposible",
-    "Ya quedó el pedido, se lo llevamos mañana temprano.",
-    "Che, el presupuesto te lo mando a la tarde, quedate tranquilo.",
+    "Ya salió el envío de la tienda, llega mañana antes de las 12.",
+    "Che, la planilla te la paso mañana, no te hagas drama.",
     "Porfa, ¿me pasas el número de pedido?",
     "Vale, lo hablamos el martes en la reunión.",
     "Listo, quedó subido a la carpeta compartida.",
-    "Qué padre quedó el logo, nomás cámbiale el color del fondo.",
+    "Está bien padre la presentación, nomás súbele la letra a la gráfica.",
 ]
 NOTES = [
     "Acta de la Reunión de Coordinación " + SHORT + " 6 de noviembre\nAsistentes: A. Pérez, B. Gómez, C. Ruiz"
@@ -99,7 +105,7 @@ REPORTS = [
     "pedimos un segundo entorno de pruebas.",
     "Memoria anual de la asociación\n\nEl cierre de la fábrica en 2019 fue un punto de inflexión para el barrio: "
     "perdimos 300 empleos y la mitad de los comercios. Este año abrimos el centro de día.",
-    "Informe de la comisión\n\nNo se trata de un error del sistema, sino de un dato mal introducido en el "
+    "Informe de la comisión\n\nNo se trata de un fallo de la báscula, sino de una tara mal anotada en el "
     "albarán. Se ha corregido el mismo y se ha avisado al cliente.",
     "Conclusiones de la auditoría\n\nLa auditoría no es solo para el departamento financiero: afecta también a "
     "compras y a logística. Las tres áreas deben entregar sus datos antes del 20.",
@@ -158,8 +164,8 @@ def test_no_spanish_check_counts_alone(counted_alone):
     assert [sign.id for sign in counted_alone if sign.language == "es"] == []
 
 
-def test_a_spanish_sign_that_counts_alone_has_no_pattern(catalogue):
-    # a usual or strong Spanish sign is for the model's own read until a native review
+def test_every_spanish_sign_is_weak_until_a_native_review(catalogue):
+    # stricter than the plan, which lets a usual or strong sign with no pattern in: none of these sources settles one
     assert [sign.id for sign in catalogue.signs.values() if sign.language == "es" and sign.strength != "weak"] == []
 
 
@@ -173,7 +179,6 @@ MACHINE = [
     ("any-ai-self-reference", "Como asistente de IA, no tengo acceso a tu calendario."),
     ("any-ai-self-reference", "Como gran modelo de lenguaje, yo no puedo comprobar ese enlace."),
     ("any-knowledge-cutoff", "Hasta mi última actualización de conocimientos, la empresa no se había fusionado."),
-    ("any-knowledge-cutoff", "Hasta mi última actualización en octubre de 2023, no había cifras de ese año."),
     ("any-assistant-preamble", "¡Claro! Aquí tienes una versión mejorada de tu correo:"),
     ("any-assistant-preamble", "¡Por supuesto! Aquí tienes una versión más formal de tu mensaje:"),
     ("any-assistant-preamble", "Claro que sí. Aquí tiene una versión revisada de su carta de presentación:"),
@@ -187,6 +192,7 @@ MACHINE = [
     ("any-unfilled-placeholder", "Un saludo,\n[Tu nombre]"),
     ("any-unfilled-placeholder", "Estimado [Nombre del cliente]:"),
     ("any-unfilled-placeholder", "Trabajo en [Tu empresa] desde 2020."),
+    ("any-unfilled-placeholder", "Atentamente,\n[Su nombre]"),
     ("any-unfilled-placeholder", "Más información: [Insertar enlace]"),
     ("any-unfilled-placeholder", "Inscripciones: insert_link_here"),
     ("any-emoji-markers", "- 🚀 Nueva oferta de formación"),
@@ -253,14 +259,14 @@ def test_spanish_typography_meets_no_formatting_check(catalogue, text):
 FORMS = [
     ("es-false-contrast", "Nuestro servicio no es simplemente una app, es un equipo a tu lado."),
     ("es-false-contrast", "Estas jornadas no son solo charlas; son el punto de encuentro del sector."),
-    ("es-false-contrast", "No se trata de vender más, se trata de vender mejor."),
+    ("es-false-contrast", "No se trata de tener la tienda más grande; se trata de tener la que todos recuerdan."),
     ("es-false-contrast", "Sin colas. Sin papeleo. Solo tu café."),
     ("es-staged-reveal", "Cambiamos de proveedor. ¿La diferencia? Pedidos en 24 horas."),
     ("es-staged-reveal", "La buena noticia es que el local ya tiene licencia."),
     ("es-staged-reveal", "Lo que realmente importa es que el cliente vuelva."),
     ("es-filler-hinges", "Cabe mencionar que el curso es gratuito."),
     ("es-filler-hinges", "Es fundamental recalcar que la sala cierra a las 18 h."),
-    ("es-filler-hinges", "Sin lugar a duda, es el mejor café de la zona."),
+    ("es-filler-hinges", "Sin lugar a duda, la tienda nueva es la más luminosa."),
     ("es-filler-hinges", "Vale la pena señalar que el parking es gratis."),
     ("es-inflated-stakes", "En la era de la IA, la papelería de barrio sigue abierta."),
     ("es-inflated-stakes", "En un mundo en constante cambio, la coral ensaya los martes."),
@@ -279,22 +285,22 @@ FORMS = [
 ]
 
 LEFT_ALONE = [
-    ("es-false-contrast", "No solo vino Ana, sino también su hermana."),
+    ("es-false-contrast", "No solo pagamos la luz, sino también el agua del local."),
     ("es-false-contrast", "No es solo cosa tuya: a mí tampoco me llegó el correo."),
-    ("es-false-contrast", "No se trata de un error del sistema."),
+    ("es-false-contrast", "No se trata de la reunión del jueves, que esa sigue igual."),
     ("es-false-contrast", "Lo enviamos sin factura. Sin embargo, llega el lunes."),
     ("es-staged-reveal", "¿El resultado del sondeo llega el lunes?"),
     ("es-staged-reveal", "¿La clave del wifi? Te la paso por privado."),
-    ("es-filler-hinges", "Es importante que traigas el DNI."),
-    ("es-filler-hinges", "Sin duda nos vemos el jueves."),
-    ("es-inflated-stakes", "En el mundial de 2014 cerramos temprano."),
+    ("es-filler-hinges", "Es importante que firmes las dos copias."),
+    ("es-filler-hinges", "Sin duda el lunes lo cerramos."),
+    ("es-inflated-stakes", "En el mundo de la hostelería, agosto es el mes fuerte."),
     ("es-inflated-stakes", "Hoy más tarde te llamo."),
-    ("es-engagement-lines", "Te leo mañana con calma."),
-    ("es-ai-vocabulary", "La potencia del motor es de 200 W."),
-    ("es-ai-vocabulary", "Me sumergí en la piscina a las siete."),
+    ("es-engagement-lines", "Te leo el informe esta tarde y te comento."),
+    ("es-ai-vocabulary", "El móvil vibra cada vez que entra un pedido."),
+    ("es-ai-vocabulary", "Los buzos se sumergen a las ocho para revisar el casco."),
     ("es-dash-pivots", "El proveedor " + RAYA + "o su comercial" + RAYA + " llama mañana."),
     ("es-dash-pivots", RAYA + "Ya voy " + RAYA + "dijo Marta" + RAYA + "."),
-    ("es-dash-pivots", "Abrimos de 9" + SHORT + "14 h, de lunes a viernes."),
+    ("es-dash-pivots", "La tienda abre de 10" + SHORT + "20 h los sábados."),
 ]
 
 

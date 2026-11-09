@@ -543,9 +543,9 @@ what = "Says in the text that a language model or a named chatbot wrote it."
 instead = "Delete it and write as the author."
 strength = "strong"
 # French: only the role a model gives itself, followed by its "je"; "en tant qu'assistante de direction, je" is a
-# person's job. Spanish: the same role, then a comma and its "no" or "yo"; "como asistente virtual" is a person's job
-# too, and is left out.
-check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智慧|人工智能)\s?(?:助手|助理|語言模型|语言模型)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:großes sprachmodell|ki|ki-assistent|ki-modell|ki-sprachmodell|künstliche intelligenz|sprachmodell),? (?:besitze|bin|darf|habe|kann|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b|\bcomo (?:una? )?(?:asistente de ia|gran modelo de lenguaje|ia|inteligencia artificial|modelo de lenguaje),\s?(?:no|yo)\b'''
+# person's job. Spanish: the same role, then a comma and its first person, no puedo or no tengo; "como asistente
+# virtual" is a person's job too, and "como asistente de IA, no como sustituto" a person's contrast.
+check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智慧|人工智能)\s?(?:助手|助理|語言模型|语言模型)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:großes sprachmodell|ki|ki-assistent|ki-modell|ki-sprachmodell|künstliche intelligenz|sprachmodell),? (?:besitze|bin|darf|habe|kann|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b|\bcomo (?:una? )?(?:asistente de ia|gran modelo de lenguaje|ia|inteligencia artificial|modelo de lenguaje),\s?(?:yo )?no (?:dispongo|puedo|soy|tengo)\b'''
 flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [
@@ -566,8 +566,8 @@ what = "Warns that its knowledge stops at a training date."
 instead = "Check the current fact, or give the date of your source."
 strength = "strong"
 # The Russian branches need the moment of the update: «во время обновления моей базы данных» is a person's server.
-# The Spanish one needs the knowledge or a year: "hasta mi última actualización del inventario" is a person's.
-check = '''(?:as of|up to) my last (?:knowledge|training) update|stand meines letzten wissensupdates|bis zu meinem letzten (?:trainings|wissens)-?update|на момент моего обучения|момент (?:последнего )?обновления моей базы данных|мо[её] последнее обновление знаний|à la date de mes connaissances|hasta mi última actualización (?:de conocimientos?|en (?:\w+ de )?20\d\d)\b'''
+# The Spanish one needs the knowledge: "hasta mi última actualización del inventario", or "en marzo", is a person's.
+check = '''(?:as of|up to) my last (?:knowledge|training) update|stand meines letzten wissensupdates|bis zu meinem letzten (?:trainings|wissens)-?update|на момент моего обучения|момент (?:последнего )?обновления моей базы данных|мо[её] последнее обновление знаний|à la date de mes connaissances|hasta mi última actualización de conocimientos?\b'''
 flags = "As of my last knowledge update, the company had not announced a merger."
 passes = "As of my last update on Tuesday, the shipment was still in Rotterdam."
 sources = [
@@ -657,7 +657,7 @@ sources = [
   { source = "wikipedia-zh", where = "短語模板與占位符文字, revision 95337857", seen = 2026-11-07 },
   { source = "yomiyasu", where = "references/slop-catalog.md, 6 仮置きの残り, commit 8394e099486a", seen = 2026-11-07 },
   { source = "slopcheck-fr", where = "src/slopcheck/packs/fr-signatures.toml, placeholder, commit 74c6b9685694", seen = 2026-11-08 },
-  { source = "humanizer-es", where = "evals/dev/raw: [Tu nombre] 15 times in 30 model texts, [Nombre del cliente] and [Tu empresa] too, commit ac2a31be1a71", seen = 2026-11-09 },
+  { source = "humanizer-es", where = "evals/dev/raw: [Tu nombre] 8 times in 30 model texts, [Nombre del cliente] and [Tu empresa] too, commit ac2a31be1a71", seen = 2026-11-09 },
 ]
 
 [[sign]]

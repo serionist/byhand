@@ -85,12 +85,12 @@ category = "structure"
 kinds = ["email", "message"]
 models = "any"
 what = "Stacks the customer-service script: a team working hard, an offer to get in touch, regret for the inconvenience, thanks for patience and understanding. Each alone is a person's set phrase."
-instead = "Say what happened, the new date and when you will write again; keep one closing."
+instead = "Name the cause and the date that now holds, then sign off once."
 strength = "weak"
 flags = "Sentimos mucho las molestias causadas y te agradecemos de corazón tu paciencia y comprensión. Todo el equipo está volcado en solucionarlo. Para cualquier duda, no dudes en escribirnos."
 passes = "Perdona el retraso: el proveedor nos falló y tu pedido sale el jueves. Te escribo en cuanto tenga el número de seguimiento."
 sources = [
-  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, D10 and D11; evals/dev/raw: in 4 of 30 model texts and none of the 4 human ones, commit ac2a31be1a71", seen = 2026-11-09 },
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, D10 and D11; evals/dev/raw: the apology for the inconvenience in 4 of 30 model texts, none of the 4 human ones, commit ac2a31be1a71", seen = 2026-11-09 },
 ]
 
 # Phrases.
@@ -129,7 +129,7 @@ terms = [
   { term = '''vale la pena (?:destacar|mencionar|señalar) que''', instead = "cut" },
 ]
 flags = "Para el viaje de fin de curso, cabe destacar que el autobús sale a las siete."
-passes = "Para el viaje de fin de curso, el autobús sale a las siete. Es importante que cada niño lleve su DNI."
+passes = "Para el viaje de fin de curso, el autobús sale a las siete. Que cada niño lleve su merienda."
 sources = [
   { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, D2; tools/deslop_es.py, MULETILLAS, commit ac2a31be1a71", seen = 2026-11-09 },
 ]

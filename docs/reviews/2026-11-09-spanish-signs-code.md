@@ -61,3 +61,17 @@ held only in part.
 
 Refuted: that the round-1 swaps in `LEFT_ALONE` made a test weaker (they test the same edges, or stricter ones); a
 Grep incompatibility in the new branch (ripgrep 14.1.1 agrees with Python).
+
+## Round 3
+
+A fresh reviewer, on 2c940d5 (the fixes since 8d22e0a). Verdict: needs-fixes. N2 and N3 hold, and N1 but for two byte
+counts; F1 held only in part again.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| R3-1 | major | `any.toml`, `any-ai-self-reference`, the Spanish branch | A person's verdict on a tool has the model's words: "Como asistente de IA, no tengo queja de ella", "Como IA, no puedo pedirle más", "Como IA no tengo en el trabajo". The branch took any words after `no puedo` or `no tengo` | fixed: the verb must name what a model says it lacks (no tengo acceso, opiniones, emociones; no puedo acceder, verificar, navegar; no dispongo de; no cuento con; no poseo; no me es posible; no soy capaz); four such lines in `REPLIES` |
+| R3-2 | minor | the same branch | It missed "modelo de IA", "asistente de inteligencia artificial", "desarrollado por OpenAI", and the role after "sin embargo" or "que" | fixed: each in the branch, with a `MACHINE` line. Still missed, and accepted for a strong sign: "carezco de", "al ser una IA", "soy un modelo de lenguaje y no puedo", "no estoy en condiciones de" |
+| R3-3 | minor | the PR body | Two byte counts stale, and the branch described more loosely than the code | fixed |
+
+On the round-3 reviewer's own probes the branch now finds 10 of its 16 model lines and none of its 25 person's lines,
+and ripgrep 14.1.1 agrees with Python on each.

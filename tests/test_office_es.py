@@ -70,6 +70,10 @@ REPLIES = [
     "Lo venden como IA, no puedo creer que sea solo un buscador.",
     "Nos lo vendieron como inteligencia artificial, no tengo claro qué hace de verdad.",
     "La contratamos como asistente de IA, no tengo queja de ella.",
+    "Como asistente de IA, no tengo queja de ella: me ahorra horas.",
+    "Como IA, no puedo pedirle más.",
+    "Se equivoca con las fechas, pero como asistente de IA no tengo queja.",
+    "Como IA no tengo en el trabajo, lo hago todo a mano.",
 ]
 CHAT = [
     "ok, lo veo y te digo",
@@ -184,6 +188,10 @@ MACHINE = [
     ("any-ai-self-reference", "Lo siento, pero como modelo de lenguaje de IA, no poseo datos de tu empresa."),
     ("any-ai-self-reference", "¿La fusión? Como IA no me es posible predecirla."),
     ("any-ai-self-reference", "Como inteligencia artificial, no cuento con acceso a internet."),
+    ("any-ai-self-reference", "Como modelo de IA, no tengo acceso a tu correo."),
+    ("any-ai-self-reference", "Como modelo de lenguaje desarrollado por OpenAI, no tengo opiniones políticas."),
+    ("any-ai-self-reference", "Sin embargo, como asistente de inteligencia artificial, no puedo verificar esa cifra."),
+    ("any-ai-self-reference", "Debo aclarar que como IA no tengo emociones."),
     ("any-knowledge-cutoff", "Hasta mi última actualización de conocimientos, la empresa no se había fusionado."),
     ("any-assistant-preamble", "¡Claro! Aquí tienes una versión mejorada de tu correo:"),
     ("any-assistant-preamble", "¡Por supuesto! Aquí tienes una versión más formal de tu mensaje:"),

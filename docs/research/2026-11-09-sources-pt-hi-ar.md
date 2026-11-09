@@ -85,3 +85,23 @@ Most evidence first; Step 3 (#13) comes before hi or ar whichever is next.
 | 3 | hi | Thin: two papers, cues and averages, no phrase a pattern could match. It can carry a few structure signs (longer text with more paragraphs; English words in formal news, which Hinglish makes risky), `usual` at most; if `propose-signs` finds no sign two sources back, record hi in the plan as having nothing to seed from |
 
 None of the three has nothing at all; Hindi is the closest.
+
+## Follow-up, 2026-11-09: Hindi has nothing to seed from
+
+Step 4 for hi, after pt (#55) and ar (#58). Both Hindi sources were read again, at the revisions `sources.toml`
+records, for a sign with or without a pattern. Neither backs one, so there is no `hi.toml`, and a Hindi draft reads the
+`any` signs only.
+
+| Candidate | Why not |
+|---|---|
+| Model Hindi is longer, with more sentences, paragraphs and punctuation (`agrahari-2026-shakti`, Table 4) | The human texts average 29 words, 1.15 sentences and one paragraph, and its section 4.1 kept model texts of about 1,000 characters or more and set no length for people's: the gap comes from that filter. Readability and sentence-length variance follow from length, and the authors call the readability trend not consistent |
+| The same, from `wang-2026-human-detection` | D.4 finds the opposite: GPT-4o's Hindi news was shorter than BBC Hindi's, with less in it. The two sources disagree |
+| Fewer names and dates, a text that keeps to its topic (Wang, D.4) | `any-generic-over-specific` holds it |
+| No idioms or colloquial words, little Urdu-origin vocabulary (Wang, D.4) | One model's news, prompted for concise and formal articles (C.4). Office Hindi is often Sanskritised by design (the style guide row above): a sign would accuse it |
+| English words in the machine's news (Wang, D.4) | The same one model's formal news, and Hinglish is what people write in messages and mail: no second source and nothing to scope it to |
+| Hindi forms in `any-ai-self-reference`, `any-knowledge-cutoff`, `any-assistant-preamble` | Neither source names a Hindi phrase |
+
+The Arabic seed left out Wang et al.'s cues that rest on one model's news alone; the Hindi ones are all of that kind.
+What would seed Hindi: a study that compares model and human Hindi of matched length and genre, a native pattern list
+whose false positives are tested on Sanskritised and Hinglish text, or a native speaker's read. `ishank31/CT2_AG_hi`
+(Dropped, above) stays a pointer for #50.

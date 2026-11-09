@@ -8,15 +8,15 @@ Two kinds of check:
   validate` on the catalogue and `byhand render --check` on the plugin's sign files, each run as a tool so the gate
   never imports the package, every sign id a base has still in the tree, no file tracked under .byhand/ or an eval
   run's results, a coverage floor no lower than at the start of each range checked, the version's CHANGELOG section
-  once a release is dated, AGENTS.md within 150 lines, each skill's frontmatter and its Codex link, the plans (each
-  refuses a review round with no Fit above it or with a Fit row unanswered, an improvement id twice in its review, and
-  a plan with no `## Plan review`; a file in docs/plans/ not named YYYY-MM-DD-<slug>.md fails too), the hooks stored
-  as executable, the plugin (its manifests, no command in it, its skills pre-approving read-only tools only, its
-  agents' frontmatter, and Claude Code's own `claude plugin validate --strict`), and each BYHAND_ variable the docs
-  and the repo's skills name being one the plugin or the package reads, with AGENTS.md naming each the plugin reads;
-  full adds pytest under coverage on every core, then the workers' data combined and the report against the floor.
-  They run when the head is the checked-out commit, and are skipped, with the reason, when the tree is not what is
-  checked;
+  once a release is dated and main's newest released section unchanged, AGENTS.md within 150 lines, each skill's
+  frontmatter and its Codex link, the plans (each refuses a review round with no Fit above it or with a Fit row
+  unanswered, an improvement id twice in its review, and a plan with no `## Plan review`; a file in docs/plans/ not
+  named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable, the plugin (its manifests, no command in it,
+  its skills pre-approving read-only tools only, its agents' frontmatter, and Claude Code's own `claude plugin
+  validate --strict`), and each BYHAND_ variable the docs and the repo's skills name being one the plugin or the
+  package reads, with AGENTS.md naming each the plugin reads; full adds pytest under coverage on every core, then the
+  workers' data combined and the report against the floor. They run when the head is the checked-out commit, and are
+  skipped, with the reason, when the tree is not what is checked;
 - the commits': no tool attribution in any message, and no tool as any commit's author or committer, and gitleaks,
   on base..head (merges included). gitleaks exits 0 when it could not read the commits, so a run that logged an
   error fails too.
@@ -123,7 +123,7 @@ _LINK = re.compile(r"\]\(([^)\s]+)")
 _CODE_SPAN = re.compile(r"`[^`\n]*`")
 # A reference-style link's definition, `[name]: target`, which leads somewhere as an inline link does.
 _REF_LINK = re.compile(r"^ {0,3}\[[^\]]+\]:\s*<?([^\s>]+)", re.MULTILINE)
-# A release's heading in CHANGELOG.md, `## X.Y.Z (YYYY-MM-DD)`: the release PR dates the version it sets.
+# A release's heading in CHANGELOG.md, `## X.Y.Z (YYYY-MM-DD)`: the PR that sets a version dates it.
 _RELEASE_HEADING = re.compile(r"^## (\d+\.\d+\.\d+(?:-[\w.]+)?) \(\d{4}-\d{2}-\d{2}\)$", re.MULTILINE)
 GITLEAKS_IGNORE = ".gitleaksignore"
 # The git log options every scan starts with. gitleaks reads `git log -p` as git prints it, and a developer's git
@@ -475,10 +475,9 @@ def agent_problems(stem: str, text: str) -> list[str]:
 
 
 def release_problems(version: str | None, changelog: str) -> list[str]:
-    """The version is CHANGELOG.md's newest dated section, `## X.Y.Z (YYYY-MM-DD)`, written by the release PR that set
-    it: a release dated without the version moved would leave every user on the old one, as Claude Code updates on
-    the version. Until the first release dates one, the version is the one being prepared under Unreleased, and
-    passes."""
+    """The version is CHANGELOG.md's newest dated section, `## X.Y.Z (YYYY-MM-DD)`, written by the PR that set it: a
+    release dated without the version moved would leave every user on the old one, as Claude Code updates on the
+    version. Before the first release dates one, any version passes."""
     if not version:
         return [f"{PLUGIN_MANIFEST} has no version"]
     released = _RELEASE_HEADING.findall(changelog)
@@ -488,6 +487,31 @@ def release_problems(version: str | None, changelog: str) -> list[str]:
             "sets the version and dates its section"
         ]
     return []
+
+
+def release_section(changelog: str, version: str) -> str | None:
+    """The text of the version's dated section, from its heading to the next `## ` heading; None when it has none."""
+    match = re.search(rf"^## {re.escape(version)} \(\d{{4}}-\d{{2}}-\d{{2}}\)$", changelog, re.MULTILINE)
+    if match is None:
+        return None
+    end = re.search(r"^## ", changelog[match.end() :], re.MULTILINE)
+    return changelog[match.start() : match.end() + end.start() if end else len(changelog)].rstrip()
+
+
+def frozen_problems(base: str, changelog: str) -> list[str]:
+    """main's newest released section is frozen: a line added under it would merge under a version users already
+    have, and they would never update to it. A new version's section goes above it; one the tree dropped is
+    release_problems' to name, if it matters."""
+    released = _RELEASE_HEADING.findall(base)
+    if not released:
+        return []
+    before, after = release_section(base, released[0]), release_section(changelog, released[0])
+    if after is None or after == before:
+        return []
+    return [
+        f"{released[0]} is released, and its CHANGELOG.md section changed: its lines go in a new version's section, "
+        f"with {PLUGIN_MANIFEST}'s version moved"
+    ]
 
 
 def readme_lists(readme: str, skill: str) -> bool:
@@ -773,6 +797,17 @@ def fork_points(ranges: list[str], root: Path = ROOT) -> list[tuple[str, str]]:
     return points
 
 
+def main_bases(ranges: list[str], root: Path = ROOT) -> list[tuple[str, str]]:
+    """(ref, label) for each range: where its fork point meets main. pre-push's range starts at the branch's last
+    push, so its fork point can hold what only the branch has: a new sign, or the PR's own dated section, which has
+    reached no one yet. Without main to meet, the fork point itself."""
+    bases = []
+    for start, label in fork_points(ranges, root):
+        on_main = git("merge-base", start, BASE, cwd=root)
+        bases.append((on_main.stdout.strip() if on_main.returncode == 0 else start, label))
+    return bases
+
+
 def tree_has(ref: str, path: str, root: Path = ROOT) -> bool:
     """True when the commit ref holds path. Reads trees only, so a blobless clone needs nothing fetched; raises
     ValueError when ref can't be read, so an unreadable base never counts as one without the file."""
@@ -799,16 +834,25 @@ def check_coverage_floor(scope: Scope, root: Path = ROOT) -> Result:
     return outcome("coverage floor", floor_problems(floor, bases), detail)
 
 
-def check_version(_scope: Scope, root: Path = ROOT) -> Result:
-    """plugin.json's version, the one version the repo has, against CHANGELOG.md's dated sections."""
+def check_version(scope: Scope, root: Path = ROOT) -> Result:
+    """plugin.json's version, the one version the repo has, against CHANGELOG.md's dated sections, and main's newest
+    released section, read where each range left main, unchanged."""
     version = _json(root / PLUGIN_MANIFEST).get("version")
     changelog = root / "CHANGELOG.md"
     if not changelog.is_file():
         return Result("version", "FAIL", "CHANGELOG.md is missing")
     text = changelog.read_text(encoding="utf-8")
+    problems = release_problems(version, text)
+    for ref, _label in main_bases(scope.ranges, root):
+        if not tree_has(ref, "CHANGELOG.md", root):
+            continue
+        shown = git("show", f"{ref}:CHANGELOG.md", cwd=root)
+        if shown.returncode != 0:
+            return Result("version", "FAIL", f"cannot read CHANGELOG.md at {ref}", output=shown.stderr)
+        problems += [p for p in frozen_problems(shown.stdout, text) if p not in problems]
     released = _RELEASE_HEADING.findall(text)
     detail = f"{version}, released" if version in released else f"{version}, not released yet"
-    return outcome("version", release_problems(version, text), detail)
+    return outcome("version", problems, detail)
 
 
 def check_agents_md(_scope: Scope) -> Result:
@@ -1021,9 +1065,7 @@ def check_sign_ids(scope: Scope, root: Path = ROOT) -> Result:
     for path in sorted((root / SIGNS_DIR).glob("*.toml")):
         here |= sign_ids(path.read_text(encoding="utf-8"))
     gone: list[str] = []
-    for start, label in fork_points(scope.ranges, root):
-        on_main = git("merge-base", start, BASE, cwd=root)
-        ref = on_main.stdout.strip() if on_main.returncode == 0 else start
+    for ref, label in main_bases(scope.ranges, root):
         listed = git("ls-tree", "--name-only", ref, "--", f"{SIGNS_DIR}/", cwd=root)
         if listed.returncode != 0:
             return Result("sign ids", "FAIL", f"cannot read the tree at {ref}", output=listed.stderr)

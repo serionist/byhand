@@ -5,8 +5,8 @@
 #
 # A fetched page can hold instructions for the model reading it, so the work is split in two jobs. `draft` runs the
 # model with no token that can write, no network tool, and the allows in .github/refresh-agent.json; it hands on a
-# diff and the PR's text. `publish` runs no model: it checks what was handed on, adds the closing lines itself, and
-# opens the PR. A PR opened with the workflow's token waits for the maintainer's "Approve workflows to run" before CI
+# diff and the PR's text. `publish` runs no model: it checks what was handed on, adds the closing lines itself, moves
+# the version when the sign files changed (docs/releasing.md), and opens the PR. A PR opened with the workflow's token waits for the maintainer's "Approve workflows to run" before CI
 # starts on it.
 name: Refresh agent
 
@@ -302,6 +302,64 @@ jobs:
           (temp / "message.txt").write_text(f"{title}\n\n" + "\n".join(lines) + "\n", encoding="utf-8")
           EOF
           cat "$RUNNER_TEMP/title.txt" "$RUNNER_TEMP/body.md" | uv run --no-sync tools/gate.py text --file -
+      # A change to the sign files is a release (docs/releasing.md): the patch moves, and CHANGELOG.md gets the
+      # version's section above the newest. Its line is written here from the paths and the base's language names,
+      # never from the model's text. A sign folder the base doesn't name fails the job, and nothing is published.
+      - name: Move the version, when the sign files changed
+        run: |
+          python3 -I - <<'EOF'
+          import datetime, re, subprocess, sys, tomllib
+          from pathlib import Path
+
+          staged = subprocess.run(["git", "diff", "--cached", "--no-renames", "--name-only", "-z"],
+                                  capture_output=True, check=True).stdout.decode("utf-8").split("\0")
+          signs = [name for name in staged if name.startswith("plugin/signs/")]
+          if not signs:
+              print("No sign file changed: no release.")
+              sys.exit(0)
+          codes = {name.split("/")[2] for name in signs if name.count("/") >= 3}
+          shown = subprocess.run(["git", "show", "HEAD:src/byhand/catalogue/languages.toml"], capture_output=True,
+                                 text=True, encoding="utf-8", check=True).stdout
+          catalogue = tomllib.loads(shown)
+          known = {row["code"]: row["name"] for kind in ("language", "extra", "variant") for row in catalogue.get(kind, [])}
+          unknown = sorted(codes - set(known) - {"any"})
+          if unknown:
+              print(f"::error::sign folders the catalogue doesn't name: {', '.join(unknown)}")
+              sys.exit(1)
+
+          def spoken(name):
+              # CLDR's "Chinese, Traditional" reads "Traditional Chinese" in a sentence.
+              first, _, rest = name.partition(", ")
+              return f"{rest} {first}" if rest else name
+
+          names = sorted((spoken(known[code]) for code in codes - {"any"}), key=str.casefold)
+          today = datetime.datetime.now(datetime.UTC).date().isoformat()
+          if not names:
+              line = f"- The signs every language shares, from the refresh of {today}."
+          else:
+              listed = " and ".join([", ".join(names[:-1]), names[-1]] if len(names) > 1 else names)
+              shared = ", and the ones every language shares" if "any" in codes else ""
+              line = f"- Signs for {listed}{shared}, from the refresh of {today}."
+
+          manifest = Path("plugin/.claude-plugin/plugin.json")
+          text = manifest.read_text(encoding="utf-8")
+          found = re.findall(r'"version": "(\d+)\.(\d+)\.(\d+)"', text)
+          if len(found) != 1:
+              print(f"::error::{manifest} holds no single plain version")
+              sys.exit(1)
+          major, minor, patch = found[0]
+          old, new = f"{major}.{minor}.{patch}", f"{major}.{minor}.{int(patch) + 1}"
+          manifest.write_bytes(text.replace(f'"version": "{old}"', f'"version": "{new}"').encode("utf-8"))
+
+          changelog = Path("CHANGELOG.md")
+          text = changelog.read_text(encoding="utf-8")
+          first = re.search(r"^## ", text, re.MULTILINE)
+          at = first.start() if first else len(text)
+          section = f"## {new} ({today})\n\n### Changed\n\n{line}\n\n"
+          changelog.write_bytes((text[:at] + section + text[at:]).encode("utf-8"))
+          subprocess.run(["git", "add", "--", str(manifest), str(changelog)], check=True)
+          print(f"{old} to {new}: {line}")
+          EOF
       - name: Commit, push and open the draft PR
         env:
           GH_TOKEN: ${{ github.token }}

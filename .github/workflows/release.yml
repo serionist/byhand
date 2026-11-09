@@ -1,0 +1,60 @@
+# The release: on every push to main, when plugin.json's version has no GitHub release yet, it tags the pushed commit
+# v<version> and creates the release, with the version's CHANGELOG.md section as its notes. The PR that changes the
+# plugin moved the version and dated that section (docs/releasing.md); users get it from the marketplace, which
+# serves main's head, and Claude Code updates on the version, not the tag. docs/plans/2026-11-09-sign-releases.md has
+# the design.
+#
+# A push that doesn't move the version finds its release and stops. A failed run is re-run from its page: a re-run
+# keeps the run's GITHUB_SHA, so the tag lands on the commit that set the version. A push made with the workflow's
+# token, as Dependabot's merges are, starts no run.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write # the tag and the release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Tag the version and release it, unless it is released
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          version=$(jq -r .version plugin/.claude-plugin/plugin.json)
+          if ! grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$' <<<"$version"; then
+            echo "::error::plugin.json's version, $version, is not one"
+            exit 1
+          fi
+          if gh release view "v$version" --json tagName >/dev/null 2>&1; then
+            echo "v$version is released already: nothing to do." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          # The section's lines, below its heading and up to the next release's.
+          python3 -I - "$version" "$RUNNER_TEMP/notes.md" <<'EOF'
+          import re, sys
+          version, out = sys.argv[1], sys.argv[2]
+          text = open("CHANGELOG.md", encoding="utf-8").read()
+          match = re.search(rf"^## {re.escape(version)} \(\d{{4}}-\d{{2}}-\d{{2}}\)\n", text, re.MULTILINE)
+          if match is None:
+              sys.exit(f"::error::CHANGELOG.md has no dated section for {version}")
+          rest = text[match.end():]
+          end = re.search(r"^## ", rest, re.MULTILINE)
+          open(out, "w", encoding="utf-8").write(rest[: end.start() if end else len(rest)].strip() + "\n")
+          EOF
+          gh release create "v$version" --target "$GITHUB_SHA" --title "byhand $version" --notes-file "$RUNNER_TEMP/notes.md"
+          echo "Released v$version at $GITHUB_SHA." >> "$GITHUB_STEP_SUMMARY"

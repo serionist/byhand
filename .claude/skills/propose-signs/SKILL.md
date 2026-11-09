@@ -53,7 +53,8 @@ ranks the sources.
 7. **Check:** `uv run byhand validate`, `uv run byhand render`, `uv run tools/gate.py quick`, and `uv run
    tools/copycheck.py` over your downloads in `.local/sources/`: read every hit, and write anew what it finds. Over a
    budget: cut word lists first, or merge two signs, rather than raise it.
-8. **Finish** with `finish-work`. The PR lists the signs added, the ones you skipped and why, and any `read_at` moved;
+8. **Finish** with `finish-work`, which moves the patch version and dates its `CHANGELOG.md` section
+   (`docs/releasing.md`); from the refresh agent, its publish job does this. The PR lists the signs added, the ones you skipped and why, and any `read_at` moved;
    from a refresh issue, it carries `Closes #<issue>`.
 
 ## Done means

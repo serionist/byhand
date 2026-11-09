@@ -53,3 +53,33 @@ reproduced F1 before fixing it.
 
 privacy-and-sources, plugin-contract and harness-integrity: no skill, agent, refresh or harness file is in scope. The
 plugin sessions, which the main session ran. Whether a native speaker finds the signs and the person's lines natural.
+
+## Round 2
+
+A fresh reviewer, on bfde69c (the fixes since f0b9c51). Verdict: clean. F1 to F4 hold: the five `REPLIES` lines F1
+added fire under f0b9c51's branch and pass now (`test_no_sign_that_counts_alone_fires_on_plain_vietnamese_work_text`),
+the three `MACHINE` lines still fire, Python and Grep agree on 51 probe lines, and a Japanese check reads 32,764 of
+32,768 bytes. The citation now says what Lee et al. 5.7 says, and VI-HUM-S03 and S04 are medium and high.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F5 | minor | `any.toml`, `any-assistant-preamble`, the Vietnamese branch and its comment | Still fires on a version made from the reader's mail with a second của ("…theo nội dung của email của bạn:") and on a converted copy ("Dưới đây là phiên bản PDF của văn bản của bạn:"); the comment said all such versions pass | fixed in part: the comment names both as still firing, left for a native reader; "…theo nội dung email của bạn:", which passes, is in `REPLIES`; the PR asks the native reader. Narrowing the gap to `{0,20}` would fill the budget to its last byte and lose model lines with long modifiers: left |
+| F6 | minor | `vi.toml`'s header, the PR description | Lee et al.'s other words were called "a field's or a year's"; the paper calls them a register group mirroring Korean and English, and sets only topic words such as chuyển đổi số aside | fixed: register words with no ratio the paper names outside its control, ordinary office words; chuyển đổi số apart |
+| F7 | minor | PR #62's description | Stale test count, cư trú missing, and the plugin try not tied to a commit | fixed: the description is updated, and `/byhand:check` ran again on the head's rendered files |
+
+Refuted: the `MACHINE` line moved from "cho tin nhắn" to "của tin nhắn" (recorded in F1; `(?:của|cho)` costs 7 bytes
+with 4 left, and lets in "phiên bản chữ ký cho email của bạn"); "names outside its control" (the paper names only nhấn
+mạnh's ratio so); no `\b` before của (no Vietnamese syllable ends in của); `^\W*` on quoted lines (every branch does
+it); CRLF (`\s*$` takes the `\r` in both).
+
+| Improvement | Answer |
+|---|---|
+| Narrow the gap to `[^:\n]{0,20}` | left: it fills the check budget to the last byte before the cut it needs, and loses model lines; a native reader can say whether the doubled của is common |
+| Pin the line between what passes and what fires with "…theo nội dung email của bạn:" | taken |
+
+The rerun of `/byhand:check` on the head, with a pasted text, read the preamble into "Dưới đây là phiên bản đã sửa theo
+email của bạn:" by hand, though the pattern passes it: the model's own read of a pasted text follows the sign's `what`,
+which every language shares, and is wider than the Vietnamese pattern. On a file the pattern decides. Recorded in the
+PR; not this change's to fix.
+
+The review ends here: no blocker or major is open.

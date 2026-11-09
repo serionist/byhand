@@ -67,6 +67,7 @@ REPLIES = [
     # a version made from the reader's mail, or sent to it, is not their text reworked (#62's review, F1)
     "Dưới đây là phiên bản đã sửa theo email của bạn:",
     "Dưới đây là phiên bản cập nhật theo tin nhắn của bạn:",
+    "Dưới đây là phiên bản cập nhật theo nội dung email của bạn:",
     "Dưới đây là phiên bản hợp đồng mình đã gửi vào email của bạn:",
     "Dưới đây là phiên bản PDF của báo giá, đã gửi qua email của bạn:",
     "Dưới đây là phiên bản slide mình làm dựa trên email của bạn:",

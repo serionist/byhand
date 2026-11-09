@@ -23,13 +23,14 @@
 # (đồng thời, qua đó, từ đó) and even sentence lengths, which it rates medium and high for false positives itself; its
 # nominal openers (Việc… Việc…), which legal text writes; "đóng vai trò… trong việc" and "trong bối cảnh… ngày càng phát
 # triển", which it keeps when the text analyses a role or names the change; and its closer "hy vọng những thông tin trên
-# sẽ hữu ích", which it keeps in letters and customer care. Lee et al.'s other 2025 words are a field's or a year's
-# (chuyển đổi số, cơ chế, kỷ nguyên, linh hoạt, mở ra, phản ánh, thách thức, then chốt, tích hợp, toàn diện, tối ưu
-# hóa), with no ratio the paper names outside its control, and each would count as a hit of its own in a plain report.
-# Wang et al.'s short sentences are one model's news summaries, against journalists' long ones, and office Vietnamese
-# writes short sentences too. Generic summaries, brochure tone and "không chỉ… mà còn" as a foil are in signs every
-# language shares (any-generic-over-specific, any-negative-parallelism, any-promotional-tone), with no Vietnamese
-# pattern; "Tóm lại" gets no form in any-closing-summary, as people close with it.
+# sẽ hữu ích", which it keeps in letters and customer care. Lee et al.'s other 2025 register words (cơ chế, kỷ nguyên,
+# linh hoạt, mở ra, phản ánh, thách thức, then chốt, tích hợp, toàn diện, tối ưu hóa) have no ratio the paper names
+# outside its control, and are ordinary office words, each of which would count as a hit of its own in a plain report;
+# chuyển đổi số is a topic word the paper sets aside. Wang et al.'s short sentences are one model's news summaries,
+# against journalists' long ones, and office Vietnamese writes short sentences too. Generic summaries, brochure tone and
+# "không chỉ… mà còn" as a foil are in signs every language shares (any-generic-over-specific, any-negative-parallelism,
+# any-promotional-tone), with no Vietnamese pattern; "Tóm lại" gets no form in any-closing-summary, as people close with
+# it.
 # tests/test_office_vi.py holds plain mail, chat, official letters and reports against every sign that counts alone,
 # and against a weak cluster.
 

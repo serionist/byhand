@@ -1,0 +1,173 @@
+# Plain Turkish work text, invented, for tests/test_office_tr.py; it lives here, not in the test, as ruff reads the
+# dotless ı as a confusable i, and Turkish writes it in nearly every word.
+#
+# Turkish office mail runs on set phrases (Bilgilerinize sunarım, Gereğini arz ederim, İyi çalışmalar, Kolay gelsin,
+# Saygılarımla, Umarım iyisinizdir) and official letters on the passive and -mektedir, with tarafından, as the 2020
+# regulation on official correspondence has them; humanizer-tr says these are right in official, legal and academic
+# text, and keeps a person's greetings and closings. People write what its native reader found natural (aslında, geniş
+# bir yelpaze, Gelin birlikte bakalım, günün sonunda, işin aslı, kilit rol oynamak, mevcut, titizlikle, yolculuk), real
+# ownership with sahip olmak, the idioms the model wrote more (katkıda bulunmak, olanak sağlamak, yol açmak), Sonuç
+# olarak before a summary that says something, Günümüzde before a number, and English laced through office Turkish
+# (deadline, feedback, toplantı set etmek). Chat is often typed with no Turkish letters (toplantiyi, yarin). They are a
+# person's, never a sign.
+#
+# Turkish typography is how people write: the apostrophe before a suffix on a name (Ankara’ya, İstanbul'da), the long
+# dash before a line of dialogue, a spaced hyphen as a dash, the short dash in a range, curly and straight quotes, the
+# decimal comma, % before the number, and capitals with the dotted İ.
+
+mail = [
+  "Sayın Kaya Hanım,\n\nEkim ayına ait 312 numaralı faturayı ekte bilgilerinize sunarım. Ödemenin 30 Kasım'a kadar yapılmasını rica ederim.\n\nSorunuz olursa beni dahili 214’ten arayabilirsiniz.\n\nSaygılarımla,\nZeynep Arslan",
+  "T.C.\nAnkara Valiliği\nİl Millî Eğitim Müdürlüğü\n\nSayı: E-12345678-100-98765\nKonu: Hizmet içi eğitim\n\nİlgi: 03.10.2026 tarihli yazınız.\n\nİlgi yazı ile talep edilen hizmet içi eğitim programı, Müdürlüğümüz tarafından 16-20 Kasım 2026 tarihleri arasında gerçekleştirilecektir.\n\nBilgilerinizi ve gereğini arz ederim.",
+  "Merhaba Emre,\n\nTeklif dosyasını ekte gönderiyorum, müsait olunca bir göz atar mısın? Uygunsa pazartesi müşteriye iletelim.\n\nKolay gelsin,\nCan",
+  "Herkese merhaba,\n\nCuma günü elektrik tesisatındaki çalışma nedeniyle ofisimiz saat 14.00'te kapanacaktır. Anlayışınız için teşekkür ederiz.\n\nİyi çalışmalar,\nİdari İşler",
+  "Selam Deniz,\n\nYarın için bir toplantı set edelim mi? Sunum hakkında feedback'ini almak istiyorum, deadline cuma.\n\nTeşekkürler,\nBurak",
+  "Sayın Av. Yılmaz,\n\nDünkü telefon görüşmemize istinaden, sözleşmenin tescili için gerekli belgeleri ekte sunuyorum.\n\nSaygılarımla,\nMehmet Demir",
+  "Değerli çalışma arkadaşlarım,\n\nMasraf formlarının 15 Aralık'a kadar, fişlerin asıllarıyla birlikte teslim edilmesi gerekmektedir.\n\nİyi çalışmalar dilerim,\nİnsan Kaynakları",
+  "Merhaba Kerem Bey,\n\nUmarım iyisinizdir. Depo kiralama için istediğiniz fiyat teklifi ekte; fiyatlar 31 Aralık'a kadar geçerli.\n\nSaygılarımla,\nNazlı Güneş",
+  "Değerli müşterimiz,\n\nSiparişinizin teslimatında yaşanan gecikme için özür dileriz. Kargonuz 12 Kasım Perşembe günü adresinize ulaşacaktır.\n\nAnlayışınız için teşekkür ederiz.\nMüşteri Hizmetleri",
+  "Selam Ayşe,\n\nSon sayıma göre depoda 12 koli A4 kâğıt kalmış. Ocak için 20 koli daha sipariş veriyorum.\n\nGörüşmek üzere,\nAli",
+  "Sayın Prof. Dr. Şahin,\n\nTez taslağımı görüşmek için sizden randevu almak istiyorum. Çarşamba veya perşembe sabahı uygunum.\n\nSaygılarımla,\nElif Çelik\nÖğrenci No: 20231045",
+  "Konu: Yıllık izin talebi\n\nSayın Müdürüm,\n\n22-26 Temmuz 2027 tarihleri arasında beş gün yıllık izin kullanmak istiyorum.\n\nGereğini bilgilerinize arz ederim.\nMehmet Öztürk",
+  "Merhaba ekip,\n\nYıl sonu kapanışına katkıda bulunan herkese çok teşekkür ederim. Rakamlar cuma günü yönetim kuruluna sunulacak.\n\nSevgiler,\nSelin",
+  "Sayın Yetkili,\n\nYeni yazılım, siparişlerin aynı gün işlenmesine olanak sağlayacak. Bunun yanı sıra, faturalar artık e-posta ile gönderilecek.\n\nSaygılarımızla,\nBilgi İşlem Müdürlüğü",
+  "Sayın Aydın Bey,\n\n18 Kasım Pazartesi saat 09.30'daki randevunuzu teyit ederim. Gelemeyecek olursanız lütfen bizi önceden arayınız.\n\nİyi günler dilerim,\nKoç Hukuk Bürosu",
+  "Selamlar,\n\nSon güncellememe kadar tabloda 40 açık talep vardı; bugün 12'ye indi.\n\nİyi çalışmalar,\nTuba",
+]
+
+replies = [
+  # a person's role, contrast or verdict, near the model's role (#53's review, rounds 1 to 4), and the eager yes of a
+  # colleague returning a document
+  "Elbette, işte sözleşmenin imzalı hâli:",
+  "Tabii, işte dünkü toplantının tutanağı, Hakan'ın düzeltmeleriyle:",
+  "Memnuniyetle! İşte ilan metninin son hâli:",
+  "Yapay zekâ sorumlusu olarak bu harcamayı yönetimin onayı olmadan onaylayamam.",
+  "Copilot'u bir yapay zekâ asistanı olarak kullanıyoruz, uzmanın yerine değil.",
+  "ChatGPT'nin bir yapay zekâ olarak şirket ağına erişimi yok.",
+  "Yapay zeka olarak ne kadar işe yarar, bilmiyorum; ben elle yapıyorum.",
+  "Harika bir soru, açıkçası bilmiyorum.",
+]
+
+chat = [
+  "tamam, sonra konuşuruz",
+  "10 dk gecikeceğim, siz başlayın 🙏",
+  "Harika bir soru! Bakıp sana dönerim.",
+  "Kesinlikle haklısın, tarihi yanlış yazmışım. 14'ü olacak.",
+  "toplantı linki olan var mı?",
+  "Yarın toplantı var mı?",
+  "Süper, böyle anlaştık 👍",
+  "kargo geldi mi?",
+  "neden Gökhan'a sormuyorsun?",
+  "Tabii! Hemen gönderiyorum.",
+  "neyse, pazartesi konuşuruz",
+  "Tamamdır, ortak klasöre koydum.",
+  "Sunum güzel olmuş, sadece grafiğin yazısını büyüt.",
+  "\"Olur\" yazdı, yani tamam diyebiliriz.",
+  "Çok teşekkürler!! Yarın müşterininkini de atarım",
+  "yarin gelemiyorum, toplantiyi erteleyebilir miyiz?",
+  "bunun yani sira faturayi da gonderir misin",
+  "Günün sonunda karar senin.",
+  "Aslında haklısın, işin aslı ben de emin değilim.",
+]
+
+notes = [
+  "Koordinasyon toplantısı tutanağı – 6 Kasım\nKatılımcılar: A. Yılmaz, B. Kaya, C. Demir\n- 2027 bütçesi onaylandı\n- İşe alım: 2 açık pozisyon\n- Bir sonraki toplantı: 4 Aralık",
+  "Notlar:\n- noteri ara\n- sözleşmeyi Hakan'a gönder [teyit edilecek]\n- teslim tarihini gözden geçir [kontrol edilecek]",
+  "Yapılacaklar:\n1. Ay sonu kapanışı\n2. Tedarikçi ödemeleri\n3. Kira sözleşmesinin yenilenmesi",
+  "Vezne çalışma saatleri: Pazartesi–Cuma, 09.00–12.30 ve 13.30–17.00.",
+  "**Önemli**: Pazartesiden itibaren kart okutmak zorunludur.",
+  "Gece vardiyası, 3/4 Kasım\n\nOlağan dışı bir durum yok. Otoparkta müdahale gerekmedi.",
+  "İlan: Usta Döner. Odun ateşinde. Öğlen de açığız.",
+  "DUYURU\n\nİŞ GÜVENLİĞİ EĞİTİMİ 14 KASIM'DA YAPILACAKTIR. KATILIM ZORUNLUDUR.",
+]
+
+reports = [
+  "Ekim ayı faaliyet raporu\n\nCiro 1,2 milyon TL'ye ulaştı; eylüle göre %4 artış. Bursa şubesi üst üste ikinci çeyreği zararla kapattı.\n\nPersonel tarafında iki teknisyen işe başladı. Kiranın ocakta artacağını da belirtmek gerekir.",
+  "İlgi yazınız üzerine yapılan incelemede, gönderilen belgelerin eksiksiz olduğu tespit edilmiştir. Dosya, 20 Kasım tarihli toplantıda Kurul tarafından görüşülecektir.",
+  "Teklif, TBMM Genel Kurulu tarafından kabul edildi ve 1 Ocak 2027'de yürürlüğe girecek.",
+  "Bulgular\n\nMetinler iki araştırmacı tarafından bağımsız olarak kodlanmıştır. Kodlayıcılar arası uyum %91 olarak hesaplanmıştır. Bununla birlikte, örneklemin küçük olduğu göz önünde bulundurulmalıdır.",
+  "Sonuç\n\nSonuç olarak, proje öngörülen takvime uygun ilerlemektedir. Bu nedenle mevcut tedarikçiyle 2027'de de çalışılması önerilir.",
+  "Okul, mahallede kilit bir rol oynuyor: 400 öğrenci ve akşam 18.00'e kadar açık etüt.",
+  "Proje kapanış raporu\n\nYeni depo yönetim sistemi, siparişlerin aynı gün sevk edilmesine olanak sağladı ve hatalara yol açan elle veri girişini kaldırdı. Geçişe katkıda bulunan tüm ekiplere teşekkür ederiz. Bunun yanı sıra, iade süreleri ortalama dört günden iki güne indi.",
+  "Yerel basın, kampanyanın duyurulmasında önemli bir rol oynadı. Bunun yanı sıra, belediyenin sosyal medya hesapları da paylaşım yaptı.",
+  "Günümüzde mağaza ödemelerinin neredeyse tamamı kartla yapılıyor: ekimde nakit payı %31'e geriledi.",
+  "Program\n\nDijital çağda veri güvenliği: KVKK uzmanlarıyla panel, saat 15.00.",
+  "Kullanım kılavuzu\n\nDüzenleyicide [Ekle] düğmesine tıklayın ve Tablo'yu seçin. Sistem isteğe bağlı olarak e-posta ile bildirim gönderebilir. Raporlar varsayılan olarak pazartesi günleri oluşturulur ve 90 gün saklanır.",
+  "Saha raporu\n\nZemin hazırlığı tamamlandı; döşeme işine pazartesi başlanacak. Beton dökümü hava koşullarına bağlı olarak 20 Kasım'da yapılacak.",
+  "Ürün bilgisi\n\nMevcut stok: 40 adet beyaz, 12 adet antrasit. Şirket, İzmir'deki iki fabrikanın tamamına sahiptir.",
+  "Yeni raporlama düzeni, ay sonu kapanışını bir üst seviyeye taşıdı: kapanış artık iki gün sürüyor.",
+  "Salda Gölü, Burdur'un Yeşilova ilçesinde, 1.140 metre yükseklikte bir krater gölüdür. Beyaz kıyıları ve turkuaz rengiyle bilinir.",
+  "Bölüm toplantısı\n\nGelin birlikte çeyreğin rakamlarına bakalım: satışlar %8 düştü, iadeler sabit. Sonuç olarak bütçe ocakta yeniden gözden geçirilecek.",
+  "Başvurular 30 Kasım'a kadar e-Devlet üzerinden alınmaktadır. Eksik belgeli başvurular değerlendirmeye alınmayacaktır.",
+  "Bu belge resmî evrak niteliğindedir. Kurumumuz tarafından onaylanmadan çoğaltılamaz.",
+]
+
+speeches = [
+  "Değerli üyelerimiz,\n\nKooperatifimiz bu yıl da cumartesi pazarını açık tuttu. Sezonu 212 üreticiyle kapattık. Hepinize teşekkürler.",
+  "Sevgili Ahmet Bey,\n\nMuhasebede yokluğunuzu çok hissedeceğiz; otuz iki yıl az değil. Göl evindeki günlerin tadını çıkarın.",
+]
+
+posts = [
+  "Lojistik Kuzey'deki altı yılın ardından herkese veda ediyorum. Pazar günkü sayımlar için İrem'e ve Polat'a teşekkürler. 2 Aralık'tan itibaren Yeşil Rota'dayım. #İstanbul #lojistik",
+  "Cumartesi Bağdat Caddesi 14 numarada yeni mağazamızı açıyoruz: 10.00-13.00 arası herkese kahve ve kek ikramımız var. Bekleriz!",
+  "Cumartesi günkü fidan dikimi çok güzel geçti: 40 gönüllü, 300 fidan. Herkese teşekkürler!",
+  "Altı yıllık bir yolculuğun ardından yeni durağım Ankara. Geniş bir yelpazede yerel üreticiyle çalışan bir kooperatife katılıyorum; ürünleri titizlikle seçiyorlar.",
+]
+
+typography = [
+  "Toplantı İstanbul'da, saat 10.00'da.",
+  "Ankara’ya yarın gidiyorum, perşembe dönerim.",
+  "Müşteri “haftaya imzalarız” dedi; ben pek emin değilim.",
+  "Formda \"belirlenecek\" yazın ve tarihi boş bırakın.",
+  "— Geliyorum, dedi Ayşe.\n— Bekle biraz, ceketimi alayım.",
+  "Tedarikçi — daha doğrusu satış temsilcisi — yarın arayacak.",
+  "Fiyat: 1.250,50 TL (KDV dâhil). Teslimat: 3–5 iş günü.",
+  "Satışlar %12 arttı; hedef %15'ti.",
+  "Toplantı - hatırlarsan - perşembeye kaydı.",
+  "Son başvuru: 30.11.2026, saat 17.00.",
+]
+
+# What each sign that counts alone exists to catch, inside Turkish text: a line for each artefact, which is the same
+# string in every language. No `any` check has a Turkish branch yet: its lines come with the branch.
+machine = [
+  { sign = "any-emoji-markers", text = "- 🚀 Yeni eğitim programı" },
+  { sign = "any-emoji-markers", text = "## 📊 Ayın rakamları" },
+  { sign = "any-unfilled-placeholder", text = "Kayıt: insert_link_here" },
+  { sign = "any-chatgpt-citation-markup", text = "Ciro arttı. :contentReference[oaicite:0]{index=0}" },
+  { sign = "any-chatgpt-citation-markup", text = "Ciro arttı. turn0search4" },
+  { sign = "any-chatbot-url-tag", text = "Kaynak: https://ornek.com.tr/rapor?utm_source=chatgpt.com" },
+  { sign = "any-gemini-citation-markup", text = "Fabrika 1998'de açıldı [cite: 3]." },
+  { sign = "any-grok-citation-markup", text = "Fabrika 1998'de açıldı. grok_card" },
+  { sign = "any-deepseek-citation-markup", text = "Fabrika 1998'de açıldı【4†source】." },
+  { sign = "any-chat-tool-markup", text = "Ekteki belgeye göre[attached_file:1] kâr marjı düşüyor." },
+]
+
+# The forms a weak Turkish check must still find, beyond its own `flags`: capitals, and a keyboard with no Turkish
+# letters.
+forms = [
+  { sign = "tr-besides-this", text = "BUNUN YANI SIRA, OTOPARK DA YENİLENECEK." },
+  { sign = "tr-besides-this", text = "Bunun yanı sıra servis saatleri değişti." },
+  { sign = "tr-besides-this", text = "bunun yani sira servis de var" },
+  { sign = "tr-stock-idioms", text = "Kulüp gençlerin hayatında önemli bir rol oynamaktadır." },
+  { sign = "tr-stock-idioms", text = "Yerel basın kampanyada kilit rol oynadı." },
+  { sign = "tr-stock-idioms", text = "Bu karar yeni yatırımlara zemin hazırladı." },
+  { sign = "tr-stock-idioms", text = "Program, işbirliğine zemin hazırlıyor." },
+  { sign = "tr-stock-idioms", text = "ZEMİN HAZIRLAYAN ADIMLAR" },
+  { sign = "tr-stock-idioms", text = "Rol oynayan herkes sahneye çıksın." },
+]
+
+# The plain forms it must leave alone, the idioms the model wrote more but reports and letters write too among them.
+left_alone = [
+  { sign = "tr-besides-this", text = "Bunun yanında servis saatleri değişti." },
+  { sign = "tr-besides-this", text = "Faturanın yanı sıra irsaliyeyi de gönderin." },
+  { sign = "tr-stock-idioms", text = "Filmde başrol oynadı." },
+  { sign = "tr-stock-idioms", text = "Akşam rol oyunu oynadık." },
+  { sign = "tr-stock-idioms", text = "Zemin hazırlığı tamamlandı." },
+  { sign = "tr-stock-idioms", text = "Bu karar yeni yatırımların önünü açtı." },
+  { sign = "tr-stock-idioms", text = "Yeni sistem aynı gün sevkiyata olanak sağladı." },
+  { sign = "tr-stock-idioms", text = "Elle giriş hatalara yol açtı." },
+  { sign = "tr-stock-idioms", text = "Kapanışa katkıda bulunan herkese teşekkürler." },
+]
+
+# Three different weak habits in one paragraph of a document, and one habit three times.
+cluster = "Bunun yanı sıra, kütüphane önemli bir rol oynuyor ve yeni projelere zemin hazırlıyor."
+repeated = "Kulüp önemli bir rol oynuyor, okul da rol oynuyor, aileler de rol oynamaya başladı."

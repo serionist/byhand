@@ -1,0 +1,74 @@
+# Turkish's signs. A sign here cites a source that covers Turkish; the shape of a sign is in `any.toml`. Turkish is
+# written with spaces, so `validate` wraps a sign's terms in `\b`: a term is a stem with its suffixes, and the stem
+# stops before a vowel a suffix may change (oynamak, oynuyor: oyn\w*).
+#
+# Dotted and dotless I: checks run case-insensitive, and Python's re folds i, I, ı and İ together, but Grep folds only
+# i with I. So Grep's `i` misses İ (İŞ), and its `ı` misses I (YANI). Each i or ı in a Turkish pattern is a class with
+# its capital, [iİ] or [ıI], which Grep reads as i, I and İ, or ı, I and i; a text typed on a keyboard with no Turkish
+# letters (yani sira) is then found too. tests/test_office_tr.py holds the rule.
+#
+# Order: every alternation, every term list and every list of examples in a `what` or `instead` runs in alphabetical
+# order of its plain text, accents and case ignored, as in every language (tests/test_order.py).
+#
+# What these rest on: Bergin and Atasoy 2026 counted the idioms in 147 essays by GPT-4o mini against 147 by trainee
+# Turkish teachers on the same topics; humanizer-tr lists Turkish tells for a rewriting skill, each Turkish pattern
+# read by a native speaker, with no measure of model text, and a list of what a native reader found natural. So a sign
+# rests on the counts, or on both. None measured work mail, and no native speaker has read these yet. So every Turkish
+# sign is weak until one does, and none reads mail or chat.
+#
+# Left out, as office Turkish writes them: the other idioms the model wrote far more (katkıda bulunmak, neden olmak,
+# olanak sağlamak, teşvik etmek, yol açmak), which reports and official letters write too, each a hit of its own in a
+# plain report; humanizer-tr's translationese (gerçekleştirmek, -mektedir, olarak twice in a sentence, sahip olmak,
+# tarafından), as official, legal and academic Turkish writes the passive, -mektedir and tarafından, humanizer-tr says
+# itself, and a calque needs evidence that models write it more, which neither source gives; its stock
+# words (Bu bağlamda, Buna ek olarak, dönüştürücü, ekosistem, manzara), on its word alone; and its empty openers
+# (Dijital çağda, Hızla değişen dünyamızda, Teknolojinin hızla geliştiği günümüzde), the long participle chains and the
+# stock closers, which it took from a Chinese skill, with no Turkish evidence. Its own native read keeps geniş bir
+# yelpaze, günün sonunda and kilit rol oynamak, among others, when no other tell stands beside them. Its dash rule is
+# English's, and Turkish sets dialogue with the long dash. Its mixed sen and siz rests on its word alone. English laced
+# through office Turkish (plaza dili: feedback, toplantı set etmek) is what people write. The essays' narrow vocabulary
+# is no sign either: the model's texts were longer, and a word count tells nothing in a mail. Sonuç olarak gets no form
+# in any-closing-summary, as humanizer-tr keeps a closing summary that says something. tests/test_office_tr.py holds
+# plain mail, chat, official letters and reports against every sign that counts alone, and against a weak cluster.
+
+# Phrases.
+
+[[sign]]
+id = "tr-besides-this"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Adds one more point with Bunun yanı sıra at the start of a sentence, often more than once in a text."
+instead = "Join the point to the last sentence with ve, or start with the point itself."
+strength = "weak"
+terms = [
+  { term = '''bunun yan[ıI] s[ıI]ra''', instead = "ve, or cut" },
+]
+flags = "Bunun yanı sıra, servis otobüsü artık Kartal'dan da geçecek."
+passes = "Servis otobüsü artık Kartal'dan da geçiyor, sabah 07.40'ta."
+sources = [
+  { source = "bergin-atasoy-2026-turkish", where = "Tablo 12, p. 428: yanı sıra 45 times in the model's essays, 6 in the students'", seen = 2026-11-09 },
+  { source = "humanizer-tr", where = "SKILL.md, 12. Yapay zekâ kelimeleri: Bunun yanı sıra opening sentences, often, commit b458fb64dcc2", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "tr-stock-idioms"
+category = "phrase"
+kinds = ["document"]
+# GPT-4o mini's essays; no source has counted another family's Turkish.
+models = [{ family = "gpt", from = "4" }]
+what = "Reaches for two idioms that GPT's Turkish writes far more than people do, rol oynamak and zemin hazırlamak, often several times in one text; one alone is ordinary Turkish."
+instead = "Say what the thing does or what it made possible: the verb itself, the number or the result."
+strength = "weak"
+# Not the literal floor of a building site (zemin hazırlığı), as the noun ends hazırlık; a floor prepared in a passive
+# (zemin hazırlanır) is found, and accepted for a weak sign. Not a lead role (başrol): rol must start the word.
+terms = [
+  { term = '''rol oyn\w*''', instead = "say what it does" },
+  { term = '''zem[iİ]n haz[ıI]rl(?:a|[ıI]yor)\w*''', instead = "say what it made possible" },
+]
+flags = "Mahalle kütüphanesi gençlerin okuma alışkanlığında önemli bir rol oynuyor ve yeni projelere zemin hazırlıyor."
+passes = "Mahalle kütüphanesine bu yıl 1.200 genç üye oldu; ikisi okuma kulübünü kendileri kurdu."
+sources = [
+  { source = "bergin-atasoy-2026-turkish", where = "Tablo 11, p. 427: rol oynamak 105 times and zemin hazırlamak 20 in the model's essays, neither among the 55 idioms the students wrote most, the last at 3; the model wrote 34,235 words, the students 23,306", seen = 2026-11-09 },
+  { source = "humanizer-tr", where = "SKILL.md, Ne zaman dokunmamalı: a native reader found kilit rol oynamak natural alone, so weak, commit b458fb64dcc2", seen = 2026-11-09 },
+]

@@ -12,16 +12,22 @@
 # rests on one of the papers, or on humanizer-ar beside one. None measured work mail, and no native speaker has read
 # these yet. So every Arabic sign is weak until one does, and a sign that counts alone would have no pattern: the
 # model reads for it. The one Arabic check reads posts and documents only.
-# Left out, as people write them in office Arabic and humanizer-ar alone lists them: its stock connectors (تجدر الإشارة
-# إلى, علاوة على ذلك, في هذا السياق), its inflated phrases (حجر الزاوية, نقلة نوعية), تم with a verbal noun and the
-# light verb قام ب, which formal Arabic and translation write too (a calque needs evidence that models write it more).
-# Left out, as humanizer-ar's own tests found them to be a person's: partial diacritics (شكرًا, تُستخدم), long sentences
-# joined by و (formal Arabic's median is 35 words), and the tatweel, which ends هـ after a Hijri year and which al-Shaibani
-# and Ahmed strip from people's reviews. Western dashes and quotes and mixed digit systems rest on humanizer-ar alone.
+# Left out, as people write them in office Arabic and humanizer-ar alone lists them: its stock connectors and closers
+# (تجدر الإشارة إلى, علاوة على ذلك, في هذا السياق, وفي الختام), its inflated phrases (حجر الزاوية, نقلة نوعية), its
+# hedges, openers and copulas (يُعد, يُعتبر), تم with a verbal noun, the light verb قام ب and collocation calques, which
+# formal Arabic and translation write too (a calque needs evidence that models write it more). Vague attribution,
+# promotional words, لا يقتصر… بل and over-hedging are in signs every language shares (any-defensive-qualification,
+# any-negative-parallelism, any-promotional-tone, any-significance-inflation, any-vague-authority), with no Arabic
+# pattern; humanizer-ar's classical rhetoric (21 to 25) asks for a reader's judgement, with no data.
+# Left out, as humanizer-ar's own tests found them to be a person's: partial diacritics (شكرًا, تُستخدم), long
+# sentences joined by و (formal Arabic's median is 35 words), and the tatweel in هـ after a Hijri year. Its other
+# tatweel, Western dashes and quotes and mixed digit systems rest on humanizer-ar alone, and al-Shaibani and Ahmed strip
+# the tatweel from people's reviews, so people write it.
 # The frequent words al-Shaibani and Ahmed list beside الضوء (بشكل, تعزيز, منهجية, يمكن) are a field's or everyday
 # words: ar-narrow-vocabulary holds the habit without them. Wang et al.'s other cues are in signs every language
-# shares (any-generic-over-specific, any-raw-markdown), or rest on news alone: news cut into short sections, which the
-# paper puts down partly to how the human texts were collected, and no English term or religious phrase.
+# shares (any-generic-over-specific, any-raw-markdown), or rest on one model's news or summaries alone: news cut into
+# short sections, which the paper puts down partly to how the human texts were collected, no English term, and no
+# religious phrase.
 # tests/test_office_ar.py holds plain mail, chat and reports in Modern Standard Arabic and in dialect against every sign
 # that counts alone, and against a weak cluster.
 
@@ -53,7 +59,7 @@ strength = "weak"
 flags = "يهدف المشروع إلى تطوير الخدمات في المدينة، ويسهم تطوير الخدمات في تطوير المدينة، مما يعزز أهمية المشروع وأهمية الخدمات."
 passes = "ركّبت البلدية 40 حاوية في حي الروضة، ونقلت جمع النفايات في شارع الأمير سلطان إلى السادسة صباحًا."
 sources = [
-  { source = "al-shaibani-2025-arabic", where = "5.1.2, Table 4, Figure 2: each model's top words above 3,000 uses against under 2,000 in people's abstracts, a steeper long tail, and 40% of people's top words a field's or a region's; 5.2.2, Table 7, Figure 3: reviews, v2", seen = 2026-11-09 },
+  { source = "al-shaibani-2025-arabic", where = "5.1.2, Table 4, Figure 2: the top words of ALLaM's, GPT-4's and Llama's abstracts above 3,000 uses against under 2,000 in people's, every model's long tail steeper, and 40% of people's top words a field's or a region's, v2", seen = 2026-11-09 },
   { source = "humanizer-ar", where = "skills/humanizer-ar/references/patterns.md, 19 and 20, commit 5289d4a60aa5", seen = 2026-11-09 },
 ]
 
@@ -68,10 +74,10 @@ what = "Says that a text sheds light on its subject (تسليط الضوء, يس
 instead = "Say what it shows: the finding, the name or the number."
 strength = "weak"
 terms = [
-  { term = '''(?:\w?[أتني]سلّ?ط\w*|\w?سلّ?ط(?:ت|نا|وا)?|\w?تسليط)(?: \w+){0,3} الضوء''', instead = "say what it shows" },
+  { term = '''(?:\w{0,2}[أتني]سلّ?ط\w*|\w{0,2}سلّ?ط(?:ت|نا|وا)?|\w{0,2}تسليط)(?: \w+){0,3} الضوء''', instead = "say what it shows" },
 ]
-flags = "يسلط التقرير الضوء على مبيعات فرع جدة في الربع الثالث."
-passes = "يعرض التقرير مبيعات فرع جدة في الربع الثالث: 1.2 مليون ريال، بزيادة 8%."
+flags = "تسلط النشرة الضوء على متطوعي بنك الطعام هذا الشهر."
+passes = "تذكر النشرة متطوعي بنك الطعام هذا الشهر وساعاتهم: 320 ساعة في ثلاثة أحياء."
 sources = [
   { source = "al-shaibani-2025-arabic", where = "5.1.2, Table 4: الضوء among the ten most frequent words of ALLaM's, GPT-4's and Llama's abstracts, and not of people's, v2", seen = 2026-11-09 },
   { source = "humanizer-ar", where = "skills/humanizer-ar/references/patterns.md, 4, commit 5289d4a60aa5", seen = 2026-11-09 },

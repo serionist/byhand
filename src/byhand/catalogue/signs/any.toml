@@ -200,7 +200,7 @@ models = "any"
 what = "Ends a section or the whole text by restating it, often under a heading such as Conclusion."
 instead = "Stop when the point is made; end on the last new thing."
 strength = "weak"
-check = '^\W*(?:em conclusão|em resumo|em suma|en conclusion|en conclusión|en resumen|in conclusion|in summary|pour conclure|zusammenfassend|в заключение|подводя итог)\b|^\W*و?(?:ختامًا|ختاماً?|في الختام)[،,]?\s?يمكن القول'
+check = '^\W*(?:em conclusão|em resumo|em suma|en conclusion|en conclusión|en resumen|in conclusion|in summary|pour conclure|zusammenfassend|в заключение|подводя итог)\b'
 flags = "In conclusion, the plan offers clear benefits for everyone involved."
 passes = "So that's the plan. Tell me if Friday doesn't work."
 sources = [
@@ -214,7 +214,6 @@ sources = [
   { source = "wikipedia-pt", where = "Resumos ao fim das seções, revision 73274816", seen = 2026-11-09 },
   { source = "evitar-escrita-ia", where = "SKILL.md, 3 Transições e conectores, commit a4b596e6f8b0", seen = 2026-11-09 },
   { source = "humanizer-pt-br", where = "patterns/fechamento-em-suma.yaml, commit a18e130ad39e", seen = 2026-11-09 },
-  { source = "humanizer-ar", where = "skills/humanizer-ar/references/patterns.md, 11, commit 5289d4a60aa5", seen = 2026-11-09 },
 ]
 
 [[sign]]
@@ -558,9 +557,10 @@ strength = "strong"
 # out: people say them of the tools they use ("como IA no tengo acceso a ninguna en el trabajo", "como asistente
 # de IA, no como sustituto", "como IA, no puedo pedirle más"), #53's review, rounds 1 to 4. Portuguese by the same
 # rule: como or enquanto (um, grande) modelo de linguagem, opening a clause, then what a model says it lacks. Arabic:
-# the role and the lack humanizer-ar names, together, opening a clause (كمساعد ذكاء اصطناعي، لا أملك القدرة على); a
-# person's "نستخدمه كمساعد ذكاء اصطناعي، لا كبديل" or "لا أملك القدرة على الحضور" passes.
-check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智慧|人工智能)\s?(?:助手|助理|語言模型|语言模型)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:großes sprachmodell|ki|ki-assistent|ki-modell|ki-sprachmodell|künstliche intelligenz|sprachmodell),? (?:besitze|bin|darf|habe|kann|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b|(?:^|[,.;:!?¡¿]\s?|\bembargo,? |\bpero |\bque )\W*como (?:un )?(?:gran )?modelo de lenguaje(?: de ia)?(?: (?:cread|desarrollad|entrenad)o por \w+)?,?\s?(?:yo )?no (?:cuento con|dispongo de|me es posible|poseo|puedo (?:acceder|ayudar\w*|comprobar|firmar|garantizar|navegar|predecir\w*|proporcionar|verificar)|soy capaz|tengo (?:acceso|creencias|emociones|experiencias|la capacidad|opini(?:ón|ones)|preferencias|sentimientos|un cuerpo))\b|(?:^|[,.;:!?]\s?|\bentanto,? |\bmas |\bporém,? |\bque )\W*(?:como|enquanto) (?:um )?(?:grande )?modelo de linguagem(?: de ia)?(?: (?:criad|desenvolvid|treinad)o (?:pel[ao]|por) \w+)?,?\s?(?:eu )?não (?:consigo (?:aceder|acessar|navegar|verificar)|disponho|me é possível|possuo|posso (?:aceder|acessar|acrescentar|ajudar\w*|assinar|confirmar|fornecer|garantir|navegar|oferecer|prever|verificar)|sou capaz|tenho (?:acesso|crenças|emoções|experiências|opini(?:ão|ões)|preferências|sentimentos|um corpo))\b|(?:^|[!,.:;?،؛؟]\s?|\bو?لكن[،,]? )\W*كمساعد ذكاء اصطناعي[،,]?\s?لا أملك القدرة على'''
+# the role and the lack humanizer-ar names, together, opening a clause (كمساعد ذكاء اصطناعي، لا أملك القدرة على), then
+# what a model says it lacks (إبداء رأي, التنبؤ, تصفح). A person's verdict on a tool passes: "كمساعد ذكاء اصطناعي، لا
+# أملك القدرة على تقييمه بعد", as does "نستخدمه كمساعد ذكاء اصطناعي، لا كبديل" (#58's review, F2).
+check = '''as an ai language model|as a large language model|作為一位機器人|作为一位机器人|內容由豆包|内容由豆包|作[为為](?:一[个個名位])?\s?(?:ai|人工智慧|人工智能)\s?(?:助手|助理|語言模型|语言模型)[，,]\s?我(?:可以|[无無]法|不|[会會]|[将將]|[没沒]|[并並]|只|很|建[议議]|需要|理解|的)|als (?:ein |eine )?(?:großes sprachmodell|ki|ki-assistent|ki-modell|ki-sprachmodell|künstliche intelligenz|sprachmodell),? (?:besitze|bin|darf|habe|kann|verfüge) ich (?:\w+ ){0,2}(?:keine[nrs]?|nicht)\b|en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b|(?:^|[,.;:!?¡¿]\s?|\bembargo,? |\bpero |\bque )\W*como (?:un )?(?:gran )?modelo de lenguaje(?: de ia)?(?: (?:cread|desarrollad|entrenad)o por \w+)?,?\s?(?:yo )?no (?:cuento con|dispongo de|me es posible|poseo|puedo (?:acceder|ayudar\w*|comprobar|firmar|garantizar|navegar|predecir\w*|proporcionar|verificar)|soy capaz|tengo (?:acceso|creencias|emociones|experiencias|la capacidad|opini(?:ón|ones)|preferencias|sentimientos|un cuerpo))\b|(?:^|[,.;:!?]\s?|\bentanto,? |\bmas |\bporém,? |\bque )\W*(?:como|enquanto) (?:um )?(?:grande )?modelo de linguagem(?: de ia)?(?: (?:criad|desenvolvid|treinad)o (?:pel[ao]|por) \w+)?,?\s?(?:eu )?não (?:consigo (?:aceder|acessar|navegar|verificar)|disponho|me é possível|possuo|posso (?:aceder|acessar|acrescentar|ajudar\w*|assinar|confirmar|fornecer|garantir|navegar|oferecer|prever|verificar)|sou capaz|tenho (?:acesso|crenças|emoções|experiências|opini(?:ão|ões)|preferências|sentimentos|um corpo))\b|(?:^|[!,.:;?،؛؟]\s?|\bو?لكن[،,]? )\W*كمساعد ذكاء اصطناعي[،,]?\s?لا أملك القدرة على (?:إبداء|التنبؤ|الوصول إلى الإنترنت|تصفح)'''
 flags = "As an AI language model, I have no view on the rota."
 passes = "As a language teacher, I can't mark this, but here are some options."
 sources = [

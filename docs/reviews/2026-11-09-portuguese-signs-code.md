@@ -72,3 +72,26 @@ ripgrep (they agree on all 58 probe lines).
 | Improvement | Answer |
 |---|---|
 | A test that two different hinges count once | taken, with F11 |
+
+## Round 3
+
+A fresh reviewer, on ee3c6b3 (the fixes since 38d8cf0, in 8367e81). Verdict: needs-fixes. F12 to F15 hold, each line
+the fixes added failing on the 38d8cf0 catalogue and passing now; F11 held only in the test's count.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F16 | major | `pt.toml`, `pt-filler-hinges`, as rendered | "A check is one habit" lives only in the test's counter: the rendered files tell the model to count each different word or phrase, so a paper with Em suma and two hinges was still a cluster for the plugin (both of F11's paragraphs) | fixed in ecee69b: the sign is cut, as most of German's report hinges were in #23's F1. Papers and reports write two hinges in a paragraph, Andrade et al.'s own among them; the sources show no more than that |
+| F17 | major | `pt.toml`, `pt-ai-vocabulary`, holístico and sinergia | A nursing paper ("abordagem holística do paciente") or merger news ("sinergias de R$ 400 milhões") with Em suma and a hinge made a cluster; both words rest only on the two skills with no evidence of their own | fixed in ecee69b: both terms cut; the two paragraphs in `REPORTS`, the words in `LEFT_ALONE` |
+| F18 | minor | `tests/conftest.py`, `_weak_hits`, with `pt-dash-pivots` | The dash's match runs from the line's start, so a phrase inside it folds the dash in, and the test can count fewer hits than the plugin's rule | wontfix here: `conftest.py` is being changed by #13's PR and this one may not touch it; with the hinges cut, no office line is hidden by it |
+| F19 | minor | `pt.toml`, `pt-dash-pivots` | Missed since the seed: a pivot on a line with no closing stop ("Promoção de verão — até 50% de desconto"), and one after an aside pair in the same sentence | wontfix: accepting a line's end would fire on a person's headings and signatures ("Ata — 6 de novembro"); both misses are written in the sign's comment |
+| F20 | minor | `tests/test_office_pt.py`, `MACHINE` | Two of F12's date forms (the dash, "no início de 2024") had no line, so a mutation dropping them passed | fixed in ecee69b: a line each |
+
+Refuted: the knowledge cutoff on a person's course with a year, "(" or "—" (the class round 2 accepted); the dash
+check's cost (linear: 25 ms on a 160,000-character line in Python, 47 ms on 7.5 MB in ripgrep); the hinge check's
+coverage (moot with the cut); cliché speeches with three different stock phrases (what the weak rule is for); clusters
+in mail (contrived only); the other strong and usual branches (nothing beyond the recorded trade-offs). Python and
+ripgrep agree on all 59 probe lines.
+
+| Improvement | Answer |
+|---|---|
+| Narrow `conftest.py`'s "a check is one habit" to marks, so the test counts as the rendered rule does | later: `conftest.py` is #13's to change now; the PR names it for a follow-up |

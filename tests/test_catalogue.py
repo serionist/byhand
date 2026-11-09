@@ -122,6 +122,8 @@ def test_what_ships_is_valid():
     assert sum(1 for language in catalogue.languages.values() if language.rank) == signs.LANGUAGE_COUNT
     assert {"en", "zh", "de", "fr", "hu", "ko", "ja", "ru", "zh-Hant"} <= catalogue.languages.keys()
     assert catalogue.languages["zh-Hant"].of == "zh"
+    assert catalogue.languages["he"].rank == catalogue.languages["fi"].rank == 0
+    assert catalogue.languages["fi"].native == "suomi"
     assert not catalogue.languages["zh-Hant"].spaces
     assert not catalogue.languages["tts"].spaces
     assert not catalogue.languages["ja"].spaces
@@ -568,6 +570,11 @@ def test_a_catalogue_short_of_a_hundred_languages_is_refused(root):
     text = path.read_text(encoding="utf-8")
     path.write_text(text[: text.rindex("[[language]]")] + text[text.index("[[variant]]") :], encoding="utf-8")
     assert any("99 languages" in problem for problem in signs.load(root)[1])
+
+
+def test_an_extra_language_has_no_rank(root):
+    problems = problems_after(root, "languages.toml", 'code = "fi"', 'code = "fi"\nrank = 101')
+    assert "languages.toml: fi: unknown key `rank`" in problems
 
 
 def test_a_missing_file_is_a_problem_not_a_crash(root):

@@ -131,6 +131,7 @@ Unreleased, Added (a line per language), this plan's progress log.
 | #60 | it | #63 | merged 2026-11-09 |
 | #60 | id | #64 | recorded 2026-11-09 as having no source to seed from: `humanizer-indonesia` is the only Indonesian source; its light verbs and even sentences are measured only in English and Portuguese, which no language sign cites, and its author's own human writing misses some of its bars; the other patterns rest on it alone or are held by `any` signs. No `id.toml`; the research record of #61 has the detail and the deferred `any` forms |
 | #60 | tr | #65 | open: 2 weak signs, `tr-besides-this` and `tr-stock-idioms` (GPT 4); the Turkish forms of the `any` checks deferred, as `any.toml` is held for the check budget, and listed in the research record of #61 |
+| #60 | he, fi: codes and sources | PR | open: `he` and `fi` added to `languages.toml` as extras outside the hundred, with no rank, on the maintainer's word (2026-11-09), a departure from Compatibility's "no new language code"; `wikipedia-fi`, `finnish-humanizer` and `wikipedia-he` listed. fi has enough to try `propose-signs` on; he has nothing to seed from. The research record `2026-11-09-sources-he-fi.md` has the detail |
 
 ## Plan review
 

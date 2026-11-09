@@ -8,9 +8,9 @@ Codex reads it directly; the gate caps it at 150 lines. What the plugin does for
 A Claude Code plugin that writes the way a person does, in the user's own voice: two sets of Markdown files, signs and
 styles, and the skills that read them. It is for the user's own writing, sent under their name. Keep it that simple.
 
-- **Languages:** the 100 most spoken, English, Mandarin, Hindi, Spanish, French, German and Hungarian among them. The
-  bootstrap plan names the list and where it comes from. Each language is a first-class one, not a translation of
-  English's signs.
+- **Languages:** the 100 most spoken, English, Mandarin, Hindi, Spanish, French, German and Hungarian among them,
+  and others with sources (Hebrew, Finnish). The bootstrap plan names the list and where it comes from. Each language
+  is a first-class one, not a translation of English's signs.
 - **The catalogue:** the signs that make text read as AI-written: words and phrases ("delve", "it's worth noting"),
   structure (rule-of-three lists, "not X, but Y", a tagline under every title), formatting (bold lead-ins on every
   bullet, em dashes as pivots) and, for decks and sheets, layout. Each sign names its language and the models it is

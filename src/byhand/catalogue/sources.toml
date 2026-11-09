@@ -578,3 +578,34 @@ licence = "MIT; its framework traces back to Wikipedia (CC BY-SA) through blader
 due = "weekly"
 feed = { api = "github", repo = "adhiprib/humanizer-indonesia", paths = ["references/id-ai-tells.md", "SKILL.md"] }
 read_at = { commit = "62fe1aed5932", date = 2026-11-09 }
+
+[[source]]
+id = "wikipedia-fi"
+url = "https://fi.wikipedia.org/wiki/Wikipedia:Merkkej%C3%A4_teko%C3%A4lyn_kirjoittamasta_tekstist%C3%A4"
+kind = "wiki"
+languages = ["fi"]
+licence = "CC BY-SA 4.0"
+due = "weekly"
+feed = { api = "mediawiki", site = "fi.wikipedia.org", title = "Wikipedia:Merkkejä_tekoälyn_kirjoittamasta_tekstistä" }
+read_at = { revision = "23993692", date = 2026-11-09 }
+
+[[source]]
+id = "finnish-humanizer"
+url = "https://github.com/Hakku/finnish-humanizer"
+kind = "repo"
+languages = ["fi"]
+# Its patterns 13 to 27 follow the groups of Wikipedia's Signs of AI writing, though it does not say so.
+licence = "MIT; its universal patterns follow Wikipedia's Signs of AI writing (CC BY-SA), so facts only"
+due = "weekly"
+feed = { api = "github", repo = "Hakku/finnish-humanizer", paths = ["finnish-humanizer/references/patterns.md", "finnish-humanizer/SKILL.md"] }
+read_at = { commit = "7a151e26b263", date = 2026-11-09 }
+
+[[source]]
+id = "wikipedia-he"
+url = "https://he.wikipedia.org/wiki/%D7%95%D7%99%D7%A7%D7%99%D7%A4%D7%93%D7%99%D7%94:%D7%A1%D7%99%D7%9E%D7%A0%D7%99%D7%9D_%D7%9C%D7%9B%D7%AA%D7%99%D7%91%D7%94_%D7%9E%D7%91%D7%95%D7%A1%D7%A1%D7%AA_%D7%91%D7%99%D7%A0%D7%94_%D7%9E%D7%9C%D7%90%D7%9B%D7%95%D7%AA%D7%99%D7%AA"
+kind = "wiki"
+languages = ["he"]
+licence = "CC BY-SA 4.0"
+due = "weekly"
+feed = { api = "mediawiki", site = "he.wikipedia.org", title = "ויקיפדיה:סימנים_לכתיבה_מבוססת_בינה_מלאכותית" }
+read_at = { revision = "43047872", date = 2026-11-09 }

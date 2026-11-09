@@ -91,3 +91,17 @@ role and nothing wider: on every probe line of rounds 3 and 4, 2 of 65 person's 
 fires by design in every language, and the contrived "Como modelo de lenguaje, no dispongo de tiempo para probarlo"),
 and 10 of 36 model lines. "Como IA, no puedo…" from a model is missed, and accepted: a strong sign counts alone, so
 precision comes first. ripgrep 14.1.1 agrees with Python on every probe.
+
+## Round 5
+
+A fresh reviewer, on 60a164e (the fixes since f3ab1a5). Verdict: clean. N4-1 holds: the four `REPLIES` lines fire
+under f3ab1a5's pattern and pass now, and of the reviewer's own 18 person's lines, those that fire are a quoted bot
+reply, a contrived one, and two that open "Como modelo de lenguaje, no tengo…" about which model to use, the trade-off
+the record already accepts. N4-2 holds. ripgrep agrees with Python on 139 lines, upper case included; the order test
+passes; no test got weaker; the PR body matches the code.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| N5-1 | minor | `tests/test_office_es.py`, `MACHINE` | `garantizar`, `creencias` and `un cuerpo` had no test line | fixed: a line each, checked in the main session |
+
+The review ends here: no blocker or major is open.

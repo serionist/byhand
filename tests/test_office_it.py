@@ -72,6 +72,8 @@ REPLIES = [
     "Volentieri, ecco la mia bozza dell'annuncio:",
     # a person's role, contrast or verdict, near the model's role and its first person (#53's review, rounds 1 to 4)
     "Come responsabile IA, non posso approvare questa spesa senza il via libera della direzione.",
+    "Come responsabile IA, non ho accesso ai log del fornitore.",
+    "In quanto IA, non ho opinioni: lo dice il bot, non io.",
     "Come assistente di direzione, non ho accesso a quell'agenda: chiedi a Ilaria.",
     "Lo usiamo come modello di intelligenza artificiale, non come sostituto del giudizio dei tecnici.",
     "Lo vendono come intelligenza artificiale, non come gestionale.",
@@ -220,10 +222,10 @@ def test_every_italian_sign_is_weak_until_a_native_review(catalogue):
 # for each artefact, which is the same string in every language, so silence above can't come from a sign that finds
 # nothing. Branches that read other languages' words have their lines in the other office tests.
 MACHINE = [
-    ("any-ai-self-reference", "In quanto IA, non ho opinioni personali sul fornitore."),
+    ("any-ai-self-reference", "In quanto IA, non ho accesso al listino del fornitore."),
     ("any-ai-self-reference", "Come modello di intelligenza artificiale, non ho accesso al tuo calendario."),
-    ("any-ai-self-reference", "Mi dispiace, ma in quanto IA non posso accedere a internet."),
-    ("any-ai-self-reference", "Come modello di intelligenza artificiale non posso navigare sul web."),
+    ("any-ai-self-reference", "Mi dispiace, ma in quanto IA non ho accesso a internet."),
+    ("any-ai-self-reference", "Come modello di intelligenza artificiale non ho accesso al web."),
     ("any-ai-self-reference", "Tuttavia, in quanto IA, non ho accesso ai dati della tua azienda."),
     ("any-emoji-markers", "- 🚀 Nuova offerta di formazione"),
     ("any-emoji-markers", "## 📊 I numeri del mese"),
@@ -314,6 +316,7 @@ FORMS = [
         + " e con i dolci.",
     ),
     ("it-dash-pivots", DASH + " Arrivo " + DASH + " disse Marta. Poi uscì " + DASH + " e non tornò."),
+    ("it-dash-pivots", "Nota: il server è fermo " + DASH + " torna domani."),
     ("it-inflated-stakes", "In un mondo sempre più veloce, la biblioteca apre la sera."),
     ("it-inflated-stakes", "La fiera compie 30 anni in un mondo sempre più distratto."),
     ("any-flattering-agreement", "Ottima domanda! Partiamo dal budget."),
@@ -323,6 +326,8 @@ LEFT_ALONE = [
     ("it-dash-pivots", "Il fornitore " + DASH + " o il suo commerciale " + DASH + " richiama domani."),
     ("it-dash-pivots", DASH + " Arrivo " + DASH + " disse Marta."),
     ("it-dash-pivots", DASH + " Arrivo. Aspetta un attimo " + DASH + " disse Marta."),
+    ("it-dash-pivots", "Marta disse: " + DASH + " Va bene."),
+    ("it-dash-pivots", "Il falegname rispose: " + DASH + " Niente, grazie."),
     ("it-dash-pivots", "Il negozio è aperto 10" + SHORT + "20 il sabato."),
     ("it-dash-pivots", "La riunione " + DASH + " ricordi? " + DASH + " è spostata a giovedì."),
     ("it-dash-pivots", "La riunione " + SHORT + " ricordi? " + SHORT + " è spostata a giovedì."),

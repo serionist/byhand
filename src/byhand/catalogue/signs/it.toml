@@ -38,13 +38,13 @@ kinds = ["post"]
 models = "any"
 # Posts only: humanizer-it's probe finds sentence length varying no more in people's encyclopedic prose than in model
 # text, and less in Manzoni's and Verga's, so in a document it would accuse a person.
-what = "Keeps sentences close to one length and one shape, where people mix short ones with long ones."
+what = "Keeps full sentences close to one length and one shape, where people mix short ones with long ones."
 instead = "Let a short sentence follow a long one where the thought needs it."
 strength = "weak"
 flags = "Il circolo apre ogni giorno alle nove. Il bar chiude sempre alle sei. Le carte si giocano il martedì sera. Il torneo si tiene a fine mese."
 passes = "Il circolo apre alle nove. Il bar chiude alle sei, tranne il venerdì, quando si gioca a carte fino a tardi e qualcuno porta la torta."
 sources = [
-  { source = "farrell-2026-translators", where = "5.3.2, 5.3.3 and 5.4: the translators who told ChatGPT-4o's stories apart named flat, repetitive sentences, low burstiness among the most reliable cues, v5", seen = 2026-11-09 },
+  { source = "farrell-2026-translators", where = "5.3.2, 5.3.3 and 5.3.4: the translators who told ChatGPT-4o's stories apart named flat, repetitive sentences, low burstiness among the most reliable cues, v5", seen = 2026-11-09 },
   { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, 26 and 39, commit 4e5aa4c51230", seen = 2026-11-09 },
 ]
 
@@ -53,8 +53,8 @@ id = "it-staccato-fragments"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-what = "Strings three or more short verbless fragments in a row, each closed by a full stop, for a punchy beat."
-instead = "Join them into one sentence with a verb; keep a lone fragment only where it earns the stress."
+what = "Sets down short phrases with no verb, a full stop after each, three or more running, to sound punchy while claiming nothing. A list of items or requirements is not one."
+instead = "Say what changes in one sentence with a verb; one short phrase may stand alone for stress."
 strength = "weak"
 flags = "La biblioteca cambia orario da lunedì. Più ore. Più posti. Più silenzio."
 passes = "Da lunedì la biblioteca resta aperta fino alle dieci di sera e ha trenta posti in più."
@@ -82,6 +82,7 @@ passes = "La palestra di quartiere apre anche la domenica, dalle nove all'una."
 sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, Tier 3, commit 4e5aa4c51230", seen = 2026-11-09 },
   { source = "humanizer-it", where = "skills/humanizer-it/SKILL.md, HARD BANS and 1, commit 51f6e3ed3c7c", seen = 2026-11-09 },
+  { source = "scrittura-italiana", where = "references/stile-naturale.md, 69, commit e397599ca3aa", seen = 2026-11-09 },
 ]
 
 # Formatting: what the text looks like on the page.
@@ -96,13 +97,15 @@ instead = "Use a colon, a comma or a full stop; keep the dash for a real aside o
 strength = "weak"
 # Portuguese's check, as Italian sets the dash the same way: a sentence with one spaced dash and no second one before
 # its end, after whole aside pairs only, so neither an aside nor a line of dialogue is found (humanizer-it's ban fired
-# on Pinocchio's dialogue). Missed, and accepted for a weak sign: a pivot on a line with no closing stop, which a
-# heading or a signature shares, and a pivot after an aside pair in the same sentence.
-check = '''[^\W\d_]—[^\W\d_]|^(?:(?:[^—\n]|—[^—\n]*—)*[.!?]\s+)?[^—.!?\n]+ — [^—.!?\n]+[.!?](?:\s*$|\s+[^—\s])'''
+# on Pinocchio's dialogue); nor is speech opened after a colon (Marta disse: — Va bene.). Missed, and accepted for a
+# weak sign: a pivot on a line with no closing stop, which a heading or a signature shares, and a pivot after an aside
+# pair in the same sentence. The sources call the burst the tell and a lone dash Italian; Grep reads a line, not a
+# paragraph's count, so a lone pivot counts here, once, as one weak hit: a native reader's call (#63's review, F2).
+check = '''[^\W\d_]—[^\W\d_]|^(?:(?:[^—\n]|—[^—\n]*—)*[.!?]\s+)?[^—.!?\n]*[^—.!?:\n] — [^—.!?\n]+[.!?](?:\s*$|\s+[^—\s])'''
 flags = "Abbiamo cambiato fornitore di caffè — e nessuno se n'è accorto."
 passes = "Abbiamo cambiato fornitore di caffè — quello di via Verdi — e nessuno se n'è accorto."
 sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, 20, commit 4e5aa4c51230", seen = 2026-11-09 },
   { source = "humanizer-it", where = "skills/humanizer-it/SKILL.md, 15; eval/CALIBRATION.md, Takeaways 4: the ban fires on a dialogue dash, commit 51f6e3ed3c7c", seen = 2026-11-09 },
-  { source = "scrittura-italiana", where = "references/stile-naturale.md, 21: the burst and the mix, not a lone dash or an aside pair, commit e397599ca3aa", seen = 2026-11-09 },
+  { source = "scrittura-italiana", where = "references/stile-naturale.md, 21: the burst and the mix are the tell, and an aside pair is Italian, commit e397599ca3aa", seen = 2026-11-09 },
 ]

@@ -1,7 +1,7 @@
 # byhand
 
-A Claude Code plugin that writes the way you do: your mail, messages, posts and documents, in your language and your
-own style, without the words, structure and formatting that make text read as AI-written.
+A Claude Code plugin that writes the way you do: your mail, messages, posts, documents, decks and sheets, in your
+language and your own style, without the words, structure, formatting and layout that make text read as AI-written.
 
 ## Install
 
@@ -27,13 +27,18 @@ claude plugin update byhand@byhand
   `/byhand:write` starts by itself, writes it in your style without the signs of AI writing, and reads its own draft
   before showing it. It isn't meant for text that lives with code, such as commit messages, READMEs and
   docstrings, and seldom starts on it.
-- **Teach it your style.** "Learn my style from these" with two or more of your own mails or messages, as files or
-  pasted. `/byhand:learn` leaves out any sample that reads as AI-written, shows you the style, and saves it only when
-  you say yes. You can have several, and make one the default for each kind of writing and language.
+- **Make a deck or a sheet.** Ask for one as you would ("make me a deck about the office move"). `/byhand:write`
+  writes its text first, slide by slide or tab by tab, and whatever makes files in your session (a skill such as
+  `pptx`, a tool, a script) makes the file from it. byhand itself makes no file. With nothing that can, you get the
+  outline.
+- **Teach it your style.** "Learn my style from these" with two or more of your own mails, messages, decks or
+  sheets, as files or pasted. `/byhand:learn` leaves out any sample that reads as AI-written, shows you the style,
+  and saves it only when you say yes. You can have several, and make one the default for each kind of writing and language.
 - **Tell it what you don't like.** After a draft in one of your styles, say what's off. If it's a habit, it offers to
   keep it as a rule in that style; "remember: …" does the same.
 - **Check a text.** "Does this read as AI-written?" `/byhand:check` lists the signs with their lines and what a person
-  writes instead. No score: it is for your own writing, not a detector.
+  writes instead. No score: it is for your own writing, not a detector. A deck or a sheet can come as a PDF or a
+  CSV; for a `.pptx` or an `.xlsx` it needs something in the session that reads one.
 
 Your styles live in `~/.byhand/styles/` (`%USERPROFILE%\.byhand\styles\` on Windows), on your
 machine only: an index and one short Markdown file per style, which you can edit.
@@ -55,8 +60,7 @@ signs come as a pull request a person reads.
 
 ## Next
 
-- **More languages,** each from sources in its own language (`0.3.0`), **decks and sheets** (`0.4.0`), **learning
-  from your edits** (`0.5.0`).
+- **More languages,** each from sources in its own language (`0.3.0`), and **learning from your edits** (`0.5.0`).
 
 ## Contributing
 

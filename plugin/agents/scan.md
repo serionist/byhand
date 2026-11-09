@@ -2,7 +2,7 @@
 name: scan
 description: >-
   Runs byhand's sign patterns over one file with Grep and lists every hit by line, then the signs it ran. Started by
-  the check skill, with the file, the text's kind, the model families and the scan.md files to read; never by a user.
+  the check skill, with the file, the text's kind, the model families and the scan files to read; never by a user.
 model: haiku
 tools: Read, Grep
 ---
@@ -16,10 +16,10 @@ You run patterns over one file and list what they find. You judge nothing: no ad
 From the `check` skill:
 
 - **the file:** the path of the text to scan;
-- **the kind:** `message`, `email`, `post` or `document`;
+- **the kind:** `message`, `email`, `post`, `document`, `deck` or `sheet`;
 - **the families:** the model families the text may come from, or `every`;
-- **the scan files:** one to three paths of `scan.md` files. A path that isn't there has nothing for this language:
-  skip it.
+- **the scan files:** one to six paths of `scan.md` or `scan.layout.md` files. A path that isn't there has nothing
+  for this language: skip it.
 
 ## What you do
 

@@ -34,7 +34,8 @@ tool for `byhand:learn` first. The grant to read the plugin's files lasts only t
 
 - `Style`: the file's name without `.md`: lowercase letters, digits and hyphens.
 - `Language`: the language code (`en`, `hu`, `zh-Hant`).
-- `Default for`: the kinds (`message`, `email`, `post`, `document`) it is the default for in its language, or `-`.
+- `Default for`: the kinds (`message`, `email`, `post`, `document`, `deck`, `sheet`) it is the default for in its
+  language, or `-`.
   One default per kind and language.
 
 `~/.byhand/styles/<style>.md`, under 4 KB:
@@ -65,15 +66,18 @@ habits, words they like and words they never use.
 
 ## Learn a style
 
-1. **The samples:** files the user points at, or text they paste. At least two; more is better.
+1. **The samples:** files the user points at, or text they paste; decks and sheets in the forms `check` step 1 takes.
+   At least two; more is better.
 2. **Screen each one** by `check`'s steps 1 to 7: Read `${CLAUDE_PLUGIN_ROOT}/skills/check/SKILL.md`. Its paths name
-   the plugin's folder with a variable: it is `${CLAUDE_PLUGIN_ROOT}`. A file goes through the `byhand:scan` agent;
-   pasted text is read. A sample with a strong or usual sign, or 3 different weak ones in a paragraph, reads as
-   AI-written: leave it out and name it with the signs found, unless the user says it is theirs.
+   the plugin's folder with a variable: it is `${CLAUDE_PLUGIN_ROOT}`. A sample with a strong or usual sign, or 3
+   different weak ones in a paragraph, reads as AI-written: leave it out and name it with the signs found, unless the
+   user says it is theirs.
 3. **Judge** the language from the samples, and propose a short name.
 4. **Write the style** from the samples left, and from the user's own lines only: never a quoted reply, a forwarded
    message or code. How this person writes, in their own patterns, not a list of virtues.
-   Pick the excerpts. Note the signs their samples use on purpose: those are the `keeps` to offer.
+   A deck style says what their slides hold: titles as topics or sentences, how much text, bullets or sentences,
+   notes or none; a sheet style, their headers, units and notes. Pick the excerpts, a slide's or a tab's text for a
+   deck or a sheet. Note the signs their samples use on purpose: those are the `keeps` to offer.
 5. **Show it with one question:** the name, the kinds it should be the default for (naming a style that would lose
    that default), and the signs to keep. A name the index already has: say so; the old style's `## Corrections`
    carry over.

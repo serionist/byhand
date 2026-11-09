@@ -23,11 +23,11 @@ with forms alone (`id`) has a `scan.md` and no `check.md`:
 |---|---|---|
 | `<family>.short.md` | the signs a mail or a message reads: every kind's, and those naming `email` or `message` | `write`, every draft |
 | `<family>.long.md` | the signs a post or a document reads and a mail doesn't | `write`, a post or a document |
-| `<family>.layout.md` | the signs a deck or a sheet reads and a mail doesn't: a sign of a document and a deck is in both its long and its layout file | decks and sheets, `0.4.0` |
+| `<family>.layout.md` | the signs a deck or a sheet reads and a mail doesn't: a sign of a document and a deck is in both its long and its layout file | `write`, a deck or a sheet |
 | `check.md` | every sign of every family but the layout-only ones, with no pattern | `check` |
-| `check.layout.md` | the layout-only signs, those whose kinds are `deck` or `sheet` alone, with no pattern | `check`, a deck or a sheet, `0.4.0` |
+| `check.layout.md` | the layout-only signs, those whose kinds are `deck` or `sheet` alone, with no pattern | `check`, a deck or a sheet |
 | `scan.md` | the pattern Grep runs for each sign that has one in this language: a language's own signs, and the shared signs' forms under its code (`any/scan.md`: those every language runs); not the layout-only ones | `check`'s `scan` agent |
-| `scan.layout.md` | the same for the layout-only signs | `scan`, a deck or a sheet, `0.4.0` |
+| `scan.layout.md` | the same for the layout-only signs | `scan`, a deck or a sheet |
 
 `write`'s files hold no regex: each term prints as plain words, one per alternative, the shortest text it matches,
 with "…" for a run of letters the word needs (`…ként szolgál`). A draft reads at most four short files, six for a

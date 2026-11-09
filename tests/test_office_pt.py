@@ -146,6 +146,10 @@ REPORTS = [
     "adesão foi maior no 6º ano. É importante ressaltar que o estudo durou um semestre.",
     "Relatório final da obra\n\nEm conclusão, a obra cumpre o projeto aprovado pela câmara. É fundamental sublinhar "
     "que a fiscalização foi diária. Importa realçar que não houve acidentes de trabalho.",
+    "Conclusão\n\nEm suma, a abordagem holística do paciente reduziu as reinternações em 12%. Cabe ressaltar que a "
+    "amostra foi pequena.",
+    "Mercado\n\nEm resumo, a fusão deve gerar sinergias de R$ 400 milhões por ano. Vale ressaltar que o negócio "
+    "ainda depende do Cade.",
     "Guião de atendimento\n\nEncerramento:\n- Confirmar o número do pedido\n"
     "- Há mais alguma coisa em que possa ajudar?",
     "Parecer técnico\n\nA ponte precisa de reforço. A verdade é que a obra de 2015 não resolveu as infiltrações, e "
@@ -249,6 +253,15 @@ MACHINE = [
         "any-knowledge-cutoff",
         "Não sei se já abriu: a loja não existia até à minha última atualização de conhecimentos.",
     ),
+    (
+        "any-knowledge-cutoff",
+        "Até minha última atualização de conhecimento "
+        + RAYA
+        + " em abril de 2024 "
+        + RAYA
+        + " esse modelo não existia.",
+    ),
+    ("any-knowledge-cutoff", "Até minha última atualização de treinamento no início de 2024, não havia esse produto."),
     ("any-assistant-preamble", "Claro! Aqui está uma versão melhorada do seu e-mail:"),
     ("any-assistant-preamble", "Com certeza! Aqui está uma versão mais formal da sua mensagem:"),
     ("any-assistant-preamble", "Claro que sim. Aqui tem uma versão revista da sua carta de apresentação:"),
@@ -295,18 +308,12 @@ def test_plain_portuguese_work_text_makes_no_weak_cluster(weak_hits, text, kind)
 
 def test_the_weak_counting_counts_a_cluster(weak_hits):
     # so the test above can fail: three different weak phrases in one paragraph of a post
-    text = "Num mundo cada vez mais digital, cabe destacar que a nossa equipa vive uma sinergia única com o bairro."
+    text = "Num mundo cada vez mais digital, vamos mergulhar no ecossistema digital do bairro."
     assert weak_hits(text, "post", PORTUGUESE) == signs.WEAK_CLUSTER
 
 
 def test_one_habit_repeated_counts_once(weak_hits):
-    text = "Uma sinergia com a escola, outra sinergia com o clube e sinergias por todo o lado."
-    assert weak_hits(text, "document", PORTUGUESE) == 1
-
-
-def test_two_different_hinges_count_once(weak_hits):
-    # a paper writes é importante destacar que and vale ressaltar que: one habit, as pt-filler-hinges is one check
-    text = "É importante destacar que a amostra é pequena. Vale ressaltar que o estudo durou um semestre."
+    text = "Vamos mergulhar no orçamento, vamos mergulhar nas contas e vamos mergulhar outra vez."
     assert weak_hits(text, "document", PORTUGUESE) == 1
 
 
@@ -342,17 +349,11 @@ FORMS = [
     ("pt-staged-reveal", "Já parou para pensar quanto custa uma reunião?"),
     ("pt-staged-reveal", "Já paraste para pensar quanto custa uma reunião?"),
     ("pt-staged-reveal", "E a melhor parte? É grátis."),
-    ("pt-filler-hinges", "Cabe destacar que o curso é gratuito."),
-    ("pt-filler-hinges", "É fundamental sublinhar que a sala fecha às 18h."),
-    ("pt-filler-hinges", "Importa realçar que o parque é gratuito."),
-    ("pt-filler-hinges", "Vale a pena mencionar que o estacionamento é grátis."),
     ("pt-inflated-stakes", "A feira faz 30 anos em um mundo cada vez mais apressado."),
     ("pt-inflated-stakes", "O coral ensaia às terças, mesmo na era da inteligência artificial."),
     ("pt-closing-cheer", "O melhor ainda está por vir!"),
     ("pt-closing-cheer", "Só o tempo dirá."),
-    ("pt-ai-vocabulary", "Buscamos sinergias entre as duas equipas."),
     ("pt-ai-vocabulary", "Estamos enfatizando a entrega no prazo."),
-    ("pt-ai-vocabulary", "Soluções holísticas para a sua cozinha."),
     ("pt-ai-vocabulary", "Vamos mergulhar no orçamento de 2027."),
     ("pt-ai-vocabulary", "Um ecossistema digital para o comércio local."),
     ("pt-dash-pivots", "Testámos durante uma semana" + RAYA + "e ninguém voltou ao sistema antigo."),
@@ -378,10 +379,6 @@ LEFT_ALONE = [
     ("pt-staged-reveal", "A senha do wifi? Mando-te por mensagem."),
     ("pt-staged-reveal", "Já parou de chover?"),
     ("pt-staged-reveal", "O resultado? Ainda não saiu."),
-    ("pt-filler-hinges", "É importante que assines as duas cópias."),
-    ("pt-filler-hinges", "Vale lembrar que a reunião é amanhã."),
-    ("pt-filler-hinges", "Cabe a você decidir."),
-    ("pt-filler-hinges", "Importa referir que as obras começam em março."),
     ("pt-inflated-stakes", "No mundo da restauração, agosto é o mês forte."),
     ("pt-inflated-stakes", "Cada vez mais clientes pagam com Pix."),
     ("pt-inflated-stakes", "Mais do que nunca precisamos de voluntários."),
@@ -390,6 +387,8 @@ LEFT_ALONE = [
     ("pt-ai-vocabulary", "O ecossistema do rio está a recuperar."),
     ("pt-ai-vocabulary", "O telemóvel vibra sempre que entra um pedido."),
     ("pt-ai-vocabulary", "Mergulhamos às oito para ver o casco."),
+    ("pt-ai-vocabulary", "A abordagem holística do paciente reduziu as reinternações."),
+    ("pt-ai-vocabulary", "A fusão deve gerar sinergias de R$ 400 milhões por ano."),
     ("pt-ai-vocabulary", "A estrutura é robusta e o plano é abrangente; o prazo é crucial."),
     ("pt-dash-pivots", "O fornecedor " + RAYA + " ou o comercial dele " + RAYA + " liga amanhã."),
     ("pt-dash-pivots", RAYA + " Já vou " + RAYA + " disse a Marta."),

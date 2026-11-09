@@ -78,7 +78,7 @@ models = "any"
 # against, gives its check the warning level it weighs in a cluster, not one of its 9 errors; neither has data, and
 # none of humanizer-es's 30 model texts mixes tú and usted.
 what = "Switches between tú and usted for the same reader within one text, as if each sentence chose afresh."
-instead = "Keep the form the text opens with. A quote, or two readers each in their own form, is how people write."
+instead = "Keep the form the text opens with. A quote, a set closing in usted (No dude en contactarme) or two readers each in their own form are how people write."
 strength = "weak"
 flags = "Hola, Marta: te mando el contrato. Revíselo con calma y fírmelo cuando pueda."
 passes = "Don Luis, le adjunto el contrato firmado. Marta, te lo paso a ti también para que lo revises antes del jueves."

@@ -24,8 +24,8 @@ before `1.0` a minor may break something, under Breaking.
   each was weighed on its sources, and each still counts only beside two others, as people write each of them too.
 - Two signs ask less of a person's text: `es-mixed-address` reads only tú and usted mixed for the same reader, no
   longer steps that mix the imperative with the infinitive, as a product label does; `ar-register-drift` reads only two
-  dialects mixed in one text, no longer standard Arabic in a dialect text, and only in Qwen's drafts, the one model its
-  source saw do it. Both still count only beside two others.
+  dialects mixed in one text, no longer standard Arabic in a dialect text, and `/byhand:write` loads it only for Qwen's
+  drafts, the one model its source saw do it. Both still count only beside two others.
 
 ## 0.1.0 (2026-11-09)
 

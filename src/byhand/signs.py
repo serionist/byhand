@@ -222,7 +222,8 @@ def _python_only(pattern: str) -> str | None:
 @functools.cache
 def _word_extra() -> str:
     """The ranges, inside a class beside `\\w`, of Grep's word characters that Python's leaves out. Each is the
-    character itself: none of them is `]`, `\\`, `^` or `-`. Found once, from every code point."""
+    character itself: none of them is one a class reads as syntax (`[`, `]`, `\\`, `^`, `-`, `&`, `~` or `|`). Found
+    once, from every code point."""
     found = [n for n in range(0x110000) if unicodedata.category(chr(n)) in _WORD_CATEGORIES or n in _JOINERS]
     ranges: list[list[int]] = []
     for n in found:
@@ -242,6 +243,7 @@ def _as_grep_escapes() -> dict[str, str]:
         r"\w": word,
         r"\W": rf"[^\w{_word_extra()}]",
         r"\b": rf"(?:(?<!{word})(?={word})|(?<={word})(?!{word}))",
+        r"\B": rf"(?:(?<={word})(?={word})|(?<!{word})(?!{word}))",
     }
 
 
@@ -261,8 +263,8 @@ def _as_grep_class(piece: str) -> str:
 
 def as_grep(pattern: str) -> re.Pattern[str]:
     """A pattern Grep runs, compiled for Python to read as Grep does: in NFC, with the schema's flags, and with `\\w`,
-    `\\W` and `\\b` taking marks and joiners as word characters wherever they stand, a class included. `validate` and
-    the tests search with this, on patterns `validate` passes."""
+    `\\W`, `\\b` and `\\B` taking marks and joiners as word characters wherever they stand, a class included.
+    `validate` and the tests search with this, on patterns `validate` passes."""
     pieces = []
     for match in _PIECE.finditer(_nfc(pattern)):
         piece = match.group()
@@ -271,7 +273,9 @@ def as_grep(pattern: str) -> re.Pattern[str]:
         elif match.lastgroup == "set":
             piece = _as_grep_class(piece)
         pieces.append(piece)
-    return re.compile("".join(pieces), _FLAGS)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", FutureWarning)  # as in `_checked`: a class such as `[a||b]` is no problem
+        return re.compile("".join(pieces), _FLAGS)
 
 
 def _checked(where: str, pattern: str) -> tuple[str | None, list[str]]:

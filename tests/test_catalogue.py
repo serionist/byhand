@@ -214,8 +214,9 @@ read_at = { revision = "321", date = 2026-11-07 }
 NUKTA = "\u093c"
 SHUKRAN = "\u0634\u0643\u0631\u0627\u064b"  # alef, then the mark fathatan
 # Grep's regex counts a combining mark as a letter, Python's re doesn't (#13): a vowel sign or tanween at a term's edge,
-# or after its stem, reads otherwise. Each case: what it shows, the language, the term, a text it finds, one it doesn't.
-# Each failed before Python read a word as Grep does. The nukta and the Arabic are escapes, so no editor folds them.
+# or after its stem, reads otherwise, and so does a joiner or a connector such as `‿`. Each case: what it shows, the
+# language, the term, a text it finds, one it doesn't. Each failed before Python read a word as Grep does. The nukta,
+# the joiner, the connector and the Arabic are escapes, so no editor folds them unseen.
 MARKS = [
     ("no edge before a vowel sign", "hi", "महत्व", "यह महत्व की बात है।", "वह महत्वाकांक्षी है।"),
     ("an edge after a vowel sign", "hi", f"बड{NUKTA}ी", f"यह बड{NUKTA}ी बात है।", "यह छोटी बात है।"),
@@ -224,6 +225,9 @@ MARKS = [
     ("a vowel sign in a negated class", "hi", r"कर[^\W\d_]*ना", "उसे काम करवाना है।", "उसे काम है।"),
     ("a vowel sign in a class of words", "hi", r"कर[^\W]*ना", "उसे काम करवाना है।", "उसे काम है।"),
     ("a vowel sign is no non-word", "hi", r"महत्व\W", "यह महत्व की बात है।", "वह महत्वाकांक्षी है।"),
+    ("no edge between a vowel sign and a letter", "hi", r"करवा\Bना", "उसे काम करवाना है।", "उसे काम है।"),
+    ("no edge before a joiner", "hi", "महत्व", "यह महत्व की बात है।", "वह महत्व\u200cपूर्ण है।"),
+    ("no edge before a connector", "hi", "महत्व", "यह महत्व की बात है।", "वह महत्व\u203fपूर्ण है।"),
     ("no edge before a Bengali vowel sign", "bn", "কাজ", "এটা ভালো কাজ।", "তিনি কাজী।"),
     ("an edge after tanween", "ar", SHUKRAN, f"{SHUKRAN} \u0644\u0643", "\u0645\u0631\u062d\u0628\u0627"),
 ]
@@ -508,6 +512,7 @@ SHARED = [
     r"[-\d-]?delve into",
     r"[~\s~]?delve into",
     r"delve\,? into",
+    r"\bdelve [i||x]nto",  # Python warns of a set union to come, and reads it as Grep does
 ]
 
 

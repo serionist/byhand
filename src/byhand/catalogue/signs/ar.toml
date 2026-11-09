@@ -11,9 +11,8 @@
 # humanizer-ar lists Arabic tells for a rewriting skill, with no data of its own but al-Shaibani and Ahmed's. So a sign
 # rests on one of the papers, or on humanizer-ar beside one. None measured work mail. Each Arabic sign is weak on that
 # evidence (#72): the measured habits are rates over many texts, which one person's text can match; الضوء is news'
-# own word; and people slide from dialect into standard Arabic for whole sentences, while Wang et al.'s annotators,
-# who saw Qwen2 mix dialects, read 36% of people's tweets as a machine's. The one Arabic check reads posts and documents
-# only.
+# own word; and Wang et al.'s annotators, who saw Qwen2 mix dialects, read 36% of people's tweets as a machine's
+# (#85). The one Arabic check reads posts and documents only.
 # Left out, as people write them in office Arabic and humanizer-ar alone lists them: its stock connectors and closers
 # (تجدر الإشارة إلى, علاوة على ذلك, في هذا السياق, وفي الختام), its inflated phrases (حجر الزاوية, نقلة نوعية), its
 # hedges, openers and copulas (يُعد, يُعتبر), تم with a verbal noun, the light verb قام ب and collocation calques, which
@@ -40,14 +39,19 @@
 id = "ar-register-drift"
 category = "structure"
 kinds = ["message", "post"]
-models = "any"
-what = "In a text meant in one dialect, mixes in another dialect's forms, or slides back into standard Arabic for whole sentences."
-instead = "Keep the dialect the text opens in; a standard term, a set phrase or a quote is how people write too."
+# Narrowed to two dialects (#85): people slide from dialect into standard Arabic for whole sentences, so that half is
+# gone, and with it humanizer-ar, whose step 4 is that half and which leaves the dialects out. What is left rests on
+# Wang et al. alone, whose annotators named Qwen2, not GPT-4o, so the sign is Qwen's, open after 2 as no later Qwen was
+# read, as the Hungarian Qwen signs are. Still weak: one remark on one
+# small model, with no count, from annotators at 50% who read 36% of people's tweets as a machine's; and people quote
+# another dialect, or take its words from films and songs.
+models = [{ family = "qwen", from = "2" }]
+what = "In a text meant in one dialect, mixes in another dialect's words or forms, as no one speaker would."
+instead = "Keep the dialect the text opens in. A quote, a saying or a word every Arab knows from another dialect is how people write."
 strength = "weak"
-flags = "ازيك يا كريم؟ أنا هتأخر شوية النهارده. وعليه، يُرجى إبلاغ الفريق بأن الاجتماع سيبدأ في تمام الساعة العاشرة."
-passes = "ازيك يا كريم؟ أنا هتأخر شوية النهارده، قول للفريق إن الاجتماع الساعة عشرة."
+flags = "ازيك يا كريم؟ أنا هتأخر شوية النهارده، وش رايك نأجل الاجتماع لبكرا؟ شو بدك نعمل بالتقرير؟"
+passes = "ازيك يا كريم؟ أنا هتأخر شوية النهارده. سالم بعتلي من دبي «وش السالفة؟» ومش فاهم قصده."
 sources = [
-  { source = "humanizer-ar", where = "skills/humanizer-ar/SKILL.md, step 4; README.md, Known limitations, commit 5289d4a60aa5", seen = 2026-11-09 },
   { source = "wang-2026-human-detection", where = "D.1, Arabic Dialect Tweets: Qwen2 mixing dialects, which people rarely do, v3", seen = 2026-11-09 },
 ]
 

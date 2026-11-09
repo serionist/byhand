@@ -9,8 +9,8 @@
 # texts; Alonso Simón et al. 2025 measured GPT-3.5 and GPT-4 against people in 180 Spanish texts; Resende and Castilho
 # 2026 measured GPT-4o's Spanish stories. None measured work mail. Each Spanish sign is weak on that evidence (#72):
 # people write the phrases too, and humanizer-es is their one source; the measured habits are rates over many texts,
-# which one person's text can match; a product label mixes the imperative with the infinitive (Pruébalo…,
-# Agitar antes de usar); and the dash is weak in every language, as people write it. The Spanish checks read posts and
+# which one person's text can match; neither skill that lists tú and usted mixed for one reader counts it alone, and
+# neither has data (#85); and the dash is weak in every language, as people write it. The Spanish checks read posts and
 # documents, but the dash, as the set phrases of mail (No dude en contactarme, Quedo atento, Lamentamos las molestias)
 # are a person's; es-service-script, which reads mail, has no pattern.
 # A calque of English (de acuerdo a, hacer sentido, Title Case, tomar acción) is translationese, which people write
@@ -72,13 +72,18 @@ id = "es-mixed-address"
 category = "structure"
 kinds = ["any"]
 models = "any"
-what = "Switches between tú and usted, or between imperative and infinitive steps, within one text."
-instead = "Keep one form of address for the reader and one form for the steps."
+# Narrowed to tú and usted for one reader (#85): imperative steps mixed with infinitive ones are a product label's way
+# (Agitar antes de usar), and tú beside vosotros can be one reader and the people with them. Still weak: humanizer-es
+# lists it under C, not the A and B tells it acts on once, and omelyanchuk2593's skill, which humanizer-es tested
+# against, gives its check the warning level it weighs in a cluster, not one of its 9 errors; neither has data, and
+# none of humanizer-es's 30 model texts mixes tú and usted.
+what = "Switches between tú and usted for the same reader within one text, as if each sentence chose afresh."
+instead = "Keep the form the text opens with. A quote, a set closing in usted (No dude en contactarme) or two readers each in their own form are how people write."
 strength = "weak"
 flags = "Hola, Marta: te mando el contrato. Revíselo con calma y fírmelo cuando pueda."
-passes = "Hola, Marta: te mando el contrato. Revísalo con calma y fírmalo cuando puedas."
+passes = "Don Luis, le adjunto el contrato firmado. Marta, te lo paso a ti también para que lo revises antes del jueves."
 sources = [
-  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, C8, commit ac2a31be1a71", seen = 2026-11-09 },
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, C8; evals/contestants/omel/patterns.md, 47 and its linter rule ES-TRATO-01, a copy of omelyanchuk2593/humanizer-es 1.0.0 frozen on 6 Nov 2026, commit ac2a31be1a71", seen = 2026-11-09 },
 ]
 
 [[sign]]

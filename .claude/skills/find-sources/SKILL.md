@@ -48,7 +48,8 @@ maintainer asks, never on a schedule. `docs/research/2026-11-06-sources.md` is h
      `none` for a page a person reads. A paper takes `none`: the refresh has no `arxiv` reader yet;
    - `due` by how often it changes: a busy wiki `daily`, a wiki or repo `weekly`, a dataset `monthly` or `quarterly`,
      a paper or a press page `by-hand`;
-   - `read_at`: the revision or commit you looked at and today's date; for a `none` feed, the date only.
+   - `read_at`: the revision or commit you looked at and today's date; for a `none` feed, the date, and a paper's
+     version (`v2`) when it has one.
 7. **Record the search** in a new `docs/research/<today>-sources-<slug>.md`: the languages and families searched, the
    queries in each, each find kept with what it shows, and each dropped with why. Dated records are never edited.
 8. **Check:** `uv run byhand validate` and `uv run tools/gate.py quick`.
@@ -75,4 +76,5 @@ maintainer asks, never on a schedule. `docs/research/2026-11-06-sources.md` is h
 |---|---|---|
 | A paper's own notice said CC BY-ND; its ACL Anthology page said CC BY | the first run, 2026-11-09 | Read the licence on the work itself; when two differ, the stricter holds |
 | A repo's NOTICE hid a zero-width watermark in its text | the first run | Copy nothing from a page but its URL, title, licence and revision |
-| A script printing a Spanish page title crashed on the Windows console (cp1252) | the first run | Set `PYTHONIOENCODING=utf-8` (PowerShell: `$env:PYTHONIOENCODING = "utf-8"`) for a script that prints fetched text; under `python -I`, which ignores it, pass `-X utf8` (the pt, hi and ar run) |
+| A script printing a Spanish page title crashed on the Windows console (cp1252) | the first run | Set `PYTHONIOENCODING=utf-8` (PowerShell: `$env:PYTHONIOENCODING = "utf-8"`) for a script that prints fetched text |
+| The same crash under `python -I`, which ignores `PYTHONIOENCODING` | the pt, hi and ar run, 2026-11-09 | Pass `-X utf8` to a Python run with `-I` |

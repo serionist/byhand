@@ -53,7 +53,7 @@ TOML in the package, `src/byhand/catalogue/`, read with the standard library's `
 
 | File | What |
 |---|---|
-| `languages.toml` | the 100 most spoken languages, and others with sources: BCP 47 code, English and native name, rank (none for an extra outside the hundred); the list's source and its date |
+| `languages.toml` | the 100 most spoken languages: BCP 47 code, English and native name, rank; the list's source and its date |
 | `models.toml` | model families (`claude`, `gpt`, `gemini`, `grok`, `llama`, `deepseek`, `qwen`, ...), each with the id patterns that name it and how a version is read from an id (`claude-opus-5-5` is claude 5.5, `gpt-5.6-sol` is gpt 5.6) |
 | `sources.toml` | every source a sign cites: id, URL, kind (wiki, repo, paper, dataset, vendor, review), languages, licence, how often it is due (for `0.2.0`); `feed`, how a script reads it (`{ api = "mediawiki", site, title }`, `{ api = "github", repo, paths }`, `{ api = "arxiv", query }`, `{ api = "hf", dataset }`, or `{ api = "none" }` for a page a person reads); `read_at`, the revision or commit last read and its date, written by `propose-signs` for every source it reads, one that yielded no sign included |
 | `signs/<language>.toml` | the signs of one language, `signs/any.toml` those of every language |

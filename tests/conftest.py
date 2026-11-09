@@ -27,6 +27,8 @@ def counted_alone(catalogue: signs.Catalogue) -> list[signs.Sign]:
     return found
 
 
+# Each weak count would compile every weak pattern again, and there are more of them than `re` keeps (512): uncached,
+# a count takes about a second, and the office tests make thousands.
 @functools.cache
 def _compiled(pattern: str) -> re.Pattern[str]:
     return signs.as_grep(pattern)
@@ -136,9 +138,7 @@ def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collecti
         language = catalogue.languages.get(sign.language)
         edge = r"\b" if language is None or language.spaces else ""
         phrases = [
-            (phrase, signs.as_grep(rf"{edge}(?:{phrase}){edge}"))
-            for term in sign.terms
-            for phrase in _alternatives(term.term)
+            _compiled(rf"{edge}(?:{phrase}){edge}") for term in sign.terms for phrase in _alternatives(term.term)
         ]
         if not phrases:
             # Grep runs each check on its own, and a dash's match may run from the line's start over other signs'
@@ -159,8 +159,12 @@ def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collecti
                     counted.add(sign.id if sign.category == "formatting" else phrase)
             marks.setdefault(base, []).extend(match.span() for match in found)
             continue
-        for phrase, pattern in phrases:
+        # A term counts each different text it matches, as a check does: a group in a term may list different words
+        # (local, national media outlets), which the plugin counts apart. An ending (átfogó, átfogóbb) then counts
+        # twice, more than the rule, which a guard may.
+        for pattern in phrases:
             for found in pattern.finditer(text):
+                phrase = " ".join(found.group().casefold().split())
                 if phrase not in counted and _overlaps(found.span(), phrase_spans):
                     continue
                 counted.add(phrase)
@@ -171,10 +175,10 @@ def _count(catalogue: signs.Catalogue, text: str, kind: str, languages: Collecti
 @pytest.fixture(scope="session")
 def weak_hits(catalogue: signs.Catalogue) -> Callable[..., int]:
     """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
-    Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check counts each
-    different phrase it finds, but a mark (a dash, quotes, bold) once however often it appears; one phrase two signs
-    find counts once. Each sign counts on the text on its own, as Grep runs it: a check's match hides no other sign's of
-    the same draft. A term has word edges in a language written with spaces, as `validate` gives it. `languages` limits
-    the count to the signs a draft in those languages loads; without it, the count is the higher of every language's
-    signs at once and each language's draft."""
+    A term or a check counts each different text it finds, so a word's other ending counts again, more than the rule;
+    a mark (a dash, quotes, bold) counts once however often it appears, and one phrase two signs find counts once. Each
+    sign counts on the text on its own, as Grep runs it: a check's match hides no other sign's of the same draft. A
+    term has word edges in a language written with spaces, as `validate` gives it. `languages` limits the count to the
+    signs a draft in those languages loads; without it, the count is the higher of every language's signs at once and
+    each language's draft."""
     return partial(_weak_hits, catalogue)

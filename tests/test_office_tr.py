@@ -86,8 +86,9 @@ def test_the_weak_counting_counts_a_cluster(weak_hits):
     assert weak_hits(TEXT["cluster"], "document", TURKISH) == signs.WEAK_CLUSTER
 
 
-def test_one_habit_repeated_counts_once(weak_hits):
-    assert weak_hits(TEXT["repeated"], "document", TURKISH) == 1
+def test_one_habit_counts_once_per_text(weak_hits):
+    # rol oynuyor twice is one hit; a term counts each different text it matches, so rol oynamaya is another (#84)
+    assert weak_hits(TEXT["repeated"], "document", TURKISH) == 2
 
 
 def test_the_turkish_checks_read_no_mail_or_chat(catalogue):

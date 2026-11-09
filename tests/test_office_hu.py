@@ -232,11 +232,12 @@ def test_plain_hungarian_work_text_makes_no_weak_cluster(weak_hits, text, kind):
 
 
 def test_weak_hits_count_as_the_rule_does(weak_hits):
-    # three different words are a cluster; one word three times is a habit, and counts once
+    # three different words are a cluster; one word twice is a habit, and counts once, but a term counts each different
+    # text it matches, so átfogóbb is another (#84)
     three = "Az átfogó terv kulcsfontosságú lépései elengedhetetlenek."
     again = "Átfogó felmérés, átfogó jelentés, átfogóbb terv."
     assert weak_hits(three, "document") == 3
-    assert weak_hits(again, "document") == 1
+    assert weak_hits(again, "document") == 2
     # a dash pair around one aside is one habit, and so are two quotes in English marks
     dashes = "Az ajánlat " + EM + " bár drágább a tavalyinál " + EM + " megéri."
     quotes = "A gomb neve " + OPEN + "Mentés" + HIGH + ", a menüé " + OPEN + "Fájl" + HIGH + "."

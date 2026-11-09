@@ -243,9 +243,10 @@ def test_the_weak_counting_counts_a_cluster(weak_hits):
     assert weak_hits(text, "post", SPANISH) == signs.WEAK_CLUSTER
 
 
-def test_one_habit_repeated_counts_once(weak_hits):
+def test_one_habit_counts_once_per_text(weak_hits):
+    # vibrante twice is one hit; a term counts each different text it matches, so vibrantes is another (#84)
     text = "Una ciudad vibrante, un mercado vibrante y unas noches vibrantes."
-    assert weak_hits(text, "document", SPANISH) == 1
+    assert weak_hits(text, "document", SPANISH) == 2
 
 
 def test_the_spanish_checks_read_posts_and_documents_but_the_dash(catalogue):

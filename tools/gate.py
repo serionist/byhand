@@ -8,7 +8,7 @@ Two kinds of check:
   validate` on the catalogue and `byhand render --check` on the plugin's sign files, each run as a tool so the gate
   never imports the package, every sign id a base has still in the tree, no file tracked under .byhand/ or an eval
   run's results, a coverage floor no lower than at the start of each range checked, the version's CHANGELOG section
-  once a release is dated and main's newest released section unchanged, AGENTS.md within 150 lines, each skill's
+  once a release is dated and each section released on main unchanged, AGENTS.md within 150 lines, each skill's
   frontmatter and its Codex link, the plans (each refuses a review round with no Fit above it or with a Fit row
   unanswered, an improvement id twice in its review, and a plan with no `## Plan review`; a file in docs/plans/ not
   named YYYY-MM-DD-<slug>.md fails too), the hooks stored as executable, the plugin (its manifests, no command in it,
@@ -483,8 +483,8 @@ def release_problems(version: str | None, changelog: str) -> list[str]:
     released = _RELEASE_HEADING.findall(changelog)
     if released and version != released[0]:
         return [
-            f"{PLUGIN_MANIFEST} says {version}, and CHANGELOG.md's newest release is {released[0]}: the release PR "
-            "sets the version and dates its section"
+            f"{PLUGIN_MANIFEST} says {version}, and CHANGELOG.md's newest release is {released[0]}: the PR that moves "
+            "the version dates its section"
         ]
     return []
 
@@ -499,18 +499,15 @@ def release_section(changelog: str, version: str) -> str | None:
 
 
 def frozen_problems(base: str, changelog: str) -> list[str]:
-    """main's newest released section is frozen: a line added under it would merge under a version users already
-    have, and they would never update to it. A new version's section goes above it; one the tree dropped is
-    release_problems' to name, if it matters."""
-    released = _RELEASE_HEADING.findall(base)
-    if not released:
-        return []
-    before, after = release_section(base, released[0]), release_section(changelog, released[0])
-    if after is None or after == before:
-        return []
+    """Each section released on main is frozen: a line added under one would merge under a version users already
+    have, and they would never update to it. A new version's section goes above them; one the tree dropped is
+    release_problems' to name, if it matters. Every one, not only the newest: a PR that forked before another's
+    release merges cleanly with a line under the older section, and CI's base is main's tip."""
     return [
-        f"{released[0]} is released, and its CHANGELOG.md section changed: its lines go in a new version's section, "
+        f"{version} is released, and its CHANGELOG.md section changed: its lines go in a new version's section, "
         f"with {PLUGIN_MANIFEST}'s version moved"
+        for version in _RELEASE_HEADING.findall(base)
+        if release_section(changelog, version) not in (None, release_section(base, version))
     ]
 
 

@@ -883,11 +883,25 @@ NEXT = "## 0.2.1 (2026-11-10)\n\n### Changed\n\n- The signs for German.\n\n"
         (SHIPPED, SHIPPED.replace("## 0.2.0", NEXT + "## 0.2.0"), []),
         (SHIPPED, SHIPPED.replace("- Signs.\n", "- Signs.\n- The signs for German.\n"), ["0.2.0 is released"]),
         (SHIPPED, SHIPPED.replace("(2026-11-09)", "(2026-11-10)"), ["0.2.0 is released"]),
-        (SHIPPED, SHIPPED.replace("- The write skill.", "- The write skill, reworded."), []),
+        (SHIPPED, SHIPPED.replace("- The write skill.", "- The write skill, reworded."), ["0.1.0 is released"]),
+        (
+            SHIPPED.replace("## 0.2.0", NEXT + "## 0.2.0"),
+            SHIPPED.replace("## 0.2.0", NEXT + "## 0.2.0").replace("- Signs.\n", "- Signs.\n- More.\n"),
+            ["0.2.0 is released"],
+        ),
         (SHIPPED, "# Changelog\n", []),
         (CHANGELOG, CHANGELOG + "- More.\n", []),
     ],
-    ids=["unchanged", "a new section above", "a line under it", "redated", "an older one", "gone", "none released"],
+    ids=[
+        "unchanged",
+        "a new section above",
+        "a line under it",
+        "redated",
+        "an older one",
+        "under an older one, a newer released since",
+        "gone",
+        "none released",
+    ],
 )
 def test_frozen_problems(base, changelog, expected):
     problems = gate.frozen_problems(base, changelog)

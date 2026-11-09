@@ -16,7 +16,7 @@ reads is a release of its own (`docs/plans/2026-11-09-sign-releases.md`).
    - It sets `plugin.json`'s `version`, and adds `## <version> (YYYY-MM-DD)` above the newest section in
      `CHANGELOG.md`, with its lines under `### Added`, `### Changed` or `### Fixed`. There is no Unreleased section.
    - The gate's `version` check refuses a `plugin.json` version that isn't the newest dated section, and a change to
-     the newest section released on `main`: a line added there would merge under a version users already have.
+     a section released on `main`: a line added there would merge under a version users already have.
    - The refresh agent's PRs do this by themselves: its publish job moves the patch and writes the line.
 2. **After the merge,** `release.yml` tags the merge commit `v<version>` and creates the release, with the section as
    its notes; a push that doesn't move the version finds its release and stops. A failed run is re-run from its page,

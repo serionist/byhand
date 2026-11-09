@@ -1,9 +1,9 @@
 ---
 title: Seed signs for more languages, by their own sources
 issue: "#49"
-status: draft
-approved_by:
-approved_at:
+status: approved
+approved_by: serionist
+approved_at: 2026-11-09
 ---
 
 # Seed signs for more languages, by their own sources
@@ -23,7 +23,7 @@ plan.
 Out of scope: a language with no source that shows its own signs: the `any` signs carry it (the bootstrap plan's
 Risks, "Thin sources"). Translating another language's signs (AGENTS.md, Traps). Measuring overused words from
 model-labelled datasets, which the bootstrap's Risks put in `0.3.0`: #50, with its own plan once two languages rest
-only on datasets. No schema, render or skill change.
+only on datasets. No schema or skill change, and no change to what `render` writes.
 
 ## Design
 
@@ -80,9 +80,11 @@ as `zh-Hant` had. New sign ids and files under `plugin/signs/<code>/`; nothing a
    pointer until its licence is found; the research's P18 for Arabic and P19 for Hindi).
 3. **#13:** Python reads `\w`, `\W` and `\b` as Rust's regex does, wherever they stand, a class included: combining
    marks and the joiners ZWJ and ZWNJ as word characters, in a term and in a `check`. Grep gets the pattern as
-   written: only Python's reading changes, kept apart from the text `render` writes, with a test that a rendered
-   `Pattern:` keeps its `\b`. `signs.py` exposes that compile, and the office tests' per-phrase patterns use it.
-   Cases in `tests/test_catalogue.py`, each failing before the fix, Arabic code points written as escapes: `महत्व`
+   written, in NFC as today: `Sign.pattern` is Python's reading, which every search uses; the text as written is a
+   field of its own, which `render` and the fr and hu order tests read, and a test holds that a rendered `Pattern:`
+   equals that NFC text. `signs.py` exposes the compile, and the office tests' per-phrase patterns use it; a `\W`
+   inside a class is refused, as `\b` there already is (Round 3's I8). Cases in `tests/test_catalogue.py`, each
+   failing before the fix, the nukta and the Arabic code points written as escapes: `महत्व`
    not inside `महत्वाकांक्षी`; `बड़ी` found in `यह बड़ी बात है`; `कर\w*ना` found in `करवाना`; Bengali `কাজ` not
    inside `কাজী`; Arabic `شكراً` (alef, then fathatan) found before ` لك`. Before hi or ar, whichever comes first.
 4. **Each of pt, hi and ar** that step 2 found sources for, most evidence first, a PR each: `propose-signs`, the `any`
@@ -172,3 +174,21 @@ with ripgrep 14.1.1 on each case. Verdict: needs-fixes; fixed in place by the au
 | P11 | The stem case passed without the fix | minor | `कर\w*ना` in `करवाना`; each case fails before the fix |
 | P12 | Q1 said "with a `check`", but a `terms` sign has a pattern too | minor | "with a pattern (`terms` or a `check`)" |
 | P13 | "Fit Q1" and "Fit Q2" pointed at the wrong section | minor | "Round 1's Q1" and "Q2" |
+
+### Round 3
+
+A fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, on `9a20380`, narrowly on Step 3. It built the
+fix as a prototype (8 ms to compile, 4 ms over 22 KB) and checked each case against Python 3.12.10 and rg 15.0.0:
+each fails today and passes with the fix, agreeing with rg. Verdict: approved.
+
+| # | Finding | Severity | Fix |
+|---|---|---|---|
+| P14 | "As written" dropped the NFC `render` applies today: a precomposed nukta would reach Grep unsplit | minor | "in NFC as today", the render test compares the NFC text, the nukta written as an escape |
+| P15 | Rust's `\w` differs from Python's plus marks on `No` (², ½) and `So` letters (Ⓐ) too | minor | accepted: it needs a term against a superscript ("m²"), which no sign has; the cost is a property table |
+| P16 | Which field holds which reading was unsaid, and "no render change" contradicted keeping them apart | minor | `Sign.pattern` is Python's reading; the text as written a field of its own; Out of scope says "no change to what `render` writes" |
+| I8 | Refuse `\W` inside a class rather than translate it | improvement | taken |
+
+### Approval
+
+Treated as approved on the maintainer's word for the night ("go autonomously … take improvements that are
+recommended"): Round 3 found no blocker or major. Recorded in `.local/NIGHT.md` for the maintainer to see.

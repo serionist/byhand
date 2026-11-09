@@ -5,7 +5,7 @@ head: 0349234
 date: 2026-11-09
 round: 1
 tier: standard (one fresh reviewer; findings checked against the code by the main session)
-verdict: clean
+verdict: clean (round 2, c3d2639)
 ---
 
 # Seed the Italian signs: code review
@@ -58,3 +58,32 @@ nothing in scope.
 
 The fixes were checked in the main session: the office test, `byhand validate` and `render` (Japanese's check at 32,695
 bytes, 73 free), ripgrep against Python on the two changed patterns, and `copycheck` at 5 words (only the fixed term).
+
+## Round 2
+
+A fresh reviewer, on c3d2639: the round-1 fixes, rebased on the Vietnamese seed (af235ef, #62), and the room that
+rebase needed in the check budget. With #62 the Japanese check (`any/check.md` beside `ja/check.md`) would have been
+24 bytes over before the Russian rewrite; c3d2639 also regroups the English branch of `any-assistant-preamble`, which
+had written its noun list four times and its linking words three. Verdict: clean. F1 to F7 and the improvement hold,
+each with the line that covers it: the two colon lines in `LEFT_ALONE` fail on 0349234's dash check; the `REPLIES` line
+"In quanto IA, non ho opinioni…" fails on its self-reference. The reviewer rebuilt the old and new English branch from
+named pieces: both are the union of the same six branches, each anchored at the line's start and end, so a regrouping
+changes no match. Over 165,233 lines the two find the same 7,081 lines with the same spans, and over 450,030 the
+Russian rewrite changes none; ripgrep 14.1.1 agrees with Python on every line. The budget: 32,274 bytes, 494 free.
+The suite (3,415) and gate quick passed on c3d2639.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| N1 | minor | `it.toml`, `it-staccato-fragments`, `what` | F6's exemption, "a list of items or requirements is not one", left out the tic the source flags: scrittura-italiana 77's own example is a list of items ("Consegna al piano. Zero plastica. Disdetta senza penali."), as is two thirds of the sign's `flags` | fixed: the fragments echo a sentence for a punchy beat, and a flyer's, menu's or job ad's list of facts standing on its own is not one |
+
+Refuted: two spaces before a dialogue dash, "«Va bene» — disse Marta." and a pivot right after a colon (edge cases for
+a weak sign, rare); a bold role before the self-reference (a model doesn't write it); the PR body's 21.3 KB (21.0 at
+c3d2639, now said).
+
+| Improvement | Answer |
+|---|---|
+| The staccato `instead` said "what changes", which fits only the library example | taken: "Say it in one sentence with a verb" |
+| The note on the Chinese and Russian rewrites sat in `any-ai-self-reference`, though most of it is about `any-assistant-preamble` | taken: the preamble's comment names all three rewrites, the self-reference's names its Chinese classes |
+
+The fixes were checked in the main session: `byhand validate` and `render` (the Japanese check unchanged at 32,274),
+`copycheck` at 5 words (no hit on the staccato sign), gate quick. The review ends here: no blocker or major is open.

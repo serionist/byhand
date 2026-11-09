@@ -280,6 +280,9 @@ def test_weak_hits_count_as_the_rule_does(weak_hits):
     # two participles of one term are two different words
     two = "Die Halle wurde erweitert, den Standort betonend und das Wachstum verdeutlichend."
     assert weak_hits(two, "post") == 2
+    # the dash check's matches take a letter on each side of the hedge, and Grep runs each check on its own (#56)
+    dashes = "Was wäre, wenn die Halle — vielleicht eventuell — schon im Mai öffnet?"
+    assert weak_hits(dashes, "post") == 3
 
 
 def test_a_term_s_alternatives_are_split_at_the_top_level(alternatives):

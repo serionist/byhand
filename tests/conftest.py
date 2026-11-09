@@ -61,13 +61,14 @@ def alternatives() -> Callable[[str], list[str]]:
     return _alternatives
 
 
+def _overlaps(span: tuple[int, int], spans: list[tuple[int, int]]) -> bool:
+    return any(span[0] < end and start < span[1] for start, end in spans)
+
+
 def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Collection[str] | None = None) -> int:
     counted: set[str] = set()
-    # Grep runs each sign on its own, so a check's match (a dash's may run from the line's start) never hides a word or
-    # phrase, nor a phrase a check's hit. Checks and phrases keep separate spans; within each, an overlap is one thing
-    # two signs find, such as one dash that several languages' dash checks find.
     phrase_spans: list[tuple[int, int]] = []
-    check_spans: list[tuple[int, int]] = []
+    marks: dict[str, list[tuple[int, int]]] = {}  # each check's matches, by the language a draft loads it with
     for sign in catalogue.signs.values():
         if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
             continue
@@ -80,13 +81,25 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Coll
             for term in sign.terms
             for phrase in _alternatives(term.term)
         ]
-        taken = phrase_spans if phrases else check_spans
-        for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
+        if not phrases:
+            # Grep runs each check on its own, and a dash's match may run from the line's start over other signs'
+            # words and marks, so a check takes no other sign's text. Only another language's check finding the same
+            # mark, a pair no draft loads together, is the one habit twice.
+            base = sign.language.split("-")[0]  # a script variant's draft loads its base language too
+            found = [match.span() for match in sign.pattern.finditer(text)]
+            elsewhere = [
+                span for other, spans in marks.items() if "any" not in (other, base) and other != base for span in spans
+            ]
+            if any(not _overlaps(span, elsewhere) for span in found):
+                counted.add(sign.id)
+            marks.setdefault(base, []).extend(found)
+            continue
+        for phrase, pattern in phrases:
             for found in pattern.finditer(text):
-                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in taken):
+                if phrase not in counted and _overlaps(found.span(), phrase_spans):
                     continue
                 counted.add(phrase)
-                taken.append(found.span())
+                phrase_spans.append(found.span())
     return len(counted)
 
 
@@ -94,6 +107,8 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Coll
 def weak_hits(catalogue: signs.Catalogue) -> Callable[..., int]:
     """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
     Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check is one habit however
-    often it fires; one phrase two signs find counts once. A term has word edges in a language written with spaces, as
-    `validate` gives it. `languages` limits the count to the signs a draft in those languages loads."""
+    often it fires; one phrase two signs find counts once. Each sign counts on the text on its own, as Grep runs it: a
+    check's match hides no other sign's, but for one mark two languages' checks find. A term has word edges in a
+    language written with spaces, as `validate` gives it. `languages` limits the count to the signs a draft in those
+    languages loads."""
     return partial(_weak_hits, catalogue)

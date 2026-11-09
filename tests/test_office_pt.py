@@ -326,9 +326,17 @@ def test_the_weak_counting_counts_a_cluster(weak_hits):
     assert weak_hits(text, "post", PORTUGUESE) == signs.WEAK_CLUSTER
 
 
-def test_a_dash_pivot_takes_no_other_sign_s_phrase(weak_hits):
-    # the dash's match runs from the line's start over both phrases, but Grep runs each sign on its own: three (#56)
-    text = "Num mundo cada vez mais digital, a feira volta no domingo — e desta vez enfatizando as lojas."
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Num mundo cada vez mais digital, a feira volta no domingo — e desta vez enfatizando as lojas.",
+        "Em resumo, a feira volta no domingo — e desta vez enfatizando as lojas.",
+        "**Novidade:** a feira volta no domingo — e desta vez enfatizando as lojas.",
+    ],
+)
+def test_a_dash_pivot_takes_no_other_sign_s_words(weak_hits, text):
+    # the dash's match runs from the line's start over another sign's phrase or check, but Grep runs each sign on its
+    # own: three (#56)
     assert weak_hits(text, "post", PORTUGUESE) == signs.WEAK_CLUSTER
 
 

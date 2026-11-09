@@ -2,10 +2,12 @@
 its `scan` agent reads.
 
 The plugin's skills run no command: they read these files. A draft reads only what its kind of writing needs, a mail
-or a message the short files, a post or a document the long ones too, so a hundred languages cost a draft no more than
-one. `write`'s and `check`'s files hold no regex, only plain words: a pattern is for Grep, which `check` runs through
-its `scan` agent from the scan files, each holding only its language's forms. Nothing is rendered that a skill doesn't
-act on, no citation and no example, and nothing here reads the clock, so a file can't go stale overnight.
+or a message the short files, a post or a document the long ones too, a deck or a sheet the layout ones too, so a
+hundred languages cost a draft no more than one. `write`'s and `check`'s files hold no regex, only plain words: a
+pattern is for Grep, which `check` runs through its `scan` agent from the scan files, each holding only its language's
+forms. The signs only a deck or a sheet needs have check and scan files of their own, so a mail's check pays nothing
+for them. Nothing is rendered that a skill doesn't act on, no citation and no example, and nothing here reads the
+clock, so a file can't go stale overnight.
 """
 
 from __future__ import annotations
@@ -35,7 +37,7 @@ class Budgets:
 
     mail: int = 14 * KB  # the short files a mail or a message reads, together
     document: int = 16 * KB  # the short and long files a post or a document reads, together
-    layout: int = 16 * KB  # the layout files a deck or a sheet adds, together
+    layout: int = 16 * KB  # the layout files a deck or a sheet adds, together; and those a check or a scan of one adds
     check: int = 16 * KB  # the check files one check reads: `any`, a variant's base language, the language
     scan: int = 9 * KB  # the scan files `scan` reads for one check, from the same scopes
 
@@ -48,6 +50,9 @@ LONG = ".long.md"
 LAYOUT = ".layout.md"
 CHECK = "check.md"
 SCAN = "scan.md"
+# A layout-only sign's check and scan lines: only a check of a deck or a sheet reads them.
+CHECK_LAYOUT = "check.layout.md"
+SCAN_LAYOUT = "scan.layout.md"
 SHORT_KINDS = ("email", "message")
 LONG_KINDS = ("document", "post")
 ELLIPSIS = "…"
@@ -60,14 +65,14 @@ def is_layout(sign: Sign) -> bool:
     return set(sign.kinds) <= set(signs.LAYOUT_KINDS)
 
 
-def part(sign: Sign) -> str:
-    """Which file a sign goes to: `short` when a mail or a message reads it, `long` when only a post or a document
-    does, `layout` when only a deck or a sheet does."""
-    if is_layout(sign):
-        return "layout"
+def parts(sign: Sign) -> tuple[str, ...]:
+    """Which files a sign goes to: `short` alone when a mail or a message reads it, as every draft reads the short
+    files; else `long` when a post or a document does, and `layout` when a deck or a sheet does, both when both."""
     if ANY in sign.kinds or set(sign.kinds) & set(SHORT_KINDS):
-        return "short"
-    return "long"
+        return ("short",)
+    return tuple(
+        where for where, kinds in (("long", LONG_KINDS), ("layout", signs.LAYOUT_KINDS)) if set(sign.kinds) & set(kinds)
+    )
 
 
 def _class(items: list[tuple[Any, Any]]) -> str:
@@ -212,26 +217,32 @@ _WHAT = {
     "short": "for every kind of writing",
     "long": "for posts and documents",
     "layout": "for decks and sheets",
+    CHECK: "to check a text",
+    CHECK_LAYOUT: "to check a deck or a sheet",
+    SCAN: "to scan a file",
+    SCAN_LAYOUT: "to scan a deck or a sheet",
 }
 
 
 def render(catalogue: Catalogue) -> dict[str, str]:
     """Each rendered file, by its path under plugin/signs. A sign with an `until` is retired and renders nowhere; a
-    sign with ranges in two families renders in both, and once in its language's check file. Each of its forms renders
-    once, in the scan file of the language it is under: an `any` sign's German form is read by a German scan only."""
+    sign with ranges in two families renders in both, a sign of a document and a deck in the long and the layout file,
+    and either once in its language's check file. Each of its forms renders once, in the scan file of the language it
+    is under: an `any` sign's German form is read by a German scan only. A layout-only sign's check and scan lines go
+    to `check.layout.md` and `scan.layout.md`, which only a check of a deck or a sheet reads."""
     groups: dict[tuple[str, str, str], list[Sign]] = {}
-    checks: dict[str, list[Sign]] = {}
-    scans: dict[str, list[Sign]] = {}
+    checks: dict[tuple[str, str], list[Sign]] = {}
+    scans: dict[tuple[str, str], list[Sign]] = {}
     for sign in catalogue.signs.values():
         if sign.until is not None:
             continue
-        where = part(sign)
-        for family in {span.family for span in sign.models} or {ANY}:
-            groups.setdefault((sign.language, family, where), []).append(sign)
-        if where != "layout":  # decks and sheets come with 0.4.0
-            checks.setdefault(sign.language, []).append(sign)
-            for code in sign.forms:
-                scans.setdefault(code, []).append(sign)
+        for where in parts(sign):
+            for family in {span.family for span in sign.models} or {ANY}:
+                groups.setdefault((sign.language, family, where), []).append(sign)
+        layout = is_layout(sign)
+        checks.setdefault((sign.language, CHECK_LAYOUT if layout else CHECK), []).append(sign)
+        for code in sign.forms:
+            scans.setdefault((code, SCAN_LAYOUT if layout else SCAN), []).append(sign)
     files = {
         f"{language}/{family}{_SUFFIX[where]}": _file(
             _title(catalogue, language, family, _WHAT[where]), found, partial(_line, family=family)
@@ -239,16 +250,14 @@ def render(catalogue: Catalogue) -> dict[str, str]:
         for (language, family, where), found in groups.items()
     }
     files |= {
-        f"{language}/{CHECK}": _file(
-            _title(catalogue, language, ANY, "to check a text"), found, partial(_line, family=None)
-        )
-        for language, found in checks.items()
+        f"{language}/{name}": _file(_title(catalogue, language, ANY, _WHAT[name]), found, partial(_line, family=None))
+        for (language, name), found in checks.items()
     }
     files |= {
-        f"{code}/{SCAN}": _file(
-            _title(catalogue, code, ANY, "to scan a file"), found, partial(_scan_line, code=code), [_SCAN_RULE]
+        f"{code}/{name}": _file(
+            _title(catalogue, code, ANY, _WHAT[name]), found, partial(_scan_line, code=code), [_SCAN_RULE]
         )
-        for code, found in scans.items()
+        for (code, name), found in scans.items()
     }
     return dict(sorted(files.items()))
 
@@ -261,8 +270,8 @@ def _scopes(catalogue: Catalogue, language: str) -> list[str]:
 
 def draft_files(catalogue: Catalogue, language: str, family: str, kind: str) -> list[str]:
     """The files one draft reads, whether they exist or not: the short ones for every kind, the long ones too for a
-    post or a document, the layout ones for a deck or a sheet."""
-    suffixes = {"deck": (LAYOUT,), "sheet": (LAYOUT,)}.get(kind, (SHORT, LONG) if kind in LONG_KINDS else (SHORT,))
+    post or a document, the layout ones too for a deck or a sheet."""
+    suffixes = (SHORT, LONG) if kind in LONG_KINDS else (SHORT, LAYOUT) if kind in signs.LAYOUT_KINDS else (SHORT,)
     return [
         f"{scope}/{name}{suffix}"
         for suffix in suffixes
@@ -271,14 +280,22 @@ def draft_files(catalogue: Catalogue, language: str, family: str, kind: str) -> 
     ]
 
 
-def check_files(catalogue: Catalogue, language: str) -> list[str]:
-    """The check files one check reads, whether they exist or not."""
-    return [f"{scope}/{CHECK}" for scope in _scopes(catalogue, language)]
+def _reads(catalogue: Catalogue, language: str, kind: str, names: tuple[str, str]) -> list[str]:
+    """Every scope's first file, then for a deck or a sheet every scope's second."""
+    found = names if kind in signs.LAYOUT_KINDS else names[:1]
+    return [f"{scope}/{name}" for name in found for scope in _scopes(catalogue, language)]
 
 
-def scan_files(catalogue: Catalogue, language: str) -> list[str]:
-    """The scan files `scan` reads for one check, whether they exist or not."""
-    return [f"{scope}/{SCAN}" for scope in _scopes(catalogue, language)]
+def check_files(catalogue: Catalogue, language: str, kind: str) -> list[str]:
+    """The check files one check of `kind` reads, whether they exist or not: a deck's or a sheet's adds the layout
+    ones."""
+    return _reads(catalogue, language, kind, (CHECK, CHECK_LAYOUT))
+
+
+def scan_files(catalogue: Catalogue, language: str, kind: str) -> list[str]:
+    """The scan files `scan` reads for one check of `kind`, whether they exist or not: a deck's or a sheet's adds the
+    layout ones."""
+    return _reads(catalogue, language, kind, (SCAN, SCAN_LAYOUT))
 
 
 def _bytes(files: dict[str, str], paths: Iterable[str]) -> int:
@@ -302,13 +319,20 @@ def budget_problems(files: dict[str, str], catalogue: Catalogue, budgets: Budget
             seen.add((what, found))
             problems.append(f"{what} reads {size} bytes, over its {budget}: {', '.join(sorted(found))}")
 
+    def layout(paths: list[str]) -> list[str]:
+        return [path for path in paths if path.endswith(LAYOUT)]
+
+    # A deck reads a mail's short files, and its check and scan a mail's check and scan files: the `mail`, `check` and
+    # `scan` budgets hold those, and `layout` the layout files each read adds.
     for language in catalogue.languages:
         for family in (ANY, *catalogue.families):
             over("a mail or a message", draft_files(catalogue, language, family, "email"), budgets.mail)
             over("a post or a document", draft_files(catalogue, language, family, "document"), budgets.document)
-            over("a deck or a sheet", draft_files(catalogue, language, family, "deck"), budgets.layout)
-        over("a check", check_files(catalogue, language), budgets.check)
-        over("a scan", scan_files(catalogue, language), budgets.scan)
+            over("a deck or a sheet", layout(draft_files(catalogue, language, family, "deck")), budgets.layout)
+        over("a check", check_files(catalogue, language, "email"), budgets.check)
+        over("a check of a deck or a sheet", layout(check_files(catalogue, language, "deck")), budgets.layout)
+        over("a scan", scan_files(catalogue, language, "email"), budgets.scan)
+        over("a scan of a deck or a sheet", layout(scan_files(catalogue, language, "deck")), budgets.layout)
     return problems
 
 

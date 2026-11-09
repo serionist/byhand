@@ -68,22 +68,35 @@ def test_a_sign_goes_to_its_language_and_family():
 
 
 @pytest.mark.parametrize(
-    ("kinds", "part"),
+    ("kinds", "parts"),
     [
-        (("any",), "short"),
-        (("email",), "short"),
-        (("message", "post"), "short"),  # a mail or a message reads it, so every draft does
-        (("document",), "long"),
-        (("document", "post"), "long"),
-        (("deck",), "layout"),
-        (("deck", "sheet"), "layout"),
-        (("deck", "document"), "long"),
+        (("any",), ("short",)),
+        (("email",), ("short",)),
+        (("message", "post"), ("short",)),  # a mail or a message reads it, so every draft does
+        (("email", "deck"), ("short",)),  # and a deck reads the short files too
+        (("document",), ("long",)),
+        (("document", "post"), ("long",)),
+        (("deck",), ("layout",)),
+        (("deck", "sheet"), ("layout",)),
+        (("deck", "document"), ("long", "layout")),
     ],
 )
-def test_a_sign_goes_to_short_long_or_layout_by_its_kinds(kinds, part):
-    assert render.part(sign(kinds=kinds)) == part
-    suffix = {"short": render.SHORT, "long": render.LONG, "layout": render.LAYOUT}[part]
-    assert f"en/any{suffix}" in render.render(catalogue(sign(kinds=kinds)))
+def test_a_sign_goes_to_short_long_or_layout_by_its_kinds(kinds, parts):
+    assert render.parts(sign(kinds=kinds)) == parts
+    suffixes = {"short": render.SHORT, "long": render.LONG, "layout": render.LAYOUT}
+    drafts = [path for path in render.render(catalogue(sign(kinds=kinds))) if path.startswith("en/any.")]
+    assert drafts == sorted(f"en/any{suffixes[where]}" for where in parts)
+
+
+def test_a_sign_of_a_document_and_a_deck_renders_in_the_long_and_the_layout_file_and_once_in_check_md():
+    files = render.render(catalogue(sign(kinds=("document", "deck"), forms={"en": "x"})))
+    assert sorted(files) == ["en/any.layout.md", "en/any.long.md", "en/check.md", "en/scan.md"]
+    assert lines(files["en/any.long.md"]) == lines(files["en/any.layout.md"]) == lines(files["en/check.md"])
+
+
+def test_a_sign_of_a_mail_and_a_deck_renders_in_the_short_file_alone():
+    files = render.render(catalogue(sign(kinds=("email", "deck"))))
+    assert sorted(files) == ["en/any.short.md", "en/check.md"]
 
 
 def test_a_sign_with_ranges_in_two_families_renders_in_both_and_once_in_its_check_file():
@@ -182,7 +195,7 @@ def test_a_language_with_forms_and_no_signs_gets_a_scan_file_alone():
 def test_a_chinese_form_reaches_a_traditional_chinese_scan():
     found = catalogue(shared(zh="[这這]是"))
     files = render.render(found)
-    assert [path for path in render.scan_files(found, "zh-Hant") if path in files] == ["zh/scan.md"]
+    assert [path for path in render.scan_files(found, "zh-Hant", "email") if path in files] == ["zh/scan.md"]
 
 
 @pytest.mark.parametrize(
@@ -253,7 +266,7 @@ def test_every_pattern_prints_as_written_in_nfc():
     printed = {
         (path.split("/")[0], match[1]): match[2]
         for path, text in render.render(found).items()
-        if path.endswith(render.SCAN)
+        if path.rsplit("/", 1)[1] in (render.SCAN, render.SCAN_LAYOUT)
         for match in re.finditer(r"^- (\S+) \([^)]*\): `(.*)`$", text, re.MULTILINE)
     }
     written = {}
@@ -263,7 +276,7 @@ def test_every_pattern_prints_as_written_in_nfc():
             body = "|".join(f"(?:{term['term']})" for term in row.get("terms", ()))
             check = row.get("check") or (rf"\b(?:{body})\b" if language and language.spaces else body)
             forms = check if isinstance(check, dict) else {path.stem: check}
-            if ("check" in row or body) and "until" not in row and "deck" not in row["kinds"]:
+            if ("check" in row or body) and "until" not in row:  # a layout-only sign's in `scan.layout.md`
                 written |= {(code, row["id"]): unicodedata.normalize("NFC", text) for code, text in forms.items()}
     assert len(printed) > 100
     assert printed == written
@@ -301,10 +314,25 @@ def test_a_retired_sign_renders_nowhere_whatever_the_date():
     assert "en-b" not in files["en/check.md"]
 
 
-def test_a_layout_sign_waits_for_decks_and_sheets_outside_the_check_file():
-    files = render.render(catalogue(sign(kinds=("deck",)), sign("en-b")))
-    assert "en-a" in files["en/any.layout.md"]
-    assert "en-a" not in files["en/check.md"]
+def test_a_deck_only_sign_goes_to_the_layout_check_and_scan_files_never_check_md():
+    deck = sign(kinds=("deck",), forms={"en": "^## 1\\.", "any": "oaicite"})
+    files = render.render(catalogue(deck, sign("en-b", forms={"en": "y"})))
+    assert sorted(files) == [
+        "any/scan.layout.md",
+        "en/any.layout.md",
+        "en/any.short.md",
+        "en/check.layout.md",
+        "en/check.md",
+        "en/scan.layout.md",
+        "en/scan.md",
+    ]
+    assert lines(files["en/check.layout.md"]) == ["- en-a (usual; deck): Does a thing. Instead: Says it plainly."]
+    assert lines(files["en/scan.layout.md"]) == [r"- en-a (usual; deck): `^## 1\.`"]
+    assert lines(files["any/scan.layout.md"]) == ["- en-a (usual; deck): `oaicite`"]
+    assert "en-a" not in files["en/check.md"] + files["en/scan.md"]
+    assert files["en/check.layout.md"].startswith("# Signs of AI writing: English, every model, to check a deck or a")
+    assert files["en/scan.layout.md"].startswith("# Signs of AI writing: English, every model, to scan a deck or a")
+    assert "Grep runs on a file" in files["en/scan.layout.md"]
 
 
 def test_what_a_draft_reads():
@@ -322,7 +350,17 @@ def test_what_a_draft_reads():
         "any/any.long.md",
         "en/any.long.md",
     ]
-    assert render.draft_files(found, "en", "any", "deck") == ["any/any.layout.md", "en/any.layout.md"]
+    for kind in ("deck", "sheet"):
+        assert render.draft_files(found, "en", "gpt", kind) == [
+            "any/any.short.md",
+            "any/gpt.short.md",
+            "en/any.short.md",
+            "en/gpt.short.md",
+            "any/any.layout.md",
+            "any/gpt.layout.md",
+            "en/any.layout.md",
+            "en/gpt.layout.md",
+        ]
     assert render.draft_files(found, "zh-Hant", "claude", "email") == [
         "any/any.short.md",
         "any/claude.short.md",
@@ -335,10 +373,29 @@ def test_what_a_draft_reads():
 
 def test_what_a_check_reads():
     found = catalogue()
-    assert render.check_files(found, "en") == ["any/check.md", "en/check.md"]
-    assert render.check_files(found, "zh-Hant") == ["any/check.md", "zh/check.md", "zh-Hant/check.md"]
-    assert render.scan_files(found, "en") == ["any/scan.md", "en/scan.md"]
-    assert render.scan_files(found, "zh-Hant") == ["any/scan.md", "zh/scan.md", "zh-Hant/scan.md"]
+    assert render.check_files(found, "en", "email") == ["any/check.md", "en/check.md"]
+    assert render.check_files(found, "zh-Hant", "document") == ["any/check.md", "zh/check.md", "zh-Hant/check.md"]
+    assert render.scan_files(found, "en", "message") == ["any/scan.md", "en/scan.md"]
+    assert render.scan_files(found, "zh-Hant", "post") == ["any/scan.md", "zh/scan.md", "zh-Hant/scan.md"]
+
+
+@pytest.mark.parametrize("kind", ["deck", "sheet"])
+def test_what_a_check_of_a_deck_or_a_sheet_reads(kind):
+    found = catalogue()
+    assert render.check_files(found, "zh-Hant", kind) == [
+        "any/check.md",
+        "zh/check.md",
+        "zh-Hant/check.md",
+        "any/check.layout.md",
+        "zh/check.layout.md",
+        "zh-Hant/check.layout.md",
+    ]
+    assert render.scan_files(found, "en", kind) == [
+        "any/scan.md",
+        "en/scan.md",
+        "any/scan.layout.md",
+        "en/scan.layout.md",
+    ]
 
 
 def files_of(sizes):
@@ -390,10 +447,25 @@ def test_the_budget_counts_bytes_not_characters():
     assert render.budget_problems({"zh/any.short.md": "字" * 40}, catalogue(), budgets(mail=100))
 
 
-def test_a_deck_has_a_budget_of_its_own():
-    files = files_of({"any/any.layout.md": 60, "en/any.layout.md": 60})
-    assert render.budget_problems(files, catalogue(), budgets(layout=100)) == [
+def test_a_deck_has_a_budget_of_its_own_for_its_layout_files():
+    # Its short files are a mail's, under `mail`: they don't count against `layout`.
+    files = files_of({"any/any.short.md": 90, "any/any.layout.md": 60, "en/any.layout.md": 60})
+    assert render.budget_problems(files, catalogue(), budgets(mail=100, layout=100)) == [
         "a deck or a sheet reads 120 bytes, over its 100: any/any.layout.md, en/any.layout.md"
+    ]
+
+
+def test_a_check_of_a_deck_over_its_layout_budget_fails():
+    files = files_of({"any/check.md": 90, "any/check.layout.md": 60, "en/check.layout.md": 60})
+    assert render.budget_problems(files, catalogue(), budgets(check=100, layout=100)) == [
+        "a check of a deck or a sheet reads 120 bytes, over its 100: any/check.layout.md, en/check.layout.md"
+    ]
+
+
+def test_a_scan_of_a_deck_over_its_layout_budget_fails():
+    files = files_of({"any/scan.md": 90, "any/scan.layout.md": 60, "en/scan.layout.md": 60})
+    assert render.budget_problems(files, catalogue(), budgets(scan=100, layout=100)) == [
+        "a scan of a deck or a sheet reads 120 bytes, over its 100: any/scan.layout.md, en/scan.layout.md"
     ]
 
 
@@ -515,5 +587,5 @@ def test_no_rendered_file_can_be_read_as_a_claude_md():
     # On Windows and macOS `claude.md` is a CLAUDE.md, which Claude Code loads as project instructions.
     claude = (ModelRange("claude", Version(4)),)
     files = render.render(catalogue(sign(models=claude), sign("en-b", kinds=("deck",), models=claude)))
-    assert sorted(files) == ["en/check.md", "en/claude.layout.md", "en/claude.short.md"]
+    assert sorted(files) == ["en/check.layout.md", "en/check.md", "en/claude.layout.md", "en/claude.short.md"]
     assert not any(path.rsplit("/", 1)[-1].casefold() == "claude.md" for path in files)

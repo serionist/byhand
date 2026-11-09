@@ -95,3 +95,25 @@ ripgrep agree on all 59 probe lines.
 | Improvement | Answer |
 |---|---|
 | Narrow `conftest.py`'s "a check is one habit" to marks, so the test counts as the rendered rule does | later: `conftest.py` is #13's to change now; the PR names it for a follow-up |
+
+## Round 4
+
+A fresh reviewer, on ec3b614 (the fixes since ee3c6b3, in ecee69b). Verdict: needs-fixes. F16, F17 and F20 hold, each
+checked against the ee3c6b3 catalogue (F20 by two mutations, each caught); F18's and F19's reasons are sound
+(`origin/13-marks` does change `conftest.py`; a line's end would fire on "Ata — 6 de novembro"). Nothing the cut left
+dangles.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F21 | major | `pt.toml`, `pt-ai-vocabulary` (ecossistema de inovação) and `pt-inflated-stakes` (divisor de águas, na era digital) | With Em resumo or Em suma, any two made a cluster in a plain innovation report, telecom report or book review. Ecossistemas de inovação is a term Brazilian law defines (Decreto 9.283/2018); the other two are idioms people write; all three rest only on the two skills | fixed in 1163aca: the three are cut, the report and review in `REPORTS`, the phrases in `LEFT_ALONE`, the flags rewritten |
+| F22 | minor | `pt.toml`, `pt-false-contrast` | "Não é só X, é também Y", the additive form the sign's comment calls ordinary, fired (5 of 5 lines) | fixed in 1163aca: the second é or são must open a noun phrase (an article); the reviewer's lookahead is not one Grep runs. A line in `LEFT_ALONE` |
+| F23 | minor | PR #55's description | Stale: 10 signs, `pt-filler-hinges`, cruciais, the dropped closing-offer branch, F2's old wording, the native-read list, the counts, the try's cluster | fixed: the description is rewritten for the head |
+
+Refuted: the strong branches on eight more plain lines (only classes rounds 1 to 3 accepted fire); clusters that need
+the dash plus a phrase F21 cuts (gone with it); cliché posts with three stock phrases (what the weak rule is for);
+"vamos mergulhar" in a dive school's post (2 at most). Python and ripgrep agree on 108 pairs. Of the reviewer's 18
+paragraphs, after the fix one reaches 3, a contrived one (Em suma, a real foil contrast and enfatizando).
+
+| Improvement | Answer |
+|---|---|
+| Write the new `REPORTS` paragraphs without a spaced dash until #13's `conftest.py` change lands | taken |

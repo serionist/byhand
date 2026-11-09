@@ -150,6 +150,10 @@ REPORTS = [
     "amostra foi pequena.",
     "Mercado\n\nEm resumo, a fusão deve gerar sinergias de R$ 400 milhões por ano. Vale ressaltar que o negócio "
     "ainda depende do Cade.",
+    "Relatório do polo tecnológico\n\nEm resumo, o ecossistema de inovação de Recife já reúne 400 empresas. A criação "
+    "do parque, em 2000, foi um divisor de águas para o centro histórico.",
+    "Recensão\n\nEm suma, a obra discute a proteção de dados na era digital, enfatizando o papel da autoridade "
+    "nacional.",
     "Guião de atendimento\n\nEncerramento:\n- Confirmar o número do pedido\n"
     "- Há mais alguma coisa em que possa ajudar?",
     "Parecer técnico\n\nA ponte precisa de reforço. A verdade é que a obra de 2015 não resolveu as infiltrações, e "
@@ -374,6 +378,7 @@ LEFT_ALONE = [
     ("pt-false-contrast", "Não é só contigo: a mim também não chegou o e-mail."),
     ("pt-false-contrast", "Não se trata da reunião de quinta, essa mantém-se."),
     ("pt-false-contrast", "Não se trata de culpa, mas de responsabilidade."),
+    ("pt-false-contrast", "O curso não é só para iniciantes, é também para quem já programa."),
     ("pt-false-contrast", "Não se trata de abrir mais cedo; trata-se de não fechar ao almoço."),
     ("pt-staged-reveal", "O resultado da sondagem sai na segunda?"),
     ("pt-staged-reveal", "A senha do wifi? Mando-te por mensagem."),
@@ -382,6 +387,8 @@ LEFT_ALONE = [
     ("pt-inflated-stakes", "No mundo da restauração, agosto é o mês forte."),
     ("pt-inflated-stakes", "Cada vez mais clientes pagam com Pix."),
     ("pt-inflated-stakes", "Mais do que nunca precisamos de voluntários."),
+    ("pt-inflated-stakes", "Em 2000, o parque tecnológico foi um divisor de águas para o centro."),
+    ("pt-inflated-stakes", "A obra discute a proteção de dados na era digital."),
     ("pt-inflated-stakes", "No cenário atual de juros, ninguém compra casa."),
     ("pt-closing-cheer", "O futuro da loja depende do aluguel."),
     ("pt-ai-vocabulary", "O ecossistema do rio está a recuperar."),
@@ -389,6 +396,7 @@ LEFT_ALONE = [
     ("pt-ai-vocabulary", "Mergulhamos às oito para ver o casco."),
     ("pt-ai-vocabulary", "A abordagem holística do paciente reduziu as reinternações."),
     ("pt-ai-vocabulary", "A fusão deve gerar sinergias de R$ 400 milhões por ano."),
+    ("pt-ai-vocabulary", "O ecossistema de inovação de Recife reúne 400 empresas."),
     ("pt-ai-vocabulary", "A estrutura é robusta e o plano é abrangente; o prazo é crucial."),
     ("pt-dash-pivots", "O fornecedor " + RAYA + " ou o comercial dele " + RAYA + " liga amanhã."),
     ("pt-dash-pivots", RAYA + " Já vou " + RAYA + " disse a Marta."),

@@ -24,7 +24,7 @@ by hand after each would be the slow part.
 
 In scope: the rule, a release workflow, the refresh agent's publish job moving the version, the docs. Out of scope:
 turning on auto-update for users (no `marketplace.json` field does; a user turns it on under `/plugin`); a gate check
-that a plugin change moved the version (Alternatives).
+that any plugin change moved the version (Alternatives).
 
 ## Design
 
@@ -36,7 +36,7 @@ One rule for every PR, by hand or from the refresh agent:
 |---|---|---|
 | `plugin/signs/` only, or fixes a skill | patch, `0.2.0` to `0.2.1` | a new `## <version> (<date>)` section above the newest, with its lines |
 | what a skill or agent does, or a one-way door (a minor may break one in `0.x`) | minor, by hand | the same |
-| nothing under `plugin/` users meet (`src/` alone, tests, docs, `plugin/evals/`) | none | none |
+| nothing a user's session reads (`src/` alone, tests, docs, `plugin/evals/`, `plugin/README.md`) | none | none |
 
 `## Unreleased` goes: every line users would read lands in the section of the version that ships it. With an
 Unreleased section kept beside sign patches, a sign PR would ship whatever skill change waited there to existing users
@@ -47,24 +47,34 @@ The date is the day the PR sets it; a PR that waits keeps it, as the release PRs
 
 ### `tools/gate.py`
 
-No change to the check. `release_problems` holds `plugin.json`'s version to the newest dated section, which is what
-each such PR writes; the version a PR moves to and the section it dates move together. Its docstring loses the
-Unreleased sentence; the no-dated-section case still passes, for a repo before its first release. Its tests' fixtures
-keep their Unreleased lines, which the check ignores.
+`release_problems` stays as it is: it holds `plugin.json`'s version to the newest dated section, which is what each
+such PR writes. Its docstring loses the Unreleased sentence; the no-dated-section case still passes, for a repo before
+its first release.
+
+`check_version` gains one guard (Fit I1): a released section is frozen. At each range's fork point, read as
+`check_coverage_floor` reads its base (`fork_points`, `tree_has`), it takes the base's newest dated section; if the
+working tree still has a section for that version and its text differs, it fails: "0.2.0 is released: its lines go in
+a new version's section, with plugin.json moved". So a line added to a released section, by habit or by a conflict
+resolved the wrong way (below), fails CI instead of merging under a version users already have. The refresh agent's
+model never edits `CHANGELOG.md`, and the publish job only adds a section above, so neither trips it.
 
 ### Two PRs open at once
 
 Both set `0.2.1` and both put a section at the same place, above `## 0.2.0`. Once one merges, the other conflicts in
-`CHANGELOG.md` (two different insertions at one spot), and GitHub won't merge it until it is rebased; its author takes
-the next patch, `0.2.2`, in the rebase. `plugin.json`'s identical one-line change doesn't conflict, so the changelog is
-the guard. The refresh agent opens at most one PR at a time (its draft job stops while one is open), so the clash is a
-hand PR against the refresh's; the maintainer resolves the refresh PR's in GitHub's conflict editor, two lines.
+`CHANGELOG.md` (two different insertions at one spot; the fit tried it in a scratch clone), and GitHub won't merge it
+until it is rebased. Main's ruleset doesn't require a branch to be up to date, so the conflict is what stops it.
+`plugin.json`'s identical one-line change doesn't conflict, so the rebase must move it by hand: its author takes the
+next patch, `0.2.2`, in both files. A rebase that keeps both PRs' lines under `0.2.1` fails the frozen-section guard;
+one that dates `0.2.2` and leaves `plugin.json` at `0.2.1` fails `release_problems`. The refresh agent opens at most one
+PR at a time (its draft job stops while one is open), so the clash is a hand PR against the refresh's; the maintainer
+rebases the refresh PR's branch the same way. Two byte-identical sections would merge without a conflict; with a
+date and the languages in each line, that is not a case worth a check.
 
 ### `release.yml`
 
 `.github/workflows/release.yml`, about 40 lines, no model, no action but `actions/checkout` pinned as `ci.yml` pins it:
 
-- **On** `push` to `main` with `paths: [plugin/.claude-plugin/plugin.json]`, and `workflow_dispatch`.
+- **On** every `push` to `main`, no `paths` filter, and nothing else (Fit I3).
 - **Permissions:** `contents: write` in its one job, nothing at the top; `concurrency: release`, never cancelled.
 - **Steps:** check out the pushed commit (`persist-credentials: false`); read the version from `plugin.json`; if
   `gh release view "v$version"` finds one, say so in the summary and stop; otherwise take the lines below
@@ -72,25 +82,24 @@ hand PR against the refresh's; the maintainer resolves the refresh PR's in GitHu
   `gh release create "v$version" --target "$GITHUB_SHA" --title "byhand $version" --notes-file <notes>`, the command
   `docs/releasing.md` has the maintainer run today.
 
-A push by the maintainer's squash merge starts it. The tag points at the commit that set the version, so a later push
-that doesn't move it changes nothing, and a dispatch after a failed run tags `main`'s head only when the version on it
-still has no release.
+A push by the maintainer's squash merge starts it. A push that doesn't move the version finds its release and stops
+in a few seconds. A run that failed (GitHub down) heals on the next push to `main`, which tags that head: the same
+files users get, since the marketplace serves the head. A push made with the workflow's token, as Dependabot's merges
+are, starts no run; the next maintainer merge does.
 
 ### The refresh agent
 
 The model can't edit `plugin.json` or `CHANGELOG.md` and shouldn't: a manifest edit could add a hook or an MCP server.
 The publish job, which runs no model, moves the version after its checks pass and before its commit:
 
-- **Draft job, the model's prompt** (`.github/refresh-agent.md`): when the change renders a sign file anew, write
-  `.local/pr/changelog.md`, a line or two for users, each starting `- `, as `CHANGELOG.md` words them. "What it hands
-  on" copies it into the hand-off when it exists.
-- **Publish job, "Check what was handed on":** the changelog lines get the title's and body's checks (no closing
-  keyword, no `@`, no other repository's issue or PR), and each line starts `- ` or is a continuation indented two
-  spaces, so no heading can be planted. Then, only when the staged diff touches `plugin/`: the patch moved in
-  `plugin.json` (the one `"version": "<old>"` string replaced, so the file's layout stays), and
-  `## <new> (<today>)`, `### Changed` and the lines inserted above the first `## ` heading of `CHANGELOG.md`. No
-  `changelog.md` handed on: the line `- Sign changes from the refresh of <today>.`, which the maintainer can reword in
-  the PR. Both files are staged with the rest; the commit and the PR go on as today.
+- **The draft job and the model's prompt** don't change: no model text reaches a file users read (Fit I2).
+- **Publish job, "Check what was handed on",** after its checks pass and only when the staged diff touches
+  `plugin/signs/`: the patch moved in `plugin.json` (the one `"version": "<old>"` string replaced, so the file's
+  layout stays), and above the first `## ` heading of `CHANGELOG.md`, `## <new> (<today>)`, `### Changed` and one line
+  the job writes from the paths: the `plugin/signs/<code>/` folders the diff touches, named from
+  `git show HEAD:src/byhand/catalogue/languages.toml` (the base's, not the model's tree), `any` as every language,
+  in alphabetical order: `- The signs for French and German, from the refresh of 2026-11-15.` Both files are staged
+  with the rest; the commit and the PR go on as today. The PR body already lists each sign for the maintainer.
 
 A run that moved only `read_at` touches nothing under `plugin/`, and releases nothing.
 
@@ -100,15 +109,21 @@ A run that moved only `read_at` touches nothing under `plugin/`, and releases no
 - **A workflow that bumps after the merge:** `main` takes PRs only, so it would open a PR of its own and merge it, as
   Dependabot's do; a push made with the workflow's token starts no CI, and the bump lands as a second commit. Moving
   the version in the PR itself is one commit, checked by CI before it lands.
-- **No `version` in `plugin.json`:** Claude Code would then track commits, the version a 12-character sha, and every
-  commit to `main` would update users, a docs commit included. It drops the tag-and-version release the bootstrap plan
-  chose on 2026-11-07, and the gate's manifest check requires a version.
+- **No `version` in `plugin.json`:** Claude Code would then track commits ("the commit SHA of the installed
+  directory", for a relative-path plugin in a git-hosted marketplace), and users would update on commits, perhaps
+  docs-only ones too; the docs don't say. It drops the tag-and-version release the bootstrap plan chose on
+  2026-11-07, and the gate's manifest check requires a version.
 - **Sign patches beside an `## Unreleased` for skill changes:** above; a sign patch ships the waiting skill changes
   under a patch number.
-- **A gate check that a change under `plugin/` moved the version against the base:** a forgotten bump delays existing
-  users until the next one and nothing worse, and the refresh agent's model runs the gate before the publish job moves
-  the version, so the check would fail every run's own gate. The rule lives in `finish-work`, `propose-signs` and
-  `docs/releasing.md` instead.
+- **A gate check that any change under `plugin/` moved the version against the base:** a forgotten bump delays
+  existing users until the next one and nothing worse, and the refresh agent's model runs the gate before the publish
+  job moves the version, so the check would fail every run's own gate. The narrower frozen-section guard catches the
+  usual slip, a line added under the released version; the rest lives in `finish-work`, `propose-signs` and
+  `docs/releasing.md`.
+- **Model-written changelog lines from the refresh agent:** better words, but model text from a run that read fetched
+  pages would reach a file users read, behind a new set of checks; the line from the paths needs none (Fit I2).
+- **A `paths` filter and a dispatch on `release.yml`:** a failed run would wait for someone to remember the dispatch
+  (Fit I3).
 
 ## Compatibility
 
@@ -118,52 +133,77 @@ workflow that may create tags and releases.
 
 ## Steps
 
-1. **`release.yml`.** Test: it runs only on `main`, so a dispatch after the merge (Step 7); before it, its notes
-   extract, run by hand on this repo's `CHANGELOG.md` for `0.2.0`, gives that section's lines.
-2. **The refresh agent:** the prompt's changelog line, the hand-off copy, the publish job's checks and bump. Test: the
-   publish step's Python run by hand on a scratch branch with a fake hand-off, once with a `plugin/signs/` change (the
-   version moves, the section is in place, `uv run tools/gate.py quick` passes the version check) and once with only
-   `sources.toml` (nothing moves).
-3. **`tools/gate.py`:** the docstring. Test: `tests/test_gate.py` as it is.
+1. **`release.yml`.** Test: it runs only on `main` (Step 7); before the merge, its notes extract, run by hand on this
+   repo's `CHANGELOG.md` for `0.2.0`, gives that section's lines.
+2. **The refresh agent's publish job:** the bump and the line from the paths. Test: the step's Python run by hand on a
+   scratch branch with a staged change, once to `plugin/signs/de/` and `plugin/signs/any/` (the version moves, the
+   section reads "the signs for every language and German", `uv run tools/gate.py quick` passes the version check)
+   and once to `sources.toml` alone (nothing moves).
+3. **`tools/gate.py`:** the frozen-section guard in `check_version`, and `release_problems`' docstring. Test:
+   `tests/test_gate.py`, a parametrised test of the guard's pure part (base and head changelogs: unchanged, a new
+   section above, a line added under the released one, the released one gone), and `check_version` over a scratch
+   git repo, as the coverage floor's tests read a base.
 4. **`CHANGELOG.md`:** `## Unreleased` removed.
 5. **The docs** (below).
 6. **finish-work:** `uv run tools/gate.py full`, `review-code` until clean, the PR.
-7. **After the merge:** `gh workflow run release.yml` once on `main`; it finds `v0.2.0` and stops. The first sign PR,
-   by hand or from the refresh agent, runs the whole path: its merge tags `v0.2.1`.
+7. **After the merge:** the merge's own push runs `release.yml`, which finds `v0.2.0` and stops; its run says so. The
+   first sign PR, by hand or from the refresh agent, runs the whole path: its merge tags `v0.2.1`, and
+   `/plugin marketplace update byhand` then `claude plugin update byhand@byhand` moves an installed copy to it.
 
 ## Tests
 
-- Unit (CI): the gate's version tests as they are; no new unit test, since both changes are workflow steps, and the
-  repo tests no workflow text.
+- Unit (CI): the guard and `check_version`, Step 3; the gate's other version tests as they are. The workflows have no
+  unit test: the repo tests no workflow text.
 - By hand: the notes extract and the publish step's Python, as Steps 1 and 2 say, recorded in the PR.
-- After the merge: the dispatch, and the first sign PR's merge.
+- After the merge: Step 7.
 - What none can show before the merge: a workflow that runs only on `main`; and that `claude plugin update` picks up
-  `0.2.1`, which the first sign release shows (`/plugin marketplace update byhand`, then `claude plugin update
-  byhand@byhand`).
+  `0.2.1`, which the first sign release shows.
 
 ## Docs
 
 - `docs/releasing.md`: rewritten for the rule: the PR moves the version and dates its section, `release.yml` tags
-  it, a minor is still tried in an empty session; two PRs at once.
+  it, a minor is still tried in an empty session; two PRs at once, and the rebase.
 - `AGENTS.md`: the `.github/` row gains `release.yml`; the `CHANGELOG.md` row says a dated section per version; within
   its 150 lines.
 - `.claude/skills/finish-work/SKILL.md`: step 1 and Never, for the rule.
 - `.claude/skills/propose-signs/SKILL.md`: step 8, the patch and its section.
+- `.claude/skills/review-code/lenses.md`: "Does the version move only in a release PR?" becomes "Does a change to the
+  plugin move the version, with its own dated section?".
+- `.github/workflows/refresh-agent.yml`: its header comment names the bump.
 - `CONTRIBUTING.md`: step 2's changelog line.
 - `README.md` and `plugin/README.md`, Update: signs come as new versions often; auto-update under `/plugin`,
   Marketplaces, `byhand`, brings them without the command.
-- `CHANGELOG.md`: no line; this changes nothing under `plugin/`.
+- `CHANGELOG.md`: no line; this changes nothing a user's session reads.
 
 ## Risks
 
 | Risk | Answer |
 |---|---|
-| Two PRs take the same version | the second conflicts in `CHANGELOG.md` and is rebased to the next patch. Resolved |
-| A plugin PR forgets the bump | existing users wait for the next version, as they do today. Accepted |
-| The model plants a heading or a link in the changelog lines | the publish job's checks, as for the PR text, and the maintainer reads the PR. Resolved |
-| `release.yml` fails (GitHub down) | the version is on `main` and users update anyway; a dispatch tags it. Accepted |
+| Two PRs take the same version | the second conflicts in `CHANGELOG.md` and is rebased to the next patch; a wrong rebase fails the gate. Resolved |
+| A plugin PR forgets the bump | existing users wait for the next version, as they do today; a line added under the released version fails the gate. Accepted |
+| `release.yml` fails (GitHub down) | the version is on `main` and users update anyway; the next push to `main` tags it. Accepted |
 | A PR's date is its opening day, not its merge's | the same as the release PRs; the maintainer may change it. Accepted |
 
 ## Plan review
 
-None yet.
+### Fit
+
+The plan at `72999d8`, by a fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, which read the plugin
+docs on versions and updates and on hosting a marketplace, main's ruleset, and prior art (release-please, changesets,
+chart-testing's version-increment check, chart-releaser-action), and tried two PRs taking one version in a scratch
+clone. The change's own question, the maintainer's "don't overcomplicate": the rule, dropping Unreleased, the
+release workflow (because a release is a tag, the bootstrap plan's call) and the publish job's bump earn their keep;
+the model-written changelog lines don't. Answers by the author on the maintainer's standing word ("take recommended
+improvements"), 2026-11-09.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I1 | A frozen-section guard in `check_version`: the base's newest dated section unchanged on the head, so a line added under a released version, or a conflict resolved by keeping both PRs' lines under one, fails CI; the model never edits `CHANGELOG.md`, so it doesn't trip the refresh agent's gate | taken |
+| I2 | No model-written changelog lines: the publish job writes the line from the `plugin/signs/<code>/` paths and the base's `languages.toml`; no model text in a file users read, no new checks | taken |
+| I3 | `release.yml` on every push to `main`, no `paths` filter and no dispatch: a failed run heals on the next push | taken |
+
+Noticed on the way, for Round 1: GitHub's conflict editor wouldn't move `plugin.json`, which doesn't conflict, so
+"two lines in the editor" was wrong (Two PRs open at once); identical sections merge without a conflict (Two PRs open
+at once); `review-code`'s lens "Does the version move only in a release PR?" contradicts the rule and wasn't in Docs;
+the rule's table placed no row for `plugin/README.md`; "a 12-character sha" and "a docs commit included" overstate
+the docs for a relative-path plugin (Alternatives).

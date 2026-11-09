@@ -157,8 +157,8 @@ def _line(sign: Sign, family: str | None) -> str:
 
 def _check_line(sign: Sign) -> str:
     line = _line(sign, None)
-    if sign.pattern is not None:
-        line += f" Pattern: `{sign.pattern.pattern}`"
+    if sign.grep:
+        line += f" Pattern: `{sign.grep}`"
     return line
 
 
@@ -179,7 +179,7 @@ def _file(title: str, found: list[Sign], line: Callable[[Sign], str]) -> str:
         lines.append(
             "A sign holds for the versions it names: `5.x` is the whole 5 series, `and later` every newer one."
         )
-    if any(sign.pattern is not None for sign in found) and line is _check_line:
+    if any(sign.grep for sign in found) and line is _check_line:
         lines.append(
             "A pattern is what Grep runs on a file, case-insensitive and line by line; a sign with none is found by "
             "reading."

@@ -1,7 +1,6 @@
 """What the office tests share: the catalogue, the signs that count alone, and the weak cluster counted as the rendered
 files say. The helpers are fixtures, as the tests import no module of their own (`--import-mode=importlib`)."""
 
-import re
 from collections.abc import Callable, Collection
 from functools import partial
 
@@ -73,7 +72,7 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Coll
         language = catalogue.languages.get(sign.language)
         edge = r"\b" if language is None or language.spaces else ""
         phrases = [
-            (phrase, re.compile(rf"{edge}(?:{phrase}){edge}", re.IGNORECASE | re.MULTILINE))
+            (phrase, signs.as_grep(rf"{edge}(?:{phrase}){edge}"))
             for term in sign.terms
             for phrase in _alternatives(term.term)
         ]

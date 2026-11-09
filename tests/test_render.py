@@ -3,6 +3,8 @@
 import datetime
 import pathlib
 import re
+import tomllib
+import unicodedata
 
 import pytest
 
@@ -140,8 +142,9 @@ def test_a_line_holds_plain_words_and_no_regex():
 
 
 def test_a_check_line_adds_the_pattern_grep_runs():
-    pattern = re.compile(r"\b(?:delv(?:e|es))\b", re.IGNORECASE)
-    files = render.render(catalogue(sign(terms=(Term("delv(?:e|es)", "look at"),), pattern=pattern)))
+    grep = r"\b(?:delv(?:e|es))\b"
+    terms = (Term("delv(?:e|es)", "look at"),)
+    files = render.render(catalogue(sign(terms=terms, pattern=signs.as_grep(grep), grep=grep)))
     assert lines(files["en/check.md"]) == [
         r"- en-a (usual): Does a thing. Instead: Says it plainly. Words: delve: look at Pattern: `\b(?:delv(?:e|es))\b`"
     ]
@@ -210,11 +213,32 @@ def test_every_word_of_the_real_catalogue_matches_its_term():
     assert wrong == []
 
 
+def test_every_pattern_prints_as_written_in_nfc():
+    # Grep runs the text as written, never Python's reading of it: Grep refuses the look-around `\b` becomes (#13).
+    found, problems = signs.load()
+    assert problems == []
+    printed = {
+        match[1]: match[2]
+        for text in render.render(found).values()
+        for match in re.finditer(r"^- (\S+) .* Pattern: `(.*)`$", text, re.MULTILINE)
+    }
+    written = {}
+    for path in (signs.CATALOGUE / "signs").glob("*.toml"):
+        language = found.languages.get(path.stem)
+        for row in tomllib.loads(path.read_text(encoding="utf-8"))["sign"]:
+            body = "|".join(f"(?:{term['term']})" for term in row.get("terms", ()))
+            text = row.get("check") or (rf"\b(?:{body})\b" if language and language.spaces else body)
+            if ("check" in row or body) and "until" not in row:
+                written[row["id"]] = unicodedata.normalize("NFC", text)
+    assert len(printed) > 100
+    assert printed == written
+
+
 def test_no_pattern_breaks_its_code_span_in_a_check_file():
     # A backtick in a pattern would end the span the check file prints it in, and scan would run half of it.
     found, problems = signs.load()
     assert problems == []
-    assert [item.id for item in found.signs.values() if item.pattern and "`" in item.pattern.pattern] == []
+    assert [item.id for item in found.signs.values() if "`" in item.grep] == []
 
 
 def test_the_range_rule_prints_only_where_a_range_is():

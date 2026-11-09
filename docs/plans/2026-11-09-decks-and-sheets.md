@@ -245,6 +245,7 @@ the hand-off), `docs/USAGE.md` (the files table: `check.layout.md`; what a deck 
 
 | Step | What | PR | State |
 |---|---|---|---|
+| 2 | sources for decks and sheets: 12 for decks (en, ja, zh, zh-Hant, ko), 5 for sheets (en, fr, pt); no sheet source in the other languages; `docs/research/2026-11-09-sources-decks-sheets.md` | #83 | open |
 
 ## Plan review
 

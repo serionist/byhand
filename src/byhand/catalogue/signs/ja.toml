@@ -173,7 +173,7 @@ category = "word"
 kinds = ["post", "document"]
 models = "any"
 what = "Uses vogue words that sound concrete or perceptive but say nothing anyone can check."
-instead = "Say the fact behind the word: who, what, how much."
+instead = "Say the fact behind the word: how much, what, who."
 strength = "weak"
 terms = [
   { term = '地に足のついた', instead = "practical" },
@@ -226,8 +226,8 @@ category = "word"
 # Not mail or chat, where engineers say 安全側に倒す and 時間を溶かした themselves.
 kinds = ["post", "document"]
 models = "any"
-what = "Explains with stock metaphors and metaphor verbs: a compass, a catalyst, crushing bugs, melting time."
-instead = "Say what the thing does, or what happened, in plain words."
+what = "Explains with stock metaphors and metaphor verbs: a catalyst, a compass, crushing bugs, melting time."
+instead = "Name what it does, or what took place, in plain words."
 strength = "weak"
 terms = [
   { term = '(?:1つ|ひとつ|一つ)ずつ潰し', instead = "say what was fixed" },

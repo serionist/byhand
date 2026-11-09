@@ -39,7 +39,7 @@ id = "tr-besides-this"
 category = "phrase"
 kinds = ["post", "document"]
 models = "any"
-what = "Adds one more point with Bunun yanı sıra at the start of a sentence."
+what = "Opens a sentence with Bunun yanı sıra to add one more point."
 instead = "Join the point to the last sentence with ve, or start with the point itself."
 strength = "weak"
 terms = [
@@ -60,7 +60,7 @@ kinds = ["document"]
 # Turkish, or another family's.
 models = [{ family = "gpt", from = "4", to = "4" }]
 what = "Reaches for two idioms that GPT's Turkish writes far more than people do, rol oynamak and zemin hazırlamak; one alone is ordinary Turkish."
-instead = "Say what the thing does or what it made possible: the verb itself, the number or the result."
+instead = "Give the verb, the number or the result that the idiom stands in for."
 strength = "weak"
 # Found, and accepted for a weak sign: a building site's floor (zemin hazırlama, zemin hazırlanır) and an actor's role
 # (üç oyunda rol oynadı), literal uses; zemin hazırlığı passes, as the noun ends hazırlık. A lead role (başrol) passes:

@@ -144,7 +144,7 @@ def test_a_line_holds_plain_words_and_no_regex():
 def test_a_check_line_adds_the_pattern_grep_runs():
     grep = r"\b(?:delv(?:e|es))\b"
     terms = (Term("delv(?:e|es)", "look at"),)
-    files = render.render(catalogue(sign(terms=terms, pattern=signs.as_grep(grep), grep=grep)))
+    files = render.render(catalogue(sign(terms=terms, pattern=signs.as_grep(grep), forms={"en": grep})))
     assert lines(files["en/check.md"]) == [
         r"- en-a (usual): Does a thing. Instead: Says it plainly. Words: delve: look at Pattern: `\b(?:delv(?:e|es))\b`"
     ]
@@ -238,7 +238,7 @@ def test_no_pattern_breaks_its_code_span_in_a_check_file():
     # A backtick in a pattern would end the span the check file prints it in, and scan would run half of it.
     found, problems = signs.load()
     assert problems == []
-    assert [item.id for item in found.signs.values() if "`" in item.grep] == []
+    assert [item.id for item in found.signs.values() if any("`" in form for form in item.forms.values())] == []
 
 
 def test_the_range_rule_prints_only_where_a_range_is():

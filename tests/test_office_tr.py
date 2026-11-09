@@ -57,7 +57,7 @@ def test_each_i_in_a_turkish_pattern_stands_with_its_capital(catalogue):
     # capitals in both, as tr.toml's header says.
     letters = f"iI{DOTLESS}{DOTTED}"
     pairs = rf"\[(?:i{DOTTED}|{DOTTED}i|{DOTLESS}I|I{DOTLESS})\]"
-    patterns = [sign.grep for sign in catalogue.signs.values() if sign.language == "tr" and sign.grep]
+    patterns = [form for sign in catalogue.signs.values() for code, form in sign.forms.items() if code == "tr"]
     assert patterns
     bare = [pattern for pattern in patterns if re.search(f"[{letters}]", re.sub(pairs, "", pattern))]
     assert bare == []

@@ -13,6 +13,7 @@ import re
 import tomllib
 import unicodedata
 import warnings
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -117,8 +118,11 @@ class Sign:
     strength: str
     flags: str
     passes: str
-    pattern: re.Pattern[str] | None  # None for a sign only the model's own read can find; else `grep`, read as Grep
-    grep: str = ""  # the pattern as written, in NFC: what Grep runs, and what a check file prints
+    pattern: re.Pattern[str] | None  # None for a sign only the model's own read can find; else every form, read as Grep
+    # Each form as written, in NFC, by the language whose scan runs it: what Grep runs, and what a scan file prints. A
+    # language's sign has one, under its language; an `any` sign one per language it holds a form for, or one under
+    # `any` that every language's scan runs.
+    forms: dict[str, str] = field(default_factory=dict[str, str], hash=False)
     terms: tuple[Term, ...] = ()
     until: datetime.date | None = None  # set, the sign is retired: it keeps its id and renders nowhere
 
@@ -486,20 +490,61 @@ def _terms(where: str, row: Table, language: str, spaces: bool) -> tuple[str | N
     return _checked(where, rf"\b(?:{body})\b" if spaces else body)
 
 
-def _pattern(where: str, row: Table, language: str, spaces: bool) -> tuple[str | None, list[str]]:
-    """A sign's own `check`, which wins over its terms: it is how a term that can't stand alone is matched."""
-    built, problems = _terms(where, row, language, spaces)
+def together(forms: Iterable[str]) -> str:
+    """Forms as one pattern, which finds what any of them finds: what `validate` proves `flags` and `passes` against.
+    One form stands as written."""
+    found = list(forms)
+    return found[0] if len(found) == 1 else "|".join(f"(?:{form})" for form in found)
+
+
+def _check_forms(where: str, check: object, language: str, catalogue: Catalogue) -> tuple[dict[str, str], list[str]]:
+    """A `check` as its forms by language. A string is one form, read in every language for an `any` sign; a table,
+    `check.<code> = '…'`, holds an `any` sign's forms each under the language it is written in, and `any` for one every
+    language's scan runs. A language's own sign has one form: its file names its language."""
+    if isinstance(check, str):
+        written = {language: check}
+    elif not isinstance(check, dict):
+        return {}, [f"{where}: `check` must be text, or forms by language"]
+    elif language != ANY:
+        return {}, [f"{where}: `check` must be text: a {language} sign's one form is {language}'s"]
+    elif not check:
+        return {}, [f"{where}: `check` holds no form"]
+    else:
+        written = check
+    forms, problems = {}, []
+    for key, form in written.items():
+        if key != ANY and key not in catalogue.languages:
+            problems.append(f"{where}: `check` has an unknown key `{key}`: a form is under a language's code or {ANY}")
+        elif not isinstance(form, str):
+            problems.append(f"{where}: {key}: a form must be text")
+        else:
+            checked, wrong = _checked(f"{where}: {key}" if isinstance(check, dict) else where, form)
+            problems += wrong
+            if checked is not None:
+                forms[key] = checked
+    return forms, problems
+
+
+def _pattern(where: str, row: Table, language: str, catalogue: Catalogue) -> tuple[dict[str, str], list[str]]:
+    """A sign's forms. Its own `check` wins over its terms: it is how a term that can't stand alone is matched."""
+    entry = catalogue.languages.get(language)
+    built, problems = _terms(where, row, language, entry.spaces if entry else True)
     category = row.get("category")
     if "check" not in row:
         if category in TERM_CATEGORIES and "terms" not in row:
             problems = [*problems, f"{where}: a {category} sign needs `terms` or a `check`"]
         if category == "artefact":
             problems = [*problems, f"{where}: an artefact sign needs a `check`: it is a string a script can find"]
-        return built, problems
-    if not isinstance(row["check"], str):
-        return None, [*problems, f"{where}: `check` must be text"]
-    own, wrong = _checked(where, row["check"])
-    return own, problems + wrong
+        return ({language: built} if built is not None else {}), problems
+    forms, wrong = _check_forms(where, row["check"], language, catalogue)
+    if wrong:
+        return {}, problems + wrong
+    try:
+        as_grep(together(forms.values()))
+    except re.error as exc:
+        # Each form compiles alone; together, one with a flag for the whole pattern, such as `(?s)`, does not.
+        return {}, [*problems, f"{where}: the forms can't be read together: {exc}"]
+    return forms, problems
 
 
 def _examples(where: str, row: Table, pattern: re.Pattern[str] | None) -> list[str]:
@@ -589,9 +634,8 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
     problems += _kinds_problems(where, row)
     problems += _text(where, row, "what") + _text(where, row, "instead")
     models, wrong = _models(where, row.get("models"), catalogue)
-    entry = catalogue.languages.get(language)
-    grep, wrong_pattern = _pattern(where, row, language, entry.spaces if entry else True)
-    pattern = None if grep is None else as_grep(grep)
+    forms, wrong_pattern = _pattern(where, row, language, catalogue)
+    pattern = as_grep(together(forms.values())) if forms else None
     problems += wrong + wrong_pattern + _examples(where, row, pattern)
     problems += _sign_sources(where, row, language, catalogue) + _dates(where, row)
     kinds = row.get("kinds")
@@ -607,7 +651,7 @@ def _sign(language: str, row: Table, catalogue: Catalogue) -> list[str]:
         str(row.get("flags", "")),
         str(row.get("passes", "")),
         pattern,
-        grep or "",
+        forms,
         _term_list(row),
         row.get("until") if _is_date(row.get("until")) else None,
     )

@@ -43,7 +43,7 @@ def regexes(catalogue: signs.Catalogue) -> list[tuple[str, str]]:
     found = []
     for sign in catalogue.signs.values():
         if sign.pattern:
-            found += [(sign.id, term.term) for term in sign.terms] or [(sign.id, sign.grep)]
+            found += [(sign.id, term.term) for term in sign.terms] or [(sign.id, form) for form in sign.forms.values()]
     return found
 
 

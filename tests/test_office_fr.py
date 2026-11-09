@@ -428,7 +428,7 @@ def _french_regexes(catalogue: signs.Catalogue) -> list[tuple[str, str]]:
     for sign in catalogue.signs.values():
         if sign.language != "fr" or not sign.pattern:
             continue
-        found += [(sign.id, term.term) for term in sign.terms] or [(sign.id, sign.grep)]
+        found += [(sign.id, term.term) for term in sign.terms] or [(sign.id, form) for form in sign.forms.values()]
     return found
 
 

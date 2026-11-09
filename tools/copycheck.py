@@ -77,9 +77,15 @@ def plain(text: str, suffix: str) -> str:
 
 
 def pattern(row: dict[str, Any]) -> re.Pattern[str] | None:
-    """What a sign's check or terms find, or None. A pattern that won't compile finds nothing: validate reports it."""
+    """What a sign's check or terms find, or None. A pattern that won't compile finds nothing: validate reports it. An
+    `any` sign's check may be forms by language, `check.en = '…'`: together they find what any of them finds, as
+    `byhand.signs.together` joins them."""
     terms = row.get("terms") or []
-    text = row.get("check") or "|".join(f"(?:{term['term']})" for term in terms)
+    check = row.get("check")
+    if isinstance(check, dict):
+        forms = [form for form in check.values() if isinstance(form, str)]
+        check = forms[0] if len(forms) == 1 else "|".join(f"(?:{form})" for form in forms)
+    text = check or "|".join(f"(?:{term['term']})" for term in terms)
     if not text:
         return None
     try:

@@ -10,7 +10,7 @@ A pattern, in backticks after a sign's brackets, is what Grep runs on a file, ca
 - ko-double-hedge (weak): `가능성(?:도|이) 있을 수(?: 있|도 있)|(?:보여질|여겨질) 수(?: 있|도 있)`
 - ko-em-dash (weak): `—`
 - ko-enumeration-preamble (weak): `크게 (?:두|세|네|다섯|[2-5]) ?가지로 (?:구분|나누|나눌|나눠|나뉘|나뉜|나뉩|요약|정리)`
-- ko-gemini-colon-headings (weak; gemini 2.5 and later; document, post): `^#{1,6}\s+[^\n:]+:\s*\S`
+- ko-gemini-colon-headings (weak; gemini 2.5 and later; document, post, deck): `^#{1,6}\s+[^\n:]+:\s*\S`
 - ko-gemini-shift-slogan (weak; gemini 2.5 and later): `['‘"“][^'’"”\n]{1,20}['’"”](?:에서|[을를] 넘어) ['‘"“][^'’"”\n]{1,20}['’"”](?:로|으로)`
 - ko-gpt-2024-vocabulary (weak; gpt 4 to 4.x): `\b(?:(?:강조(?:하|한|할|함|합|해|했)\w*)|(?:기여(?:하|한|할|함|합|해|했)\w*)|(?:중요한 역할\w*)|(?:탐구(?:하|한|할|함|합|해|했)\w*))\b`
 - ko-gpt-meaning-wrap (weak; gpt 5 and later): `다는 (?:뜻|의미)(?:이다|입니다)`

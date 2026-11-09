@@ -5,8 +5,8 @@ A weak sign counts only with 3 or more hits of weak signs in a paragraph or sect
 A sign holds for the versions it names: `5.x` is the whole 5 series, `and later` every newer one.
 
 - any-ai-self-reference (strong): Says in the text that a language model or a named chatbot wrote it. Instead: Delete it and write as the author.
-- any-assistant-closing-offer (strong; document): Keeps the chatbot's sign-off under a document: a hope that it helped, or an offer to do more. Instead: Delete the line; end with the document.
-- any-assistant-preamble (strong; email, document, post): Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'. Instead: Delete the line; start with the text itself.
+- any-assistant-closing-offer (strong; document, deck): Keeps the chatbot's sign-off under a document: a hope that it helped, or an offer to do more. Instead: Delete the line; end with the document.
+- any-assistant-preamble (strong; email, document, post, deck): Keeps the chatbot's opening line above the text, such as an eager yes and 'here is'. Instead: Delete the line; start with the text itself.
 - any-chat-tool-markup (strong): Leaves a chat tool's file or document tags in the text. Instead: Delete the tag.
 - any-chatbot-url-tag (strong): Keeps a link's tracking tag that names a chatbot, which shows one found the link if not the text. Instead: Strip the tag and open the page before you cite it.
 - any-chatgpt-citation-markup (strong; gpt 4 and later): Leaves ChatGPT's internal citation tokens or search placeholders in the text. Instead: Delete the token and cite the source, or cut the claim.
@@ -39,6 +39,6 @@ A sign holds for the versions it names: `5.x` is the whole 5 series, `and later`
 - any-over-attribution (weak; document): Narrates what a record lists or identifies where the fact could stand alone. Instead: State the fact; attribute only what someone could dispute.
 - any-raw-markdown (weak; email, post, document): Leaves Markdown symbols such as **, ## or --- rules where they will not render. Instead: Format for where the text lands; in mail and plain text, drop the symbols.
 - any-rule-of-three (weak): Lists three adjectives or short phrases for rhythm, not because there are three things. Instead: Give the items there really are, even if that is one or two.
-- any-stock-headings (weak): Titles sections with two nouns joined by 'and', or a stock label such as Legacy. Instead: Use a heading that says what the section says, or none.
+- any-stock-headings (weak; document, email, message, post): Titles sections with two nouns joined by 'and', or a stock label such as Legacy. Instead: Use a heading that says what the section says, or none.
 - any-synonym-cycling (weak): Renames one thing several ways to avoid repeating a word. Instead: Repeat the plain word.
 - any-table-for-prose (weak): Puts a few facts that read better as a sentence into a small table. Instead: Write the sentence; keep tables for data people compare.

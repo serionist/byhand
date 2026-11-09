@@ -268,7 +268,7 @@ sources = [
 id = "ru-throat-clearing"
 category = "phrase"
 # Not mail or chat, where «давайте разберёмся» opens a plain call to sort something out.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Spends a sentence on what it is about to say, or on how frank it is being."
 instead = "Start with the point."
@@ -292,7 +292,7 @@ sources = [
 [[sign]]
 id = "ru-therapy-register"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Comforts the reader with stock lines of emotional support."
 instead = "Give the fact that would reassure, or cut."
@@ -313,7 +313,7 @@ sources = [
 id = "ru-calques"
 category = "phrase"
 # Not mail or chat, where a team's own jargon is a person's.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Pairs a Russian verb and noun the way English pairs them, not the way Russian does."
 instead = "Use the Russian pairing: решить проблему, успеть к сроку."
@@ -332,7 +332,7 @@ sources = [
 [[sign]]
 id = "ru-promotional-words"
 category = "word"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Describes a place or a business in tourist-brochure words."
 instead = "Say where it is and what is there."
@@ -355,7 +355,7 @@ sources = [
 id = "ru-chat-residue"
 category = "phrase"
 # Not mail or chat, where a person hopes their answer helped too.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Leaves a chat assistant's sign-off in a post or a document: a hope that it helped, an offer of more."
 instead = "Delete it; end on the last useful fact."

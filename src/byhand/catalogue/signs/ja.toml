@@ -94,7 +94,7 @@ sources = [
 [[sign]]
 id = "ja-chat-residue"
 category = "structure"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Keeps a chat reply's framing in a document: answering the asker's question, offering the asker more; not an offer the writer makes to readers."
 instead = "Delete it; a document answers no one."
@@ -109,7 +109,7 @@ sources = [
 [[sign]]
 id = "ja-instruction-residue"
 category = "structure"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Leaves the writer's prompt in the text: the tone or style it was told to take; not a note on scope, readers or sources."
 instead = "Delete the line; keep what the reader gets."
@@ -170,7 +170,7 @@ sources = [
 id = "ja-texture-words"
 category = "word"
 # Not mail or chat: 温度感 and 肌感 are everyday business talk there (#18's review, N1).
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Uses vogue words that sound concrete or perceptive but say nothing anyone can check."
 instead = "Say the fact behind the word: how much, what, who."
@@ -224,7 +224,7 @@ sources = [
 id = "ja-stock-metaphors"
 category = "word"
 # Not mail or chat, where engineers say 安全側に倒す and 時間を溶かした themselves.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Explains with stock metaphors and metaphor verbs: a catalyst, a compass, crushing bugs, melting time."
 instead = "Name what it does, or what took place, in plain words."
@@ -256,7 +256,7 @@ sources = [
 id = "ja-stiff-wording"
 category = "phrase"
 # Not mail or chat: アグリー and アライン are how many offices talk (#18's review, N1).
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Swaps a plain word for consultants' katakana, or a short verb for a stiff Sino-Japanese phrase that says the same."
 instead = "Use the plain Japanese word, or the short verb."
@@ -285,7 +285,7 @@ sources = [
 id = "ja-calques"
 category = "phrase"
 # Not mail or chat, where 押した瞬間に落ちる is how a person reports a bug.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Carries English idiom over word for word: the moment, on the table, project-level, a single source of truth."
 instead = "Say it the Japanese way: すぐに, 未定, この案件だけの."
@@ -327,7 +327,7 @@ sources = [
 id = "ja-preface-filler"
 category = "phrase"
 # Not mail or chat: 正直に言うと and 結論から言うと are how people talk there (#18's review, N1).
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Opens a sentence by clearing its throat: what matters is, to be honest, the conclusion first."
 instead = "Start with the point."
@@ -369,7 +369,7 @@ sources = [
 [[sign]]
 id = "ja-structure-announcements"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Announces the structure instead of giving it: there are three points, let's look at each in turn."
 instead = "Start on the first point; headings show the structure."
@@ -435,7 +435,7 @@ sources = [
 id = "ja-noncommittal"
 category = "phrase"
 # Not mail or chat, where ケースバイケース is a plain answer (#18's review, N1).
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Takes no side: it depends, there are pros and cons, opinions differ."
 instead = "Say which you chose and why, or what it depends on."
@@ -450,6 +450,42 @@ flags = "在宅勤務の是非は賛否が分かれる話で、どちらにも�
 passes = "A案にします。B案は安いけれど、納期が二週間遅れるので。"
 sources = [
   { source = "stop-ai-slop-jp", where = "references/phrases.md, 4 結論回避フレーズ; references/structures.md, 6-1, commit e09d32796f25", seen = 2026-11-07 },
+]
+
+# Decks: read only by a deck.
+
+[[sign]]
+id = "ja-count-titles"
+category = "structure"
+kinds = ["deck"]
+models = "any"
+what = "Titles a slide by how many items it holds, five steps or three reasons, where the title could state the point."
+instead = "Title the slide with what its items show; keep a number only when the number is the point: an amount, a share, a span of time."
+strength = "weak"
+# A slide title in the outline form; 3割, 3月 and 3点 are figures, not a count of the slide's items, and 一つの is a
+# single one.
+check = '^#{1,6} .*[2-9２-９二三四五六七八九]つの'
+flags = "## 2. 窓口を減らすための4つの施策"
+passes = "## 2. 電話予約は半年で3割減った"
+sources = [
+  { source = "jinba-consulting-pptx", where = "references/slide-rules.md, 2.4: AI puts the count of a slide's items in its title; 4.103: its check fails a deck with three titles bundled by a count, commit 60affb5ea3fe", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "ja-emoji-titles"
+category = "formatting"
+kinds = ["deck"]
+models = "any"
+what = "Opens slide titles with an emoji or a tick, as decoration."
+instead = "Let the title's words stand alone."
+strength = "weak"
+# A slide title in the outline form, its number before the emoji or none. Emoji on bullets are no sign in a deck:
+# people's slides hold more of them (any-emoji-markers' note).
+check = '^#{1,6} (?:[0-9]+\. )?[\U0001F300-\U0001FAFF✅❌✨⚡⭐]'
+flags = "## 1. 🚀 新しい受付の流れ\n## 2. 📊 先月の待ち時間"
+passes = "## 1. 新しい受付の流れ\n## 2. 先月の待ち時間\n- 📦 4月から稼働"
+sources = [
+  { source = "jinba-consulting-pptx", where = "references/ai-smell-lexicon.md, 0. 実際にレビューで直された核 and 3. トーン・締め（尻尾を消す）: emoji before headings, which reviewers marked as AI-like, commit 60affb5ea3fe", seen = 2026-11-09 },
 ]
 
 # Tied to a model family.

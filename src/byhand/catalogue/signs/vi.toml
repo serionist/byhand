@@ -61,7 +61,7 @@ sources = [
 [[sign]]
 id = "vi-emphasise"
 category = "word"
-kinds = ["document"]
+kinds = ["document", "deck"]
 models = "any"
 what = "Says that a text or a result emphasises something (nhấn mạnh), where it could say the thing; ordinary in a report of what a speaker stressed."
 instead = "Give what it shows: the number, the decision or the date."

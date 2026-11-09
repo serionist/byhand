@@ -377,6 +377,9 @@ def test_office_register_is_for_the_models_read_of_posts_and_documents(catalogue
     assert set(register.kinds) == {"post", "document"}
 
 
-def test_the_chat_words_are_read_in_posts_and_documents_only(catalogue):
-    for sign in ("ru-chopped-fragments", "ru-math-signs", "ru-throat-clearing", "ru-calques", "ru-chat-residue"):
+def test_the_chat_words_never_read_mail_or_chat(catalogue):
+    # a slide shows the words, so decks read them too (#66); verbless scraps and a vs are a slide's own form
+    for sign in ("ru-chopped-fragments", "ru-math-signs"):
         assert set(catalogue.signs[sign].kinds) == {"post", "document"}, sign
+    for sign in ("ru-throat-clearing", "ru-calques", "ru-chat-residue"):
+        assert set(catalogue.signs[sign].kinds) == {"post", "document", "deck"}, sign

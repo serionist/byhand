@@ -378,7 +378,7 @@ sources = [
 [[sign]]
 id = "ko-gemini-colon-headings"
 category = "formatting"
-kinds = ["document", "post"]
+kinds = ["document", "post", "deck"]
 models = [{ family = "gemini", from = "2.5" }]
 what = "Breaks heading after heading at a colon, a topic on the left and a catchline on the right."
 instead = "Write the heading as what the section tells the reader, with no colon."

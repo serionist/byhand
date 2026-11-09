@@ -6,4 +6,4 @@ A sign holds for the versions it names: `5.x` is the whole 5 series, `and later`
 
 - ar-narrow-vocabulary (weak; post, document): Circles a few common words, repeating them more than people do, and uses fewer of a field's own terms, names and places. Instead: Use the field's own term, the name and the place, and let a plain word come once.
 - ar-register-drift (weak; qwen 2 and later; message, post): In a text meant in one dialect, mixes in another dialect's words or forms, as no one speaker would. Instead: Keep the dialect the text opens in. A quote, a saying or a word every Arab knows from another dialect is how people write.
-- ar-shed-light (weak; post, document): Says that a text sheds light on its subject (تسليط الضوء, يسلط الضوء على); one alone is ordinary Arabic, in news above all. Instead: Say what it shows: the finding, the name or the number. Words: تسليط الضوء: say what it shows
+- ar-shed-light (weak; post, document, deck): Says that a text sheds light on its subject (تسليط الضوء, يسلط الضوء على); one alone is ordinary Arabic, in news above all. Instead: Say what it shows: the finding, the name or the number. Words: تسليط الضوء: say what it shows

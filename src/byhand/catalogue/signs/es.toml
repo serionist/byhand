@@ -124,7 +124,7 @@ sources = [
 [[sign]]
 id = "es-filler-hinges"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Hangs a sentence on a hinge that only announces it: cabe señalar que, es fundamental destacar que, vale la pena mencionar que."
 instead = "Cut the hinge; the sentence says the same without it."
@@ -144,7 +144,7 @@ sources = [
 [[sign]]
 id = "es-inflated-stakes"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Frames a plain fact as an epoch or a turning point: en el mundo actual, hoy más que nunca, punto de inflexión, un antes y un después."
 instead = "Give the date, the number or the change itself."
@@ -167,7 +167,7 @@ sources = [
 [[sign]]
 id = "es-staged-reveal"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Stages a point before making it: a question it answers at once (¿El resultado?), la buena noticia es que, la verdadera pregunta es."
 instead = "State the point; let the fact carry it."
@@ -184,7 +184,7 @@ sources = [
 [[sign]]
 id = "es-ai-vocabulary"
 category = "word"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Leans on the words Spanish model prose favours: adéntrate, de vanguardia, fascinante, sinergia, sumérgete, vibrante. One alone is ordinary Spanish."
 instead = "Use the plain word, or the fact the word stands in for."

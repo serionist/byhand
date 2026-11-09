@@ -170,13 +170,13 @@ def test_no_sign_that_counts_alone_fires_on_plain_german_work_text(counted_alone
     assert fired == []
 
 
-def test_a_service_desk_s_closing_line_meets_a_sign_that_reads_only_documents(catalogue):
+def test_a_service_desk_s_closing_line_meets_a_sign_that_reads_only_documents_and_decks(catalogue):
     # the maintainer's call on #23: the chatbot's line and the service desk's are the same words, so the sign stays
-    # strong for documents, where no person writes it, and never reads mail
+    # strong for documents, where no person writes it, and never reads mail; a slide's text is no service desk's (#66)
     offer = catalogue.signs["any-assistant-closing-offer"]
     assert offer.pattern is not None
     assert offer.pattern.search(SERVICE_DESK)
-    assert offer.kinds == ("document",)
+    assert offer.kinds == ("document", "deck")
 
 
 def test_no_german_check_counts_alone(counted_alone):
@@ -301,7 +301,8 @@ def test_a_term_s_alternatives_are_split_at_the_top_level(alternatives):
     assert alternatives(r"x\|y") == [r"x\|y"]
 
 
-# Word lists people use at work: they read posts and documents, never mail or chat (#4).
+# Word lists people use at work: they read posts and documents, and decks where a slide shows them (#66), never mail
+# or chat (#4).
 AT_WORK = [
     "de-dive-in",
     "de-emphasis-phrases",
@@ -320,7 +321,7 @@ AT_WORK = [
 def test_a_word_list_people_use_at_work_reads_posts_and_documents(catalogue, sign):
     found = catalogue.signs[sign]
     assert found.strength == "weak"
-    assert set(found.kinds) == {"post", "document"}
+    assert {"post", "document"} <= set(found.kinds) <= {"post", "document", "deck"}
 
 
 def test_the_sowohl_triad_is_for_the_model_s_read(catalogue):

@@ -43,7 +43,7 @@
 [[sign]]
 id = "tr-besides-this"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Opens a sentence with Bunun yanı sıra to add one more point."
 instead = "Join the point to the last sentence with ve, or start with the point itself."
@@ -61,7 +61,7 @@ sources = [
 [[sign]]
 id = "tr-stock-idioms"
 category = "phrase"
-kinds = ["document"]
+kinds = ["document", "deck"]
 # GPT-4o mini's essays, so the 4 series only, as ko-gpt-2024-vocabulary has it: no source has counted a later GPT's
 # Turkish, or another family's.
 models = [{ family = "gpt", from = "4", to = "4" }]

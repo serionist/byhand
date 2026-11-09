@@ -36,14 +36,15 @@ layout ones. A check of a deck or a sheet reads the `check.layout.md` files afte
 agent the `scan.layout.md` files after the `scan.md` ones.
 
 The budgets, `Budgets` in `src/byhand/render.py`, set from the catalogue of 8 Nov 2026 with a margin and only ever
-lowered (`check` and `scan` on 9 Nov, the largest read plus at least 512 bytes, rounded up to a whole KB); over any
-of them the render fails:
+lowered (`check` and `scan` on 9 Nov, the largest read plus at least 512 bytes, rounded up to a whole KB; `layout`
+on 9 Nov once the first deck signs were in, the largest read plus 4 KB, rounded up); over any of them the render
+fails:
 
 | What | Budget |
 |---|---|
 | the short files a mail or a message reads, together (`mail`) | 14 KB |
 | the short and long files a post or a document reads, together (`document`) | 16 KB |
-| the layout files a deck or a sheet adds, together; and, each on its own, the `check.layout.md` and the `scan.layout.md` files a check of one adds (`layout`) | 16 KB |
+| the layout files a deck or a sheet adds, together; and, each on its own, the `check.layout.md` and the `scan.layout.md` files a check of one adds (`layout`) | 11 KB |
 | the check files one check reads: `any`, a variant's base language and the language (`check`) | 16 KB |
 | the scan files `scan` reads for one check, from the same languages (`scan`) | 9 KB |
 | any one file (`MAX_LINES`) | under 2,000 lines, Claude Code's `Read` default |

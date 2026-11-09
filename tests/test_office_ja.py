@@ -145,6 +145,12 @@ MACHINE = [
     ("any-chat-tool-markup", "公式サイトによると[web:2]、来期は増収です。"),
     ("any-chat-tool-markup", "ppl-ai-file-upload の資料を参照。"),
     ("any-chat-tool-markup", ":::writing{variant=standard}"),
+    # a deck's titles, weak: one frame on every title, and a count where the point goes (#66)
+    ("any-colon-titles", "## 2. 現状と課題\uff1a受注の半分が電話"),
+    ("ja-count-titles", "## 3. 窓口を減らす5つの手順"),
+    ("ja-count-titles", "## 4. 導入の三つの壁"),
+    ("ja-emoji-titles", "## 2. 📊 先月の待ち時間"),
+    ("ja-emoji-titles", "## ✅ 決まったこと"),
 ]
 
 
@@ -158,6 +164,23 @@ def test_the_signs_still_find_what_they_are_for_in_japanese(catalogue, read_in, 
 
 def test_every_japanese_form_of_a_shared_sign_has_a_machine_line(unproven):
     assert unproven(MACHINE, "ja") == []
+
+
+@pytest.mark.parametrize(
+    ("sign", "text"),
+    [
+        # a single one, a figure and a month are no count of the slide's items (#90's review, F1)
+        ("ja-count-titles", "## 1. 一つの画面で受付から会計まで"),
+        ("ja-count-titles", "## 2. 電話予約は半年で3割減った"),
+        ("ja-count-titles", "## 3. 3月の売上"),
+        # emoji on a slide's bullets, not its title
+        ("ja-emoji-titles", "## 1. 概要\n- 📦 新倉庫は4月稼働"),
+    ],
+)
+def test_a_deck_check_leaves_plain_titles_alone(catalogue, sign, text):
+    pattern = catalogue.signs[sign].pattern
+    assert pattern is not None
+    assert not pattern.search(text), sign
 
 
 def test_colon_replies_and_short_chat_meet_only_weak_signs(catalogue):

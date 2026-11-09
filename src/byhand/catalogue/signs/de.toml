@@ -3,7 +3,7 @@
 # compound matches only where the term starts the word. German's own typography is a person's, never a sign: „…“
 # quotes, the spaced short dash (–), long compounds and capitalised nouns. No German check counts alone: business German
 # (Nominalstil, im Rahmen, zeitnah, bezüglich) is how people write at work, so the word lists are weak, and most read
-# posts and documents only. `tests/test_office_de.py` holds plain work mail, chat, minutes and reports against them.
+# posts, documents and decks only. `tests/test_office_de.py` holds plain work mail, chat, minutes and reports against them.
 
 # Formatting.
 
@@ -110,7 +110,7 @@ sources = [
 [[sign]]
 id = "de-significance-phrases"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Dresses a plain subject in set phrases of legacy and deep meaning."
 instead = "Give the fact or the number that shows it matters."
@@ -134,7 +134,7 @@ sources = [
 [[sign]]
 id = "de-promo-words"
 category = "word"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Sells a place, a firm or a product with brochure words where a neutral one would do."
 instead = "Describe what is there, and let the reader judge."
@@ -159,7 +159,7 @@ sources = [
 [[sign]]
 id = "de-stock-openers"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Opens on a stock line about fast-changing modern times."
 instead = "Start with the subject."
@@ -179,7 +179,7 @@ sources = [
 id = "de-future-closers"
 category = "phrase"
 # Not mail or chat, where wir dürfen gespannt sein is a plain wait for news.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Closes on a stock look ahead that promises nothing anyone can check."
 instead = "End on the last fact, or the next date."
@@ -203,7 +203,7 @@ id = "de-emphasis-phrases"
 category = "phrase"
 # Not mail or chat. Only the calques of "it's important to note": wichtig zu beachten or zu bedenken, es sei
 # darauf hingewiesen and bemerkenswert ist are how reports and instructions are written (#23's review, F1).
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Tells the reader that a point deserves attention before making it."
 instead = "Make the point; the reader decides what matters."
@@ -222,7 +222,7 @@ sources = [
 [[sign]]
 id = "de-dive-in"
 category = "phrase"
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Invites the reader to dive in with it, or offers to break the subject down, as a chatbot's walk-through does."
 instead = "Start with the first point."
@@ -243,7 +243,7 @@ sources = [
 id = "de-list-announcers"
 category = "phrase"
 # Not eine große Palette or eine Vielzahl von, which plain reports write (#23's review, F1).
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Announces a list with a stock phrase of plenty before naming the items; common in people's ad copy too."
 instead = "Name the items, or give the number."
@@ -263,7 +263,7 @@ sources = [
 id = "de-rhetorical-openers"
 category = "phrase"
 # Not mail or chat, where was wäre, wenn is a real proposal.
-kinds = ["post", "document"]
+kinds = ["post", "document", "deck"]
 models = "any"
 what = "Opens with a question nobody asked: what if, have you ever wondered."
 instead = "Start with the point or the news."

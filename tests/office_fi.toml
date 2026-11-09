@@ -1,5 +1,5 @@
-# Plain Finnish work text, invented, for tests/test_office_fi.py; it lives here, not in the test, as ruff reads the short
-# dash as a confusable hyphen, and Finnish writes it in every range and as its dash.
+# Plain Finnish work text, invented, for tests/test_office_fi.py; it lives here, not in the test, as ruff reads the
+# short dash as a confusable hyphen, and Finnish writes it in every range and as its dash.
 #
 # Office and official Finnish run on what finnish-humanizer would rewrite: the passive, light verbs (suorittaa
 # tarkistuksen, tehdä päätös), officialese (edellä mainittu, kyseinen, mikäli), "tulee" for must, and set phrases in
@@ -10,13 +10,14 @@
 # siirtaa). They are a person's, never a sign.
 #
 # Finnish typography is how people write: the same closing mark on both sides of a quote (”…”), » » and straight quotes,
-# the spaced short dash as a dash and to open a line of dialogue, the unspaced short dash in a range, a spaced hyphen
-# as a dash, the decimal comma, a space between thousands, % after a space, dates as 9.11.2026 and klo 14.00.
+# the spaced short dash as a dash and to open a line of dialogue, now and then the long dash a phone or a Mac makes, the
+# unspaced short dash in a range, a spaced hyphen as a dash, the decimal comma, a space between thousands, % after a
+# space, dates as 9.11.2026 and klo 14.00.
 
 mail = [
   "Hei Laura,\n\nLiitteenä lokakuun lasku numero 4512. Eräpäivä on 30.11.2026.\n\nJos tulee kysyttävää, soita minulle numeroon 040 123 4567.\n\nTerveisin\nMikko Virtanen",
   "Kasvatuksen ja koulutuksen toimiala\n\nPäätös 12.10.2026\n\nAsia: Koulukuljetus lukuvuodelle 2026–2027\n\nKyseinen hakemus on käsitelty, ja oppilaalle myönnetään koulukuljetus ajalle 1.1.–31.5.2027. Mikäli olosuhteet muuttuvat, tulee huoltajan ilmoittaa siitä koulun rehtorille.\n\nPäätökseen tyytymätön voi hakea siihen oikaisua 14 päivän kuluessa tiedoksisaannista.",
-  "Moi Antti,\n\nLaitoin tarjouksen liitteeksi. Ehditkö vilkaista sen ennen maanantaita? Jos se näyttää hyvältä, lähetetään se asiakkaalle.\n\nTerkuin\nJussi",
+  "Moi Antti,\n\nLaitoin tarjouksen liitteeksi. Ehditkö vilkaista sitä ennen maanantaita? Jos se näyttää hyvältä, lähetetään se asiakkaalle.\n\nTerkuin\nJussi",
   "Hyvä henkilöstö,\n\nToimisto suljetaan perjantaina klo 14.00 sähkötöiden vuoksi. Pahoittelemme häiriötä.\n\nYstävällisin terveisin\nHallinto",
   "Hei Sanna,\n\nVoitaisiinko pitää huomenna lyhyt palaveri? Haluaisin saada feedbackia esityksestä, deadline on perjantaina.\n\nKiitos!\nEero",
   "Arvoisa vastaanottaja,\n\nViitaten puhelinkeskusteluumme 3.11. lähetän liitteenä sopimuksen allekirjoitettavaksi. Pyydän palauttamaan sen 20.11.2026 mennessä.\n\nYstävällisin terveisin\nAnna Laine\nLakiasiaintoimisto Laine Oy",
@@ -28,7 +29,7 @@ mail = [
   "Aihe: Vuosilomahakemus\n\nHyvä esihenkilö,\n\nHaen vuosilomaa ajalle 22.–26.7.2027.\n\nTerveisin\nMatti Mäkinen",
   "Hei tiimi,\n\nIso kiitos kaikille, jotka osallistuivat tilinpäätöksen tekemiseen. Luvut esitellään hallitukselle perjantaina.\n\nTerveisin\nSelma",
   "Hei,\n\nUusi järjestelmä suorittaa tilausten tarkistuksen automaattisesti joka yö. Laskut lähetetään jatkossa sähköpostitse.\n\nYstävällisin terveisin\nTietohallinto",
-  "Hei,\n\nViimeisimpien tietojeni mukaan taulukossa oli 40 avointa pyyntöä; tänään niitä on 12.\n\nTerveisin\nTuula",
+  "Hei,\n\nViimeisimpien tietojeni mukaan avoimia pyyntöjä on enää 12, kun maanantaina niitä oli 40.\n\nTerveisin\nTuula",
   "Hei Pekka,\n\nOn syytä huomata, että vuokrasopimus päättyy jo 31.3. Tehdään päätös jatkosta ennen helmikuuta.\n\nTerveisin\nRiikka",
   "Hei Jari,\n\nKiitos eilisestä! Alla vielä sovitut asiat:\n- tarjous asiakkaalle perjantaina\n- seuraava palaveri 18.11. klo 9.30\n\nTerveisin\nMinna",
 ]
@@ -67,8 +68,8 @@ chat = [
 
 notes = [
   "Koordinaatiopalaverin muistio – 6.11.\nOsallistujat: A. Virtanen, B. Korhonen, C. Nieminen\n- Vuoden 2027 budjetti hyväksyttiin\n- Rekrytointi: 2 avointa paikkaa\n- Seuraava palaveri: 4.12.",
-  "Muistiinpanot:\n- soita notaarille\n- lähetä sopimus Hannulle [vahvistetaan]\n- tarkista toimituspäivä [tarkistetaan]",
-  "Tehtävät:\n1. Kuukauden päättäminen\n2. Toimittajamaksut\n3. Vuokrasopimuksen uusiminen",
+  "Muistiinpanot:\n- soita isännöitsijälle\n- lähetä sopimus Hannulle [vahvistetaan]\n- tarkista toimituspäivä [tarkistetaan]",
+  "Tehtävät:\n1. Kuun vaihteen kirjaukset\n2. Toimittajamaksut\n3. Vuokrasopimuksen uusiminen",
   "Kassan aukioloajat: ma–pe 9.00–12.30 ja 13.30–17.00.",
   "**Tärkeää**: maanantaista alkaen kulkukortti on näytettävä ovella.",
   "Yövuoro 3./4.11.\n\nEi poikkeamia. Pysäköintialueella ei tarvittu toimenpiteitä.",
@@ -77,11 +78,11 @@ notes = [
 ]
 
 reports = [
-  "Lokakuun toimintakatsaus\n\nLiikevaihto nousi 1,2 miljoonaan euroon, 4 % enemmän kuin syyskuussa. Turun toimipiste teki tappiota toisen neljänneksen peräkkäin.\n\nHenkilöstössä aloitti kaksi asentajaa. On myös syytä mainita, että vuokra nousee tammikuussa.",
+  "Lokakuun toimintakatsaus\n\nLiikevaihto nousi 1,2 miljoonaan euroon, 4 % enemmän kuin syyskuussa. Turun toimipiste teki tappiota toista neljännestä peräkkäin.\n\nHenkilöstössä aloitti kaksi asentajaa. On myös syytä mainita, että vuokra nousee tammikuussa.",
   "Asiakirjojen tarkastuksessa todettiin, että toimitetut liitteet ovat täydelliset. Asia käsitellään lautakunnan kokouksessa 20.11.",
   "Eduskunta hyväksyi lakiesityksen, ja laki tulee voimaan 1.1.2027.",
   "Tulokset\n\nAineisto koodattiin kahden tutkijan toimesta toisistaan riippumatta. Koodaajien yhtäpitävyys oli 91 %. Otoksen pienuus on kuitenkin otettava huomioon.",
-  "Yhteenveto\n\nHanke etenee aikataulussa. Tämän vuoksi nykyisen toimittajan kanssa ehdotetaan jatkettavaksi myös vuonna 2027.",
+  "Yhteenveto\n\nHanke etenee aikataulussa. Siksi ehdotetaan, että yhteistyötä nykyisen toimittajan kanssa jatketaan myös vuonna 2027.",
   "Kirjasto ei ole vain lainaamo, vaan myös nuorten iltapäiväpaikka: viime vuonna 400 nuorta kävi läksykerhossa.",
   "Projektin loppuraportti\n\nUusi varastojärjestelmä mahdollistaa tilausten lähettämisen samana päivänä. Kiitos kaikille siirtoon osallistuneille. Palautusaika lyheni keskimäärin neljästä päivästä kahteen.",
   "Haasteista huolimatta myymälä teki voittoa: kassavirta parani toisella vuosipuoliskolla 8 %.",
@@ -89,22 +90,24 @@ reports = [
   "Hakemukset otetaan vastaan sähköisesti 30.11. mennessä. Puutteellisia hakemuksia ei käsitellä.",
   "Saimaa on Suomen suurin järvi, ja sen pinta-ala on noin 4 400 neliökilometriä. Järvi tunnetaan saimaannorpasta.",
   "Osastokokous\n\nKatsotaan yhdessä neljänneksen luvut: myynti laski 8 %, palautukset pysyivät ennallaan. Budjetti tarkistetaan siis tammikuussa.",
-  "Nykyään lähes kaikki myymälän maksut tehdään kortilla: lokakuussa käteisen osuus laski 31 prosenttiin.",
+  "Nykyään lähes kaikki myymälän maksut tehdään kortilla: lokakuussa käteisen osuus laski 3 prosenttiin.",
   "Tilaisuudessa käsitellään kolme asiaa: budjetti, rekrytoinnit ja toimitilat.",
+  # a person's long dash, from a phone or a Mac: one weak hit, never a cluster
+  "Muutto Pasilaan siirtyy kesäkuulle — vuokranantaja ei saanut remonttia valmiiksi.",
   "Muuttoon liittyvät kysymykset tulee osoittaa kiinteistöpäällikölle. Kyseinen henkilö vastaa myös avaimista.",
   "Toimintasuunnitelma 2027\n\n## Tavoitteet\n\nAsiakasmäärä kasvaa 10 %, ja uusi myymälä avataan Lahteen.\n\n## Resurssit\n\nRekrytoimme kaksi myyjää keväällä.",
 ]
 
 speeches = [
-  "Hyvät jäsenet,\n\nOsuuskuntamme piti torin auki tänäkin vuonna joka lauantai. Kausi päättyi 212 tuottajan voimin. Kiitos kaikille.",
+  "Hyvät jäsenet,\n\nOsuuskuntamme piti torin auki tänäkin vuonna joka lauantai. Kaudella mukana oli 212 tuottajaa. Kiitos kaikille.",
   "Hyvä Pertti,\n\nKaipaamme sinua kirjanpidossa; kolmekymmentäkaksi vuotta on pitkä aika. Nauti mökkipäivistä.",
 ]
 
 posts = [
-  "Kuuden vuoden jälkeen on aika sanoa hei Logistiikka Pohjoiselle. Kiitos Iinalle ja Pasille sunnuntain inventaarioista. 2.12. alkaen olen Vihreällä Reitillä. #Tampere #logistiikka",
+  "Kuuden vuoden jälkeen on aika hyvästellä Logistiikka Pohjoinen. Kiitos Iinalle ja Pasille sunnuntain inventaarioista. 2.12. alkaen olen Vihreällä Reitillä. #Tampere #logistiikka",
   "Avaamme lauantaina uuden myymälän osoitteessa Hämeenkatu 14: klo 10–13 kahvit ja pullat talon puolesta. Tervetuloa!",
   "Lauantain taimien istutus meni hienosti: 40 vapaaehtoista, 300 taimea. Kiitos kaikille!",
-  "Kuuden vuoden matkan jälkeen uusi osoitteeni on Jyväskylä. Liityn osuuskuntaan, joka tekee töitä laajan joukon paikallisten tuottajien kanssa ja valitsee tuotteensa huolella.",
+  "Kuuden vuoden jälkeen muutan Jyväskylään. Liityn osuuskuntaan, joka tekee töitä laajan joukon paikallisten tuottajien kanssa ja valitsee tuotteensa huolella.",
 ]
 
 typography = [

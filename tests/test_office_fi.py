@@ -35,7 +35,6 @@ def test_the_text_holds_finnish_letters_and_marks():
     # so the tests below can't pass on text that lost its letters or marks on the way
     for name in ("EN DASH", "RIGHT DOUBLE QUOTATION MARK", "RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK"):
         assert any(unicodedata.lookup(name) in text for text in OFFICE), name
-    assert not any(unicodedata.lookup("EM DASH") in text for text in OFFICE)
     assert sum("ä" in text for text in OFFICE) >= 50
     assert sum("ö" in text for text in OFFICE) >= 10
     assert len(OFFICE) >= 60

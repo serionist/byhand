@@ -53,8 +53,8 @@ two signs of its own, both formatting and both weak, as neither source measures 
 
 | Sign | Strength | Evidence |
 |---|---|---|
-| `fi-em-dash` (a check) | weak | `finnish-humanizer`'s typography notes say models write the long dash where Finnish writes the spaced short one (SFS 4175); the page's second example of model text sets a list off between spaced long dashes, though it quotes it for something else. `de-em-dash` and `hu-em-dash` hold the habit weak too |
-| `fi-title-case-headings` (for the model's read) | weak | The page's section on anglicisms: capitals on every word of a model-written article's subheadings, after English titling, five of them in one example. `de-title-case-headings` and `hu-title-case-headings` hold it weak too |
+| `fi-em-dash` (a check) | weak | `finnish-humanizer`'s typography notes say models write the long dash where Finnish writes the spaced short one (SFS 4175); the page's second example of model text sets a list off between spaced long dashes, though it quotes it for something else. `de-em-dash` and `hu-em-dash` hold the habit weak too, and `finnish-humanizer`'s own Finnish prose writes it |
+| `fi-title-case-headings` (for the model's read) | weak | The page's section on anglicisms: capitals on the words after the first in a model-written article's subheadings, after English titling, with ja left small, five of them in one example. `de-title-case-headings` and `hu-title-case-headings` hold it weak too |
 
 No structure sign of Finnish's own: what the page shows of structure is held by `any` signs (negative parallelism, the
 rule of three, promotional tone, unnamed places and people, needless lists), and `finnish-humanizer`'s Finnish
@@ -67,7 +67,7 @@ Turkish. Each would come with a `machine` line and the person's line beside it i
 
 | `any` sign | Form | Source | The person's line it must pass |
 |---|---|---|---|
-| `any-chatgpt-citation-markup` | a source's name with +1, +2 or +5 glued on, ChatGPT's citation chips pasted as text (Oulun kaupunki+1) | `wikipedia-fi`, Virheelliset tai erikoiset viitteet | Puh. +358 40 123 4567; tarjous 2+1; C++ |
+| `any-chatgpt-citation-markup` | a source's name with +1, +2 or +5 glued on, ChatGPT's citation chips pasted as text (Oulun kaupunki+1) | `wikipedia-fi`, Virheelliset tai erikoiset viitteet | C++; Disney+; Erasmus+-hanke (on the page itself); Puh. +358 40 123 4567; tarjous 2+1 |
 | `any-flattering-agreement` | Hyvä kysymys!; Erinomainen huomio! | `finnish-humanizer` 15 | Hyvä kysymys, en oikeastaan tiedä; Erinomainen huomio, korjaan sen |
 | `any-knowledge-cutoff` | Viimeisimpien tietojeni mukaan | `finnish-humanizer` 26 | Likely none: a person writes it of their own latest news, as in `office_fi.toml` |
 | `any-didactic-aside` | On syytä huomata, että | `finnish-humanizer` 17 | Likely none: reports write it, as in `office_fi.toml` |

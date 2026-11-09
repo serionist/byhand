@@ -5,4 +5,4 @@ A weak sign counts only with 3 or more hits of weak signs in a paragraph or sect
 A pattern is what Grep runs on a file, case-insensitive and line by line; a sign with none is found by reading.
 
 - fi-em-dash (weak): Sets off a clause with the long English dash (—), where Finnish writes the spaced short dash (–). Instead: Write the spaced short dash, or end the sentence and start another. Pattern: `[^\s—.,] ?— ?[^\s—]`
-- fi-title-case-headings (weak; document, deck, post): Capitalises every word of a heading, as English titles do; Finnish capitalises only the first word and names. Instead: Capitalise the first word and names: ## Kevään koulutukset Tampereella
+- fi-title-case-headings (weak; document, deck, post): Capitalises the words after the first in a heading, as English titles do; Finnish capitalises only the first word and names. Instead: Capitalise the first word and names: ## Kevään koulutukset Tampereella

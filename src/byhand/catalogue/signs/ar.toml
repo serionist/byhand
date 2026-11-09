@@ -9,9 +9,11 @@
 # What these rest on: al-Shaibani and Ahmed 2025 measured ALLaM, GPT-4, Jais and Llama against people in Arabic
 # abstracts and reviews; Wang et al. 2026 asked annotators what told GPT-4o's and Qwen2's Arabic from people's;
 # humanizer-ar lists Arabic tells for a rewriting skill, with no data of its own but al-Shaibani and Ahmed's. So a sign
-# rests on one of the papers, or on humanizer-ar beside one. None measured work mail, and no native speaker has read
-# these yet. So every Arabic sign is weak until one does, and a sign that counts alone would have no pattern: the
-# model reads for it. The one Arabic check reads posts and documents only.
+# rests on one of the papers, or on humanizer-ar beside one. None measured work mail. Each Arabic sign is weak on that
+# evidence (#72): the measured habits are rates over many texts, which one person's text can match; الضوء is news'
+# own word; and people slide from dialect into standard Arabic for whole sentences, while Wang et al.'s annotators,
+# who saw Qwen2 mix dialects, read 36% of people's tweets as a machine's. The one Arabic check reads posts and documents
+# only.
 # Left out, as people write them in office Arabic and humanizer-ar alone lists them: its stock connectors and closers
 # (تجدر الإشارة إلى, علاوة على ذلك, في هذا السياق, وفي الختام), its inflated phrases (حجر الزاوية, نقلة نوعية), its
 # hedges, openers and copulas (يُعد, يُعتبر), تم with a verbal noun, the light verb قام ب and collocation calques, which

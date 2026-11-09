@@ -14,6 +14,8 @@ before `1.0` a minor may break something, under Breaking.
 
 - `/byhand:check` and the sign files say plainly how weak signs add up: two different phrases one sign finds count as
   two, and a mark such as a dash counts once however often it appears.
+- The Spanish, Portuguese, Arabic, Vietnamese, Italian and Turkish signs no longer wait for a native speaker's read:
+  each was weighed on its sources, and each still counts only beside two others, as people write each of them too.
 
 ## 0.1.0 (2026-11-09)
 

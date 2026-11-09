@@ -13,8 +13,9 @@
 # What these rest on: Bergin and Atasoy 2026 counted the idioms in 147 essays by GPT-4o mini against 147 by trainee
 # Turkish teachers on the same topics; humanizer-tr lists Turkish tells for a rewriting skill, each Turkish pattern
 # read by a native speaker, with no measure of model text, and a list of what a native reader found natural. So a sign
-# rests on the counts, or on both. None measured work mail, and no native speaker has read these yet. So every Turkish
-# sign is weak until one does, and none reads mail or chat.
+# rests on the counts, or on both. None measured work mail. Each Turkish sign is weak on that evidence (#72): the
+# students wrote yanı sıra too, office reports write both idioms, and humanizer-tr's native reader found kilit rol
+# oynamak natural alone. None reads mail or chat.
 #
 # Left out, as office Turkish writes them: the other idioms the model wrote far more (katkıda bulunmak, neden olmak,
 # olanak sağlamak, teşvik etmek, yol açmak), which reports and official letters write too, each a hit of its own in a

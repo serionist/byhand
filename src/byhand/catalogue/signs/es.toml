@@ -7,10 +7,12 @@
 #
 # What these rest on: humanizer-es lists Spanish tells for a rewriting skill and tested its checker on human and model
 # texts; Alonso Simón et al. 2025 measured GPT-3.5 and GPT-4 against people in 180 Spanish texts; Resende and Castilho
-# 2026 measured GPT-4o's Spanish stories. None measured work mail, and no native speaker has read these yet. So every
-# Spanish sign is weak until one does, and a sign that counts alone would have no pattern: the model reads for it. The
-# Spanish checks read posts and documents, but the dash, as the set phrases of mail (No dude en contactarme, Quedo
-# atento, Lamentamos las molestias) are a person's; es-service-script, which reads mail, has no pattern.
+# 2026 measured GPT-4o's Spanish stories. None measured work mail. Each Spanish sign is weak on that evidence (#72):
+# people write the phrases too, and humanizer-es is their one source; the measured habits are rates over many texts,
+# which one person's text can match; a product label mixes the imperative with the infinitive (Pruébalo…,
+# Agitar antes de usar); and the dash is weak in every language, as people write it. The Spanish checks read posts and
+# documents, but the dash, as the set phrases of mail (No dude en contactarme, Quedo atento, Lamentamos las molestias)
+# are a person's; es-service-script, which reads mail, has no pattern.
 # A calque of English (de acuerdo a, hacer sentido, Title Case, tomar acción) is translationese, which people write
 # too: no source measures models writing one more than people, and humanizer-es's 30 model texts hold none of its
 # phrase calques, so none has a sign. Spanish typography is no tell either: ¿ and ¡, the raya around an aside and before dialogue, « » and “ ”.

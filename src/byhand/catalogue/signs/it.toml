@@ -9,9 +9,11 @@
 # Italian news from people's; humanizer-it, scrittura-italiana and avoid-ai-writing-multilingual list Italian tells for
 # a rewriting skill, with no measurement of model text: humanizer-it's model texts were written to carry its own
 # markers. So a sign rests on Farrell, or on two of the three lists, and lists only what they name. None measured work
-# mail, and no native speaker has read these yet. So every Italian sign is weak until one does, and a sign that counts
-# alone would have no pattern: the model reads for it. The Italian checks read posts and documents, but the dash, as
-# the set phrases of mail (Cordiali saluti, In allegato Le trasmetto, Resto a disposizione) are a person's.
+# mail. Each Italian sign is weak on that evidence (#72): even sentences are a rate over many texts, which one person's
+# text can match; an advert writes staccato fragments; avoid-ai-writing-multilingual counts in un mondo sempre più only
+# twice or beside two other phrases, and a person's speech writes it; and the dash is weak in every language, as
+# people write it. The Italian checks read posts and documents, but the dash, as the set phrases of mail (Cordiali
+# saluti, In allegato Le trasmetto, Resto a disposizione) are a person's.
 # Left out, as people write them in office Italian, papers and news: burocratese and the nominal style (al fine di,
 # nell'ambito di, si è proceduto alla verifica), which avoid-ai-writing-multilingual calls no sign alone and on which
 # humanizer-it's own probe finds people's and model text overlapping; the connectors (inoltre, pertanto, tuttavia);
@@ -100,7 +102,7 @@ strength = "weak"
 # on Pinocchio's dialogue); nor is speech opened after a colon (Marta disse: — Va bene.). Missed, and accepted for a
 # weak sign: a pivot on a line with no closing stop, which a heading or a signature shares, and a pivot after an aside
 # pair in the same sentence. The sources call the burst the tell and a lone dash Italian; Grep reads a line, not a
-# paragraph's count, so a lone pivot counts here, once, as one weak hit: a native reader's call (#63's review, F2).
+# paragraph's count, so a lone pivot counts here, once, as one weak hit (#63's review, F2).
 check = '''[^\W\d_]—[^\W\d_]|^(?:(?:[^—\n]|—[^—\n]*—)*[.!?]\s+)?[^—.!?\n]*[^—.!?:\n] — [^—.!?\n]+[.!?](?:\s*$|\s+[^—\s])'''
 flags = "Abbiamo cambiato fornitore di caffè — e nessuno se n'è accorto."
 passes = "Abbiamo cambiato fornitore di caffè — quello di via Verdi — e nessuno se n'è accorto."

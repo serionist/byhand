@@ -1,9 +1,9 @@
 ---
 title: Use a project's own styles from .byhand/styles/
 issue: "#103"
-status: draft
-approved_by:
-approved_at:
+status: approved
+approved_by: serionist
+approved_at: 2026-11-09
 ---
 
 # Use a project's own styles from .byhand/styles/
@@ -19,7 +19,8 @@ Done means, from the issue:
 - in a project with its own styles, `write` picks the project's default for the kind and language;
 - the global styles stay usable there by name;
 - `learn` saves into the project only when the user asks;
-- the extra read per draft costs bytes only where the folder exists;
+- the extra read per draft costs bytes where the folder exists; elsewhere one failed Read, about 250 bytes, once a
+  conversation, as no listing can tell first (Round 1, P1);
 - tries in real sessions show it.
 
 In scope: `write`'s pick, `learn`'s save, list, default, remove and remember, the docs, tries.
@@ -67,7 +68,9 @@ Two lines are new besides:
   voice.
 - **The first draft in a conversation in a project's style ends with one line naming it** ("In this project's style
   `acme-mail`."). A project default replaces the user's own for that kind without asking: one line, once, makes that
-  visible. Step 8's "nothing the user didn't ask for" gains this exception.
+  visible. Step 8's "nothing the user didn't ask for" gains this exception. Step 9's offer to keep feedback as a
+  rule names it as the project's too ("Save this as a rule for `acme-mail`, this project's style?", Round 1, I6): a
+  personal habit shouldn't land in a team's shared file unnoticed.
 
 ### `learn`
 
@@ -82,7 +85,8 @@ Two lines are new besides:
   another (Fit I2).
 - **List:** both indexes, the project's marked as this project's.
 - **Default, remove:** in the index that holds the style; a name in both: ask which.
-- **Remember:** under `## Corrections` of the style the last draft used, in the file the draft read.
+- **Remember:** under `## Corrections` of the style the last draft used, in the file the draft read; a project's
+  style is named as the project's when `learn` says where it saves (Round 1, I6).
 
 ### What a draft reads, in bytes
 
@@ -144,20 +148,26 @@ still hold: byhand's own repo is the plugin's, has no project voice to commit, a
    `tests/test_render.py`, beside the one that holds every `${CLAUDE_PLUGIN_ROOT}/signs/` path to a rendered suffix:
    every `${...}` a plugin skill or agent names is one byhand uses, `CLAUDE_PLUGIN_ROOT` or `CLAUDE_PROJECT_DIR`
    (Fit I3): a misspelt one is never substituted, and the project read would fail silently on every draft. A closed
-   list of our own never has to track Claude Code's docs. The gate's plugin checks prove the form.
+   list of our own never has to track Claude Code's docs. The same test holds that `write`'s and `learn`'s SKILL.md
+   each name `${CLAUDE_PROJECT_DIR}/.byhand/styles/`, so a later trim that drops the project read fails CI (Round 1,
+   P2). The gate's plugin checks prove the form.
 2. **`learn`,** `plugin/skills/learn/SKILL.md`: the format names both folders; save, list, default, remove and
    remember as designed. The same checks.
 3. **Tries, by hand,** the scaffolded suite in `.local/` (Design, Evals), three runs a case, every text invented:
 
+   The first three cases share one seed (Round 1, I7): global `home-mail` (en, email) and `work-mail` (en), project
+   `acme-mail` (en, email) and `work-mail` (en).
+
    | Case | Seeds | Bar |
    |---|---|---|
-   | project default | global `home-mail` (en, email), project `acme-mail` (en, email) | an English mail reads `acme-mail.md` from the project, not `home-mail.md`; the answer's last line names `acme-mail` |
-   | global by name | the same | "in my home-mail style" reads `home-mail.md` from `~/.byhand/` |
-   | name clash | `work-mail` in both | "in my work-mail style" reads the global one; "in the project's work-mail style" the project's |
+   | project default | the shared one | an English mail reads `acme-mail.md` from the project, not `home-mail.md`; the answer's last line names `acme-mail` |
+   | global by name | the shared one | "in my home-mail style" reads `home-mail.md` from `~/.byhand/` |
+   | name clash | the shared one | "in my work-mail style" reads the global one; "in the project's work-mail style" the project's |
    | another kind | project default for `email`, global for `message` | a Slack message reads the global style, with no note |
    | no project folder | global `home-mail` (en, email) | reads `home-mail.md`; says nothing about project styles |
    | `learn`, unasked | none | a pre-answered save (or a history file ending on `learn`'s question) writes under `~/.byhand/styles/`, nothing in the workspace; Write and Edit granted to the run |
-   | `learn`, for this project | none | the same with "for this project" writes the project's style and index, and the question named committing and `.gitignore` |
+   | `learn`, for this project, asked | none | "for this project", not pre-answered: the question names committing and `.gitignore`, and nothing is written (Round 1, P3) |
+   | `learn`, for this project, saved | none | the same pre-answered, or a history file ending on the question: the style and index are written to the workspace's `.byhand/styles/` |
 
    Then the committed `write-*`, `learn-from-samples` and `remember-a-rule` cases, one run each (Fit I4): they show
    only that a failed project read changes nothing, which the "no project folder" case shows three times. The bytes a first
@@ -169,7 +179,7 @@ still hold: byhand's own repo is the plugin's, has no project voice to commit, a
 
 ## Tests
 
-- Unit (CI): the substitution test in Step 1; the gate's plugin and private checks, unchanged.
+- Unit (CI): the substitution test in Step 1, and its assert that both skills name the project folder; the gate's plugin and private checks, unchanged.
 - By hand: Step 3's suite and the committed cases, on Windows, Opus 5.5. macOS, Linux or WSL if one is at hand, else
   said in the PR: `${CLAUDE_PROJECT_DIR}` is documented for every platform but tried only on Windows.
 - What none can show: whether a project style reads as that project's voice; a session started in a subfolder (by
@@ -226,3 +236,31 @@ Noticed on the way, for Round 1:
 - This repo's own `.byhand/`: `.gitignore` and `check_private`'s stated reason ("hold real writing") goes stale for a
   shared house style; the reason that holds is that this repo keeps only invented text.
 - Docs: the `REVIEW.md` blocker edit widens a harness rule without naming the maintainer's agreement.
+
+### Round 1
+
+**How:** a fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, on `3939872`, every lens.
+**Verdict:** approved, minors only, so no second round. **Now:** P1 to P3 fixed in the plan; I6 and I7 taken. Approved
+on the maintainer's standing word of 2026-11-09 (take the recommended improvements, answer owner calls with the
+recommendation, approve once a round has no blocker or major); no owner call came up.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P1 | minor | The Goal quoted the issue's "bytes only where the folder exists", which a failed Read outside a project breaks: the PR would claim a done-means it doesn't meet (the Fit's note 1) | fixed: the Goal names the departure, one failed Read of about 250 bytes once a conversation |
+| P2 | minor | The substitution test passes before the change and if the project read is dropped: a later trim of `write` could lose it with CI green | fixed: the same test holds that `write` and `learn` name `${CLAUDE_PROJECT_DIR}/.byhand/styles/` |
+| P3 | minor | One `learn` try asked both to save into the project and to show the question naming committing, which a non-interactive run can't do together, so the guard on committing could pass unseen | fixed: two rows, the question unanswered and the save |
+
+Refuted: the Fit's note 2 (every learned style keeps word-for-word excerpts, so "hold real writing" still holds, and
+this repo commits none); the Fit's note 3 (both folders are already the one-way door's, the blocker still covers
+everything outside them, and the edit is named in Docs); a project save not asking under `acceptEdits` (`learn` saves
+only on a yes to its question, which holds the note); a project index made mid-conversation going unread (`learn`'s
+Write leaves it in context); a hostile style pulling files into a draft (the draft stays in the chat, the "how to
+write" line, Fit I5); an older Claude Code leaving the variable as is (the Read fails, read as no project styles); the
+bootstrap's "project wins on a name" reversed silently (Fit I2, and the Decisions line in Docs); the minor's
+empty-session try missing (`finish-work` runs `docs/releasing.md`'s); a lone non-default project style picked for
+other kinds (today's rule on one list, and the note names it).
+
+| # | Improvement | Answer |
+|---|---|---|
+| I6 | `write` step 9's offer and `learn`'s Remember name a project's style as the project's, so a personal habit doesn't land in a team's shared file unnoticed | taken |
+| I7 | One seed for the three `write` tries that differ only by prompt | taken |

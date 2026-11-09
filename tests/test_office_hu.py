@@ -10,6 +10,7 @@ them in source; the first test holds that they are the real marks."""
 
 import re
 import unicodedata
+from collections.abc import Callable
 
 import pytest
 
@@ -155,24 +156,6 @@ KINDS = [
 ]
 
 
-def _reads(sign: signs.Sign, kind: str) -> bool:
-    return bool({"any", kind} & set(sign.kinds))
-
-
-@pytest.fixture(scope="module")
-def catalogue():
-    found, problems = signs.load()
-    assert problems == []
-    return found
-
-
-@pytest.fixture(scope="module")
-def counted_alone(catalogue):
-    found = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength != "weak"]
-    assert found
-    return found
-
-
 def test_the_marks_are_the_real_ones():
     # an escape that lost its backslash would leave the lines holding ASCII, and the test passing on nothing
     assert unicodedata.name(LOW) == "DOUBLE LOW-9 QUOTATION MARK"
@@ -185,8 +168,8 @@ def test_the_marks_are_the_real_ones():
 
 
 @pytest.mark.parametrize(("text", "kind"), KINDS)
-def test_no_sign_that_counts_alone_fires_on_plain_hungarian_work_text(counted_alone, text, kind):
-    fired = [sign.id for sign in counted_alone if _reads(sign, kind) and sign.pattern and sign.pattern.search(text)]
+def test_no_sign_that_counts_alone_fires_on_plain_hungarian_work_text(counted_alone, reads, text, kind):
+    fired = [sign.id for sign in counted_alone if reads(sign, kind) and sign.pattern and sign.pattern.search(text)]
     assert fired == []
 
 
@@ -237,80 +220,34 @@ def test_the_signs_still_find_what_they_are_for_in_hungarian(counted_alone, sign
     assert pattern.search(text), sign
 
 
-def _alternatives(term: str) -> list[str]:
-    """A term's top-level alternatives: `a|b` is two phrases, `(?:a|b)c` one phrase with two spellings."""
-    found, depth, start, escaped, in_class = [], 0, 0, False, False
-    for n, char in enumerate(term):
-        if escaped:
-            escaped = False
-        elif char == "\\":
-            escaped = True
-        elif in_class:
-            in_class = char != "]"
-        elif char == "[":
-            in_class = True
-        elif char == "(":
-            depth += 1
-        elif char == ")":
-            depth -= 1
-        elif char == "|" and depth == 0:
-            found.append(term[start:n])
-            start = n + 1
-    return [*found, term[start:]]
-
-
-def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
-    """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
-    Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check is one habit however
-    often it fires; one phrase two signs find counts once. Hungarian is written with spaces, so a phrase has word edges,
-    as `validate` gives it."""
-    counted: set[str] = set()
-    spans: list[tuple[int, int]] = []
-    for sign in catalogue.signs.values():
-        if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
-            continue
-        phrases = [
-            (phrase, re.compile(rf"\b(?:{phrase})\b", re.IGNORECASE | re.MULTILINE))
-            for term in sign.terms
-            for phrase in _alternatives(term.term)
-        ]
-        for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
-            for found in pattern.finditer(text):
-                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
-                    continue
-                counted.add(phrase)
-                spans.append(found.span())
-    return len(counted)
-
-
 @pytest.mark.parametrize(("text", "kind"), KINDS)
-def test_plain_hungarian_work_text_makes_no_weak_cluster(catalogue, text, kind):
+def test_plain_hungarian_work_text_makes_no_weak_cluster(weak_hits, text, kind):
     for paragraph in text.split("\n\n"):
-        assert _weak_hits(catalogue, paragraph, kind) < signs.WEAK_CLUSTER, paragraph
+        assert weak_hits(paragraph, kind) < signs.WEAK_CLUSTER, paragraph
 
 
-def test_weak_hits_count_as_the_rule_does(catalogue):
+def test_weak_hits_count_as_the_rule_does(weak_hits):
     # three different words are a cluster; one word three times is a habit, and counts once
     three = "Az átfogó terv kulcsfontosságú lépései elengedhetetlenek."
     again = "Átfogó felmérés, átfogó jelentés, átfogóbb terv."
-    assert _weak_hits(catalogue, three, "document") == 3
-    assert _weak_hits(catalogue, again, "document") == 1
+    assert weak_hits(three, "document") == 3
+    assert weak_hits(again, "document") == 1
     # a dash pair around one aside is one habit, and so are two quotes in English marks
     dashes = "Az ajánlat " + EM + " bár drágább a tavalyinál " + EM + " megéri."
     quotes = "A gomb neve " + OPEN + "Mentés" + HIGH + ", a menüé " + OPEN + "Fájl" + HIGH + "."
-    assert _weak_hits(catalogue, dashes, "document") == 1
-    assert _weak_hits(catalogue, quotes, "document") == 1
+    assert weak_hits(dashes, "document") == 1
+    assert weak_hits(quotes, "document") == 1
 
 
-def test_three_different_weak_phrases_in_a_report_are_a_cluster(catalogue):
+def test_three_different_weak_phrases_in_a_report_are_a_cluster(weak_hits):
     # The maintainer judged a two-sentence report of this shape machine-made (#28): three different phrases are three.
     report = "Az átfogó leltár lezárult. A frissítés minden gépen elengedhetetlen, beleértve a laptopokat is."
-    assert _weak_hits(catalogue, report, "document") == signs.WEAK_CLUSTER
+    assert weak_hits(report, "document") == signs.WEAK_CLUSTER
 
 
-def test_a_term_s_alternatives_are_split_at_the_top_level():
-    assert _alternatives("a|b(?:c|d)|[|]e") == ["a", "b(?:c|d)", "[|]e"]
-    assert _alternatives(r"x\|y") == [r"x\|y"]
+def test_a_term_s_alternatives_are_split_at_the_top_level(alternatives):
+    assert alternatives("a|b(?:c|d)|[|]e") == ["a", "b(?:c|d)", "[|]e"]
+    assert alternatives(r"x\|y") == [r"x\|y"]
 
 
 def _plain(text: str) -> str:
@@ -349,12 +286,12 @@ def _start(alternative: str) -> str:
     return _plain(re.split(r"[\[(\\]", alternative, maxsplit=1)[0])
 
 
-def _misordered(regex: str) -> list[list[str]]:
-    groups = [_alternatives(group) for group in _groups(regex)]
+def _misordered(regex: str, alternatives: Callable[[str], list[str]]) -> list[list[str]]:
+    groups = [alternatives(group) for group in _groups(regex)]
     return [items for items in groups if len(items) > 1 and [_start(i) for i in items] != sorted(map(_start, items))]
 
 
-def test_hungarian_alternations_run_in_alphabetical_order(catalogue):
+def test_hungarian_alternations_run_in_alphabetical_order(catalogue, alternatives):
     # hu.toml's header: our own order is alphabetical, so no source's order can come back (#28's review). A group with
     # a class or an escape in it is read by each alternative's literal start (F9); any-didactic-aside's English groups
     # are main's, already in order.
@@ -370,15 +307,15 @@ def test_hungarian_alternations_run_in_alphabetical_order(catalogue):
     assert didactic is not None
     regexes.append(("any-didactic-aside", didactic.pattern))
     assert sum(len(_groups(regex)) for _, regex in regexes) >= 15  # the parse finds the groups, so the test can fail
-    wrong = [(sign, items) for sign, regex in regexes for items in _misordered(regex)]
+    wrong = [(sign, items) for sign, regex in regexes for items in _misordered(regex, alternatives)]
     assert wrong == []
 
 
-def test_the_order_rule_reads_groups_with_classes_and_escapes():
+def test_the_order_rule_reads_groups_with_classes_and_escapes(alternatives):
     # reversed, a suffix group with classes and a group with escapes both fail, so the test above can't pass on nothing
-    assert _misordered(r"-(?:v[ae]l|t|n[ae]k|b[ae]n?)\b") == [["v[ae]l", "t", "n[ae]k", "b[ae]n?"]]
-    assert _misordered(r",\s+(?:így\s+|ezzel is\s+)?") == [["így\\s+", "ezzel is\\s+"]]
-    assert _misordered(r"(?:b[ae]n?|n[ae]k|t|v[ae]l)(?:ezzel is\s+|így\s+)") == []
+    assert _misordered(r"-(?:v[ae]l|t|n[ae]k|b[ae]n?)\b", alternatives) == [["v[ae]l", "t", "n[ae]k", "b[ae]n?"]]
+    assert _misordered(r",\s+(?:így\s+|ezzel is\s+)?", alternatives) == [["így\\s+", "ezzel is\\s+"]]
+    assert _misordered(r"(?:b[ae]n?|n[ae]k|t|v[ae]l)(?:ezzel is\s+|így\s+)", alternatives) == []
 
 
 def test_hungarian_term_lists_run_in_alphabetical_order(catalogue):

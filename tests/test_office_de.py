@@ -6,7 +6,6 @@ person's, never a sign. A weak sign may fire: it counts only in a cluster, and p
 The low and high quotes and the short and long dashes are written as escapes, as ruff refuses them in source; the first
 test holds that they are the real marks."""
 
-import re
 import unicodedata
 
 import pytest
@@ -155,24 +154,6 @@ KINDS = [
 ]
 
 
-def _reads(sign: signs.Sign, kind: str) -> bool:
-    return bool({"any", kind} & set(sign.kinds))
-
-
-@pytest.fixture(scope="module")
-def catalogue():
-    found, problems = signs.load()
-    assert problems == []
-    return found
-
-
-@pytest.fixture(scope="module")
-def counted_alone(catalogue):
-    found = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength != "weak"]
-    assert found
-    return found
-
-
 def test_the_marks_are_the_real_ones():
     # an escape that lost its backslash would leave the lines holding ASCII, and the test passing on nothing
     assert unicodedata.name(LOW) == "DOUBLE LOW-9 QUOTATION MARK"
@@ -184,8 +165,8 @@ def test_the_marks_are_the_real_ones():
 
 
 @pytest.mark.parametrize(("text", "kind"), KINDS)
-def test_no_sign_that_counts_alone_fires_on_plain_german_work_text(counted_alone, text, kind):
-    fired = [sign.id for sign in counted_alone if _reads(sign, kind) and sign.pattern and sign.pattern.search(text)]
+def test_no_sign_that_counts_alone_fires_on_plain_german_work_text(counted_alone, reads, text, kind):
+    fired = [sign.id for sign in counted_alone if reads(sign, kind) and sign.pattern and sign.pattern.search(text)]
     assert fired == []
 
 
@@ -284,72 +265,26 @@ def test_the_signs_still_find_what_they_are_for_in_german(counted_alone, sign, t
     assert pattern.search(text), sign
 
 
-def _alternatives(term: str) -> list[str]:
-    """A term's top-level alternatives: `a|b` is two phrases, `(?:a|b)c` one phrase with two spellings."""
-    found, depth, start, escaped, in_class = [], 0, 0, False, False
-    for n, char in enumerate(term):
-        if escaped:
-            escaped = False
-        elif char == "\\":
-            escaped = True
-        elif in_class:
-            in_class = char != "]"
-        elif char == "[":
-            in_class = True
-        elif char == "(":
-            depth += 1
-        elif char == ")":
-            depth -= 1
-        elif char == "|" and depth == 0:
-            found.append(term[start:n])
-            start = n + 1
-    return [*found, term[start:]]
-
-
-def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
-    """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
-    Each alternative of a term is a phrase of its own, one phrase however its endings vary; a check is one habit however
-    often it fires; one phrase two signs find counts once. German is written with spaces, so a phrase has word edges,
-    as `validate` gives it (#23's review, F10)."""
-    counted: set[str] = set()
-    spans: list[tuple[int, int]] = []
-    for sign in catalogue.signs.values():
-        if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
-            continue
-        phrases = [
-            (phrase, re.compile(rf"\b(?:{phrase})\b", re.IGNORECASE | re.MULTILINE))
-            for term in sign.terms
-            for phrase in _alternatives(term.term)
-        ]
-        for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
-            for found in pattern.finditer(text):
-                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
-                    continue
-                counted.add(phrase)
-                spans.append(found.span())
-    return len(counted)
-
-
 @pytest.mark.parametrize(("text", "kind"), KINDS)
-def test_plain_german_work_text_makes_no_weak_cluster(catalogue, text, kind):
+def test_plain_german_work_text_makes_no_weak_cluster(weak_hits, text, kind):
     for paragraph in text.split("\n\n"):
-        assert _weak_hits(catalogue, paragraph, kind) < signs.WEAK_CLUSTER, paragraph
+        assert weak_hits(paragraph, kind) < signs.WEAK_CLUSTER, paragraph
 
 
-def test_weak_hits_count_as_the_rule_does(catalogue):
+def test_weak_hits_count_as_the_rule_does(weak_hits):
     # three different phrases are a cluster; one phrase three times is a habit, and counts once
     three = "Im Herzen der Altstadt liegt ein atemberaubendes Café mit wegweisendem Konzept."
     again = "Atemberaubend der Blick, atemberaubend das Essen, atemberaubend der Preis."
-    assert _weak_hits(catalogue, three, "post") == 3
-    assert _weak_hits(catalogue, again, "post") == 1
+    assert weak_hits(three, "post") == 3
+    assert weak_hits(again, "post") == 1
     # two participles of one term are two different words
     two = "Die Halle wurde erweitert, den Standort betonend und das Wachstum verdeutlichend."
-    assert _weak_hits(catalogue, two, "post") == 2
+    assert weak_hits(two, "post") == 2
 
 
-def test_a_term_s_alternatives_are_split_at_the_top_level():
-    assert _alternatives("a|b(?:c|d)|[|]e") == ["a", "b(?:c|d)", "[|]e"]
-    assert _alternatives(r"x\|y") == [r"x\|y"]
+def test_a_term_s_alternatives_are_split_at_the_top_level(alternatives):
+    assert alternatives("a|b(?:c|d)|[|]e") == ["a", "b(?:c|d)", "[|]e"]
+    assert alternatives(r"x\|y") == [r"x\|y"]
 
 
 # Word lists people use at work: they read posts and documents, never mail or chat (#4).
@@ -387,13 +322,13 @@ def test_the_sowohl_triad_is_for_the_model_s_read(catalogue):
         ("de-future-closers", "Wir dürfen gespannt sein, was der Kunde sagt."),
     ],
 )
-def test_what_chat_says_too_fires_only_where_the_sign_reads(catalogue, sign, text):
+def test_what_chat_says_too_fires_only_where_the_sign_reads(catalogue, reads, sign, text):
     # each fires on a plain chat line, which is why it reads posts and documents only
     found = catalogue.signs[sign]
     assert found.pattern is not None
     assert found.pattern.search(text)
-    assert not _reads(found, "message")
-    assert not _reads(found, "email")
+    assert not reads(found, "message")
+    assert not reads(found, "email")
 
 
 # German typography: no formatting sign a German draft reads may fire on it, whatever its strength.

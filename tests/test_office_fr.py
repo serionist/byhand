@@ -165,20 +165,6 @@ OFFICE = [
 ]
 
 
-@pytest.fixture(scope="module")
-def catalogue():
-    found, problems = signs.load()
-    assert problems == []
-    return found
-
-
-@pytest.fixture(scope="module")
-def counted_alone(catalogue):
-    found = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength != "weak"]
-    assert found
-    return found
-
-
 def test_no_french_check_counts_alone(counted_alone):
     # fr-stock-openers was the last, made weak in #24's review: a speech or an edito opens that way too. A French sign
     # with a pattern that counts alone needs its lines in MACHINE below, a line per branch of its check.
@@ -269,32 +255,6 @@ def test_the_signs_still_find_what_they_are_for_in_french(counted_alone, sign, t
     assert pattern.search(text), sign
 
 
-def _reads(sign: signs.Sign, kind: str) -> bool:
-    return bool({"any", kind} & set(sign.kinds))
-
-
-def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str) -> int:
-    """Hits of the weak signs a kind of writing reads, as the cluster rule counts them: each a different word or phrase.
-    A term is one phrase however its endings vary, and a check one habit however often it fires; one phrase two signs
-    find counts once."""
-    counted: set[str] = set()
-    spans: list[tuple[int, int]] = []
-    for sign in catalogue.signs.values():
-        if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
-            continue
-        # each term with the word edges `validate` gives it, French being written with spaces
-        phrases = [
-            (term.term, re.compile(rf"\b(?:{term.term})\b", re.IGNORECASE | re.MULTILINE)) for term in sign.terms
-        ]
-        for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
-            for found in pattern.finditer(text):
-                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
-                    continue
-                counted.add(phrase)
-                spans.append(found.span())
-    return len(counted)
-
-
 WEAK_CASES = [
     (FORMAL_MAIL, "email"),
     (NOTICE, "email"),
@@ -313,25 +273,25 @@ WEAK_CASES = [
 
 
 @pytest.mark.parametrize(("text", "kind"), WEAK_CASES)
-def test_plain_french_work_text_is_no_weak_cluster(catalogue, text, kind):
-    assert _weak_hits(catalogue, text, kind) < signs.WEAK_CLUSTER
+def test_plain_french_work_text_is_no_weak_cluster(weak_hits, text, kind):
+    assert weak_hits(text, kind) < signs.WEAK_CLUSTER
 
 
-def test_the_weak_counting_counts_a_cluster(catalogue):
+def test_the_weak_counting_counts_a_cluster(weak_hits):
     # so the test above can fail: three different weak phrases in one paragraph of a post
     text = (
         "Dans cet article, nous allons voir pourquoi ce partenariat crée une synergie rare. "
         "Il convient de souligner que nos équipes sont plus motivées que jamais."
     )
-    assert _weak_hits(catalogue, text, "post") >= signs.WEAK_CLUSTER
+    assert weak_hits(text, "post") >= signs.WEAK_CLUSTER
 
 
-def test_one_habit_repeated_counts_once(catalogue):
+def test_one_habit_repeated_counts_once(weak_hits):
     text = "Notre synergie avec Lyon et notre synergie avec Lille comptent. Les synergies se multiplient."
-    assert _weak_hits(catalogue, text, "document") == 1
+    assert weak_hits(text, "document") == 1
 
 
-def test_only_the_hedge_stack_reads_mail_and_chat_among_the_french_weak_checks(catalogue):
+def test_only_the_hedge_stack_reads_mail_and_chat_among_the_french_weak_checks(catalogue, reads):
     # The set phrases of formal mail and office chat (il convient de, soyons clairs, Et vous ?, #canal) would add up in
     # mail; the French weak checks read posts and documents, and only the doubled hedge reads every kind.
     reading_mail = sorted(
@@ -340,7 +300,7 @@ def test_only_the_hedge_stack_reads_mail_and_chat_among_the_french_weak_checks(c
         if sign.language == "fr"
         and sign.pattern
         and sign.strength == "weak"
-        and (_reads(sign, "email") or _reads(sign, "message"))
+        and (reads(sign, "email") or reads(sign, "message"))
     )
     assert reading_mail == ["fr-hedge-stack"]
     assert set(catalogue.signs["fr-engagement-lines"].kinds) == {"post"}

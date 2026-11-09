@@ -12,3 +12,5 @@ before `1.0` a minor may break something, under Breaking.
   styles in `~/.byhand/styles/`.
 - `/byhand:check`: finds the signs of AI writing in a text or a file, in any of the catalogue's languages, with
   their lines and what a person writes instead. No score. A file's patterns run through its `scan` agent.
+- Spanish signs: 11 of Spanish's own, and Spanish forms in seven signs every language shares. Until a native speaker
+  reads them, each of Spanish's own signs counts only beside two others.

@@ -1,0 +1,215 @@
+# Spanish's signs. A sign here cites a source that covers Spanish; the shape of a sign is in `any.toml`. A term is a
+# regular-expression fragment, and `validate` wraps the list in `\b`, so a term starts and ends at a word's edge. Spanish
+# inflects for gender, number and person, so a term lists its forms or writes a stem.
+#
+# Order: every alternation, every term list and every list of examples in a `what` or `instead` runs in alphabetical
+# order of its plain text, accents and case ignored, as in every language (tests/test_order.py).
+#
+# What these rest on: humanizer-es lists Spanish tells for a rewriting skill and tested its checker on human and model
+# texts; Alonso Simón et al. 2025 measured GPT-3.5 and GPT-4 against people in 180 Spanish texts; Resende and Castilho
+# 2026 measured GPT-4o's Spanish stories. None measured work mail, and no native speaker has read these yet. So every
+# Spanish sign is weak until one does, and a sign that counts alone would have no pattern: the model reads for it. The
+# Spanish checks read posts and documents, but the dash, as the set phrases of mail (No dude en contactarme, Quedo
+# atento, Lamentamos las molestias) are a person's; es-service-script, which reads mail, has no pattern.
+# A calque of English (de acuerdo a, hacer sentido, Title Case, tomar acción) is translationese, which people write
+# too: no source measures models writing one more than people, and humanizer-es's 30 model texts hold none of its
+# phrase calques, so none has a sign. Spanish typography is no tell either: ¿ and ¡, the raya around an aside and before dialogue, « » and “ ”.
+# Left-out ¿ and ¡ in chat are a person's. tests/test_office_es.py holds plain Spanish mail, chat and reports against
+# every sign that counts alone, and against a weak cluster.
+
+# Structure: how the text is built.
+
+[[sign]]
+id = "es-false-contrast"
+category = "structure"
+kinds = ["post", "document"]
+models = "any"
+# any-negative-parallelism says what the habit is; this sign holds its Spanish forms and their check. "No solo X, sino
+# también Y" is ordinary Spanish and the check leaves it alone.
+what = "The Spanish forms of a set-up contrast: no es solo… es…, no se trata de… se trata de…, or a run of Sin… fragments."
+instead = "Say what the thing does, with a figure or an example, and drop the foil."
+strength = "weak"
+check = '''\bno (?:es|son) (?:simplemente|solamente|solo|sólo|únicamente) [^.!?;:\n]{1,60}[,;:]\s*(?:es|son)\b|\bno se trata (?:solo |sólo )?de [^.!?;\n]{1,60}[,.;]\s*se trata de\b|(?:^|[.!?]\s+)(?-i:Sin) [^.,;:!?\n]{1,30}\.\s+(?-i:Sin) [^.,;:!?\n]{1,30}\.'''
+flags = "El huerto comunitario no es solo un terreno con tomates, es el corazón del barrio."
+passes = "El huerto comunitario no es solo para socios: cualquier vecino puede regar los sábados."
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, A1; tools/deslop_es.py, ESTRUCTURAS, commit ac2a31be1a71", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "es-gpt-adjective-load"
+category = "structure"
+kinds = ["post", "document"]
+models = [{ family = "gpt", from = "3.5", to = "4" }]
+what = "Loads nouns with adjectives, more of them and more varied than people use, and uses fewer adverbs and pronouns."
+instead = "Keep the adjective that says something; let an adverb, a pronoun or a verb do the rest."
+strength = "weak"
+flags = "Una propuesta innovadora y ambiciosa para un barrio vivo y acogedor, con espacios verdes amplios y luminosos."
+passes = "Proponemos abrir el patio del colegio por las tardes; así los vecinos lo usan y nadie paga más."
+sources = [
+  { source = "alonso-simon-2025-spanish", where = "6.1 and 7: adjectives and distinct adjectives up, adverbs and pronouns down, in 120 GPT-3.5 and GPT-4 texts against 60 human ones", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "es-gpt-short-sentences"
+category = "structure"
+kinds = ["post", "document"]
+models = [{ family = "gpt", from = "3.5", to = "4" }]
+what = "Chops Spanish prose into many short sentences, each ended with a full stop, where a person joins clauses with brackets, colons, commas or semicolons."
+instead = "Join what belongs together; let a long sentence carry an aside after a colon or in brackets."
+strength = "weak"
+flags = "El taller abre en marzo. Está en la calle Mayor. Tiene diez plazas. Las clases son los martes. Cuesta 40 euros."
+passes = "El taller abre en marzo en la calle Mayor, con diez plazas; las clases son los martes (40 euros al mes)."
+sources = [
+  { source = "alonso-simon-2025-spanish", where = "6.2 and 6.3, Tabla 7: more full stops and sentences, fewer commas, colons, semicolons, brackets and quotes than people", seen = 2026-11-09 },
+  { source = "resende-castilho-2026-style", where = "3.2 and 3.3: GPT-4o's Spanish original at less than half the human sentence length", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "es-mixed-address"
+category = "structure"
+kinds = ["any"]
+models = "any"
+what = "Switches between tú and usted, or between imperative and infinitive steps, within one text."
+instead = "Keep one form of address for the reader and one form for the steps."
+strength = "weak"
+flags = "Hola, Marta: te mando el contrato. Revíselo con calma y fírmelo cuando pueda."
+passes = "Hola, Marta: te mando el contrato. Revísalo con calma y fírmalo cuando puedas."
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, C8, commit ac2a31be1a71", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "es-service-script"
+category = "structure"
+kinds = ["email", "message"]
+models = "any"
+what = "Stacks the customer-service script: a team working hard, an offer to get in touch, regret for the inconvenience, thanks for patience and understanding. Each alone is a person's set phrase."
+instead = "Name the cause and the date that now holds, then sign off once."
+strength = "weak"
+flags = "Sentimos mucho las molestias causadas y te agradecemos de corazón tu paciencia y comprensión. Todo el equipo está volcado en solucionarlo. Para cualquier duda, no dudes en escribirnos."
+passes = "Perdona el retraso: el proveedor nos falló y tu pedido sale el jueves. Te escribo en cuanto tenga el número de seguimiento."
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, D10 and D11; evals/dev/raw: the apology for the inconvenience in 4 of 30 model texts, none of the 4 human ones, commit ac2a31be1a71", seen = 2026-11-09 },
+]
+
+# Phrases.
+
+[[sign]]
+id = "es-engagement-lines"
+category = "phrase"
+kinds = ["post"]
+models = "any"
+what = "Ends a social post on stock bait: asks readers to comment below, or to save the post."
+instead = "Ask one real question, or end on the news."
+strength = "weak"
+terms = [
+  { term = '''(?:cuéntame|cuéntanos|déjame|déjanos) (?:tu opinión )?en (?:los )?comentarios''', instead = "ask one real question" },
+  { term = '''guarda (?:esta publicación|este post)''', instead = "cut" },
+  { term = '''te leo en (?:los )?comentarios''', instead = "cut" },
+]
+flags = "Este año plantamos 300 árboles en el parque. ¡Te leo en los comentarios!"
+passes = "Este año plantamos 300 árboles en el parque. El sábado toca el talud del río, a las diez."
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, D8; tools/deslop_es.py, REDES, commit ac2a31be1a71", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "es-filler-hinges"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Hangs a sentence on a hinge that only announces it: cabe señalar que, es fundamental destacar que, vale la pena mencionar que."
+instead = "Cut the hinge; the sentence says the same without it."
+strength = "weak"
+terms = [
+  { term = '''cabe (?:destacar|mencionar|recalcar|resaltar|señalar) que''', instead = "cut" },
+  { term = '''es (?:fundamental|importante) (?:destacar|mencionar|recalcar|resaltar|señalar) que''', instead = "cut" },
+  { term = '''sin lugar a dudas?''', instead = "cut, or give the evidence" },
+  { term = '''vale la pena (?:destacar|mencionar|señalar) que''', instead = "cut" },
+]
+flags = "Para el viaje de fin de curso, cabe destacar que el autobús sale a las siete."
+passes = "Para el viaje de fin de curso, el autobús sale a las siete. Que cada niño lleve su merienda."
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, D2; tools/deslop_es.py, MULETILLAS, commit ac2a31be1a71", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "es-inflated-stakes"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Frames a plain fact as an epoch or a turning point: en el mundo actual, hoy más que nunca, punto de inflexión, un antes y un después."
+instead = "Give the date, the number or the change itself."
+strength = "weak"
+terms = [
+  { term = '''en el (?:mundo|panorama) actual''', instead = "cut" },
+  { term = '''en la era (?:de la ia|de la inteligencia artificial|digital)''', instead = "cut" },
+  { term = '''en un mundo (?:cada vez más|en constante)''', instead = "cut" },
+  { term = '''hoy más que nunca''', instead = "cut" },
+  { term = '''(?:marca|marcan|marcará|marcó) un antes y un después''', instead = "say what changed" },
+  { term = '''punto de inflexión''', instead = "give the date" },
+  { term = '''(?:sentaron|sentó|sienta|sientan) las bases''', instead = "say what it starts" },
+]
+flags = "En el mundo actual, la panadería del barrio sienta las bases de otra forma de desayunar."
+passes = "La panadería del barrio abre a las siete desde el lunes y vende pan de centeno."
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, D3 and D4; tools/deslop_es.py, MULETILLAS, commit ac2a31be1a71", seen = 2026-11-09 },
+]
+
+[[sign]]
+id = "es-staged-reveal"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Stages a point before making it: a question it answers at once (¿El resultado?), la buena noticia es que, la verdadera pregunta es."
+instead = "State the point; let the fact carry it."
+strength = "weak"
+check = '''¿(?:el|la) (?:clave|diferencia|resultado|secreto)\?\s+\S|\b(?:la buena noticia es que|la verdadera pregunta es|lo que realmente importa es)\b'''
+flags = "Cambiamos el horario de reparto. ¿El resultado? Ninguna queja en octubre."
+passes = "Cambiamos el horario de reparto y en octubre no hubo quejas. ¿El resultado del sondeo llega el lunes?"
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, A3 and A4; tools/deslop_es.py, ESTRUCTURAS, commit ac2a31be1a71", seen = 2026-11-09 },
+]
+
+# Words.
+
+[[sign]]
+id = "es-ai-vocabulary"
+category = "word"
+kinds = ["post", "document"]
+models = "any"
+what = "Leans on the words Spanish model prose favours: adéntrate, de vanguardia, fascinante, sinergia, sumérgete, vibrante. One alone is ordinary Spanish."
+instead = "Use the plain word, or the fact the word stands in for."
+strength = "weak"
+terms = [
+  { term = '''adéntrate''', instead = "cut" },
+  { term = '''de vanguardia''', instead = "say what is new" },
+  { term = '''fascinantes?''', instead = "say what is interesting" },
+  { term = '''sinergias?''', instead = "say who does what together" },
+  { term = '''sumérgete''', instead = "cut" },
+  { term = '''vibrantes?''', instead = "lively, or the fact" },
+]
+flags = "Sumérgete en un barrio vibrante con una oferta cultural fascinante."
+passes = "El barrio tiene dos teatros, un cine de verano y mercado los jueves."
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, D1; tools/deslop_es.py, LEXICO, commit ac2a31be1a71", seen = 2026-11-09 },
+]
+
+# Formatting: what the text looks like on the page.
+
+[[sign]]
+id = "es-dash-pivots"
+category = "formatting"
+kinds = ["any"]
+models = "any"
+what = "Uses the long dash the English way, as a pivot: spaced on both sides, or joined to the words on both sides. Spanish opens a raya before an aside and closes it after, and starts dialogue with one."
+instead = "Use a colon, a comma or a full stop; keep the raya for a real aside or dialogue."
+strength = "weak"
+check = '''[^\W\d_]—[^\W\d_]| — '''
+flags = "El mercadillo vuelve el domingo — y esta vez con churros."
+passes = "El mercadillo —que estuvo cerrado en agosto— vuelve el domingo, y esta vez con churros."
+sources = [
+  { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, E1; evals/contestants/omel/SKILL.md, ES-RAYA-01 and ES-RAYA-03, commit ac2a31be1a71", seen = 2026-11-09 },
+  { source = "resende-castilho-2026-style", where = "3.3: no em dashes in the human Spanish texts, 2.9 and 25.3 per 1,000 tokens in GPT-4o's", seen = 2026-11-09 },
+]

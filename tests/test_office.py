@@ -177,15 +177,6 @@ OFFICE = [
 ]
 
 
-@pytest.fixture(scope="module")
-def counted_alone():
-    catalogue, problems = signs.load()
-    assert problems == []
-    found = [sign for sign in catalogue.signs.values() if sign.pattern and sign.strength != "weak"]
-    assert found
-    return found
-
-
 @pytest.mark.parametrize("text", OFFICE)
 def test_no_sign_that_counts_alone_fires_on_plain_office_text(counted_alone, text):
     assert [sign.id for sign in counted_alone if sign.pattern and sign.pattern.search(text)] == []

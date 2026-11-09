@@ -551,12 +551,12 @@ instead = "Delete the token and cite the source, or cut the claim."
 strength = "strong"
 check.any = 'contentReference\[oaicite|oaicite:\d|oai_citation|attributableIndex|turn\d+(?:file|image|news|search)\d+'
 check.de = 'gehe zu suche nr'
-# Finnish: ChatGPT's source chips pasted as text, a name of up to three words with +1 to +9 glued on, right after a
-# sentence's full stop, after a word or a year, as wikipedia-fi shows each one (keväällä. Oulun kaupunki+1). A sign-up
-# list, a score or code (Matti+1, HIFK+3, count+1) has no such full stop before the name, nor does a numbered list,
-# a date or a time (1. Matti+1, la 12.10. Matti+1, klo 9. Tiimi+2), and each passes; so do C++, Disney+,
-# Erasmus+-hanke, 2+1 and +358. A + glued to a name after an abbreviation (esim. Matti+1) still fires: rare.
-check.fi = '(?:[^\W\d_]|\d{4})\.\s(?:[^\W\d_]+\s){0,2}[^\W\d_]{2,}\+[1-9](?:\D|$)'
+# Finnish: ChatGPT's source chips pasted as text, two or more glued in a row, a name with +1 to +9 and the next name
+# with no space (Suomi+5RakennusFakta+5NCC+5, kaupunki+2Oulun), as wikipedia-fi shows four of its six. A lone chip
+# (keväällä. Oulun kaupunki+1) is left out: it is a person's sign-up list or score in every shape round 1 to 3 of #86's
+# review tried (Matti+1, 1. Matti+1, Kiitos kutsusta. Matti+1 tulee., HIFK+3, count+1). C++, Disney+,
+# Erasmus+-hanke, 2+1 and +358 pass.
+check.fi = '[^\W\d_]{2}\+[1-9][^\W\d_]{2}'
 flags = "The bridge opened in 1932. :contentReference[oaicite:3]{index=3}"
 passes = "The bridge opened in 1932 (county archive, box 12)."
 sources = [
@@ -763,9 +763,9 @@ check.pt = '^\W*(?:gostaria que eu (?:[ao] )?(?:adaptasse|ampliasse|desenvolvess
 check.ru = '^\W*сообщите мне, если хотите, чтобы (?:я (?:адаптировал|дополнил|доработал|изменил|переписал|расширил|сократил)|(?:документ|статья|текст) был\w* (?:расширен|сокращ[её]н|доработан|переписан|адаптирован))'
 # Vietnamese, from the line vietnamese-humanizer tells its model not to add (Nếu bạn cần, tôi có thể…): an offer to
 # rework the text, as English's: the verb, then the text (đoạn, bài viết, nội dung, văn bản) as the whole object,
-# ending there or at này, trên or cho. A person's offer of data or of another document (gửi thêm số liệu gốc, bổ sung
+# ending there or at a word that goes on about the rework (này, cho, theo, thành, với, để, xuống, trên, hoặc). A person's offer of data or of another document (gửi thêm số liệu gốc, bổ sung
 # thêm số liệu, chỉnh sửa lại hợp đồng, chỉnh sửa nội dung hợp đồng, viết lại văn bản đề nghị) passes.
-check.vi = '^\W*nếu bạn cần,? tôi có thể (?:chỉnh sửa|mở rộng|rút gọn|viết lại) (?:lại )?(?:bài viết|nội dung|văn bản|đoạn(?: văn)?)(?: (?:cho|này|trên)\b|\s*[!,.:;?]|\s*$)'
+check.vi = '^\W*nếu bạn cần,? tôi có thể (?:chỉnh sửa|mở rộng|rút gọn|viết lại) (?:lại )?(?:bài viết|nội dung|văn bản|đoạn(?: văn)?)(?: (?:cho|hoặc|này|thành|theo|trên|với|xuống|để)\b|\s*[!,.:;?]|\s*$)'
 flags = "The committee meets each spring.\n\nWould you like me to expand this into a one-page handout?"
 passes = "The committee meets each spring.\n\nWould you like me to bring the projector, or will Sam?"
 sources = [

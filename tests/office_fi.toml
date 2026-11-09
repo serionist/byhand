@@ -56,6 +56,9 @@ chat = [
   "Ilmoittautuneet:\n1. Matti+1\n2. Liisa",
   "Juhlat la 12.10. Matti+1 ja Liisa+1 tulevat.",
   "Aamupalaveri klo 9. Tiimi+2 aloittaa.",
+  "Kiitos kutsusta. Matti+1 tulee.",
+  "Mökki varattu. Matti+1",
+  "Väkiluku kasvoi 3 %. Tilastokeskus+1",
   "Korjaa silmukka niin, että indeksi on count+1.",
   "onks kellään palaverin linkkiä?",
   "Onko huomenna palaveria?",
@@ -139,7 +142,7 @@ typography = [
 # What each sign exists to catch, inside Finnish text: a line for each Finnish form of an `any` check, and one for
 # each artefact, which is the same string in every language.
 machine = [
-  { sign = "any-chatgpt-citation-markup", text = "Rakennuslupa myönnettiin keväällä. Oulun kaupunki+1" },
+  { sign = "any-chatgpt-citation-markup", text = "Rakennuslupa myönnettiin keväällä. Oulun kaupunki+2Oulun kaupunki+2" },
   { sign = "any-chatgpt-citation-markup", text = "Työmaa alkaa maaliskuussa. PERI Suomi+5RakennusFakta+5NCC+5" },
   { sign = "any-flattering-agreement", text = "Hyvä kysymys! Tämä on yksi tärkeimmistä aiheista juuri nyt." },
   { sign = "any-flattering-agreement", text = "Erinomainen huomio! Katsotaan asiaa tarkemmin." },

@@ -29,9 +29,10 @@ licences and revisions.
 |---|---|
 | es.wikipedia: `Wikipedia:Comunicación mediante mensajes generados por inteligencia artificial` (`WP:Chatbots`, rev. 175850486) and `Wikipedia:Redacción con modelos de lenguaje grandes` (rev. 175831506) | Policy pages: no AI text in articles or on talk pages, and only "formal polish and commonplaces" as a trait. Too thin. Wikidata lists no Spanish version of Signs of AI writing. |
 | Hainrixz/humanizalo (MIT, 97 stars) | Its word list is English's (blader/humanizer's), and its Spanish examples translate English ones: little Spanish of its own in what was read. |
-| mattc95/Humanizer-es, Milevan/humanizer-es, alvaromieres9/humanizer-es, madebydiego/humanizador, omelyanchuk2593/humanizer-es | Small, one to five stars; `humanizer-es` credits all but mattc95's for its Spanish layer; omelyanchuk2593's is a port of blader/humanizer and humanizer-ru. madebydiego's country packs (Mexico, Bolivia) are worth a look when a variety matters. |
-| ToniPerea/humanizar-texto-es, josedelsol1/escritura-humana, LucassToledo/anti-texto-basura, Carlosyekana/antislop | No licence or NOASSERTION, a few commits, no evidence behind the rules. |
-| ljmor/my-humanizer-es-en, kevin0818-lxd/turnitout-essay-humanizer | Detector evasion: sold to get past stylometric detectors and Turnitin. |
+| Milevan/humanizer-es, alvaromieres9/humanizer-es, madebydiego/humanizador, omelyanchuk2593/humanizer-es | Small, none above one star. `humanizer-es` credits the first three for its Spanish layer and omelyanchuk2593's for Spanish false positives; omelyanchuk2593's is a port of blader/humanizer and humanizer-ru. madebydiego's country packs (Mexico, Bolivia) are worth a look when a variety matters. |
+| ToniPerea/humanizar-texto-es, josedelsol1/escritura-humana, LucassToledo/anti-texto-basura | No licence or NOASSERTION, a few commits, no evidence behind the rules. |
+| Carlosyekana/antislop | MIT, but one commit and no evidence behind its rules. |
+| ljmor/my-humanizer-es-en, kevin0818-lxd/turnitout-essay-humanizer, mattc95/Humanizer-es | Detector evasion: each says it is made to get past AI detectors (stylometric ones, Turnitin, detection tools). |
 | ROBOT-TALK corpus (Complutense, 5,017 Spanish texts by people and by Gemini, Claude, GPT, Mixtral and DeepSeek) | No download and no licence on its page. The RAEL paper is its team's; watch it for a release. |
 | symanto/autextification2023 (Hugging Face) | CC BY-NC-SA, 2023 models only. |
 | Press and blogs: pasqualepillitteri.it, wwwhatsnew, INESEM, Decrypt, El Heraldo | SEO content or retellings of English Wikipedia and Pangram; no evidence of their own. |

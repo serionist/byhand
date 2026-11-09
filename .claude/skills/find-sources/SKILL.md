@@ -15,8 +15,8 @@ maintainer asks, never on a schedule. `docs/research/2026-11-06-sources.md` is h
 
 ## Steps
 
-1. **Start** with `start-work`: the issue the maintainer names, or one for this run, and a branch. New sources with no
-   sign need no plan, as a sign doesn't; the PR says `Trivial: new sources, no sign`.
+1. **Start** with `start-work`: the issue the maintainer names, or one for this run, a branch, and whether it needs a
+   plan, by the rule in `docs/plans/README.md`.
 2. **What to search.** The languages or families the maintainer names. None named: the languages no source covers,
    most spoken first,
 
@@ -37,7 +37,8 @@ maintainer asks, never on a schedule. `docs/research/2026-11-06-sources.md` is h
 5. **Keep or drop.** Keep a source that names signs of AI writing in a language or a family's habits, with evidence
    or a method behind them. Drop, and say why in step 7:
    - a detector-evasion tool: a humaniser sold to get past detectors, an "undetectable" rewriter, a watermark remover;
-   - a source already listed (search `sources.toml` for its URL), or a fork or translation of one that adds nothing;
+   - a source already listed or dropped (search `sources.toml` and `docs/research/` for its URL), or a fork or
+     translation of one that adds nothing;
    - a page with no evidence, such as SEO content or a detector's advert; too thin to cite, but recorded.
 6. **Each find, an entry** at the end of `sources.toml`, in the schema `load_sources` in `src/byhand/signs.py` checks:
    - `licence` as the source states it: its LICENSE file or page, never GitHub's label alone (`NOASSERTION` means read

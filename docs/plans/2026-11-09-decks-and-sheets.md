@@ -1,9 +1,9 @@
 ---
 title: Write the text of decks and sheets for whatever makes the file
 issue: "#66"
-status: draft
-approved_by:
-approved_at:
+status: approved
+approved_by: serionist
+approved_at: 2026-11-09
 ---
 
 # Write the text of decks and sheets for whatever makes the file
@@ -67,16 +67,19 @@ Today `render.draft_files` gives a deck the layout files alone, so a Hungarian d
 
 - a sign renders into each file a reader of its kinds reads: the short file when its kinds hold `any`, `message` or
   `email`; else the long file when they hold `post` or `document`, and the layout file when they hold `deck` or
-  `sheet`, both when both (`part` becomes `parts`; a sign in two families already renders twice);
+  `sheet`, both when both (`part` becomes `parts`; a sign in two families already renders twice). A short-file sign
+  stays in the short file alone, `deck` in its kinds or not, as a deck reads that file;
 - a deck or a sheet reads the short files and the layout files: every sign whose kinds hold it, and none of the 82
   post-and-document signs it would skip by kind;
-- every sign whose kinds name `document` and not `deck`, 76 in the short and long files, is a sign slide text read
+- every sign whose kinds name `document` and not `deck`, 81 (76 in the long files, 5 in the short), is a sign slide text read
   as a `document` until now, and a deck drops it by kind. Step 3 goes through them and adds `deck` to those a slide's
   text shows, as `hu-title-case-headings` has it already: in the short files `any-assistant-preamble` (strong),
   `any-emoji-markers` (usual), `hu-parenthetical-gloss` and `hu-explicit-subject-repeat`; in the long files
   `any-assistant-closing-offer`, `zh-leaked-request`, `fr-english-headings`, `ja-structure-announcements` and the
-  others like them. `any-raw-markdown` stays off: its pattern finds `## `, which the outline form is built of. They
-  are in `check.md` already, so a check pays nothing more, and the long files are 5.2 KB at most (`fr`).
+  others like them. `any-raw-markdown` stays off: its pattern finds `## `, which the outline form is built of.
+  `any-emoji-markers`' pattern takes an emoji after a heading's marks only, so it gains an optional slide number
+  (`## 1. 🚀 …`) and a `flags` outline with one. They are in `check.md` already, so a check pays nothing more, and
+  the long files are 5,169 bytes at most (`fr`).
 
 A check reads every family's signs with their patterns. `any/check.md` and a language's `check.md` come to 31,027 bytes
 for `zh-Hant` and 32,274 for `ja` today, against a budget of 32,768, so the layout-only signs go to `check.layout.md`,
@@ -174,7 +177,7 @@ on deck and sheet requests it may have missed. CHANGELOG says so under Unrelease
 1. **Render.** `parts` for a sign; a deck's and a sheet's `draft_files` are the short and layout files;
    `check.layout.md` per scope with the layout-only signs and their patterns, and `check_files` takes a kind; the
    `layout` budget over both sums. Proven by `tests/test_render.py`: a `document`-and-`deck` sign in the long and the
-   layout file; a `deck`-only sign in the layout file and `check.layout.md`, never `check.md`; `draft_files` for
+   layout file; an `email`-and-`deck` sign in the short file alone; a `deck`-only sign in the layout file and `check.layout.md`, never `check.md`; `draft_files` for
    `deck` and `sheet`; a check of a deck over its layout budget fails; the files `render` writes from the catalogue
    are unchanged but `hu/any.layout.md` (from `hu-title-case-headings`).
 2. **Sources.** One `find-sources` run for decks and sheets: B23 and E6 as entries, the search in the seed languages'
@@ -183,8 +186,8 @@ on deck and sheet requests it may have missed. CHANGELOG says so under Unrelease
    text shows, the four short-file ones above among them, a PR per language, or one for `any` and `en` when the sources are
    few, as one English reader reviews both; `layout` lowered to the largest read plus 4 KB. Sheets
    with no source: a progress-log line. Proven by `byhand validate` (each sign's `flags` and `passes`), the render
-   budgets, and a render test that a deck's files carry `any-assistant-preamble` and `any-emoji-markers` and not
-   `any-raw-markdown`.
+   budgets, and a render test that in the files a deck reads the lines of `any-assistant-preamble` and
+   `any-emoji-markers` name `deck` and that of `any-raw-markdown` doesn't.
 4. **The skills.** `write` (description, kinds, the files, the outline, the hand-off), `check` (the forms, the layout
    check files, a file read through what the session has), `scan` (the kinds, and up to six check files, `check.layout.md` among them), `learn` (the kinds, the samples); the evals; the docs. Proven by the gate's
    plugin and skills checks, the eval suite and the tries by hand under Tests, recorded in
@@ -195,15 +198,15 @@ Each step ends with `finish-work`: the gate, `review-code` until clean, a PR.
 ## Tests
 
 - **Unit (CI):** Step 1's render tests; `byhand validate` on every layout sign's `flags` and `passes`; the budgets;
-  an invented plain deck outline in the office test of each language with a layout sign that has a `check`
-  (`tests/test_office.py` for `any` and `en`), holding that no layout check counts alone on it.
+  an invented plain deck outline in `tests/test_office.py`'s office texts, so no strong or usual pattern, the layout
+  ones and those Step 3 gives `deck` among them, counts alone on it.
 - **The eval suite** (`claude plugin eval --ablation none --threshold 1.0`, three runs a case, every text invented):
   - 6 deck and sheet requests, each graded `tool_used: Skill` on `write` and never `check`: a deck in en, hu, de and
     ja ("make me a deck about…", "készíts egy prezentációt…"), a sheet in en and fr; the en ones also graded
     `tool_used: Read` on `'signs(?:/|\\\\)(?:any|en)(?:/|\\\\)any\.layout\.md'` (single-quoted YAML: the
     input is matched as JSON, where a backslash is doubled) once Step 3 seeds them. A run loads only the
     plugin and allows only `Read` and `Skill`, so nothing makes a file: each deck case is also graded by a `regex` on
-    `last_message`, `^## 1\.` with `flags: m`, and each sheet case by `^\|`, the outline answered.
+    `last_message`, `^## 1\.` with `flags: m`, and each sheet case by `^\|` with `flags: m`, the outline answered.
     `write-en-slide-text` stays. Bar: 6 of 6.
   - 4 code cases graded `write` never started: a `python-pptx` script from a CSV, an `openpyxl` builder, a bug in a
     deck-building function, a CSV parser. Bar: at most 1 of 4, in one run.
@@ -234,7 +237,7 @@ the hand-off), `docs/USAGE.md` (the files table: `check.layout.md`; what a deck 
 | The maker starts first and writes its own text, so `write` never starts or its text is dropped | The description says to start first, and the hand-off says to keep the words; the tries by hand measure it on the real `document-skills` and in the maintainer's session; accepted, the description tuned if it misses |
 | The maker adds text of its own (a "Key takeaways" slide, a chart title) | The hand-off says to add none; accepted: what a later skill does is outside byhand |
 | Few or no sources for layout signs, none for sheets | No sign without one; a sheet reads the short files; recorded, as Hindi was; accepted |
-| A layout sign flags a plain human deck (three bullets, a title slide) | Each has a `passes` outline, a weak one counts only in a cluster, as for prose, and the office tests' plain deck outline holds that no layout check counts alone |
+| A layout sign flags a plain human deck (three bullets, a title slide) | Each has a `passes` outline, a weak one counts only in a cluster, as for prose, and the office tests' plain deck outline holds that no strong or usual pattern counts alone on it |
 | A deck PDF costs many tokens to read | Only for a check or a sample the user gives; 20 pages a read; accepted |
 | `write` starts on code that builds a deck | The description names it; 4 eval cases |
 
@@ -307,3 +310,31 @@ a skill names (it ends in `.layout.md`).
 | I8 | The sheet form's table rows start with `\|`, so the sheet grader's `^\|` holds | taken |
 
 Round 2 reads the fixes.
+
+### Round 2
+
+A fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, on `0410a65`, reading the round 1 edits; it
+checked each sign's kinds, the counts and sizes against `byhand.render`, the grader facts against the plugin-evals
+docs, and ran every pattern over invented outlines. Verdict: approved; its minors fixed in place by the author.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P13 | minor | Step 3's render test would fail on `any-raw-markdown`, which a deck's short file holds, and pass without Step 3 for the other two; and `parts` left open whether a short-file sign gaining `deck` is copied into the layout file | fixed: the test checks the kinds on each line; a short-file sign stays in the short file alone, with a Step 1 test |
+| P14 | minor | `any-emoji-markers` misses an emoji after a slide number, the outline's own title form, so a scanned outline file passes clean | fixed: an optional slide number and a `flags` outline with one |
+| P15 | minor | 76 signs named `document` and not `deck` are 81, 5 of them short | fixed: 81; the long files in bytes |
+
+Refuted: the deck eval's regex failing on a script the session prints (with `Read` and `Skill` only, nothing makes
+a file, so the outline is answered); P2's fix leaving a single-style user without a deck style (decided and said);
+the short files' least, 5,925 bytes for a language with no signs (no budget rests on it); I6's wording (nothing names
+`sheet`); the plain outline flagging plain text (no counted pattern fires); every other round 1 fix.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I9 | `flags: m` for the sheet grader too, as a sheet's answer opens with a tab heading | taken |
+| I10 | The plain deck outline in `tests/test_office.py` whatever the layout signs, as Step 3 makes strong and usual signs apply to decks | taken |
+
+### Approval
+
+Approved on the maintainer's standing word (take the recommended improvements, answer owner calls with the
+recommended option): Round 2 found no blocker or major, Q1 has its answer, and the plan names its tests and docs and
+ends each step with `review-code` through `finish-work`.

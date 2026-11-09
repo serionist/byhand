@@ -117,3 +117,19 @@ paragraphs, after the fix one reaches 3, a contrived one (Em suma, a real foil c
 | Improvement | Answer |
 |---|---|
 | Write the new `REPORTS` paragraphs without a spaced dash until #13's `conftest.py` change lands | taken |
+
+## Round 5
+
+A fresh reviewer, on b4c5a99 (the fixes since ec3b614, in 1163aca). Verdict: needs-fixes. F21 and F22 hold, each line
+the fixes added failing on the ec3b614 catalogue and passing now; F23 holds, checked by hand against the head (signs,
+forms, counts, the review's tallies).
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F24 | major | `pt.toml`, `pt-inflated-stakes` (na era da inteligência artificial) and `pt-ai-vocabulary` (ecossistema digital) | F21's class: a 2026 title phrase and a policy term, resting only on the two skills, made clusters with Em suma and enfatizando in plain abstracts, reviews and policy briefs | fixed in b4d3514: both cut; a dissertation abstract and a policy note in `REPORTS`, the phrases in `LEFT_ALONE`, the flags and the counting test rewritten |
+| F25 | major | `pt.toml`, `pt-false-contrast` | F22's article rule lost most model foils: 8 of 24 found ("Não são apenas números, são histórias de vida", "não é apenas sobre resultados, é sobre pessoas", "é seu parceiro") | fixed in b4d3514: the second clause must not start ta… (é também, é tão), written `(?:[^t\s]\|t[^a])` and not the reviewer's `[^\Wt]`, as #13 will refuse a `\W` in a class; three `FORMS` lines. It fires on 14 of the reviewer's 15 plain contrastive lines, the class rounds 1 to 3 accept for a weak sign |
+| F26 | minor | `any.toml`, `any-unfilled-placeholder`, inserir and insira | A manual's bracketed button fired the usual sign alone ("clique em [Inserir] e escolha Tabela") | fixed in b4d3514: a word must follow the verb; the manual's line is in `REPORTS`. "[Inserir linha]" as a button still fires, English's "[Insert …]" class |
+
+Refuted: clusters only the rendered rule counts, through the dash (F18's gap, and each stacks the dash with two other
+tells); two stock cheers in one sentence; the bold label list (a probe artefact, counting one label twice); the strong
+branches on 14 more plain lines (only the recorded classes fire). Python and ripgrep agree on 78 pairs.

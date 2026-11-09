@@ -185,7 +185,7 @@ category = "word"
 kinds = ["any"]
 models = "any"
 what = "Reaches for weighty abstract words where a plain word or the fact itself would do."
-instead = "Use the everyday word, or say what it does and why it matters."
+instead = "Use the everyday word, or say what it does or why it matters."
 strength = "weak"
 terms = [
   { term = 'aspektus\w*', instead = "oldal, szempont" },

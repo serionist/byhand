@@ -32,13 +32,13 @@ id = "pt-false-contrast"
 category = "structure"
 kinds = ["post", "document"]
 models = "any"
-# any-negative-parallelism says what the habit is; this sign holds its Portuguese forms and their check. "Não só X,
-# mas também Y" and "não se trata de X, mas de Y" are ordinary Portuguese and the check leaves them alone.
+# any-negative-parallelism says what the habit is; this sign names its Portuguese forms for the model's read. It has
+# no check: Portuguese writes the same shape to add (não é só X, é também Y; é ainda; é preciso) and to correct (não
+# é só o preço, é o prazo), and each check the review tried either missed the model's foils or fired on those (#55's
+# review, F22, F25, F27).
 what = "The Portuguese form of a set-up contrast: não é apenas… é…, não é só… é…."
 instead = "Say what the thing is or does, with a figure or an example; drop the foil."
 strength = "weak"
-# The second é or são must not start ta…: "não é só para iniciantes, é também para quem já programa" adds, and passes.
-check = '''\bnão (?:é|são) (?:apenas|só) [^.!?;:\n]{1,60}[,;:]\s*(?:é|são) (?:[^t\s]|t[^a])'''
 flags = "A biblioteca municipal não é apenas um sítio de livros, é a sala de estar da vila."
 passes = "A biblioteca municipal não é só para sócios: qualquer morador pode requisitar livros ao sábado."
 sources = [

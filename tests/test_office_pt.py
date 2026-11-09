@@ -158,6 +158,10 @@ REPORTS = [
     "enfatizando o papel do professor.",
     "Nota de política\n\nEm conclusão, a diretiva reforça a concorrência no ecossistema digital europeu, enfatizando "
     "as plataformas de grande dimensão.",
+    "Acórdão, súmula\n\nEm suma, o relator entendeu que a cláusula não é apenas abusiva, é ainda nula de pleno "
+    "direito, enfatizando o art. 51 do CDC.",
+    "Assembleia municipal\n\nEm suma, o problema da linha não é só o dinheiro, é que ninguém decide. O autarca "
+    "falou na assembleia, enfatizando os prazos.",
     "Guião de atendimento\n\nEncerramento:\n- Confirmar o número do pedido\n"
     "- Há mais alguma coisa em que possa ajudar?",
     "Parecer técnico\n\nA ponte precisa de reforço. A verdade é que a obra de 2015 não resolveu as infiltrações, e "
@@ -286,6 +290,7 @@ MACHINE = [
     ("any-unfilled-placeholder", "Trabalho na [Sua empresa] desde 2020."),
     ("any-unfilled-placeholder", "Com os melhores cumprimentos,\n[O teu nome]"),
     ("any-unfilled-placeholder", "Mais informações: [Inserir link]"),
+    ("any-unfilled-placeholder", "Morada: [Inserir: morada completa]"),
     ("any-unfilled-placeholder", "Escreva para [Seu endereço de e-mail]."),
     ("any-unfilled-placeholder", "[Descreva a secção a editar]"),
     ("any-unfilled-placeholder", "Inscrições: insert_link_here"),
@@ -351,11 +356,6 @@ def test_portuguese_typography_meets_no_formatting_check(catalogue, text):
 # Portuguese inflects, writes enclisis in Portugal and proclisis in Brazil, and sets asides between spaced travessões:
 # the forms a weak check must still find, beyond its own `flags`, and the plain forms it must leave alone.
 FORMS = [
-    ("pt-false-contrast", "O nosso serviço não é só uma app, é uma equipa ao seu lado."),
-    ("pt-false-contrast", "Estas jornadas não são só palestras; são o ponto de encontro do setor."),
-    ("pt-false-contrast", "Não são apenas números, são histórias de vida."),
-    ("pt-false-contrast", "Liderança não é apenas sobre resultados, é sobre pessoas."),
-    ("pt-false-contrast", "O nosso banco não é só um banco, é seu parceiro de todos os dias."),
     ("pt-staged-reveal", "Mudámos de fornecedor. O detalhe? Encomendas em 24 horas."),
     ("pt-staged-reveal", "Já parou para pensar quanto custa uma reunião?"),
     ("pt-staged-reveal", "Já paraste para pensar quanto custa uma reunião?"),
@@ -379,12 +379,6 @@ FORMS = [
 ]
 
 LEFT_ALONE = [
-    ("pt-false-contrast", "Não só pagamos a luz, como também a água da loja."),
-    ("pt-false-contrast", "Não é só contigo: a mim também não chegou o e-mail."),
-    ("pt-false-contrast", "Não se trata da reunião de quinta, essa mantém-se."),
-    ("pt-false-contrast", "Não se trata de culpa, mas de responsabilidade."),
-    ("pt-false-contrast", "O curso não é só para iniciantes, é também para quem já programa."),
-    ("pt-false-contrast", "Não se trata de abrir mais cedo; trata-se de não fechar ao almoço."),
     ("pt-staged-reveal", "O resultado da sondagem sai na segunda?"),
     ("pt-staged-reveal", "A senha do wifi? Mando-te por mensagem."),
     ("pt-staged-reveal", "Já parou de chover?"),

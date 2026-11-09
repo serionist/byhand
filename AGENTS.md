@@ -25,7 +25,7 @@ styles, and the skills that read them. It is for the user's own writing, sent un
   user's machine.
 - **The plugin** (`plugin/`): skills that write and check text against the signs and a style, starting by themselves
   when the user writes mail, a message, a document or a deck. They run no command: nothing but the plugin to install.
-- **Where the work stands:** the harness, the catalogue with its first signs (`any`, `en`, `zh`, `zh-Hant`, `ko`, `ja`, `ru`, `de`, `fr`, `hu`, `es`, `pt`, `ar`, `vi`, `it`, `tr`), its rendering, the `write`, `check` and `learn` skills and the `scan` agent, the refresh (`byhand refresh`, `refresh.yml`). `docs/plans/2026-11-06-bootstrap.md`
+- **Where the work stands:** the harness, the catalogue with its first signs (`any`, `en`, `zh`, `zh-Hant`, `ko`, `ja`, `ru`, `de`, `fr`, `hu`, `es`, `pt`, `ar`, `vi`, `it`, `tr`, `fi`), its rendering, the `write`, `check` and `learn` skills and the `scan` agent, the refresh (`byhand refresh`, `refresh.yml`). `docs/plans/2026-11-06-bootstrap.md`
   (#1) designs `0.1.0` and after; read its progress log first. The package in `src/` is the repo's own tool, never a user's.
 
 ## Where things are

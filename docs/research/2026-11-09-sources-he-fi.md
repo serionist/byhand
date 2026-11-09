@@ -43,3 +43,34 @@ All three feeds read with the refresh's own readers on 2026-11-09: each unchange
 
 Both style guides stand as the third run named them: the Academy of the Hebrew Language for Hebrew punctuation, the
 Kielitoimiston ohjepankki of Kotimaisten kielten keskus for Finnish.
+
+## Follow-up, 2026-11-09: Finnish's signs and deferred `any` forms
+
+Move 2 of `docs/plans/2026-11-09-more-languages.md` for fi, under #60, with #72's change: no native-review gate, so
+each sign is as strong as its sources make it. `wikipedia-fi` at 23993692 and `finnish-humanizer` at `7a151e26b263`,
+both still their heads, were read in full: the page, `references/patterns.md` and `SKILL.md`. Finnish is seeded with
+two signs of its own, both formatting and both weak, as neither source measures how often people do them:
+
+| Sign | Strength | Evidence |
+|---|---|---|
+| `fi-em-dash` (a check) | weak | `finnish-humanizer`'s typography notes say models write the long dash where Finnish writes the spaced short one (SFS 4175); the page's second example of model text sets a list off between spaced long dashes, though it quotes it for something else. `de-em-dash` and `hu-em-dash` hold the habit weak too, and `finnish-humanizer`'s own Finnish prose writes it |
+| `fi-title-case-headings` (for the model's read) | weak | The page's section on anglicisms: capitals on the words after the first in a model-written article's subheadings, after English titling, with ja left small, five of them in one example. `de-title-case-headings` and `hu-title-case-headings` hold it weak too |
+
+No structure sign of Finnish's own: what the page shows of structure is held by `any` signs (negative parallelism, the
+rule of three, promotional tone, unnamed places and people, needless lists), and `finnish-humanizer`'s Finnish
+patterns (light verbs, officialese, the passive, genitive chains, joka chains, long sentences, missing particles,
+needless pronouns, English word order and politeness) rest on its word alone and are written by people at work. The
+header of `signs/fi.toml` has each reason.
+
+Finnish forms in the `any` checks, deferred: `any.toml` is held for the check budget (#71), as for Indonesian and
+Turkish. Each would come with a `machine` line and the person's line beside it in `tests/office_fi.toml`.
+
+| `any` sign | Form | Source | The person's line it must pass |
+|---|---|---|---|
+| `any-chatgpt-citation-markup` | a source's name with +1, +2 or +5 glued on, ChatGPT's citation chips pasted as text (Oulun kaupunki+1) | `wikipedia-fi`, Virheelliset tai erikoiset viitteet | C++; Disney+; Erasmus+-hanke (on the page itself); Puh. +358 40 123 4567; tarjous 2+1 |
+| `any-flattering-agreement` | Hyvä kysymys!; Erinomainen huomio! | `finnish-humanizer` 15 | Hyvä kysymys, en oikeastaan tiedä; Erinomainen huomio, korjaan sen |
+| `any-knowledge-cutoff` | Viimeisimpien tietojeni mukaan | `finnish-humanizer` 26 | Likely none: a person writes it of their own latest news, as in `office_fi.toml` |
+| `any-didactic-aside` | On syytä huomata, että | `finnish-humanizer` 17 | Likely none: reports write it, as in `office_fi.toml` |
+
+`wikipedia-fi` could also be cited by `any-negative-parallelism` (ei ole vain X, vaan Y), `any-rule-of-three`
+("Stubbismi") and `any-promotional-tone`, and `finnish-humanizer` 20 by `any-challenges-formula`; none has a check.

@@ -200,7 +200,7 @@ languages = ["en", "ko", "ru", "zh", "vi", "fil"]
 licence = "MIT"
 due = "weekly"
 feed = { api = "github", repo = "hwajongpark/slop-gate", paths = ["rules"] }
-read_at = { commit = "f78d5cbee0dc", date = 2026-11-07 }
+read_at = { commit = "f78d5cbee0dc", date = 2026-11-09 }
 
 [[source]]
 id = "avoid-ai-writing"
@@ -290,7 +290,7 @@ languages = ["ko", "vi"]
 licence = "facts only, with a citation"
 due = "by-hand"
 feed = { api = "none" }
-read_at = { revision = "v1", date = 2026-11-07 }
+read_at = { revision = "v1", date = 2026-11-09 }
 
 [[source]]
 id = "kiss-2026-hungarian"
@@ -566,7 +566,7 @@ kind = "repo"
 languages = ["vi"]
 licence = "MIT"
 due = "weekly"
-feed = { api = "github", repo = "longhang2004/vietnamese-humanizer", paths = ["patterns/humanizer.yml", "patterns/translationese.yml", "docs/limitations.md"] }
+feed = { api = "github", repo = "longhang2004/vietnamese-humanizer", paths = ["patterns/humanizer.yml", "patterns/translationese.yml", "docs/limitations.md", "skills/humanizer-vi/SKILL.md"] }
 read_at = { commit = "2fd7dd05cbd9", date = 2026-11-09 }
 
 [[source]]

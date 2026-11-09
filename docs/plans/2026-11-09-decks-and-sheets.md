@@ -245,6 +245,7 @@ the hand-off), `docs/USAGE.md` (the files table: `check.layout.md`; what a deck 
 
 | Step | What | PR | State |
 |---|---|---|---|
+| 1 | the render: `parts`; a deck and a sheet read the short and the layout files; `check.layout.md` per scope, and `check_files` and `scan_files` take a kind. Departures, after #86 moved the patterns out of `check.md`: the layout-only signs' patterns go to a `scan.layout.md` per scope, beside `scan.md`, and `layout` holds three sums, a draft's layout files, a check's `check.layout.md` files and a scan's `scan.layout.md` files, while `check` (16 KB) and `scan` (9 KB) hold the rest of a deck's check. The render adds `hu/any.layout.md` and `fi/any.layout.md` (`fi-title-case-headings`, seeded in #79 after this plan), every other file byte-identical, and no `check.layout.md` or `scan.layout.md` until a layout-only sign; `byhand render --check` and the diff show it, not a test pinning the catalogue's files, which every new sign would break | — | open |
 | 2 | sources for decks and sheets: 12 for decks (en, ja, zh, zh-Hant, ko), 5 for sheets (en, fr, pt); no sheet source in the other languages; `docs/research/2026-11-09-sources-decks-sheets.md` | #83 | open |
 
 ## Plan review

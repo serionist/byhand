@@ -22,14 +22,17 @@ with forms alone (`id`) has a `scan.md` and no `check.md`:
 | File | Holds | Read by |
 |---|---|---|
 | `<family>.short.md` | the signs a mail or a message reads: every kind's, and those naming `email` or `message` | `write`, every draft |
-| `<family>.long.md` | the signs only a post or a document reads | `write`, a post or a document |
-| `<family>.layout.md` | the signs only a deck or a sheet reads | decks and sheets, `0.4.0` |
-| `check.md` | every prose sign of every family, with no pattern | `check` |
-| `scan.md` | the pattern Grep runs for each sign that has one in this language: a language's own signs, and the shared signs' forms under its code (`any/scan.md`: those every language runs) | `check`'s `scan` agent |
+| `<family>.long.md` | the signs a post or a document reads and a mail doesn't | `write`, a post or a document |
+| `<family>.layout.md` | the signs a deck or a sheet reads and a mail doesn't: a sign of a document and a deck is in both its long and its layout file | decks and sheets, `0.4.0` |
+| `check.md` | every sign of every family but the layout-only ones, with no pattern | `check` |
+| `check.layout.md` | the layout-only signs, those whose kinds are `deck` or `sheet` alone, with no pattern | `check`, a deck or a sheet, `0.4.0` |
+| `scan.md` | the pattern Grep runs for each sign that has one in this language: a language's own signs, and the shared signs' forms under its code (`any/scan.md`: those every language runs); not the layout-only ones | `check`'s `scan` agent |
+| `scan.layout.md` | the same for the layout-only signs | `scan`, a deck or a sheet, `0.4.0` |
 
 `write`'s files hold no regex: each term prints as plain words, one per alternative, the shortest text it matches,
 with "…" for a run of letters the word needs (`…ként szolgál`). A draft reads at most four short files, six for a
-script variant such as `zh-Hant`, and a post or a document as many long ones again.
+script variant such as `zh-Hant`, a post or a document as many long ones again, and a deck or a sheet as many
+layout ones. A check of a deck or a sheet reads the `check.layout.md` and `scan.layout.md` files after the others.
 
 The budgets, `Budgets` in `src/byhand/render.py`, set from the catalogue of 8 Nov 2026 with a margin and only ever
 lowered (`check` and `scan` on 9 Nov, the largest read plus at least 512 bytes, rounded up to a whole KB); over any
@@ -39,7 +42,7 @@ of them the render fails:
 |---|---|
 | the short files a mail or a message reads, together (`mail`) | 14 KB |
 | the short and long files a post or a document reads, together (`document`) | 16 KB |
-| the layout files a deck or a sheet adds, together (`layout`) | 16 KB |
+| the layout files a deck or a sheet adds, together; and, each on its own, the `check.layout.md` and the `scan.layout.md` files a check of one adds (`layout`) | 16 KB |
 | the check files one check reads: `any`, a variant's base language and the language (`check`) | 16 KB |
 | the scan files `scan` reads for one check, from the same languages (`scan`) | 9 KB |
 | any one file (`MAX_LINES`) | under 2,000 lines, Claude Code's `Read` default |

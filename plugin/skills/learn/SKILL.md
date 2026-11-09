@@ -69,9 +69,9 @@ habits, words they like and words they never use.
 1. **The samples:** files the user points at, or text they paste; decks and sheets in the forms `check` step 1 takes.
    At least two; more is better.
 2. **Screen each one** by `check`'s steps 1 to 7: Read `${CLAUDE_PLUGIN_ROOT}/skills/check/SKILL.md`. Its paths name
-   the plugin's folder with a variable: it is `${CLAUDE_PLUGIN_ROOT}`. A file goes through the `byhand:scan` agent;
-   pasted text is read. A sample with a strong or usual sign, or 3 different weak ones in a paragraph, reads as
-   AI-written: leave it out and name it with the signs found, unless the user says it is theirs.
+   the plugin's folder with a variable: it is `${CLAUDE_PLUGIN_ROOT}`. A sample with a strong or usual sign, or 3
+   different weak ones in a paragraph, reads as AI-written: leave it out and name it with the signs found, unless the
+   user says it is theirs.
 3. **Judge** the language from the samples, and propose a short name.
 4. **Write the style** from the samples left, and from the user's own lines only: never a quoted reply, a forwarded
    message or code. How this person writes, in their own patterns, not a list of virtues.

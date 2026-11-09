@@ -31,9 +31,9 @@ claude plugin update byhand@byhand
   writes its text first, slide by slide or tab by tab, and whatever makes files in your session (a skill such as
   `pptx`, a tool, a script) makes the file from it. byhand itself makes no file. With nothing that can, you get the
   outline.
-- **Teach it your style.** "Learn my style from these" with two or more of your own mails, messages or decks, as
-  files or pasted. `/byhand:learn` leaves out any sample that reads as AI-written, shows you the style, and saves it only when
-  you say yes. You can have several, and make one the default for each kind of writing and language.
+- **Teach it your style.** "Learn my style from these" with two or more of your own mails, messages, decks or
+  sheets, as files or pasted. `/byhand:learn` leaves out any sample that reads as AI-written, shows you the style,
+  and saves it only when you say yes. You can have several, and make one the default for each kind of writing and language.
 - **Tell it what you don't like.** After a draft in one of your styles, say what's off. If it's a habit, it offers to
   keep it as a rule in that style; "remember: …" does the same.
 - **Check a text.** "Does this read as AI-written?" `/byhand:check` lists the signs with their lines and what a person

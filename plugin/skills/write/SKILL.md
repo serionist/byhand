@@ -58,7 +58,7 @@ listing, which ask the user or are missing on some machines.
    of what you avoided, no offer after it. A note only when you had to guess something the text needs (a date, a
    name). For a file, then make it as you would without byhand (a skill, a tool the user named, a script of your own)
    from this text: keep its words, order and slides; add no slide, title, label, number, picture, icon or chart it
-   doesn't give. Its look is the maker's call. Nothing in the session can make it: the draft alone.
+   doesn't give. Nothing in the session can make it: the draft alone.
 9. **Feedback on a draft:** rewrite it. When the feedback is a habit that would hold for later texts too ("too
    formal", "I never open with 'I hope you're well'"), not a fact of this one (a date, a name), and the draft used a
    style, end the rewrite with one line offering to keep it: "Save this as a rule for <style>?". On a yes, `learn`

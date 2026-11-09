@@ -95,5 +95,6 @@ its scan, run by the agent, the `scan.md` and `scan.layout.md` ones.
   and their makers (claude.ai's synced skills, a tool the system prompt puts first) counted apart. Theirs to run.
 - **The `document-skills` plugin as installed,** rather than its skills synced from claude.ai; and an `.xlsx` read
   through `xlsx` for `check`.
-- **Interactive sessions, permission prompts, macOS, Linux and WSL.**
+- **Interactive sessions, permission prompts, macOS, Linux and WSL;** among the prompts, whether `check` starting
+  `pptx` before it reads the sign files ends its `Read` grant.
 - **A maker that keeps the words in sessions other than these;** the plan's "What none can show".

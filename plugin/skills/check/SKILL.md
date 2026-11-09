@@ -32,8 +32,8 @@ for `byhand:check` first. The grant to read the plugin's files lasts only the tu
    files name families in their ranges (`gpt 5 and later`). Otherwise every family.
 4. **Read the signs** with Read: `${CLAUDE_PLUGIN_ROOT}/signs/any/check.md`, and
    `${CLAUDE_PLUGIN_ROOT}/signs/<language>/check.md`. For a script variant, its base language's too (`zh` for
-   `zh-Hant`). A deck or a sheet: then `check.layout.md` from the same folders. A language with no file has no signs
-   of its own yet: use `any` alone, and say so. Keep the signs whose kinds hold the text's kind (a sign with no kinds
+   `zh-Hant`). A language with no file has no signs of its own yet: use `any` alone, and say so. A deck or a sheet:
+   then `check.layout.md` from the same folders. Keep the signs whose kinds hold the text's kind (a sign with no kinds
    reads every kind) and whose model range, if any, is in a family from step 3.
 5. **A file: scan it.** Start the `byhand:scan` agent with the file's path, the kind, the families (or `every`) and
    the scan files of the same languages as step 4: `${CLAUDE_PLUGIN_ROOT}/signs/any/scan.md`,

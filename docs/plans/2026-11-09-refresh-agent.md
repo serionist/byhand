@@ -1,9 +1,9 @@
 ---
 title: Draft the refresh's sign changes with an agent every two weeks, as one draft PR
 issue: "#30"
-status: draft
-approved_by:
-approved_at:
+status: approved
+approved_by: serionist
+approved_at: 2026-11-09
 ---
 
 # Draft the refresh's sign changes with an agent every two weeks, as one draft PR
@@ -56,7 +56,9 @@ claude -p "$(cat .github/refresh-agent.md) <the source ids and issue numbers>" \
 
 `--restricted` (Round 1, I8) loads no settings but managed ones and `--settings`, confines the file tools to the
 checkout, and keeps Bash only because `--tools` names it. So `.github/refresh-agent.json` holds the whole of what the
-run allows, with an empty `attribution` as `.claude/settings.json` has, and only whole commands (Round 1, P1, P2):
+run allows, with an empty `attribution` as `.claude/settings.json` has, the read block
+(`blockReadsOutsideWorkingDirectories`, so the built-in read-only shell commands can't read outside the checkout
+either; Round 2, P9), and only whole commands (Round 1, P1, P2):
 
 | Allow | Why |
 |---|---|
@@ -66,7 +68,7 @@ run allows, with an empty `attribution` as `.claude/settings.json` has, and only
 | `Bash(git add -A)`, `Bash(git commit -F .local/commit.txt)` | its local commits, so `review-code` can name one; never `git add *` or `git commit *`, whose `--pathspec-from-file`, `-F` and `--template` read any file into what the model sees |
 
 The read-only git forms `review-code` uses (`git diff`, `git log`, `git show`) run as Claude Code's built-in read-only
-commands.
+commands, inside the checkout only.
 
 - **`dontAsk`:** anything not allowed is denied, not asked. Reads inside the checkout need no rule; an edit needs one
   of the four `Edit` allows, which cover Write too, so nothing outside them is written.
@@ -110,7 +112,8 @@ and `workflow_dispatch`; `concurrency: refresh-agent`, never cancelled in flight
      skipped and why, the `read_at` moved, that the plugin wasn't tried, and how the refresh agent ran. No issue
      number and no `@` in either: the publish job adds the closing lines.
 5. **What it hands on:** fail unless the CLI's JSON says `success`, which a run over its budget doesn't; write its
-   turns, tokens and estimated cost to the job summary, never its text; write `git diff --binary origin/main..HEAD`
+   turns, tokens, estimated cost and the count of its `permission_denials` to the job summary, numbers only, never its
+   text (Round 2, I10); write `git diff --binary origin/main..HEAD`
    and the PR text into `$RUNNER_TEMP/out/`, outside the checkout and every `Edit` allow (Round 1, P5), so the model
    can't plant a file in the hand-off; fail if the token's value is anywhere in it (`grep -rF`); upload it as an
    artifact kept 7 days. The model's commit messages stay on the runner (Round 1, P3).
@@ -119,8 +122,10 @@ and `workflow_dispatch`; `concurrency: refresh-agent`, never cancelled in flight
 
 1. A fresh checkout of `main`, uv, and git's identity set to `github-actions[bot]` (Round 1, P4); download the
    artifact; `git apply --index` the diff on a new branch `refresh-agent/<date>`.
-2. **The checks, each a failure that publishes nothing:** every changed path is under `src/byhand/catalogue/`,
-   `plugin/signs/`, `docs/reviews/` or `docs/research/`; the title is one line; neither title nor body holds a
+2. **The checks, each a failure that publishes nothing:** every changed path, listed with `--no-renames`, is under
+   `src/byhand/catalogue/`, `plugin/signs/`, `docs/reviews/` or `docs/research/`, has no component starting `.git` (a
+   planted `.gitattributes` could hide the sign changes in GitHub's diff), and is a plain file, mode 100644 (Round 2,
+   P11); the title is one line; neither title nor body holds a
    closing keyword before `#<n>`, an `@` mention, or a reference to another repository's issue or PR (`owner/repo#n`
    or its URL), which would post a backlink there from a public draft (Fit I6).
 3. **The closing lines,** by a few lines of Python with `tomllib`: `Closes #<n>` for each issue whose source's
@@ -208,17 +213,20 @@ No one-way door. Harness changes, each agreed on #30 or named for the maintainer
    `settings_problems`' tests in `tests/test_gate.py` for both.
 3. **The workflow, its prompt and its settings:** `.github/workflows/refresh-agent.yml`, `.github/refresh-agent.md`,
    `.github/refresh-agent.json`. `tests/test_gate.py`'s exact-or-swept allow test reads `.github/refresh-agent.json`
-   too, with nothing added to the commands it sweeps, and a test holds its `Edit` allows to the four folders the
-   `publish` job accepts (Fit I4; Round 1, P1).
-4. **A try by hand before the merge:** on the maintainer's machine, in a fresh clone, with `CLAUDE_CONFIG_DIR` set to
-   an empty folder and `CLAUDE_CODE_OAUTH_TOKEN` set, as CI has them, `byhand fetch` and the model's command line from
+   too, with nothing added to the commands it sweeps; `.claude/settings.json` keeps its Bash-only assertion, and the
+   agent's file may hold, beside its Bash allows, exactly `Edit(src/byhand/catalogue/**)`, `Edit(docs/reviews/**)`,
+   `Edit(docs/research/**)` and `Edit(.local/**)`, and must set the read block (Fit I4; Round 1, P1; Round 2, P10).
+4. **A try by hand before the merge:** the maintainer runs `claude setup-token` (Round 2, I9); on their machine, in a
+   fresh clone, with `CLAUDE_CONFIG_DIR` set to an empty folder and `CLAUDE_CODE_OAUTH_TOKEN` set to that token, as CI
+   has them, `byhand fetch` and the model's command line from
    the workflow on an open refresh issue, or on `wikipedia-en` with `read_at` set back to
    1384165696 on a scratch branch. Its turns, tokens and the PR text it wrote go in the PR, and the budget constant is
    set from it. It also shows whether `AGENTS.md` and the skill files load under `--restricted` (the prompt names
-   them, so the model reads them either way).
+   them, so the model reads them either way), and that `cat ../x` and `git diff --no-index ../x /dev/null` are
+   denied (Round 2, P9).
 5. **The docs** (below).
 6. **finish-work:** the gate, `review-code` until clean, the PR.
-7. **Before the merge, by the maintainer:** `claude setup-token`, the secret `CLAUDE_CODE_OAUTH_TOKEN`, the repo
+7. **Before the merge, by the maintainer:** the token from Step 4 as the secret `CLAUDE_CODE_OAUTH_TOKEN`, the repo
    setting, all inert until the workflow is on `main`, so a cron run between the merge and the try finds them in place
    (Round 1, P7).
 8. **After the merge:** `gh workflow run refresh-agent.yml` once with no refresh issue open (it ends at step 1) and
@@ -246,7 +254,8 @@ reads from `byhand fetch`. `SECURITY.md`: the refresh agent's token or permissio
 
 | Risk | Answer |
 |---|---|
-| A page tells the model to leak the OAuth token | no network tool; the token scrubbed from its commands' environment, their `/proc` view cut off by the scrub's PID namespace, and the file tools confined to the checkout; no allowed command reads a file outside it; the output grepped for its value before upload; the repo is public, so the job log prints numbers only. A leaked token can only make model requests on the subscription. Resolved, with the grep as the backstop |
+| A page tells the model to leak the OAuth token | no network tool; the token scrubbed from its commands' environment, their `/proc` view cut off by the scrub's PID namespace, the file tools confined to the checkout by `--restricted`, and reads outside it by the built-in shell commands refused
+by the read block; no allowed command takes a path; the output grepped for its value before upload; the repo is public, so the job log prints numbers only. A leaked token can only make model requests on the subscription. Resolved, with the grep as the backstop |
 | A page tells the model to change code, a workflow or a skill | `Edit` rules allow four folders; the `publish` job refuses any other path. Resolved |
 | A page tells the model to close or ping issues, or merge | the model has no GitHub token; the `publish` job writes the closing lines and refuses keywords and mentions in its text; nothing marks ready or merges. Resolved |
 | A plausible but wrong sign | the maintainer reads the draft PR before marking it ready, as today. Accepted |
@@ -311,3 +320,36 @@ Owner calls: none.
 |---|---|---|
 | I7 | Run `gate.py text` over the title and body in the `publish` job, so a body saying how the agent ran never opens failing `PR text` | taken |
 | I8 | `--restricted`: only managed settings and `--settings` load, the file tools stay in the checkout, Bash only because `--tools` names it; one flag in place of the read block and the trust question | taken; the try in Step 4 shows whether `AGENTS.md` and the skills load, which the prompt names anyway |
+
+### Round 2
+
+**How:** a fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, read only, on the edits from `d98a749`
+to `2711f63` and the open findings; it checked `--restricted`, `dontAsk`, the read-only commands and the scrub in
+Claude Code's docs, and `git diff --binary` with `git apply --index` on new, binary, renamed and gitlink entries in a
+scratch repo. **Verdict:** approved once P9 to P11 are fixed, which they are; no blocker or major, so no third round.
+**Now:** P1 to P8 confirmed fixed; P9 to P11 fixed in the plan.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P9 | minor | Round 1's edit dropped the read block, but `--restricted` confines only the file tools: a built-in read-only command (`cat`, `git diff --no-index`) might still read a runner file outside the checkout into a public PR; the docs don't settle it | fixed: the read block is back in `.github/refresh-agent.json`, and the try checks both commands are denied |
+| P10 | minor | Step 3's test can't be built as written: the current test asserts every allow is `Bash(`, and the `Edit` folders it named were the `publish` job's, not the agent's | fixed: `.claude/settings.json` keeps its assertion; the agent's file may hold exactly its four `Edit` allows and must set the read block |
+| P11 | minor | `git add -A` stages a planted `.gitattributes` in an allowed folder (`linguist-generated` would hide the sign changes in GitHub's diff), and a rename's source path hides without `--no-renames` | fixed: the path check lists with `--no-renames`, refuses any component starting `.git` and any mode but 100644 |
+
+Refuted: drift between the two jobs' base (both check out `github.sha`); `git commit -F .local/commit.txt` reading
+another file (a fixed path, no `ln`, `.git` writes denied); `git add -A` staging `.local/` or `.venv/` (ignored);
+relative `Edit` patterns in a `--settings` file (no leading slash, so they resolve against the working directory);
+losing `git fetch origin` with `.claude/settings.json` (the checkout already has `origin/main`); copycheck reading
+`change.diff` (not among its suffixes; it reads `new/`).
+
+Owner calls: none.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I9 | `claude setup-token` in Step 4, where the try needs the token, and Step 7 stores that same token | taken |
+| I10 | The count of the CLI's `permission_denials` in the job summary, numbers only, so a denied gate command or an injection attempt shows | taken |
+
+### Approval
+
+Treated as approved on the maintainer's standing word for the night ("take improvements that are recommended",
+owner calls answered with the recommended option): the Fit's six improvements and Round 1's and Round 2's four taken,
+no owner call raised, and Round 2 found no blocker or major. The maintainer's own review of the plan PR stands over it.

@@ -5,7 +5,7 @@ head: 5562141
 date: 2026-11-09
 round: 1
 tier: standard (one fresh reviewer; findings checked against the code by the main session)
-verdict: needs-fixes
+verdict: clean (round 8)
 ---
 
 # Seed the Portuguese signs: code review
@@ -163,3 +163,24 @@ no test asserts on nothing, and no doc still speaks of a false-contrast check. T
 Refuted: the strong and usual branches on 18 more person's lines (2 fire, both a bracketed button, F26's class); one
 paragraph that clusters through `any-raw-markdown` stacked with two tells (the refuted class). Python and ripgrep
 agree on 230 pairs.
+
+## Round 8
+
+A fresh reviewer, on 1a22a94 (the fixes since cfd8b79, in 5086400). Verdict: clean. F29 holds: the sign is gone from
+the catalogue and the rendered files, and both summaries count 2 by the test and by the rendered rule. F30 holds:
+dropping the insira branch fails exactly the new `MACHINE` line. Nothing dangles; every comment line is 120
+characters or fewer; the PR description matches the head.
+
+No new finding. On 20 more person's lines, 3 strong or usual hits, all in recorded classes (a closing offer in a
+document, two bracketed buttons); of 24 plain paragraphs from Brazil and Portugal, two reach 3, each three different
+stock tells stacked (the refuted class); no sign with no pattern adds a third hit on a routine shape by its rendered
+text. Refuted: `any-negative-parallelism` on an additive clause (unchanged by this PR, and its text names a claim
+nobody made); the description's wording on F29; the header's finding range. Python and ripgrep agree on 340 pairs.
+
+| Improvement | Answer |
+|---|---|
+| Cite wikipedia-pt's Paralelismos negativos and evitar-escrita-ia section 2 on `any-negative-parallelism`, which the cut left cited nowhere | taken in e3b1f0f |
+| Name the findings the header means (F22, F25, F27, F29), not a range | taken in e3b1f0f |
+
+The review ends here: no blocker or major is open. Left, with their reasons: F18 (wontfix here, #13's `conftest.py`)
+and F19 (two dash misses, accepted for a weak sign).

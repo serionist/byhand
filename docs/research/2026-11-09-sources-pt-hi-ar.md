@@ -94,9 +94,10 @@ records, for a sign with or without a pattern. Neither backs one, so there is no
 
 | Candidate | Why not |
 |---|---|
-| Model Hindi is longer, with more sentences, paragraphs and punctuation (`agrahari-2026-shakti`, Table 4) | The human texts average 29 words, 1.15 sentences and one paragraph, and its section 4.1 kept model texts of about 1,000 characters or more and set no length for people's: the gap comes from that filter. Readability and sentence-length variance follow from length, and the authors call the readability trend not consistent |
+| Model Hindi is longer, with more sentences, paragraphs and punctuation (`agrahari-2026-shakti`, Table 4) | The lengths are not matched: the human texts average 171 characters, 29 words, 1.15 sentences and one paragraph, about one sentence, shorter than every model's. Section 4.1 states a minimum of about 1,000 characters for model texts and none for people's, yet five of the eight models' means in Table 4 fall below it, so the paper doesn't say how the gap arose. Readability (Table 6, 5.3) is mixed across models, as the authors say, and sentence-length variance means little when the human texts hold about one sentence |
 | The same, from `wang-2026-human-detection` | D.4 finds the opposite: GPT-4o's Hindi news was shorter than BBC Hindi's, with less in it. The two sources disagree |
-| Fewer names and dates, a text that keeps to its topic (Wang, D.4) | `any-generic-over-specific` holds it |
+| Fewer names of people and dates (Wang, D.4) | `any-generic-over-specific` holds it |
+| The text keeps strictly to its topic (Wang, D.4) | One model's news, and office writing keeps to its topic too: a sign would accuse it |
 | No idioms or colloquial words, little Urdu-origin vocabulary (Wang, D.4) | One model's news, prompted for concise and formal articles (C.4). Office Hindi is often Sanskritised by design (the style guide row above): a sign would accuse it |
 | English words in the machine's news (Wang, D.4) | The same one model's formal news, and Hinglish is what people write in messages and mail: no second source and nothing to scope it to |
 | Hindi forms in `any-ai-self-reference`, `any-knowledge-cutoff`, `any-assistant-preamble` | Neither source names a Hindi phrase |

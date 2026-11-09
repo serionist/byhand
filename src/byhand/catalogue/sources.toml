@@ -609,3 +609,185 @@ licence = "CC BY-SA 4.0"
 due = "weekly"
 feed = { api = "mediawiki", site = "he.wikipedia.org", title = "ויקיפדיה:סימנים_לכתיבה_מבוססת_בינה_מלאכותית" }
 read_at = { revision = "43047872", date = 2026-11-09 }
+
+[[source]]
+id = "flight-check"
+url = "https://github.com/analystacademy/flight-check"
+kind = "repo"
+languages = ["en"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "analystacademy/flight-check", paths = ["SKILL.md"] }
+read_at = { commit = "ca975a186188", date = 2026-11-09 }
+
+[[source]]
+id = "analyst-academy-not-ai-decks"
+url = "https://aa-not-ai-decks.vercel.app/"
+kind = "vendor"
+languages = ["en"]
+licence = "all rights reserved; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "plusai-2026-slides"
+url = "https://plusai.com/blog/how-to-make-ai-slides-that-dont-look-like-ai-slop"
+kind = "vendor"
+languages = ["en"]
+licence = "all rights reserved; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "presentations-ai-2026-mistakes"
+url = "https://www.presentations.ai/blog/common-ai-presentation-mistakes"
+kind = "vendor"
+languages = ["en"]
+licence = "all rights reserved; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "decksmith-2026-seven-signs"
+url = "https://dev.to/decksmith/seven-signs-a-slide-deck-was-made-by-ai-1828"
+kind = "vendor"
+languages = ["en"]
+licence = "unstated; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "leinonen-2026-slides"
+url = "https://arxiv.org/abs/2605.13532"
+kind = "paper"
+languages = ["en"]
+licence = "CC BY 4.0"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { revision = "v1", date = 2026-11-09 }
+
+[[source]]
+id = "anthropic-skills"
+url = "https://github.com/anthropics/skills"
+kind = "repo"
+languages = ["en"]
+# What a generator is told to do when it makes a deck or a sheet, not what anyone saw in one.
+licence = "Apache 2.0 (each skill's LICENSE.txt)"
+due = "weekly"
+feed = { api = "github", repo = "anthropics/skills", paths = ["skills/pptx/SKILL.md", "skills/xlsx/SKILL.md"] }
+read_at = { commit = "2c5958ecac7c", date = 2026-11-09 }
+
+[[source]]
+id = "grossman-2025-spreadsheets"
+url = "https://arxiv.org/abs/2604.25689"
+kind = "paper"
+languages = ["en"]
+licence = "CC BY 4.0"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { revision = "v1", date = 2026-11-09 }
+
+[[source]]
+id = "yen-2026-mbabench"
+url = "https://arxiv.org/abs/2605.22664"
+kind = "paper"
+languages = ["en"]
+licence = "CC BY 4.0"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { revision = "v5", date = 2026-11-09 }
+
+[[source]]
+id = "poeltl-2026-mbabench-2"
+url = "https://arxiv.org/abs/2610.31711"
+kind = "paper"
+languages = ["en"]
+licence = "CC BY 4.0"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { revision = "v1", date = 2026-11-09 }
+
+[[source]]
+id = "futura-2023-chatgpt-excel"
+url = "https://www.futura-sciences.com/tech/questions-reponses/intelligence-artificielle-utiliser-chatgpt-excel-19208/"
+kind = "review"
+languages = ["fr"]
+licence = "all rights reserved; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "hashtag-2024-chatgpt-excel"
+url = "https://www.hashtagtreinamentos.com/formulas-complexas-no-excel-com-chatgpt-excel"
+kind = "vendor"
+languages = ["pt"]
+licence = "all rights reserved; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "jinba-consulting-pptx"
+url = "https://github.com/carnot-tech/jinba-consulting-pptx-skill"
+kind = "repo"
+languages = ["ja"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "carnot-tech/jinba-consulting-pptx-skill", paths = ["references/ai-smell-lexicon.md", "references/slide-rules.md"] }
+read_at = { commit = "60affb5ea3fe", date = 2026-11-09 }
+
+[[source]]
+id = "lt-slide-skills"
+url = "https://github.com/kakira9618/lt-slide-skills"
+kind = "repo"
+languages = ["ja"]
+# Its LICENSE.txt holds the words "MIT License" and nothing else.
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "kakira9618/lt-slide-skills", paths = [".claude/skills/lt-slides/references/compose.md", ".claude/skills/lt-slides/SKILL.md"] }
+read_at = { commit = "202873468ef5", date = 2026-11-09 }
+
+[[source]]
+id = "kiyo-2026-ai-slides"
+url = "https://note.com/kiyo_ai_note/n/nc3b0d7a85855"
+kind = "review"
+languages = ["ja"]
+licence = "unstated; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "report-de-ai-voice"
+url = "https://github.com/ashleyw57/report-de-ai-voice"
+kind = "repo"
+languages = ["zh"]
+licence = "unstated (no LICENSE file); facts only, with a citation"
+due = "weekly"
+feed = { api = "github", repo = "ashleyw57/report-de-ai-voice", paths = ["SKILL.zh.md"] }
+read_at = { commit = "fd1503eb8fab", date = 2026-11-09 }
+
+[[source]]
+id = "managertoday-2026-decks"
+url = "https://www.managertoday.com.tw/articles/view/72669"
+kind = "review"
+languages = ["zh-Hant"]
+licence = "all rights reserved; facts only, with a citation"
+due = "by-hand"
+feed = { api = "none" }
+read_at = { date = 2026-11-09 }
+
+[[source]]
+id = "agent-kit-briefing"
+url = "https://github.com/kimjisub/agent-kit"
+kind = "repo"
+languages = ["ko"]
+licence = "MIT"
+due = "weekly"
+feed = { api = "github", repo = "kimjisub/agent-kit", paths = ["plugins/docs/skills/docs/kinds/briefing/review.md"] }
+read_at = { commit = "91836f5bd825", date = 2026-11-09 }

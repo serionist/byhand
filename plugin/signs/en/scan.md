@@ -20,7 +20,7 @@ A pattern, in backticks after a sign's brackets, is what Grep runs on a file, ca
 - en-gemini-phrases (weak; gemini 1.5 and later): `\b(?:(?:complex interplay)|(?:extends? far beyond)|(?:here['’]s a breakdown)|(?:key improvements)|(?:manifests? in various ways)|(?:multi-?pronged approach)|(?:necessitates))\b`
 - en-gpt-2023-vocabulary (weak; gpt 3.5 to 4.x): `\b(?:(?:boasts)|(?:bolster(?:ed|ing|s)?)|(?:enduring)|(?:garner(?:ed|ing|s)?)|(?:intricac(?:ies|y))|(?:meticulous(?:ly)?)|(?:testament))\b`
 - en-gpt-2024-vocabulary (weak; gpt 4 to 5.x): `\b(?:(?:emphasi[sz]ing)|(?:enhanc(?:e|ed|es|ing))|(?:highlighting)|(?:showcas(?:e|ed|es|ing)))\b`
-- en-gpt-5-vocabulary (weak; gpt 5 to 5.x): `\b(?:(?:independent coverage)|(?:(?:local|national|regional) media outlets)|(?:(?:maintains?|has) an? (?:active|strong) (?:digital|online|social media) presence)|(?:trade publications))\b`
+- en-gpt-5-vocabulary (weak; gpt 5 to 5.x): `\b(?:(?:independent coverage)|(?:(?:local|national|regional) media outlets)|(?:(?:maintains?|has) a(?: strong|n active) (?:digital|online|social media) presence)|(?:trade publications))\b`
 - en-gpt-6-vocabulary (weak; gpt 6 and later): `\b(?:(?:dependable)|(?:echoed)|(?:prioriti[sz](?:e|ed|es|ing))|(?:universally))\b`
 - en-grok-vocabulary (weak; grok 1 and later): `\b(?:(?:causal)|(?:correlat(?:e|ed|es|ing))|(?:democrati[sz](?:e|ed|es|ing))|(?:demystif(?:ied|ies|y|ying))|(?:empirical))\b`
 - en-llama-phrases (weak; llama 4 and later): `\b(?:(?:far-reaching consequences)|(?:gain(?:ing|s)? a deeper understanding)|(?:role in shaping)|(?:stay(?:ing|s)? ahead of the competition))\b`

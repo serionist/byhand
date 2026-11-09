@@ -212,10 +212,20 @@ def test_a_chinese_form_reaches_a_traditional_chinese_scan():
         (r"a[^.!?]b", ["a\u2026b"]),  # a negated class never prints a character it excludes
         ("至[关關]重要|[举舉]足[轻輕]重", ["至关重要", "举足轻重"]),
         (r"поворотн\w+ (?:момент|пункт)", ["поворотн\u2026 пункт"]),
+        (r"sieht (?:\w+ )?rosig aus", ["sieht rosig aus"]),  # an optional word leaves no gap
+        (r"[ж-я]{3,} могут", ["\u2026 могут"]),  # a class with a range: any of its letters
+        (r"adresse (?:ce |l['\u2019])défi", ["adresse ce défi"]),  # an elided article only where nothing else will do
+        (r"là qu(?:['\u2019]|e [^.]{1,40} )entre", ["là qu'entre"]),  # and before a gap
     ],
 )
 def test_a_term_prints_one_plain_word_per_alternative(term, printed):
     assert render.words(term) == printed
+
+
+def filled(word):
+    """A printed word as the texts it stands for: its ellipsis as a Latin letter, and as a Cyrillic one for a
+    Cyrillic class."""
+    return [word.replace(render.ELLIPSIS, letter) for letter in ("x", "я")]
 
 
 def test_every_top_level_alternative_of_the_real_catalogue_has_its_word():
@@ -228,8 +238,7 @@ def test_every_top_level_alternative_of_the_real_catalogue_has_its_word():
         for term in item.terms
         for alternative in render.alternatives(term.term)
         if not any(
-            re.fullmatch(alternative, word.replace(render.ELLIPSIS, "x"), re.IGNORECASE)
-            for word in render.words(term.term)
+            re.fullmatch(alternative, text, re.IGNORECASE) for word in render.words(term.term) for text in filled(word)
         )
     ]
     assert lost == []
@@ -254,9 +263,27 @@ def test_every_word_of_the_real_catalogue_matches_its_term():
     wrong = [
         (term, word)
         for term, word in printed
-        if not word or not re.search(term, word.replace(render.ELLIPSIS, "x"), re.IGNORECASE)
+        if not word or not any(re.fullmatch(term, text, re.IGNORECASE) for text in filled(word))
     ]
     assert wrong == []
+
+
+def test_the_real_catalogue_prints_phrases_a_person_writes():
+    # Each was once printed as the shortest text its term matches, with no regard for grammar (#92): "a" before a
+    # vowel, "l'" before a consonant, a noun with no article, a verb that disagrees with its subject, the letter a
+    # class happens to list first, a gap where an optional word may go.
+    found, problems = signs.load()
+    assert problems == []
+    printed = {word for item in found.signs.values() for term in item.terms for word in render.words(term.term)}
+    assert {
+        "has a strong online presence",
+        "adresse ce défi",
+        "délivre de la valeur",
+        "navigue dans la complexité",
+        "надеюсь, это поможет",
+        "\u2026 могут похвастаться",
+        "die zukunft sieht rosig aus",
+    } <= printed
 
 
 def test_every_pattern_prints_as_written_in_nfc():

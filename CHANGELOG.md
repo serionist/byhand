@@ -46,6 +46,13 @@ before `1.0` a minor may break something, under Breaking.
   dialects mixed in one text, no longer standard Arabic in a dialect text, and `/byhand:write` loads it only for Qwen's
   drafts, the one model its source saw do it. Both still count only beside two others.
 
+### Fixed
+
+- The words `/byhand:write` and `/byhand:check` list read as phrases a person writes: "has a strong online
+  presence", "adresse ce défi", "надеюсь, это поможет", in place of "has a active online presence", "adresse
+  l'défi", "надеюсь, это помог". No sign file grows.
+- The German sign for rich traditions finds "eine reiche Tradition", not only "reiche Traditionen".
+
 ## 0.1.0 (2026-11-09)
 
 ### Added

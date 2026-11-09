@@ -117,7 +117,7 @@ instead = "Give the fact or the number that shows it matters."
 strength = "weak"
 terms = [
   { term = 'bleibende[ns]? (?:erbes?|vermächtnis(?:ses)?)', instead = "say what remains" },
-  { term = '(?:dienen|dient|diente|dienten|stand|standen|stehen|steht) als zeugnis', instead = "zeigt" },
+  { term = '(?:dien(?:en|t|te|ten)|stand|standen|stehen|steht) als zeugnis', instead = "zeigt" },
   { term = 'fasziniert (?:bis heute|nach wie vor|weiterhin)', instead = "say who still comes or reads it" },
   { term = 'schlüsselmoment\w*', instead = "give the date and what changed" },
   { term = 'tief ?verwurzelt\w*', instead = "say since when, or cut" },
@@ -145,7 +145,7 @@ terms = [
   { term = 'im herzen (?:der|des|von)', instead = "in, or the address" },
   { term = 'kulturelle[nrs]? teppich\w*', instead = "name the groups" },
   { term = 'paradigmenwechsel\w*', instead = "say what changed for whom" },
-  { term = 'reiche[nrs]? (?:kulturelle[nrs]? )?(?:erbes?|geschichte|traditionen?)', instead = "name one piece of it" },
+  { term = 'reiche[nrs]? (?:kulturelle[nrs]? )?(?:erbes?|geschichte|tradition(?:en)?)', instead = "name one piece of it" },
   { term = 'revolutionier\w*', instead = "say what it changes" },
   { term = 'wegweisend\w*', instead = "say who followed" },
 ]

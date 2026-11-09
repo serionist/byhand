@@ -9,8 +9,9 @@ allowed-tools: Read
 
 # Learn how the user writes
 
-A style is how one person writes one kind of text, learned from their own samples, never from AI-written text. Styles
-live in `~/.byhand/styles/`, on the user's machine only.
+A style is how one person writes one kind of text, learned from their own samples, never from AI-written text. The
+user's own live in `~/.byhand/styles/`, on their machine; a project's in `${CLAUDE_PROJECT_DIR}/.byhand/styles/`,
+which goes where the project goes.
 
 Read each file named here by its path with the Read tool, one call per file: never a command, Glob or a listing, which
 ask the user or are missing on some machines.
@@ -20,7 +21,7 @@ for `byhand:learn` first. The grant to read the plugin's files lasts only the tu
 
 ## The format
 
-`~/.byhand/styles/index.md` is the list of styles. A style file it doesn't name is never used.
+Each folder's `index.md` lists its styles. A style file its index doesn't name is never used.
 
 ```markdown
 # byhand styles
@@ -36,7 +37,7 @@ for `byhand:learn` first. The grant to read the plugin's files lasts only the tu
 - `Default for`: the kinds (`message`, `email`, `post`, `document`, `deck`, `sheet`) it is the default for in its
   language, or `-`. One default per kind and language: setting one takes it from the style that held it.
 
-`~/.byhand/styles/<style>.md`, under 4 KB:
+`<style>.md`, beside its index, under 4 KB:
 
 ```markdown
 ---
@@ -77,18 +78,24 @@ habits, words they like and words they never use.
    the `keeps` to offer.
 5. **Show it with one question:** the name, the kinds it should be the default for (naming a style that would lose
    that default), and the signs to keep. A name the index already has: say so; the old style's `## Corrections`
-   carry over.
-6. **Save on a yes,** with Write or Edit: the style, then the index with its row (a new index starts with the header
-   above).
+   carry over. For a project, a name `~/.byhand/styles/index.md` has is taken: propose another. Into a project with
+   no index yet, the question also says that the excerpts are the user's own words and the folder goes where the
+   project goes if it is committed; to keep it to themselves, add `.byhand/` to the project's `.gitignore`.
+6. **Save on a yes,** with Write or Edit, into `~/.byhand/styles/`, or `${CLAUDE_PROJECT_DIR}/.byhand/styles/` when
+   the user asked for this project ("for this project", "in this repo"): the style, then the index with its row (a new
+   index starts with the header above). Write nothing else into a project.
 
 ## Other requests
 
-- **List:** read the index and show it.
-- **A default:** set or clear it in the index.
-- **Remove:** take its row out of the index, and give the user the file's path to delete; no tool here deletes. To
-  rename a style, learn it again, or rename the file and its row by hand.
-- **Remember:** add the rule under `## Corrections` of the style the last draft used, or the one the user names; ask
-  when it isn't clear. No style yet: say so, and offer to learn one from their samples. Date it, and name the kind of
-  text it came from.
+Read both indexes, `${CLAUDE_PROJECT_DIR}/.byhand/styles/index.md` (missing: no project styles) and
+`~/.byhand/styles/index.md`.
+
+- **List:** show both, the project's marked as this project's.
+- **A default:** set or clear it in the index that holds the style; a name in both: ask which.
+- **Remove:** take its row out of the index that holds it (a name in both: ask which), and give the user the file's
+  path to delete; no tool here deletes. To rename a style, learn it again, or rename the file and its row by hand.
+- **Remember:** add the rule under `## Corrections` of the style the last draft used, in the file the draft read, or
+  the one the user names; ask when it isn't clear. A project's style: say it is this project's when you save. No
+  style yet: say so, and offer to learn one from their samples. Date it, and name the kind of text it came from.
 
 Never put the user's samples anywhere but their own style file.

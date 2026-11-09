@@ -392,6 +392,11 @@ Decisions on the way:
   the catalogue has never seen; tokens were not counted (no API key), bytes stand in. Every measured bar met
   (`docs/reviews/2026-11-08-real-sessions.md`): no `SessionStart` hook before the release. `write` offers to keep a
   draft's feedback as a rule in its style (the maintainer, 2026-11-09).
+- **A project's styles, as built (#103, `docs/plans/2026-11-09-project-styles.md`):** this replaces the Styles
+  section's project lines. `write` reads `${CLAUDE_PROJECT_DIR}/.byhand/styles/index.md` before the user's, one list,
+  so a project's default wins for its kind and language; a style the user names is their own first, not the
+  project's. `learn` saves into a project only when asked, and writes no `.gitignore`: committing a project's styles is
+  the user's call, said at the first save.
 
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
 `0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.

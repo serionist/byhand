@@ -357,13 +357,15 @@ category = "phrase"
 # Not mail or chat, where a person hopes their answer helped too.
 kinds = ["post", "document", "deck"]
 models = "any"
-what = "Leaves a chat assistant's sign-off in a post or a document: a hope that it helped, an offer of more."
+what = "Leaves a chat assistant's sign-off: a hope that it helped, an offer of more."
 instead = "Delete it; end on the last useful fact."
 strength = "weak"
+# `помог\w*` holds помог, помогла and помогло as a stem, which `write` prints after a whole word: "это поможет",
+# not "это помог", which disagrees.
 terms = [
   { term = 'буду рад\w* помочь', instead = "cut" },
   { term = 'если (?:вы )?хотите (?:спросить|узнать) (?:что-нибудь|что-то) ещ[её]', instead = "cut" },
-  { term = 'надеюсь, (?:мой ответ|эта информация|это) (?:был полезен|была полезна|было полезно|помог|помогла|помогло|поможет)', instead = "cut" },
+  { term = 'надеюсь, (?:мой ответ|эта информация|это) (?:был полезен|была полезна|было полезно|помог\w*|поможет)', instead = "cut" },
 ]
 flags = "Вот и все шаги настройки принтера. Надеюсь, эта информация была полезна!"
 passes = "Вот и все шаги настройки принтера. Если застрянете, пишите Диме, он настраивал."

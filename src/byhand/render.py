@@ -57,6 +57,7 @@ SCAN_LAYOUT = "scan.layout.md"
 SHORT_KINDS = ("email", "message")
 LONG_KINDS = ("document", "post")
 ELLIPSIS = "…"
+APOSTROPHES = ("'", "\u2019")  # an elision's marks, straight and curly
 _ORDER = {strength: n for n, strength in enumerate(signs.STRENGTHS)}
 _SUFFIX = {"short": SHORT, "long": LONG, "layout": LAYOUT}
 
@@ -78,12 +79,13 @@ def parts(sign: Sign) -> tuple[str, ...]:
 
 def _class(items: list[tuple[Any, Any]]) -> str:
     """A character class's word: its first literal, a space for `\\s`, else the ellipsis. A negated class's literals
-    are what it excludes, so it prints the ellipsis."""
-    if any(op.name == "NEGATE" for op, _value in items):
+    are what it excludes, and a class with a range stands for any letter in it, not its first: both print the
+    ellipsis. A letter wins over an apostrophe, as an alternative does: Python folds `qu(?:'|e)` into a class."""
+    if any(op.name in ("NEGATE", "RANGE") for op, _value in items):
         return ELLIPSIS
-    for op, value in items:
-        if op.name == "LITERAL":
-            return chr(value)
+    literals = [chr(value) for op, value in items if op.name == "LITERAL"]
+    if literals:
+        return next((char for char in literals if char not in APOSTROPHES), literals[0])
     if any(op.name == "CATEGORY" and value.name == "CATEGORY_SPACE" for op, value in items):
         return " "
     return ELLIPSIS
@@ -104,8 +106,14 @@ def _shortest(items: Iterable[tuple[Any, Any]]) -> str:
         elif name == "SUBPATTERN":
             out.append(_shortest(value[-1]))
         elif name == "BRANCH":
-            # A word before an ellipsis: "delve" says more than "…".
-            out.append(min((_shortest(branch) for branch in value[1]), key=lambda word: (ELLIPSIS in word, len(word))))
+            # A word before an ellipsis: "delve" says more than "…". And no elided article while another will do: "l'"
+            # fits only before a vowel, which the word after it may not start with ("adresse l'défi").
+            out.append(
+                min(
+                    (_shortest(branch) for branch in value[1]),
+                    key=lambda word: (ELLIPSIS in word, word.endswith(APOSTROPHES), len(word)),
+                )
+            )
         elif name in ("MAX_REPEAT", "MIN_REPEAT"):
             low, high, inner = value
             word = _shortest(inner)
@@ -113,8 +121,10 @@ def _shortest(items: Iterable[tuple[Any, Any]]) -> str:
                 out.append(ELLIPSIS if ELLIPSIS in word else word * low)
             elif word == ELLIPSIS and high > 1 and out:
                 out.append(ELLIPSIS)  # a stem's open end: "служ…", not "служ", which reads as a typo
-            elif high == 1 and word and not any(char.isalpha() for char in word):
-                out.append(word)  # an optional apostrophe or space prints: "today's", not "todays"; a word doesn't
+            elif high == 1 and word and ELLIPSIS not in word and not any(char.isalpha() for char in word):
+                # An optional apostrophe or space prints: "today's", not "todays"; an optional word doesn't, nor a gap
+                # where one may go: "sieht rosig aus", not "sieht … rosig aus".
+                out.append(word)
         elif name != "AT":  # `\b`, `^` and `$` print nothing; `validate` refuses what else Grep can't run
             raise ValueError(f"no word for {name}")
     return re.sub(f"{ELLIPSIS}+", ELLIPSIS, "".join(out))

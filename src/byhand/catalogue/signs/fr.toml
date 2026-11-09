@@ -305,7 +305,7 @@ id = "fr-calques"
 category = "word"
 kinds = ["post", "document", "deck"]
 models = "any"
-what = "Uses business English turned into French verbs: adresser un enjeu, naviguer dans l'incertitude."
+what = "Uses business English turned into French verbs."
 instead = "Use the idiom French already has for it."
 strength = "weak"
 # Not "faire sens": people say it at work every day. Not "adresser un problème": "j'ai adressé le problème à la DSI"
@@ -313,7 +313,7 @@ strength = "weak"
 # short of "ces " and alphabetical order matches what any order would.
 terms = [
   { term = '''adress(?:e|é|ée|ées|ent|er|ez|ons) (?:ce |ces |cet |des |l['’]|le |les |un )(?:défis?|enjeux?)''', instead = "traiter" },
-  { term = '''délivr(?:ant|e|ent|er|ez|ons) (?:de la |plus de )?valeur''', instead = "apporter" },
+  { term = '''délivr(?:ant|e|ent|er|ez|ons) (?:de la|plus de) valeur''', instead = "apporter" },
   { term = '''navigu(?:ant|e|ent|er|ez|ons) (?:à travers|dans) (?:ces |cette |l['’]|la |les )(?:complexités?|incertitudes?)''', instead = "say how" },
 ]
 flags = "En mai, le comité a adressé ces enjeux un par un, en naviguant dans l'incertitude du marché."

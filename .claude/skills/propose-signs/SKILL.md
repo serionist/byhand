@@ -38,7 +38,8 @@ ranks the sources.
    - `models`: `any` unless a source ties it to a family, with a range. No `to` for a sign still seen.
    - `terms` for a word list, as stems in an inflecting language (`kulcsfontosság\w*`), or a `check`. Each must be what
      Grep can run as Python does: no look-around, no backreference, nothing only Python reads, such as `\Z`, `*+` or
-     `(?x)`; `validate` names any it finds.
+     `(?x)`; `validate` names any it finds. `write` prints a term as the shortest text it matches (`docs/USAGE.md`):
+     read that print in the rendered file, and spell the term so it reads as a person writes it.
    - An `any` sign's `check` is a form per language, `check.<code> = '…'`, under the language it is written in, with
      its note above it; `check.any` for a chatbot's leftover every language meets. A new language's forms go under
      its code, each with a machine line in `tests/test_office_<code>.py` (English's in `tests/test_office.py`),

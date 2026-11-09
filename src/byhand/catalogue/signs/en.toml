@@ -249,10 +249,11 @@ models = [{ family = "gpt", from = "5", to = "5" }]
 what = "Stresses media coverage and online presence, as GPT-5 does."
 instead = "Say what the source says, not what kind of source it is."
 strength = "weak"
+# `a(?: strong|n active)`, not `an? (?:active|strong)`: `write` prints a term's shortest text, "a active" there.
 terms = [
   { term = 'independent coverage', instead = "name the report" },
   { term = '(?:local|national|regional) media outlets', instead = "name them" },
-  { term = '(?:maintains?|has) an? (?:active|strong) (?:digital|online|social media) presence', instead = "cut" },
+  { term = '(?:maintains?|has) a(?: strong|n active) (?:digital|online|social media) presence', instead = "cut" },
   { term = 'trade publications', instead = "name them" },
 ]
 flags = "The studio maintains an active social media presence and has drawn independent coverage."

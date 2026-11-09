@@ -1,9 +1,9 @@
 ---
 title: Release a new version with each change to the plugin, signs included
 issue: "#31"
-status: draft
-approved_by:
-approved_at:
+status: approved
+approved_by: serionist
+approved_at: 2026-11-09
 ---
 
 # Release a new version with each change to the plugin, signs included
@@ -35,7 +35,7 @@ One rule for every PR, by hand or from the refresh agent:
 | Of what a user's session reads (`plugin/`, but `plugin/evals/` and `plugin/README.md`), the PR changes | Version | `CHANGELOG.md` |
 |---|---|---|
 | sign files only, or fixes a skill or an agent | patch, `0.2.0` to `0.2.1` | a new `## <version> (<date>)` section above the newest, with its lines |
-| anything else: what a skill or agent does, `plugin.json`, or a one-way door (a minor may break one in `0.x`) | minor, by hand | the same |
+| anything else: what a skill or agent does, `plugin.json` but its version, or a one-way door (a minor may break one in `0.x`) | minor, by hand | the same |
 | nothing (the package, tests, docs, the catalogue's sources alone) | none | none |
 
 `## Unreleased` goes: every line users would read lands in the section of the version that ships it. With an
@@ -103,7 +103,8 @@ The publish job, which runs no model, moves the version after its checks pass an
   `git show HEAD:src/byhand/catalogue/languages.toml` (the base's, not the model's tree: its `[[language]]`,
   `[[extra]]` and `[[variant]]` tables, a name "X, Y" written "Y X", so `zh-Hant` reads "Traditional Chinese"), in
   alphabetical order, with `any` last as "the ones every language shares" (Round 1, I4): `- Signs for French and
-  German, and the ones every language shares, from the refresh of 2026-11-15.` A folder whose code the base doesn't
+  German, and the ones every language shares, from the refresh of 2026-11-15.`; with `any` alone, `- The signs
+  every language shares, from the refresh of 2026-11-15.` (Round 2, I7). A folder whose code the base doesn't
   name fails the job, and nothing is published (Round 1, P3). Both files are staged
   with the rest; the commit and the PR go on as today. The PR body already lists each sign for the maintainer.
 
@@ -144,7 +145,8 @@ workflow that may create tags and releases.
 2. **The refresh agent's publish job:** the bump and the line from the paths. Test: the step's Python run by hand on a
    scratch branch with a staged change, once to `plugin/signs/de/`, `plugin/signs/zh-Hant/` and `plugin/signs/any/`
    (the version moves, the line reads "Signs for German and Traditional Chinese, and the ones every language shares",
-   `uv run tools/gate.py quick` passes the version check), once to a folder `plugin/signs/xx/` (the job fails), and
+   `uv run tools/gate.py quick` passes the version check), once to `plugin/signs/any/` alone (the line for `any`
+   alone), once to a folder `plugin/signs/xx/` (the job fails), and
    once to `sources.toml` alone (nothing moves).
 3. **`tools/gate.py`:** the frozen-section guard in `check_version`, and `release_problems`' docstring. Test:
    `tests/test_gate.py`, a parametrised test of the guard's pure part (base and head changelogs: unchanged, a new
@@ -177,7 +179,8 @@ workflow that may create tags and releases.
 - `.claude/skills/propose-signs/SKILL.md`: step 8, the patch and its section, "from the refresh agent, its publish
   job does this", since the agent's model reads this skill and may not edit either file (Round 1, P5).
 - `.claude/skills/review-code/lenses.md`: "Does the version move only in a release PR?" becomes "Does a change to the
-  plugin move the version, with its own dated section?".
+  plugin move the version, with its own dated section? (A refresh agent's draft: its publish job moves it after the
+  review.)", so the agent's own review doesn't flag a bump it may not make (Round 2, P6).
 - `.github/workflows/refresh-agent.yml`: its header comment names the bump.
 - `CONTRIBUTING.md`: step 2's changelog line.
 - `README.md` and `plugin/README.md`, Update: signs come as new versions often; auto-update under `/plugin`,
@@ -248,3 +251,29 @@ Owner calls: none.
 | I4 | The `any` folder as "the ones every language shares", as `CHANGELOG.md` words it, not "every language" | taken |
 | I5 | `GH_TOKEN` in `release.yml`'s step env, named, since `persist-credentials: false` leaves `gh` none and the slip would show only after the merge | taken |
 | I6 | One helper for main's base per range, shared by `check_sign_ids` and the guard (the refuter's) | taken |
+
+### Round 2
+
+**How:** a fresh Claude Code agent on Opus 5.5 (claude-opus-5-5), 2026-11-09, read only, on the plan at `a5ef7ce`: the
+edits since Round 1 and whether each fix closes its finding; it tried P1's ranges again in a scratch repo, a reworded
+second push and a force push after a rebase. **Verdict:** approved. **Now:** P6, I7 and I8 edited in; the plan
+approved on the maintainer's standing word ("approve once a round has no blocker or major"), 2026-11-09.
+
+P1 to P5: closed, each checked against the code it rests on.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P6 | minor | The refresh agent runs `review-code`, whose rewritten lens asks whether a plugin change moved the version; its draft never does, since the publish job moves it after the review, so every run's review would flag a bump the model may not make | fixed: the lens's question says a refresh agent's draft is bumped by its publish job |
+
+Refuted: a waiting `release.yml` run cancelled by a newer one (three merges inside one run of seconds, the middle one
+moving the version; it costs a release page, not an update); the guard with no `origin/main` (it falls back to the
+fork point, as `check_sign_ids` and the default `--base` do); I6's helper missing from Step 3 (the design names it,
+and `check_sign_ids`' tests cover the move); the no-`paths` reason after P2 (a push that keeps the version still heals
+a failed run).
+
+Owner calls: none.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I7 | A form of the refresh's line for `any` alone, which the template had none for, and its case in Step 2's test | taken |
+| I8 | "`plugin.json` but its version" in the minor row, so a sign PR's own bump doesn't read as a minor | taken |

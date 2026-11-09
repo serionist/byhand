@@ -20,16 +20,17 @@
 # olanak sağlamak, teşvik etmek, yol açmak), which reports and official letters write too, each a hit of its own in a
 # plain report; humanizer-tr's translationese (gerçekleştirmek, -mektedir, olarak twice in a sentence, sahip olmak,
 # tarafından), as official, legal and academic Turkish writes the passive, -mektedir and tarafından, humanizer-tr says
-# itself, and a calque needs evidence that models write it more, which neither source gives; its stock
-# words (Bu bağlamda, Buna ek olarak, dönüştürücü, ekosistem, manzara), on its word alone; and its empty openers
-# (Dijital çağda, Hızla değişen dünyamızda, Teknolojinin hızla geliştiği günümüzde), the long participle chains and the
-# stock closers, which it took from a Chinese skill, with no Turkish evidence. Its own native read keeps geniş bir
-# yelpaze, günün sonunda and kilit rol oynamak, among others, when no other tell stands beside them. Its dash rule is
-# English's, and Turkish sets dialogue with the long dash. Its mixed sen and siz rests on its word alone. English laced
-# through office Turkish (plaza dili: feedback, toplantı set etmek) is what people write. The essays' narrow vocabulary
-# is no sign either: the model's texts were longer, and a word count tells nothing in a mail. Sonuç olarak gets no form
-# in any-closing-summary, as humanizer-tr keeps a closing summary that says something. tests/test_office_tr.py holds
-# plain mail, chat, official letters and reports against every sign that counts alone, and against a weak cluster.
+# itself, and a calque needs evidence that models write it more, which neither source gives; its stock words (Bu
+# bağlamda, Buna ek olarak, dönüştürücü, ekosistem, manzara), on its word alone; and its empty openers (Dijital çağda,
+# Hızla değişen dünyamızda, Teknolojinin hızla geliştiği günümüzde), the long participle chains and the stock closers,
+# which it took from a Chinese skill, with no Turkish evidence. Its own native read keeps geniş bir yelpaze, günün
+# sonunda and kilit rol oynamak, among others, when no other tell stands beside them. Its dash rule rests on its word
+# alone, with no measure, and office Turkish sets an aside between two dashes. Its mixed sen and siz rests on its word
+# alone. English laced through office Turkish (plaza dili: feedback, toplantı set etmek) is what people write. The
+# essays' narrow vocabulary is no sign either: the model's texts were longer, and a word count tells nothing in a mail.
+# Sonuç olarak gets no form in any-closing-summary, as humanizer-tr keeps a closing summary that says something.
+# tests/test_office_tr.py holds plain mail, chat, official letters and reports against every sign that counts alone, and
+# against a weak cluster.
 
 # Phrases.
 
@@ -38,7 +39,7 @@ id = "tr-besides-this"
 category = "phrase"
 kinds = ["post", "document"]
 models = "any"
-what = "Adds one more point with Bunun yanı sıra at the start of a sentence, often more than once in a text."
+what = "Adds one more point with Bunun yanı sıra at the start of a sentence."
 instead = "Join the point to the last sentence with ve, or start with the point itself."
 strength = "weak"
 terms = [
@@ -55,13 +56,15 @@ sources = [
 id = "tr-stock-idioms"
 category = "phrase"
 kinds = ["document"]
-# GPT-4o mini's essays; no source has counted another family's Turkish.
-models = [{ family = "gpt", from = "4" }]
-what = "Reaches for two idioms that GPT's Turkish writes far more than people do, rol oynamak and zemin hazırlamak, often several times in one text; one alone is ordinary Turkish."
+# GPT-4o mini's essays, so the 4 series only, as ko-gpt-2024-vocabulary has it: no source has counted a later GPT's
+# Turkish, or another family's.
+models = [{ family = "gpt", from = "4", to = "4" }]
+what = "Reaches for two idioms that GPT's Turkish writes far more than people do, rol oynamak and zemin hazırlamak; one alone is ordinary Turkish."
 instead = "Say what the thing does or what it made possible: the verb itself, the number or the result."
 strength = "weak"
-# Not the literal floor of a building site (zemin hazırlığı), as the noun ends hazırlık; a floor prepared in a passive
-# (zemin hazırlanır) is found, and accepted for a weak sign. Not a lead role (başrol): rol must start the word.
+# Found, and accepted for a weak sign: a building site's floor (zemin hazırlama, zemin hazırlanır) and an actor's role
+# (üç oyunda rol oynadı), literal uses; zemin hazırlığı passes, as the noun ends hazırlık. A lead role (başrol) passes:
+# rol must start the word.
 terms = [
   { term = '''rol oyn\w*''', instead = "say what it does" },
   { term = '''zem[iİ]n haz[ıI]rl(?:a|[ıI]yor)\w*''', instead = "say what it made possible" },

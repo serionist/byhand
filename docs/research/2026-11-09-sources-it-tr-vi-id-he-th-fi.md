@@ -162,3 +162,22 @@ it; each rests on D11 or D2 alone.
 What would seed Indonesian: a study that compares model and human Indonesian of the same genre, a second native list
 whose false positives are tested on office and academic text, or a native speaker's read. `wang-2026-human-detection`
 has no Indonesian section.
+
+## Follow-up, 2026-11-09: Turkish's deferred `any` forms
+
+Turkish is seeded with two weak signs of its own (#65): `tr-besides-this` (Bunun yanı sıra) and `tr-stock-idioms`
+(rol oynamak, zemin hazırlamak, for GPT 4). `any.toml` was held, as for Indonesian, so the forms `humanizer-tr` shows for
+the `any` checks wait here, each for its narrowest wording, a `machine` line and the person's line beside it in
+`tests/office_tr.toml`. Each rests on `humanizer-tr` 23 or 24 alone.
+
+| `any` sign | Form | The person's line it must pass |
+|---|---|---|
+| `any-ai-self-reference` | Bir yapay zekâ olarak, then what a model says it lacks | ChatGPT'nin bir yapay zekâ olarak şirket ağına erişimi yok; Yapay zekâ sorumlusu olarak… |
+| `any-assistant-closing-offer` | Başka bir şey ister misin?; Umarım yardımcı olur! | None yet: the source keeps courtesy in mail and replies, and the sign reads documents only |
+| `any-assistant-preamble` | Elbette! İşte, then the reader's text reworked | Elbette, işte sözleşmenin imzalı hâli:; Memnuniyetle! İşte ilan metninin son hâli: |
+| `any-flattering-agreement` | Harika bir soru!; Kesinlikle haklısın! | Harika bir soru, açıkçası bilmiyorum; Kesinlikle haklısın, tarihi yanlış yazmışım |
+| `any-knowledge-cutoff` | Son güncellememe kadar | Son güncellememe kadar tabloda 40 açık talep vardı |
+
+`any-negative-parallelism` could cite `humanizer-tr` 1 (X değil, Y); it has no check. `any-closing-summary` gets no
+Turkish form, as `humanizer-tr` 34 keeps a closing summary that says something. When the forms land, the dotted and
+dotless I classes of `tr.toml`'s header hold for them too: Grep folds only i with I.

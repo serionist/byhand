@@ -4,8 +4,8 @@
 # Turkish office mail runs on set phrases (Bilgilerinize sunarım, Gereğini arz ederim, İyi çalışmalar, Kolay gelsin,
 # Saygılarımla, Umarım iyisinizdir) and official letters on the passive and -mektedir, with tarafından, as the 2020
 # regulation on official correspondence has them; humanizer-tr says these are right in official, legal and academic
-# text, and keeps a person's greetings and closings. People write what its native reader found natural (aslında, geniş
-# bir yelpaze, Gelin birlikte bakalım, günün sonunda, işin aslı, kilit rol oynamak, mevcut, titizlikle, yolculuk), real
+# text, and keeps a person's greetings and closings. People write what its native reader found natural (aslında, Gelin
+# birlikte bakalım, geniş bir yelpaze, günün sonunda, işin aslı, kilit rol oynamak, mevcut, titizlikle, yolculuk), real
 # ownership with sahip olmak, the idioms the model wrote more (katkıda bulunmak, olanak sağlamak, yol açmak), Sonuç
 # olarak before a summary that says something, Günümüzde before a number, and English laced through office Turkish
 # (deadline, feedback, toplantı set etmek). Chat is often typed with no Turkish letters (toplantiyi, yarin). They are a
@@ -92,6 +92,8 @@ reports = [
   "Günümüzde mağaza ödemelerinin neredeyse tamamı kartla yapılıyor: ekimde nakit payı %31'e geriledi.",
   "Program\n\nDijital çağda veri güvenliği: KVKK uzmanlarıyla panel, saat 15.00.",
   "Kullanım kılavuzu\n\nDüzenleyicide [Ekle] düğmesine tıklayın ve Tablo'yu seçin. Sistem isteğe bağlı olarak e-posta ile bildirim gönderebilir. Raporlar varsayılan olarak pazartesi günleri oluşturulur ve 90 gün saklanır.",
+  "Döşeme şartnamesi\n\nParke öncesi zemin hazırlama için tesviye şapı kullanılır; şap kurumadan parke döşenmez.",
+  "Tiyatro\n\nGenç oyuncu bu sezon iki oyunda birden rol oynuyor: cuma akşamları Şehir Tiyatrosu'nda, pazar öğleden sonra Kadıköy'de.",
   "Saha raporu\n\nZemin hazırlığı tamamlandı; döşeme işine pazartesi başlanacak. Beton dökümü hava koşullarına bağlı olarak 20 Kasım'da yapılacak.",
   "Ürün bilgisi\n\nMevcut stok: 40 adet beyaz, 12 adet antrasit. Şirket, İzmir'deki iki fabrikanın tamamına sahiptir.",
   "Yeni raporlama düzeni, ay sonu kapanışını bir üst seviyeye taşıdı: kapanış artık iki gün sürüyor.",

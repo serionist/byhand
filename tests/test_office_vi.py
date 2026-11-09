@@ -64,6 +64,12 @@ REPLIES = [
     "Dưới đây là phiên bản tiếng Anh của văn bản, gửi bạn:",
     "Dưới đây là phiên bản 2.1 của phần mềm quản lý kho:",
     "Dưới đây là phiên bản thư mời gửi các bạn trong nhóm:",
+    # a version made from the reader's mail, or sent to it, is not their text reworked (#62's review, F1)
+    "Dưới đây là phiên bản đã sửa theo email của bạn:",
+    "Dưới đây là phiên bản cập nhật theo tin nhắn của bạn:",
+    "Dưới đây là phiên bản hợp đồng mình đã gửi vào email của bạn:",
+    "Dưới đây là phiên bản PDF của báo giá, đã gửi qua email của bạn:",
+    "Dưới đây là phiên bản slide mình làm dựa trên email của bạn:",
     "Mình gửi lại bạn bản email hôm qua nhé:",
     "Nếu anh muốn trao đổi trực tiếp, em có thể gọi lại trong giờ hành chính.",
     "Nếu bạn cần bản in, mình để ở quầy lễ tân.",
@@ -191,7 +197,7 @@ def test_every_vietnamese_sign_is_weak_until_a_native_review(catalogue):
 # finds nothing. Branches that read other languages' words have their lines in the other office tests.
 MACHINE = [
     ("any-assistant-preamble", "Dưới đây là phiên bản đã chỉnh sửa của email của bạn:"),
-    ("any-assistant-preamble", "Dưới đây là phiên bản trang trọng hơn cho tin nhắn của bạn:"),
+    ("any-assistant-preamble", "Dưới đây là phiên bản trang trọng hơn của tin nhắn của bạn:"),
     ("any-assistant-preamble", "Dưới đây là phiên bản ngắn gọn của văn bản của bạn:"),
     ("any-emoji-markers", "- 🚀 Chương trình đào tạo mới"),
     ("any-emoji-markers", "## 📊 Số liệu tháng 10"),

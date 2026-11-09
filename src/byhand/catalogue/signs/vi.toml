@@ -1,0 +1,73 @@
+# Vietnamese's signs. A sign here cites a source that covers Vietnamese; the shape of a sign is in `any.toml`. A term
+# is a regular-expression fragment, and `validate` wraps the list in `\b`. Vietnamese puts a space between syllables,
+# not words, so `\b` is a syllable's edge: a term is a whole word of one or more syllables (nhấn mạnh, not mạnh), and
+# can still be the start of a longer phrase. The catalogue is in NFC, the precomposed letters a Vietnamese keyboard
+# types by default; a text typed in combining form (Unikey's "tổ hợp") is not matched.
+#
+# Order: every alternation, every term list and every list of examples in a `what` or `instead` runs in alphabetical
+# order of its plain text, accents and case ignored, as in every language (tests/test_order.py); đ is a letter of its
+# own there, after z.
+#
+# What these rest on: Lee et al. 2026 compared 47,165 Vietnamese abstracts before and after 2023, beside their Korean
+# ones, and found the register words of Korean and English rising in 2025, without a bound; Wang et al. 2026 asked
+# annotators what told GPT-4o's Vietnamese news summaries and Wikipedia openings from people's; vietnamese-humanizer
+# lists Vietnamese tells and says they are not calibrated on any corpus; slop-gate lists Vietnamese tells with no data.
+# So a sign rests on Lee et al., or on vietnamese-humanizer beside a second source. None measured work mail, and no
+# native speaker has read these yet. So every Vietnamese sign is weak until one does, and none reads mail or chat.
+#
+# Left out, as office Vietnamese writes them and the sources show no model writing them more: slop-gate's Sino-Vietnamese
+# verbs and connectors (do đó, đảm bảo rằng, đối với, lưu trú, theo quy định hiện hành, thực hiện, tiến hành, trong
+# trường hợp, tuy nhiên), which Decree 30/2020's administrative style is made of; vietnamese-humanizer's light verbs
+# (thực hiện việc), its passive with được… bởi and its other calques of English (mở khóa tiềm năng, trải nghiệm liền
+# mạch), as a calque needs evidence that models write it more; its dense connectors (đồng thời, qua đó, từ đó) and
+# even sentence lengths, which it rates high for false positives itself; its nominal openers (Việc… Việc…), which legal
+# text writes; "đóng vai trò… trong việc" and "trong bối cảnh… ngày càng phát triển", which it keeps when the text
+# analyses a role or names the change; and its closer "hy vọng những thông tin trên sẽ hữu ích", which it keeps in
+# letters and customer care. Lee et al.'s other 2025 words are a field's or a year's (chuyển đổi số, cơ chế, kỷ
+# nguyên, linh hoạt, then chốt, toàn diện), and each would count as a hit of its own in a plain report. Wang et al.'s
+# short sentences are one model's news summaries, against journalists' long ones, and office Vietnamese writes short
+# sentences too. Generic summaries, brochure tone and "không chỉ… mà còn" as a foil are in signs every language shares
+# (any-generic-over-specific, any-negative-parallelism, any-promotional-tone), with no Vietnamese pattern; "Tóm lại"
+# gets no form in any-closing-summary, as people close with it.
+# tests/test_office_vi.py holds plain mail, chat, official letters and reports against every sign that counts alone,
+# and against a weak cluster.
+
+# Phrases.
+
+[[sign]]
+id = "vi-article-opener"
+category = "phrase"
+kinds = ["post", "document"]
+models = "any"
+what = "Opens by telling the reader what the article or section will do together with them (Trong bài viết này, chúng ta sẽ cùng…)."
+instead = "Start with the first fact; the title already says what the text is about."
+strength = "weak"
+terms = [
+  { term = '''(?:ở|trong) (?:bài viết|phần) này,? chúng ta (?:cùng|sẽ)''', instead = "cut" },
+]
+flags = "Trong bài viết này, chúng ta sẽ so sánh hai cách ủ phân hữu cơ tại nhà."
+passes = "Ủ phân hữu cơ tại nhà có hai cách: ủ nóng trong thùng kín và ủ lạnh ngoài vườn."
+sources = [
+  { source = "vietnamese-humanizer", where = "patterns/humanizer.yml, VI-HUM-D01, commit 2fd7dd05cbd9", seen = 2026-11-09 },
+  { source = "slop-gate", where = "rules/vietnamese.json, vi-bai-viet-nay, commit f78d5cbee0dc", seen = 2026-11-09 },
+]
+
+# Words.
+
+[[sign]]
+id = "vi-emphasise"
+category = "word"
+kinds = ["document"]
+models = "any"
+what = "Says that a text or a result emphasises something (nhấn mạnh), where it could say the thing; ordinary in a report of what a speaker stressed."
+instead = "Give what it shows: the number, the decision or the date."
+strength = "weak"
+# Also found as the start of nhấn mạnh tay, to press hard, which a manual may write: accepted for a weak sign.
+terms = [
+  { term = '''nhấn mạnh''', instead = "give what it shows" },
+]
+flags = "Kết quả khảo sát nhấn mạnh tầm quan trọng của việc kèm cặp nhân viên mới."
+passes = "Theo khảo sát, 64% nhân viên mới muốn có người kèm trong tháng đầu."
+sources = [
+  { source = "lee-2026-korean", where = "arXiv 2609.07447v1, 5.7 External comparison: Vietnamese, Table 8, and 6.4: nhấn mạnh in 4.0% of 2025's abstracts against 0.4% expected, 11.3 times, the one ratio above the 2022 control's 4.0; no bound, as the excess stays under the control's floor", seen = 2026-11-09 },
+]

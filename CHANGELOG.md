@@ -19,3 +19,5 @@ before `1.0` a minor may break something, under Breaking.
 - Arabic signs, for Modern Standard Arabic and every dialect alike: 3 of Arabic's own, and Arabic forms in three
   signs every language shares. Until a native speaker reads them, each of Arabic's own signs counts only beside two
   others.
+- Vietnamese signs: 2 of Vietnamese's own, and a Vietnamese form in one sign every language shares. Until a native
+  speaker reads them, each of Vietnamese's own signs counts only beside two others.

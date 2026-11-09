@@ -12,14 +12,14 @@
 # tells. So a sign from either rests on both, or on another source beside it, and lists only what a source names.
 # any-negative-parallelism holds the set-up contrast for Portuguese too, and leaves out a real correction: Portuguese
 # writes não é só X, é Y to add, to correct and as a model's foil, and no check of the shape the review tried told them
-# apart (#55's review, F22 to F29). Left out, as Portuguese reports, papers and news are full of them: a word English's
-# lists translate (abrangente, crucial, robusto), a field's term (ecossistema de inovação, ecossistema digital,
-# holístico, sinergia), a phrase people use (divisor de águas, mais do que nunca, na era da inteligência artificial, na
-# era digital, no cenário atual), and the hinges both skills list (cabe ressaltar que, é importante destacar que), which
-# papers write two to a paragraph, Andrade et al.'s among them. None measured work mail, and no native speaker has read
-# these yet. So every Portuguese sign is weak until one does, and a sign that counts alone would have no pattern: the
-# model reads for it. The Portuguese checks read posts and documents, but the dash, as the set phrases of mail (Fico à
-# disposição, Qualquer dúvida, é só dizer, Sem mais para o momento) are a person's.
+# apart (#55's review, F22, F25, F27, F29). Left out, as Portuguese reports, papers and news are full of them: a word
+# English's lists translate (abrangente, crucial, robusto), a field's term (ecossistema de inovação, ecossistema
+# digital, holístico, sinergia), a phrase people use (divisor de águas, mais do que nunca, na era da inteligência
+# artificial, na era digital, no cenário atual), and the hinges both skills list (cabe ressaltar que, é importante
+# destacar que), which papers write two to a paragraph, Andrade et al.'s among them. None measured work mail, and no
+# native speaker has read these yet. So every Portuguese sign is weak until one does, and a sign that counts alone would
+# have no pattern: the model reads for it. The Portuguese checks read posts and documents, but the dash, as the set
+# phrases of mail (Fico à disposição, Qualquer dúvida, é só dizer, Sem mais para o momento) are a person's.
 # A calque of English (a full stop after a list label, alavancar, endereçar um problema, Espero que esta mensagem o
 # encontre bem, Title Case) is translationese, which people write too: no source measures models writing one more than
 # people, so none has a sign. Brazilian forms in text for Portugal, or European ones in Brazil, are a variety, not a

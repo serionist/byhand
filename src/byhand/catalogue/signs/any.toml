@@ -154,6 +154,8 @@ sources = [
   { source = "wikipedia-zh", where = "否定平行結構, revision 95337857", seen = 2026-11-07 },
   { source = "russell-2025-detectors", where = "arXiv v2, Table 3, sentence structure", seen = 2026-11-07 },
   { source = "vale-ai-tells", where = "styles/ai-tells/ContrastiveNegation.yml, commit 51f646e366ba", seen = 2026-11-07 },
+  { source = "wikipedia-pt", where = "Paralelismos negativos, revision 73274816", seen = 2026-11-09 },
+  { source = "evitar-escrita-ia", where = "SKILL.md, 2 Sintaxe e construções, commit a4b596e6f8b0", seen = 2026-11-09 },
 ]
 
 [[sign]]

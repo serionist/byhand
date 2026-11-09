@@ -167,11 +167,12 @@ instead = "Use a colon, a comma or a full stop; keep the travessão for a real a
 strength = "weak"
 # A sentence with one spaced dash and no second one before its end, after whole aside pairs only: an aside has two
 # (one may close after a ? or an abbreviation's full stop), and a line of dialogue starts with one, so neither is
-# found. Missed, and accepted for a weak sign: a pivot on a line with no closing stop, which a heading or a signature
-# shares (Ata — 6 de novembro), and a pivot after an aside pair in the same sentence.
-check = '''[^\W\d_]—[^\W\d_]|^(?:(?:[^—\n]|—[^—\n]*—)*[.!?]\s+)?[^—.!?\n]+ — [^—.!?\n]+[.!?](?:\s*$|\s+[^—\s])'''
+# found; nor is speech opened after a colon (A Marta disse: — Já vou.). Missed, and accepted for a weak sign: a pivot
+# on a line with no closing stop, which a heading or a signature shares (Ata — 6 de novembro), and a pivot after an
+# aside pair in the same sentence.
+check = '''[^\W\d_]—[^\W\d_]|^(?:(?:[^—\n]|—[^—\n]*—)*[.!?]\s+)?[^—.!?\n]*[^—.!?:\n] — [^—.!?\n]+[.!?](?:\s*$|\s+[^—\s])'''
 flags = "A feira volta no domingo — e desta vez com pastéis de nata."
-passes = "A feira — que esteve fechada em agosto — volta no domingo, e desta vez com pastéis de nata."
+passes = "A feira — que esteve fechada em agosto — volta no domingo, e desta vez com pastéis de nata. O feirante avisou: — Cheguem cedo."
 sources = [
   { source = "resende-castilho-2026-style", where = "3.3: no em dashes in the human Brazilian original or translation, 9.5 and 27.3 per 1,000 tokens in GPT-4o's", seen = 2026-11-09 },
   { source = "evitar-escrita-ia", where = "SKILL.md, 5 Formatação, Travessão, commit a4b596e6f8b0", seen = 2026-11-09 },

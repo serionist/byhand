@@ -63,7 +63,11 @@ def alternatives() -> Callable[[str], list[str]]:
 
 def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Collection[str] | None = None) -> int:
     counted: set[str] = set()
-    spans: list[tuple[int, int]] = []
+    # Grep runs each sign on its own, so a check's match (a dash's may run from the line's start) never hides a word or
+    # phrase, nor a phrase a check's hit. Checks and phrases keep separate spans; within each, an overlap is one thing
+    # two signs find, such as one dash that several languages' dash checks find.
+    phrase_spans: list[tuple[int, int]] = []
+    check_spans: list[tuple[int, int]] = []
     for sign in catalogue.signs.values():
         if not sign.pattern or sign.strength != "weak" or not _reads(sign, kind):
             continue
@@ -76,12 +80,13 @@ def _weak_hits(catalogue: signs.Catalogue, text: str, kind: str, languages: Coll
             for term in sign.terms
             for phrase in _alternatives(term.term)
         ]
+        taken = phrase_spans if phrases else check_spans
         for phrase, pattern in phrases or [(sign.id, sign.pattern)]:
             for found in pattern.finditer(text):
-                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in spans):
+                if phrase not in counted and any(found.start() < end and start < found.end() for start, end in taken):
                     continue
                 counted.add(phrase)
-                spans.append(found.span())
+                taken.append(found.span())
     return len(counted)
 
 

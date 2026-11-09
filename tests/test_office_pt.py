@@ -326,6 +326,12 @@ def test_the_weak_counting_counts_a_cluster(weak_hits):
     assert weak_hits(text, "post", PORTUGUESE) == signs.WEAK_CLUSTER
 
 
+def test_a_dash_pivot_takes_no_other_sign_s_phrase(weak_hits):
+    # the dash's match runs from the line's start over both phrases, but Grep runs each sign on its own: three (#56)
+    text = "Num mundo cada vez mais digital, a feira volta no domingo — e desta vez enfatizando as lojas."
+    assert weak_hits(text, "post", PORTUGUESE) == signs.WEAK_CLUSTER
+
+
 def test_one_habit_repeated_counts_once(weak_hits):
     text = "Vamos mergulhar no orçamento, vamos mergulhar nas contas e vamos mergulhar outra vez."
     assert weak_hits(text, "document", PORTUGUESE) == 1

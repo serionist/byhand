@@ -365,6 +365,19 @@ def test_fetch_refuses_a_tarball_that_names_a_path_outside(tmp_path, capsys, top
     assert not list(tmp_path.rglob("escape.md"))
 
 
+@pytest.mark.parametrize(
+    "cut", [lambda t: t[: len(t) // 2], lambda t: t[:10] + b"x" * 40], ids=["cut short", "garbled"]
+)
+def test_fetch_a_broken_tarball_is_unreadable_and_the_rest_are_fetched(tmp_path, capsys, cut):
+    whole = tarball("repo-x-bbbb", {f"evals/{n}.md": f"{n}\n".encode() * 500 for n in range(20)})
+    wiki = {"revids=": wikitext(100, "a\n"), "titles=": wikitext(101, "b\n")}
+    files = Files(**{"commits/HEAD": {"sha": NEW}, "tar.gz/": cut(whole), **wiki})
+    code, out = fetch(tmp_path, REPO + WIKI, files, ["repo-x", "wiki-x"])
+    assert code == 1
+    assert "repo-x: unreadable" in capsys.readouterr().out
+    assert (out / "wiki-x" / "revision").exists()
+
+
 def test_fetch_a_dataset_card(tmp_path):
     files = Files(
         **{

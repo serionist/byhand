@@ -20,6 +20,7 @@ import tomllib
 import urllib.error
 import urllib.parse
 import urllib.request
+import zlib
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -323,11 +324,13 @@ def fetch(ids: list[str], out: Path, get: GetBytes = get_bytes, root: Path = sig
             OSError,
             http.client.HTTPException,
             tarfile.TarError,
+            EOFError,
+            zlib.error,
             LookupError,
             TypeError,
             ValueError,
         ) as exc:
-            # As in `run`; TarError is a tarball cut short.
+            # As in `run`; TarError, EOFError and zlib.error are a tarball cut short or garbled.
             print(f"{source_id}: unreadable ({type(exc).__name__}: {exc})")
             shutil.rmtree(new, ignore_errors=True)
             failed += 1

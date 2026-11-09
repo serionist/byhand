@@ -366,6 +366,12 @@ PR for #30, 2026-11-09. Departures from the design above, each small and said he
 - **The `publish` checks are a little stricter:** a deleted file fails the mode check (its new mode is `000000`; the
   agent never needs to delete one), and the title and body may hold no `@` at all, not only a mention. The body gets
   one line of our own naming any source `byhand fetch` couldn't read.
+- **From the code review** (`docs/reviews/2026-11-09-refresh-agent-build-code.md`): the branch is
+  `refresh-agent/<date>-<run id>`, as a draft closed unmerged keeps its branch; the open-PR check counts only the
+  workflow's own PRs, so a fork's branch of that name can't stall it; the token grep runs in a step of its own, and
+  the hand-off's diff with `--no-ext-diff`; the publish job's Python runs with `-I`, so a planted `json.py` can't load;
+  and `CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR=1`, though the probe found 2.1.285 already starts each command in the
+  checkout's root.
 - **`byhand fetch --out`** defaults to `.local/sources`, where `copycheck` reads. A failed fetch leaves nothing of an
   earlier one behind, so no old diff is read as new.
 - **The permission mode:** Claude Code 2.1.285 forces it to `default` when `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` is set

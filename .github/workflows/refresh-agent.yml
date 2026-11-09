@@ -55,13 +55,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          if gh pr list --state open --limit 1000 --json headRefName --jq '.[].headRefName' | grep -q '^refresh-agent/'; then
+          if gh pr list --state open --author app/github-actions --limit 1000 --json headRefName --jq '.[].headRefName' \
+            | grep -q '^refresh-agent/'; then
             echo "The last run's PR is still open: nothing to do until it is merged or closed." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           gh issue list --label refresh --author app/github-actions --state open --limit 1000 --json number,title \
             > "$RUNNER_TEMP/issues.json"
-          issues=$(python3 - "$RUNNER_TEMP/issues.json" <<'EOF'
+          issues=$(python3 -I - "$RUNNER_TEMP/issues.json" <<'EOF'
           import json, re, sys, tomllib
           with open("src/byhand/catalogue/sources.toml", "rb") as f:
               ids = {source["id"] for source in tomllib.load(f)["source"]}
@@ -131,6 +132,9 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           CLAUDE_CODE_SUBPROCESS_ENV_SCRUB: "1"
+          # Each command starts in the checkout's root, so a `cd` can't make an allowed command run a script the model
+          # wrote under a folder it may edit (`uv run tools/gate.py quick` from src/byhand/catalogue/).
+          CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR: "1"
           CLAUDE_CONFIG_DIR: ${{ runner.temp }}/claude-config
           DISABLE_AUTOUPDATER: "1"
           ISSUES: ${{ steps.todo.outputs.issues }}
@@ -156,8 +160,6 @@ jobs:
       - name: What it hands on
         id: hand
         if: steps.todo.outputs.issues != ''
-        env:
-          TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
         run: |
           result="$RUNNER_TEMP/result.json"
           {
@@ -174,15 +176,22 @@ jobs:
           fi
           out="$RUNNER_TEMP/out"
           mkdir -p "$out"
-          git diff --binary "$GITHUB_SHA"..HEAD > "$out/change.diff"
+          # No external diff driver: git config is the checkout's, which nothing but git should write.
+          git diff --no-ext-diff --no-textconv --binary "$GITHUB_SHA"..HEAD > "$out/change.diff"
           cp .local/pr/title.txt "$out/title.txt"
           cp .local/pr/body.md "$out/body.md"
           if [ ! -s "$out/change.diff" ]; then echo "::error::the model committed no change"; exit 1; fi
-          if [ -n "$TOKEN" ] && grep -rqF -- "$TOKEN" "$out"; then
+          echo "handed=true" >> "$GITHUB_OUTPUT"
+      # The token's value is in this step alone, which runs nothing from the checkout.
+      - name: No token in the hand-off
+        if: steps.hand.outputs.handed == 'true'
+        env:
+          TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -n "$TOKEN" ] && grep -rqF -- "$TOKEN" "$RUNNER_TEMP/out"; then
             echo "::error::the hand-off holds the OAuth token; nothing is published"
             exit 1
           fi
-          echo "handed=true" >> "$GITHUB_OUTPUT"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: steps.hand.outputs.handed == 'true'
         with:
@@ -220,7 +229,8 @@ jobs:
       - name: Apply the change
         id: branch
         run: |
-          branch="refresh-agent/$(date -u +%F)"
+          # The run's id too: a draft closed unmerged keeps its branch, and a second run that day would collide.
+          branch="refresh-agent/$(date -u +%F)-$GITHUB_RUN_ID"
           git switch -c "$branch"
           git apply --index "$RUNNER_TEMP/in/change.diff"
           echo "name=$branch" >> "$GITHUB_OUTPUT"
@@ -234,8 +244,9 @@ jobs:
           ISSUES: ${{ needs.draft.outputs.issues }}
           UNREAD: ${{ needs.draft.outputs.unread }}
         run: |
-          git diff --cached --no-renames --raw -z > "$RUNNER_TEMP/raw"
-          python3 - "$RUNNER_TEMP/raw" "$IN" "$RUNNER_TEMP" <<'EOF'
+          git diff --cached --no-renames --no-ext-diff --raw -z > "$RUNNER_TEMP/raw"
+          # -I: the hand-off is in the working folder now, and a planted json.py must not load on `import json`.
+          python3 -I - "$RUNNER_TEMP/raw" "$IN" "$RUNNER_TEMP" <<'EOF'
           import json, os, re, subprocess, sys, tomllib
           from pathlib import Path
 

@@ -1381,6 +1381,10 @@ def test_the_refresh_agent_edits_four_folders_and_reads_only_the_checkout():
     assert [rule for rule in permissions["allow"] if not rule.startswith("Bash(")] == AGENT_EDITS
     assert permissions["blockReadsOutsideWorkingDirectories"] is True
     assert AGENT_SETTINGS["attribution"] == SETTINGS["attribution"]
+    # Nothing else: `--settings` would load hooks, env, a key helper or another directory as readily, and a hook runs
+    # a command no allow names.
+    assert set(AGENT_SETTINGS) == {"$schema", "attribution", "permissions"}
+    assert set(permissions) == {"allow", "blockReadsOutsideWorkingDirectories"}
 
 
 # What keeps a ` *` must print nothing of a file outside the repository, whatever follows it. A throwaway repository

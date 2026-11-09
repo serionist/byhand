@@ -22,10 +22,11 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  # The CLI's own estimate of one run's spend, the reviewer's and refuters' subagents included. A run over it fails
-  # and publishes nothing. Set from the try by hand to about 1.5M tokens, the cost table's top row; the job summary
-  # records each run's estimate, so the first runs tune it.
-  BUDGET_USD: "25"
+  # The CLI's own estimate of one run's spend at list prices, the reviewer's and refuters' subagents included; on the
+  # subscription it is a cap, not a bill. A run over it fails and publishes nothing. The try by hand, one source and no
+  # sign, came to $1.00 (about 1M tokens, nearly all cached reads), so this allows five sources with signs in each, the
+  # plan's top row; the job summary records each run's estimate, so the first runs tune it.
+  BUDGET_USD: "15"
 
 jobs:
   draft:

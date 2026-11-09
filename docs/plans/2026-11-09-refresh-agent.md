@@ -353,3 +353,37 @@ Owner calls: none.
 Treated as approved on the maintainer's standing word for the night ("take improvements that are recommended",
 owner calls answered with the recommended option): the Fit's six improvements and Round 1's and Round 2's four taken,
 no owner call raised, and Round 2 found no blocker or major. The maintainer's own review of the plan PR stands over it.
+
+## Built
+
+PR for #30, 2026-11-09. Departures from the design above, each small and said here so the review reads them:
+
+- **The fetch step holds the workflow's read-only token.** GitHub allows 60 unauthenticated calls an hour, shared by
+  a hosted runner's address; `refresh.yml` passes it for the same reason. It is before the model, and `byhand fetch`
+  sends it to api.github.com alone, as an unredirected header (`get_json` now does too).
+- **The `draft` job runs on `main` only:** the gate the model runs compares with `origin/main`, and the PR goes to
+  `main`. The hand-off is `git diff --binary "$GITHUB_SHA"..HEAD`, the same commit as `origin/main` there.
+- **The `publish` checks are a little stricter:** a deleted file fails the mode check (its new mode is `000000`; the
+  agent never needs to delete one), and the title and body may hold no `@` at all, not only a mention. The body gets
+  one line of our own naming any source `byhand fetch` couldn't read.
+- **`byhand fetch --out`** defaults to `.local/sources`, where `copycheck` reads. A failed fetch leaves nothing of an
+  earlier one behind, so no old diff is read as new.
+- **The permission mode:** Claude Code 2.1.285 forces it to `default` when `CLAUDE_CODE_SUBPROCESS_ENV_SCRUB` is set
+  ("allowed_non_write_users hardening"), whatever `--permission-mode` says. In `-p`, with no one to ask, everything
+  that would prompt is still denied, as the try showed; `--permission-mode dontAsk` stays in the command line.
+- **The budget is $15, not 1.5M tokens' worth.** The try below took about 1M tokens for one source with no sign, ten
+  times the Cost table's 100k, as the table left out the cached reads the CLI's estimate counts. At the try's $1.00 for
+  the lightest run, the table's top row (five sources, signs in each) is about $15.
+
+The try, 2026-11-09, on this machine (Windows 11), in a scratch clone with `wikipedia-en`'s `read_at` set back to
+1384165696 and `origin/main` pointed at that commit, as CI's checkout has it: `byhand fetch` (a diff of 10.7 kB), then
+the workflow's command line with Claude Code 2.1.285, `--model opus` (Opus 5.5), `.github/refresh-agent.json` and the
+scrub. It used the maintainer's own login under `--restricted`, not an empty `CLAUDE_CONFIG_DIR` with the setup token,
+which only the first dispatch runs.
+
+| What | Result |
+|---|---|
+| The run | `success` in 195 s: 33 turns, one reviewer subagent, an estimate of $1.00; 869k tokens read from the cache, 82k written to it, 15k out |
+| What it did | read `AGENTS.md`, both skills and `REVIEW.md` (it reads them because the prompt names them); found no sign in the change and said why for each hunk; moved `read_at` to 1384534594; ran validate, render, copycheck, gate quick and full; one `review-code` round, clean, recorded in `docs/reviews/`; wrote the title and the body from the template, with no issue number and no `@` |
+| Denied | its two compound commands (`cd <checkout> && ...`), which it then ran one by one; in a probe, `cat ../x`, `git diff --no-index ../x /dev/null`, `Read ../x`, `env`, `curl`, a write to `tools/` and `echo > tools/x` were denied, and `git log`, `git diff origin/main...HEAD`, `uv run byhand validate` and a write to `.local/` allowed |
+| The publish checks | on its hand-off: passed, and `gate text` with the closing line; on invented hand-offs: a path in `tools/` or `.github/`, a `.gitattributes`, an executable file, a symlink, a closing keyword (`fixes #12`, `Resolves: someone/thing#3`), an `@` mention, `octo/repo#3` and its URL, a two-line title and a "Generated with" line each refused; the draft job's grep refused a hand-off holding an invented token |

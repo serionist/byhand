@@ -16,9 +16,10 @@
 # (تجدر الإشارة إلى, علاوة على ذلك, في هذا السياق, وفي الختام), its inflated phrases (حجر الزاوية, نقلة نوعية), its
 # hedges, openers and copulas (يُعد, يُعتبر), تم with a verbal noun, the light verb قام ب and collocation calques, which
 # formal Arabic and translation write too (a calque needs evidence that models write it more). Vague attribution,
-# promotional words, لا يقتصر… بل and over-hedging are in signs every language shares (any-defensive-qualification,
-# any-negative-parallelism, any-promotional-tone, any-significance-inflation, any-vague-authority), with no Arabic
-# pattern; humanizer-ar's classical rhetoric (21 to 25) asks for a reader's judgement, with no data.
+# promotional words, a clause tacked on with مما يعكس, لا يقتصر… بل, a padded three and over-hedging are in signs every
+# language shares (any-defensive-qualification, any-negative-parallelism, any-promotional-tone, any-rule-of-three,
+# any-significance-inflation, any-tacked-on-analysis, any-vague-authority), with no Arabic pattern; humanizer-ar's
+# classical rhetoric (21 to 25) asks for a reader's judgement, with no data.
 # Left out, as humanizer-ar's own tests found them to be a person's: partial diacritics (شكرًا, تُستخدم), long
 # sentences joined by و (formal Arabic's median is 35 words), and the tatweel in هـ after a Hijri year. Its other
 # tatweel, Western dashes and quotes and mixed digit systems rest on humanizer-ar alone, and al-Shaibani and Ahmed strip
@@ -74,7 +75,7 @@ what = "Says that a text sheds light on its subject (تسليط الضوء, يس
 instead = "Say what it shows: the finding, the name or the number."
 strength = "weak"
 terms = [
-  { term = '''(?:\w{0,2}[أتني]سلّ?ط\w*|\w{0,2}سلّ?ط(?:ت|نا|وا)?|\w{0,2}تسليط)(?: \w+){0,3} الضوء''', instead = "say what it shows" },
+  { term = '''(?:\w{0,2}[أتني]سلّ?ط\w*|\w?سلّ?ط(?:ت|نا|وا)?|\w{0,2}تسليط)(?: \w+){0,3} الضوء''', instead = "say what it shows" },
 ]
 flags = "تسلط النشرة الضوء على متطوعي بنك الطعام هذا الشهر."
 passes = "تذكر النشرة متطوعي بنك الطعام هذا الشهر وساعاتهم: 320 ساعة في ثلاثة أحياء."

@@ -45,7 +45,7 @@ reproduced F1 before fixing it.
 
 | Improvement | Answer |
 |---|---|
-| Write down for the next seeds that the check budget is full at ja (4 bytes left after F1), so it, tr and id must start by cutting, the English preamble branch's repeated noun lists the cheapest place | taken: the PR says so; a follow-up issue for the cut |
+| Write down for the next seeds that the check budget is full at ja (4 bytes left after F1), so it, tr and id must start by cutting, the English preamble branch's repeated noun lists the cheapest place | taken: the PR says so; the follow-up issue for the cut is drafted for the maintainer, as `gh issue create` was refused in this session |
 | `vi.toml` line 18 was 121 characters | taken: the header is rewrapped to 120 |
 | The header named slop-gate's lưu trú, and its rule is "lưu trú\|cư trú" | taken |
 

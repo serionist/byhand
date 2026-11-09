@@ -297,9 +297,10 @@ def test_another_language_s_dash_check_takes_no_french_check(weak_hits):
     assert weak_hits(text, "post") == signs.WEAK_CLUSTER
 
 
-def test_one_habit_repeated_counts_once(weak_hits):
+def test_one_habit_counts_once_per_text(weak_hits):
+    # synergie twice is one hit; a term counts each different text it matches, so synergies is another (#84)
     text = "Notre synergie avec Lyon et notre synergie avec Lille comptent. Les synergies se multiplient."
-    assert weak_hits(text, "document") == 1
+    assert weak_hits(text, "document") == 2
 
 
 def test_only_the_hedge_stack_reads_mail_and_chat_among_the_french_weak_checks(catalogue, reads):

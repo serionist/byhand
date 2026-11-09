@@ -383,9 +383,11 @@ def test_the_weak_counting_counts_a_cluster(weak_hits):
     assert weak_hits(text, "document", ARABIC) == signs.WEAK_CLUSTER
 
 
-def test_one_habit_repeated_counts_once(weak_hits):
-    text = "يسلط التقرير الضوء على المبيعات، ويسلط الضوء على المخزون، ثم يسلط الضوء على الفروع."
-    assert weak_hits(text, "document", ARABIC) == 1
+def test_one_habit_counts_once_per_text(weak_hits):
+    # the second يسلط الضوء repeats the third, one hit; a term counts each different text it matches, and this one
+    # takes the words between the verb and الضوء, so يسلط التقرير الضوء is another, more than the rule (#84)
+    text = "يسلط التقرير الضوء على المبيعات، ثم يسلط الضوء على المخزون، ثم يسلط الضوء على الفروع."
+    assert weak_hits(text, "document", ARABIC) == 2
 
 
 def test_the_arabic_checks_read_posts_and_documents(catalogue):

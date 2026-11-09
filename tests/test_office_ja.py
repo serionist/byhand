@@ -224,6 +224,11 @@ def test_one_habit_repeated_counts_once(weak_hits, catalogue):
     assert weak_hits(ASIDES, "post") == 1
 
 
+def test_two_different_words_of_one_sign_count_twice(weak_hits):
+    # The plugin counts each different phrase it finds, so two of ja-calques' levels, one term, are two hits (#84)
+    assert weak_hits("プロジェクトレベルの設定と組織レベルの権限を見直した。", "document") == 2
+
+
 def test_the_function_words_are_for_the_models_read(catalogue):
     # the study counted rates over whole texts: as terms, one に関する in a mail was a hit (#18's review, F1)
     assert catalogue.signs["ja-llm-function-words"].pattern is None

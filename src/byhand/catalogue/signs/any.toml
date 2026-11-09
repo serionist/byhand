@@ -369,9 +369,13 @@ check.ar = 'سؤال رائع!'
 check.de = 'ha(?:ben sie|bt ihr|st du) absolut recht|(?:ausgezeichnete|großartige|hervorragende|tolle) frage!'
 check.en = '''you(?:['’]re| are) absolutely right'''
 check.es = '¡excelente pregunta!'
+check.fi = '(?:erinomainen huomio|hyvä kysymys)!'
 check.it = 'ottima domanda!'
 check.pt = '(?:excelente|ótima) (?:pergunta|questão)!'
 check.ru = 'вы абсолютно правы'
+# Turkish: the dotted and dotless i in a class each with its capital, as tr.toml's header says: Grep folds only i
+# with I.
+check.tr = '(?:har[iİ]ka b[iİ]r soru|kes[iİ]nl[iİ]kle hakl[ıI]s[ıI]n)!'
 check.zh = '[这這]是很好的[观觀]察'
 flags = "You're absolutely right, and that is such an important point to raise."
 passes = "You're right, I missed the date. I'll resend it today."
@@ -386,6 +390,8 @@ sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, 34, commit 4e5aa4c51230", seen = 2026-11-09 },
   { source = "humanizer-it", where = "skills/humanizer-it/SKILL.md, 22, commit 51f6e3ed3c7c", seen = 2026-11-09 },
   { source = "scrittura-italiana", where = "references/stile-naturale.md, 29, commit e397599ca3aa", seen = 2026-11-09 },
+  { source = "finnish-humanizer", where = "finnish-humanizer/references/patterns.md, 15 Mielistelevä sävy, commit 7a151e26b263", seen = 2026-11-09 },
+  { source = "humanizer-tr", where = "SKILL.md, 23 Sohbet kalıntısı, commit b458fb64dcc2", seen = 2026-11-09 },
 ]
 
 [[sign]]
@@ -545,6 +551,10 @@ instead = "Delete the token and cite the source, or cut the claim."
 strength = "strong"
 check.any = 'contentReference\[oaicite|oaicite:\d|oai_citation|attributableIndex|turn\d+(?:file|image|news|search)\d+'
 check.de = 'gehe zu suche nr'
+# Finnish: ChatGPT's source chips pasted as text, a name with +1 to +9 glued on (Oulun kaupunki+1, NCC+5RakennusFakta)
+# as wikipedia-fi shows them; a + after one letter (C++, n+1), before a space or a dash (Disney+, Erasmus+-hanke), after
+# a digit (2+1) or before a number (+358) passes.
+check.fi = '[^\W\d_]{2}\+[1-9](?:\D|$)'
 flags = "The bridge opened in 1932. :contentReference[oaicite:3]{index=3}"
 passes = "The bridge opened in 1932 (county archive, box 12)."
 sources = [
@@ -553,6 +563,7 @@ sources = [
   { source = "wikipedia-en-markup", where = "ChatGPT: turn0search0, revision 1383317735", seen = 2026-11-07 },
   { source = "wikipedia-de", where = "Gehe zu Suche Nr., revision 271721424", seen = 2026-11-07 },
   { source = "wikipedia-zh", where = "turn0search0, revision 95337857", seen = 2026-11-07 },
+  { source = "wikipedia-fi", where = "Virheelliset tai erikoiset viitteet, revision 23993692", seen = 2026-11-09 },
 ]
 
 [[sign]]
@@ -598,10 +609,11 @@ check.es = '(?:^|[,.;:!?¡¿]\s?|\bembargo,? |\bpero |\bque )\W*como (?:un )?(?:
 # French: only the role a model gives itself, followed by its "je"; "en tant qu'assistante de direction, je" is a
 # person's job.
 check.fr = '''en tant qu(?:['’]|e )\s?(?:assistant (?:conversationnel|d['’]ia|ia|virtuel)|grand modèle de langage|ia|intelligence artificielle|modèle de langage),\s?je\b'''
-# Italian: two roles humanizer-it names (come modello di intelligenza artificiale, in quanto IA), opening a clause, then
-# the one lack an Italian source shows, non ho accesso (avoid-ai-writing-multilingual). A person's "come responsabile
-# IA, non ho accesso" and a tool's third person ("Copilot, in quanto IA, non ha accesso") pass.
-check.it = '(?:^|[,.;:!?]\s?|\bma )\W*(?:come modello di intelligenza artificiale|in quanto ia),?\s?non ho accesso\b'
+# Italian: three roles humanizer-it names (come modello di intelligenza artificiale, in qualità di IA, in quanto IA),
+# opening a clause, then the one lack an Italian source shows, non ho accesso (avoid-ai-writing-multilingual). A
+# person's "come responsabile IA, non ho accesso", "in qualità di referente IA, non ho accesso" and a tool's third
+# person ("Copilot, in quanto IA, non ha accesso") pass. In quanto intelligenza artificiale is in no Italian source.
+check.it = '(?:^|[,.;:!?]\s?|\bma )\W*(?:come modello di intelligenza artificiale|in qualità di ia|in quanto ia),?\s?non ho accesso\b'
 # Portuguese by the Spanish rule: como or enquanto (um, grande) modelo de linguagem, opening a clause, then what a model
 # says it lacks.
 check.pt = '(?:^|[,.;:!?]\s?|\bentanto,? |\bmas |\bporém,? |\bque )\W*(?:como|enquanto) (?:um )?(?:grande )?modelo de linguagem(?: de ia)?(?: (?:criad|desenvolvid|treinad)o (?:pel[ao]|por) \w+)?,?\s?(?:eu )?não (?:consigo (?:aceder|acessar|navegar|verificar)|disponho|me é possível|possuo|posso (?:aceder|acessar|acrescentar|ajudar\w*|assinar|confirmar|fornecer|garantir|navegar|oferecer|prever|verificar)|sou capaz|tenho (?:acesso|crenças|emoções|experiências|opini(?:ão|ões)|preferências|sentimentos|um corpo))\b'
@@ -636,6 +648,9 @@ check.en = '(?:as of|up to) my last (?:knowledge|training) update'
 # The Spanish form needs the knowledge: "hasta mi última actualización del inventario", or "en marzo", is a person's.
 check.es = 'hasta mi última actualización de conocimientos?\b'
 check.fr = 'à la date de mes connaissances'
+# The Italian form needs its date: "conoscenze aggiornate al corso HACCP" is a person's refresher course, and "fino al
+# mio ultimo aggiornamento" is left out, as a person writes it of their own file.
+check.it = 'secondo le mie conoscenze aggiornate a[dl]? (?:(?:agosto|aprile|dicembre|febbraio|gennaio|giugno|luglio|maggio|marzo|novembre|ottobre|settembre) (?:del )?)?\d{4}\b'
 # The Portuguese one likewise: knowledge or training, in either variety's word for it, ending the phrase or before its
 # date; "atualização de conhecimentos em suporte básico de vida" is a person's course.
 check.pt = 'até (?:[aà] )?minha última ac?tualização de (?:conhecimentos?|treinamento|treino)(?:\s*[(,.:;—]|\s+(?:de |em (?:\w+ de )?|no \w+ de )\d{4}\b|\s*$)'
@@ -650,6 +665,7 @@ sources = [
   { source = "avoid-ai-writing-multilingual", where = "SKILL-FR.md, pattern 28, commit 4e5aa4c51230", seen = 2026-11-08 },
   { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, A6; evals/contestants/omel/patterns.md, 21, commit ac2a31be1a71", seen = 2026-11-09 },
   { source = "wikipedia-pt", where = "Avisos sobre a data-limite do conhecimento, de 2022 a 2023, revision 73274816", seen = 2026-11-09 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, 30 Disclaimer da AI, commit 4e5aa4c51230", seen = 2026-11-09 },
 ]
 
 [[sign]]
@@ -684,10 +700,19 @@ check.es = '^\W*(?:claro|claro que sí|con gusto|desde luego|por supuesto)\s?[!,
 # votre e-mail, de ton message); a person returning a client's devis or courrier passes (#24's review). Its alternations
 # run in alphabetical order, as fr.toml's header says.
 check.fr = '^\W*(?:absolument|avec plaisir|bien sûr|certainement)\s?[!,.]+\s?voici (?:(?:ton|votre) (?:compte rendu|courriel|cv|e-?mail|mail|message|post|rapport|texte) (?:amélioré|reformulé|retravaillé|révisé)|une (?:\w+ )?version (?:améliorée|peaufinée|plus (?:chaleureuse|claire|concise|courte|engageante|fluide|formelle|percutante|professionnelle)(?: et plus \w+)?|reformulée|retravaillée|révisée) de (?:ta|ton|votre) (?:annonce|compte rendu|courriel|cv|e-?mail|lettre|mail|message|post|publication|rapport|texte))\b[^.!?\n]*:\s*$'
+# Indonesian, from humanizer-indonesia's D11 (Tentu, berikut draf revisinya), by the same rule: the revision names the
+# reader's text (draf revisi email Anda); a person's "Tentu, berikut draf revisinya, Pak:" or "… draf revisi
+# kontraknya:" passes.
+check.id = '^\W*tentu\s?[!,.]+\s?berikut (?:adalah )?(?:draf|versi) revisi (?:dari )?(?:email|pesan|surat|teks|tulisan) (?:anda|kamu)\b[^.!?\n]*:\s*$'
+# Italian likewise, from the openers the three Italian lists name (Certo!, Certamente!, Con piacere!) and their Ecco
+# a te…: "Certo! Ecco la versione corretta del preventivo:" passes, as does a concessive "Certo, …".
+check.it = '^\W*(?:assolutamente|certamente|certo|con piacere)\s?[!,.]+\s?ecco (?:a te )?(?:la|una) (?:\w+ )?versione (?:corretta|migliorata|più (?:breve|chiara|concisa|formale|professionale)|riformulata|rivista) d(?:el|ella) (?:sua|suo|tua|tuo) (?:annuncio|curriculum|cv|e-?mail|lettera|mail|messaggio|post|testo)\b[^.!?\n]*:\s*$'
 # Portuguese likewise: "Claro! Aqui está a versão corrigida do orçamento:" passes.
 check.pt = '^\W*(?:certamente|claro|claro que sim|com certeza)\s?[!,.]+\s?(?:aqui (?:está|tem|tens)|eis) (?:(?:[ao] )?(?:seu|sua|teu|tua) (?:anúncio|carta de apresentação|currículo|cv|e-?mail|mensagem|post|publicação|resposta|texto) (?:corrigid|melhorad|reescrit|reformulad|revisad|revist)[ao]|(?:a|uma) (?:\w+ )?versão (?:corrigida|mais (?:clara|concisa|curta|formal|profissional)(?: e \w+)?|melhorada|reescrita|reformulada|revisada|revista) d[aoe] (?:seu|sua|teu|tua) (?:anúncio|carta de apresentação|currículo|cv|e-?mail|mensagem|post|publicação|resposta|texto))\b[^.!?\n]*:\s*$'
 # The Russian participles share their ending, written once (#63).
 check.ru = '^\W*(?:безусловно|конечно)! вот (?:(?:ваш|тво)\w* (?:исправле|переработа|улучше|отредактирова|сокращ[её])нн\w+ (?:абзац|письмо|пост|резюме|сообщение|текст)\b|(?:\w+ )?(?:исправле|переработа|улучше|отредактирова|сокращ[её])нн\w+ (?:вариант|версия|редакция|текст) (?:ваш|тво)\w+ (?:абзац|объявлени|письм|пост|резюме|сообщени|стать|текст)\w*|(?:\w+ )?более (?:вежлив|делов|дружелюбн|кратк|лаконичн|мягк|нейтральн|неформальн|официальн|профессиональн|формальн)\w* (?:вариант|версия)\b)[^.!?\n]*:\s*$'
+# Turkish likewise, from humanizer-tr's Elbette! and İşte …: (23): "Elbette, işte sözleşmenin imzalı hâli:" passes.
+check.tr = '^\W*elbette\s?[!,.]+\s?[iİ]şte (?:(?:e-?posta|mesaj[ıI]|yaz[ıI])n[ıI]z[ıI]n|metn[iİ]n[iİ]z[iİ]n) (?:\S+ ){0,3}(?:hal[iİ]|hâl[iİ]|sürümü|vers[iİ]yonu):\s*$'
 # Vietnamese, from the line vietnamese-humanizer tells its model not to add: Dưới đây là phiên bản, then the reader's
 # text, called bạn as a model calls the user, right after của and ending the line (của email của bạn:); a person's
 # "phiên bản cuối của hợp đồng", a text of anh's or chị's, or a version made from the reader's mail or sent to it (theo
@@ -714,6 +739,10 @@ sources = [
   { source = "evitar-escrita-ia", where = "SKILL.md, 4 Aberturas e fechos, Artefactos de chatbot, commit a4b596e6f8b0", seen = 2026-11-09 },
   { source = "humanizer-ar", where = "skills/humanizer-ar/references/patterns.md, 12, commit 5289d4a60aa5", seen = 2026-11-09 },
   { source = "vietnamese-humanizer", where = "skills/humanizer-vi/SKILL.md, Đầu ra, commit 2fd7dd05cbd9", seen = 2026-11-09 },
+  { source = "avoid-ai-writing-multilingual", where = "SKILL-IT.md, 28 Opener chatbot, commit 4e5aa4c51230", seen = 2026-11-09 },
+  { source = "scrittura-italiana", where = "references/stile-naturale.md, 27, commit e397599ca3aa", seen = 2026-11-09 },
+  { source = "humanizer-tr", where = "SKILL.md, 23 Sohbet kalıntısı, commit b458fb64dcc2", seen = 2026-11-09 },
+  { source = "humanizer-indonesia", where = "references/id-ai-tells.md, D11 Residu percakapan, commit 62fe1aed5932", seen = 2026-11-09 },
 ]
 
 [[sign]]
@@ -729,6 +758,9 @@ check.en = '''^\W*(?:would you like me to (?:convert|expand|reformat|turn) this|
 check.es = '^\W*(?:quieres|te gustaría) que (?:(?:amplíe|desarrolle) (?:algún|alguna|esta|este)|(?:la|lo|te lo) (?:acorte|adapte|amplíe|desarrolle|resuma))\b'
 check.pt = '^\W*(?:gostaria que eu (?:[ao] )?(?:adaptasse|ampliasse|desenvolvesse|detalhasse|encurtasse|expandisse|resumisse|transformasse)\b|(?:quer|queres) que eu (?:[ao] )?(?:adapte|amplie|desenvolva|detalhe|encurte|expanda|resuma|transforme)\b)'
 check.ru = '^\W*сообщите мне, если хотите, чтобы (?:я (?:адаптировал|дополнил|доработал|изменил|переписал|расширил|сократил)|(?:документ|статья|текст) был\w* (?:расширен|сокращ[её]н|доработан|переписан|адаптирован))'
+# Vietnamese, from the line vietnamese-humanizer tells its model not to add (Nếu bạn cần, tôi có thể…): an offer to
+# rework the text, as English's; a person's "Nếu bạn cần, tôi có thể gửi thêm số liệu gốc." passes.
+check.vi = '^\W*nếu bạn cần,? tôi có thể (?:bổ sung|chỉnh sửa|mở rộng|rút gọn|viết lại)\b'
 flags = "The committee meets each spring.\n\nWould you like me to expand this into a one-page handout?"
 passes = "The committee meets each spring.\n\nWould you like me to bring the projector, or will Sam?"
 sources = [
@@ -738,6 +770,7 @@ sources = [
   { source = "wikipedia-zh", where = "協作式溝通訊息, revision 95337857", seen = 2026-11-07 },
   { source = "humanizer-es", where = "skills/humanizer-es/SKILL.md, A6; evals/contestants/omel/patterns.md, 20, commit ac2a31be1a71", seen = 2026-11-09 },
   { source = "wikipedia-pt", where = "Conversas com o usuário, revision 73274816", seen = 2026-11-09 },
+  { source = "vietnamese-humanizer", where = "skills/humanizer-vi/SKILL.md, Đầu ra, commit 2fd7dd05cbd9", seen = 2026-11-09 },
 ]
 
 [[sign]]

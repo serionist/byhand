@@ -123,11 +123,19 @@ typography = [
   "Palaveri - jos muistat - siirtyi torstaille.",
   "Viimeinen hakupäivä: 30.11.2026 klo 16.15.",
   "Puh. +358 40 123 4567, sähköposti etunimi.sukunimi@yritys.fi",
+  "Taustajärjestelmä on kirjoitettu C++:lla, käyttöliittymä TypeScriptillä.",
+  "Erasmus+-hanke alkaa syyskuussa, ja Disney+ maksetaan yhteiseltä kortilta.",
+  "Kahvilan tarjous 2+1 on voimassa perjantaihin.",
+  "Korjasin n+1-kyselyn, joka hidasti tilauslistaa.",
 ]
 
-# What each sign that counts alone exists to catch, inside Finnish text: a line for each artefact, which is the same
-# string in every language. No `any` check has a Finnish branch yet: its lines come with the branch.
+# What each sign exists to catch, inside Finnish text: a line for each Finnish form of an `any` check, and one for
+# each artefact, which is the same string in every language.
 machine = [
+  { sign = "any-chatgpt-citation-markup", text = "Rakennuslupa myönnettiin keväällä. Oulun kaupunki+1" },
+  { sign = "any-chatgpt-citation-markup", text = "Työmaa alkaa maaliskuussa. PERI Suomi+5RakennusFakta+5NCC+5" },
+  { sign = "any-flattering-agreement", text = "Hyvä kysymys! Tämä on yksi tärkeimmistä aiheista juuri nyt." },
+  { sign = "any-flattering-agreement", text = "Erinomainen huomio! Katsotaan asiaa tarkemmin." },
   { sign = "any-emoji-markers", text = "- 🚀 Uusi koulutusohjelma" },
   { sign = "any-emoji-markers", text = "## 📊 Kuukauden luvut" },
   { sign = "any-unfilled-placeholder", text = "Ilmoittautuminen: insert_link_here" },

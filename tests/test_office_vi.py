@@ -108,6 +108,7 @@ NOTES = [
     "1. Chốt sổ tháng 10\n2. Thanh toán nhà cung cấp\n3. Gia hạn hợp đồng thuê kho",
 ]
 REPORTS = [
+    "Phụ lục\n\nBảng 3 chỉ có số liệu quý III. Nếu bạn cần, tôi có thể gửi thêm số liệu gốc.",
     "Tóm tắt\n\n"
     "Bài viết này phân tích tác động của làm việc từ xa đến năng suất của 312 nhân viên ngân hàng tại TP.HCM. Kết quả "
     "nhấn mạnh vai trò của người quản lý trực tiếp trong việc giữ tiến độ.",
@@ -187,6 +188,8 @@ def test_no_sign_that_counts_alone_fires_on_plain_vietnamese_work_text(counted_a
 # finds nothing. Branches that read other languages' words have their lines in the other office tests.
 MACHINE = [
     ("any-assistant-preamble", "Dưới đây là phiên bản đã chỉnh sửa của email của bạn:"),
+    ("any-assistant-closing-offer", "Nếu bạn cần, tôi có thể viết lại đoạn này ngắn gọn hơn."),
+    ("any-assistant-closing-offer", "Nếu bạn cần tôi có thể bổ sung phần kết luận."),
     ("any-assistant-preamble", "Dưới đây là phiên bản trang trọng hơn của tin nhắn của bạn:"),
     ("any-assistant-preamble", "Dưới đây là phiên bản ngắn gọn của văn bản của bạn:"),
     ("any-emoji-markers", "- 🚀 Chương trình đào tạo mới"),

@@ -227,7 +227,7 @@ category = "word"
 kinds = ["post", "document"]
 models = "any"
 what = "Explains with stock metaphors and metaphor verbs: a compass, a catalyst, crushing bugs, melting time."
-instead = "Say what the thing does, or what happened, in plain words."
+instead = "Name what it does, or what took place, in plain words."
 strength = "weak"
 terms = [
   { term = '(?:1つ|ひとつ|一つ)ずつ潰し', instead = "say what was fixed" },

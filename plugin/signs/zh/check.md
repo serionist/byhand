@@ -6,7 +6,7 @@ A sign holds for the versions it names: `5.x` is the whole 5 series, `and later`
 A pattern is what Grep runs on a file, case-insensitive and line by line; a sign with none is found by reading.
 
 - zh-holding-space (usual; gpt 5.4 and later; claude 4.7 and later): Comforts like a counsellor: promises to hold the reader steady, and tells them what they really feel. Instead: Answer what was said; offer help in plain words, and don't diagnose. Pattern: `[稳穩][稳穩](?:地)?接住(?:你|大家|所有人)(?:[。！，,.!？?\s]|$)|[稳穩][稳穩](?:地)?接住[这這]份(?:不安|委屈|情緒|情绪|焦慮|焦虑|脆弱)|[稳穩][稳穩](?:地)?接住你的(?:不安|委屈|情緒|情绪|焦慮|焦虑|脆弱)`
-- zh-aphorism (weak): Ends a point on a coined maxim, X is the Y of Z or the real X is Y, that adds no fact. Instead: Replace it with the concrete claim, or leave it out.
+- zh-aphorism (weak): Ends a point on a coined maxim that adds no fact: the real X is Y, or X is Z's Y. Instead: Replace it with the concrete claim, or leave it out.
 - zh-chat-residue (weak): Keeps chat lines meant for the person who asked: hope this helps, copy it as is, ask me anything else. Instead: Cut them; end with the text itself. Pattern: `希望(?:以上|这|這)(?:些)?(?:信息|內容|内容|回答|資訊)?(?:能)?(?:对|對)[你您]有所?(?:帮助|幫助)|直接(?:复制|複製)使用|如果[你您](?:还|還)有(?:任何|其他)(?:問題|问题)`
 - zh-connective-stacking (weak; post): Starts sentence after sentence with 此外, 然而, 与此同时 or 因此, where the order already links them. Instead: Drop most of them; keep one only where it carries a turn or a cause.
 - zh-dash-density (weak): Leans on dashes (——) to bolt clauses together, several in one paragraph. Instead: Join clauses with ordinary punctuation; one dash a paragraph at most. Pattern: `—+[^—\n]+—+[^—\n]+—+`

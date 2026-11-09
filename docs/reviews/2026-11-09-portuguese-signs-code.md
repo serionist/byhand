@@ -50,3 +50,25 @@ three text sources (only fixed phrases).
 ## Not covered
 
 Whether a native speaker finds the signs right; the plugin sessions, which the main session ran.
+
+## Round 2
+
+A fresh reviewer, on 38d8cf0 (the fixes since 5562141, in e63cd10). Verdict: needs-fixes. F1 to F10 hold: it ran every
+list of the office test against the 5562141 catalogue, and each line the fixes added fails there and passes now.
+
+| # | Severity | Where | Finding | Status |
+|---|---|---|---|---|
+| F11 | major | `pt.toml`, `pt-filler-hinges` | Each hinge was a term of its own, so a plain paper or report with two different hinges and Em suma or Em conclusão made a cluster: 4 of 9 such paragraphs reached 3 ("Em suma, a horta… Vale destacar que… É importante ressaltar que…"). Andrade et al.'s own paper writes two | fixed in 8367e81: the hinges are one check, which counts once; two such paragraphs in `REPORTS`, and `test_two_different_hinges_count_once` |
+| F12 | minor | `any.toml`, `any-knowledge-cutoff` | F4's ending lost model forms: "em 2023,", "(outubro de 2023)", "— em abril de 2024 —", "no início de 2024" | fixed in 8367e81: the reviewer's tested ending; two more `MACHINE` lines, and F4's person's lines still pass |
+| F13 | minor | `any.toml`, `any-assistant-preamble` and `any-ai-self-reference` | F7's segue, abaixo está, aprimorada, amigável and F6's capacidade are in no cited Portuguese source, and segue fired on a Brazilian returning a friend's text ("Claro! Segue seu currículo revisado:") | fixed in 8367e81: those words are out; the joined second adjective and acrescentar, which a source shows, stay; the friend's line is in `REPLIES` |
+| F14 | minor | `pt.toml`, `pt-dash-pivots` | F9's fix hid a pivot after an aside pair or a dialogue tag on the same line, and an aside closing after a ? or an abbreviation still fired | fixed in 8367e81: the reviewer's tested check; two `FORMS` lines and two `LEFT_ALONE` lines. Still fires, accepted for a weak sign: an aside that ends on an abbreviation and its dash at the line's end |
+| F15 | minor | `pt.toml`, `pt-ai-vocabulary`'s citation | It still named `adjetivo-robusto.yaml` after robusto was cut | fixed in 8367e81 |
+
+Refuted: the self-reference on a person's "Como modelo de linguagem, não tenho…" (the trade-off #53 accepted); the
+joined adjective on a person's document (the noun must be the reader's text); the knowledge cutoff on a person's
+course followed by a comma (the model's own words, as in Spanish); a cluster in mail (2 at most); Python against
+ripgrep (they agree on all 58 probe lines).
+
+| Improvement | Answer |
+|---|---|
+| A test that two different hinges count once | taken, with F11 |

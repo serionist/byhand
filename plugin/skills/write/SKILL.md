@@ -49,7 +49,8 @@ read only what isn't in context yet.
    A deck is an outline: `## <n>. <title>` per slide, its text, `Notes:` for speaker notes, and in square brackets
    what isn't text, with the user's numbers or none (`[bar chart, tickets closed per month: your numbers]`). A sheet:
    `## <tab>` per tab and a Markdown table, each row starting `|`, of its headers and labels with the user's numbers or
-   empty cells, never invented ones, then its notes. One slide's text alone: its title on a line, then its text, no heading marks.
+   empty cells, never invented ones, then its notes. One slide's text alone: its title on a line, then its text, no
+   heading marks.
 7. **Read your draft** against the signs and the style, line by line, and rewrite what you find.
 8. **Answer with the draft** and nothing else the user didn't ask for: no line before it ("Here's a draft"), no list
    of what you avoided, no offer after it. A note only when you had to guess something the text needs (a date, a

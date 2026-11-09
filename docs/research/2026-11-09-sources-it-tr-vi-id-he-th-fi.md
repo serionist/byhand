@@ -123,30 +123,35 @@ language code. Adding he or fi to `languages.toml` is the maintainer's decision.
 
 Move 2 of `docs/plans/2026-11-09-more-languages.md` for id, after vi (#62) and it (#63), under #60.
 `humanizer-indonesia`, the one source that covers Indonesian, was read again at `62fe1aed5932`, still its head:
-`references/id-ai-tells.md` in full, `SKILL.md`'s section on detectors, and the metrics of `references/voice-prib-id.md`.
-Each pattern was held against the bar above, a second source showing the same pattern. None clears it with a sign of
-its own, so there is no `id.toml`, and an Indonesian draft reads the `any` signs only.
+`references/id-ai-tells.md` in full, `SKILL.md`'s steps 5b to 5d and its section on detectors, and the metrics of
+`references/voice-prib-id.md`. Each pattern was held against the bar above, a second source showing the same pattern.
+Two meet it as written, with another language's measure, but no language sign in the catalogue cites another
+language's source (AGENTS.md, Traps), and both would flag plain Indonesian; the rest have no second source, or are
+held by an `any` sign. So there is no `id.toml`, and an Indonesian draft reads the `any` signs only.
 
-The source's own numbers weigh against its list as signs. Its bars are its author's own writing: version 1.2 loosened
-them after a passage of the author's paper, which GPTZero scored fully human, failed four of them, light verbs and
+The source's own numbers weigh against its list as signs. Version 1.2 loosened its author's bars after a passage of
+the author's paper, which GPTZero scored fully human, failed four of them, light verbs at 0.39 a hundred words and
 merupakan among them (`voice-prib-id.md`, 1). On 31 Oct 2026 the author wrote an informal essay without AI, from an
-outline of keywords and data Claude gave; it holds yang mana, merupakan, a triplet and nine short sentences with
-no linking word, and misses the bars for sentence-length spread (5.9), connectors and merupakan. The source concludes
-that its patterns are what models overdo, not what people never write, and not for judging a person's text
-(`SKILL.md`, Detektor pihak ketiga, the fourteenth measurement). Its other numbers are GPTZero scores, about a
-detector.
+outline of keywords and data Claude gave; it holds yang mana, merupakan, a triplet and nine short sentences with no
+linking word. Its sentence-length spread, 5.9, is under the catalogue's bar of 6 (A4), and it fails the semiformal
+preset's bars for connectors and merupakan, though not the catalogue's for connectors (C1 flags over 3 a hundred
+words; the essay has 0.74). The source concludes that its patterns are what models overdo, not what people never
+write, and not for judging its author's own writing (`SKILL.md`, Detektor pihak ketiga, the fourteenth measurement).
+Its other numbers are GPTZero scores, about a detector.
 
 | Candidate | Why not |
 |---|---|
-| A light verb with a verbal noun, melakukan pengukuran terhadap (A1) | The only measure of the pattern is English's (`reinhart-2025-pnas`, behind `en-nominalisation`), and no sign in the catalogue cites another language's source, as `_sign_sources` in `signs.py` says: English's signs aren't carried over. The register it would flag is the one the source keeps (F7) and office Indonesian writes, as the vi, it and ar seeds left out thực hiện việc, burocratese and قام ب; the author's own paper has as many (above) |
-| Sentences of one length (A4) | Measured in Portuguese only (`andrade-2026-portuguese`), and named by Italian translators reading fiction (`farrell-2026-translators`); the author's essay falls below the source's bar (above). If it holds across languages, it is an `any` sign's job |
-| Stacked connectors (C1), merupakan as the copula (A5), yang mana and dimana as relatives (A3) | One source, no measure in any language, and the author's essay misses each (above). A3 is a calque, which needs evidence that models write it more; dimana is a set formula in patents (G1) |
-| Opening formulas, Di era digital saat ini and the like (D1) | One source. en, es, it and pt each hold an epoch opener of their own, on their own lists, which show nothing about Indonesian; no `any` sign holds it |
-| Reflex passives, subjectless openers, paired conjunctions, pleonasms, prestige words, stacked hedges, new information first, lists after seperti, a topic sentence in every paragraph, needless bullets, signposting sentences, citation formulas, spatial references (A2, A6, A7, B1, B3, B4, C2, D4 to D6, D8 to D10) | One source, none measured. The source says people write A6 as models do; A7 and B1 are slips people make; B3 is English's word list in Indonesian; D9 is a journal's house style (F8); D4's bar is the author's own writing |
-| Triplets (D3), bukan sekadar X, melainkan Y (D7), unnamed authorities (B5), false ranges (D12), memegang peranan penting (B2), bold and emoji in running text (D11) | Held by signs every language shares: `any-bold-overuse`, `any-emoji-markers`, `any-false-range`, `any-negative-parallelism`, `any-rule-of-three`, `any-significance-inflation`, `any-vague-authority`. They read Indonesian already: the model reads them in any language, and the one with a check, `any-emoji-markers`, holds no words. An `id` sign would count them twice |
+| A light verb with a verbal noun, melakukan pengukuran terhadap (A1) | Meets the bar as written with English's measure (`reinhart-2025-pnas`, behind `en-nominalisation`), but no language sign cites another language's source, and `propose-signs` never carries an English sign over. The register it would flag is the one the source keeps (F7) and office Indonesian writes, as the vi, it and ar seeds left out thực hiện việc, burocratese and قام ب |
+| Sentences of one length (A4) | Meets the bar as written with Portuguese's measure (`andrade-2026-portuguese`), for the same reason no sign. The author's essay falls under the source's bar (above). en, it and pt hold it as signs of their own (`en-even-sentences`, `it-even-sentences`, `pt-even-sentences`): three languages, the start of a case for an `any` sign |
+| Stacked connectors (C1), merupakan as the copula (A5), yang mana and dimana as relatives (A3) | One source, no measure in any language. The author's essay has yang mana and merupakan, and the paper's passage failed the old merupakan bar (above). A3 is a calque, which needs evidence that models write it more; dimana is a set formula in patents (G1) |
+| Opening formulas, Di era digital saat ini and the like (D1) | One source. de, en, es, fr, it, pt, ru and zh each hold an epoch opener of their own, on their own lists, none measured, which show nothing about Indonesian; no `any` sign holds it |
+| Reflex passives, subjectless openers, paired conjunctions, pleonasms, prestige words, stacked hedges, new information first, lists after seperti, a topic sentence in every paragraph, needless bullets, signposting sentences, citation formulas, spatial references, question headings (A2, A6, A7, B1, B3, B4, C2, D4 to D6, D8 to D11) | One source, none measured. The source says people write A6 as models do; A7 and B1 are slips people make; B3 is English's word list in Indonesian; D9 is a journal's house style (F8); D4's bar is the author's own writing |
+| `SKILL.md`'s own checks: calques, things given a temper, stock sentence openers (Mari kita lihat, Pertanyaannya sederhana), runs of fragments (steps 5b to 5d); no dashes (E) | One source, drawn from its author's cases. A calque needs evidence that models write it more; the dash ban is the author's request, and the author's corpus has up to 7 (`voice-prib-id.md`, 1) |
+| Triplets (D3), bukan sekadar X, melainkan Y (D7), unnamed authorities (B5), false ranges (D12), memegang peranan penting (B2), bold and emoji in running text (D11) | Held by signs every language shares: `any-bold-overuse`, `any-emoji-markers`, `any-false-range`, `any-negative-parallelism`, `any-rule-of-three`, `any-significance-inflation`, `any-vague-authority`. They read Indonesian already: the model reads them in any language, and the one with a check, `any-emoji-markers`, holds no words. An `id` sign would count them twice. B2's patut diperhatikan and step 5c's Perhatikan bahwa are `any-didactic-aside`'s hinge, which the it seed left without a form too |
 
 Indonesian forms in the `any` checks, deferred: `any/check.md` counts toward every language's 32 KB check budget,
-and beside `ja/check.md` it leaves 494 bytes, held for a design fix. Each form rests on D11 or D2 alone.
+and beside `ja/check.md` it leaves 494 bytes, held for a design fix that no issue tracks yet. The forms wait here for
+it; each rests on D11 or D2 alone.
 
 | `any` sign | Form | Note |
 |---|---|---|

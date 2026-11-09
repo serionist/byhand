@@ -25,6 +25,9 @@ before `1.0` a minor may break something, under Breaking.
 
 ### Changed
 
+- The skills' own files are shorter, for fewer tokens: `/byhand:write`, read by every draft, from 5,259 to 4,581
+  bytes; `check`, `learn` and the `scan` agent by 270 to 770 bytes each, and the descriptions every session loads
+  by 178 bytes together. They do the same.
 - The text of a slide is a deck now, not a document: it no longer uses your `document` default style. Make a style
   the default for `deck` (say "make work-decks my default for decks") to have one.
 

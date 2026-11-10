@@ -397,6 +397,11 @@ Decisions on the way:
   so a project's default wins for its kind and language; a style the user names is their own first, not the
   project's. `learn` saves into a project only when asked, and writes no `.gitignore`: committing a project's styles is
   the user's call, said at the first save.
+- **Learning from edits, as built (#106, `docs/plans/2026-11-10-learn-from-edits.md`):** `0.5.0`'s milestone, released
+  as `0.4.0`, as each PR that changes the plugin is a release now. `learn`'s Remember takes the user's version of a
+  draft, compares it with the draft, and proposes the habits behind the changes as rules to pick; `write`'s step 9
+  offers it for a version given with no request. Only the changes reach `## Corrections`: the user's version is never
+  a sample, as the lines they kept are byhand's.
 
 GitHub milestones: `0.1.0 Write in your own voice` (Steps 2 to 8), `0.2.0 Refresh`, `0.3.0 More languages`,
 `0.4.0 Decks and sheets`, `0.5.0 Learn from edits`; an issue per step, #2 to #8, opened when this plan was approved.

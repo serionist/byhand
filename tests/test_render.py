@@ -644,6 +644,13 @@ def test_every_variable_a_plugin_skill_names_is_one_byhand_uses():
         assert "${CLAUDE_PROJECT_DIR}/.byhand/styles/" in texts[f"skills/{skill}/SKILL.md"]
 
 
+def test_writes_skill_stays_within_its_bytes():
+    # Every draft reads write's SKILL.md whole, so each byte it gains costs every draft, edited or not. The ceiling is
+    # its size after #106; a change that needs more raises it here, where a review sees the number move.
+    plugin = pathlib.Path(signs.__file__).resolve().parents[2] / "plugin"
+    assert len((plugin / "skills" / "write" / "SKILL.md").read_bytes()) <= 5488
+
+
 def test_no_rendered_file_can_be_read_as_a_claude_md():
     # On Windows and macOS `claude.md` is a CLAUDE.md, which Claude Code loads as project instructions.
     claude = (ModelRange("claude", Version(4)),)

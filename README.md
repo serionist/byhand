@@ -37,7 +37,8 @@ claude plugin update byhand@byhand
   sheets, as files or pasted. `/byhand:learn` leaves out any sample that reads as AI-written, shows you the style,
   and saves it only when you say yes. You can have several, and make one the default for each kind of writing and language.
 - **Tell it what you don't like.** After a draft in one of your styles, say what's off. If it's a habit, it offers to
-  keep it as a rule in that style; "remember: …" does the same.
+  keep it as a rule in that style; "remember: …" does the same. Or give it the version you sent instead, pasted or
+  as the file you changed: `/byhand:learn` names the habits behind your changes and keeps the ones you pick.
 - **Check a text.** "Does this read as AI-written?" `/byhand:check` lists the signs with their lines and what a person
   writes instead. No score: it is for your own writing, not a detector. A deck or a sheet can come as a PDF or a
   CSV; for a `.pptx` or an `.xlsx` it needs something in the session that reads one.
@@ -63,7 +64,7 @@ signs come as a pull request a person reads.
 
 ## Next
 
-- **More languages,** each from sources in its own language (`0.3.0`), and **learning from your edits** (`0.5.0`).
+- **More languages,** each from sources in its own language.
 
 ## Contributing
 

@@ -17,7 +17,7 @@ before `1.0` a minor may break something, under Breaking.
 
 - A correction that repeats an older one replaces it, and a style that would pass 4 KB asks which old corrections to
   drop or fold into its rules, for "remember: …" too.
-- `/byhand:write`'s own file, which every draft reads, grows from 5,137 to 5,463 bytes; a test holds it there.
+- `/byhand:write`'s own file, which every draft reads, grows from 5,137 to 5,490 bytes; a test holds it there.
 
 ## 0.3.0 (2026-11-09)
 

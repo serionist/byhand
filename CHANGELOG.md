@@ -3,6 +3,22 @@
 What changed in each release, for the people who use byhand. Versions follow [semantic versioning](https://semver.org);
 before `1.0` a minor may break something, under Breaking.
 
+## 0.4.0 (2026-11-10)
+
+### Added
+
+- Learning from your edits: give byhand the version you sent instead of its draft, pasted or as the file you changed
+  ("I changed it" for the file the draft became), and `/byhand:learn` compares the two, names the habits behind your
+  changes (a sign-off swapped, bold cut, shorter sentences) and asks which to keep as corrections in the style the
+  draft used. A change to a fact of that text, a date or a name, is no habit, and your version is never taken as a
+  sample. With no request beside your version, `/byhand:write` offers to learn from it in one line.
+
+### Changed
+
+- A correction that repeats an older one replaces it, and a style that would pass 4 KB asks which old corrections to
+  drop or fold into its rules, for "remember: …" too.
+- `/byhand:write`'s own file, which every draft reads, grows from 5,137 to 5,463 bytes; a test holds it there.
+
 ## 0.3.0 (2026-11-09)
 
 ### Added

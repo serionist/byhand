@@ -95,6 +95,27 @@ habits, words they like and words they never use.
   path to delete; no tool here deletes. To rename a style, learn it again, or rename the file and its row by hand.
 - **Remember:** add the rule under `## Corrections` of the style the last draft used, in the file the draft read, or
   the one the user names; ask when it isn't clear. A project's style: say it is this project's when you save. No
-  style yet: say so, and offer to learn one from their samples. Date it, and name the kind of text it came from.
+  style yet: say so, and offer to learn one from their samples. Date it, and name the kind of text it came from. A
+  repeat of an older correction replaces it, newly dated; past 4 KB, ask which old corrections to drop or fold into
+  the rules.
+
+## Learn from an edit
+
+The user's version of a byhand draft is Remember with rules you find:
+
+1. **The two versions:** theirs and the draft of yours it changes (unclear which: ask), or both from the user. The
+   file the draft became: Read it again; a deck or a sheet as `check` step 1 reads one, compared by its words and
+   their order, without the outline's marks (`## <n>.`, `Notes:`, `[...]`, `## <tab>`, `|`). No draft: say so and
+   ask for it; with no style either, offer to learn one from samples.
+2. **The style:** the one that draft used, or none; both from the user: as Remember picks it. None: say so and offer
+   to learn one from samples, without comparing.
+3. **The habits:** keep a change only if it would hold for the next text of this kind (a sign-off, a word, sentence
+   length, register, bold or bullets cut), never a fact of this text (a date, a name, a point) or what the style
+   holds.
+4. **One question:** each as a short rule with its before and after, numbered: which to keep? A rule that puts in
+   what a sign names says so (the signs from the draft, else Read `any/any.short.md` and `<language>/any.short.md`
+   under `${CLAUDE_PLUGIN_ROOT}/signs/`). Silence saves nothing.
+5. **Save the picks** as Remember does. The user's version is never a sample or an excerpt: the lines they kept are
+   yours.
 
 Never put the user's samples anywhere but their own style file.

@@ -12,16 +12,16 @@ verdict: needs-fixes
 
 One fresh agent read the pack (`git diff origin/main...HEAD` at `e78ed80`), AGENTS.md, REVIEW.md, issue #106, the plan
 and every touched file, with every lens. Minors only, so no second round: the main session fixed them and checked the
-fixes.
+fixes. After them, on `76d5a68`: **clean**.
 
 | # | Sev | Where | Finding | Status |
 |---|---|---|---|---|
-| F1 | minor | `plugin/skills/learn/SKILL.md`, Learn from an edit, step 4 | A `zh-Hant` version read only `zh-Hant/any.short.md`, missing the Mandarin signs `write` reads from `zh`; and `<language>/any.short.md` isn't there for `ar`, `tr`, `vi` or `id`, with no word on what a missing file means | fixed: a script variant's base language's too; a file that isn't there has no signs. `5c…` below |
+| F1 | minor | `plugin/skills/learn/SKILL.md`, Learn from an edit, step 4 | A `zh-Hant` version read only `zh-Hant/any.short.md`, missing the Mandarin signs `write` reads from `zh`; and `<language>/any.short.md` isn't there for `ar`, `tr`, `vi` or `id`, with no word on what a missing file means | fixed: a script variant's base language's too; a file that isn't there has no signs. `76d5a68` |
 | F2 | minor | `plugin/skills/learn/SKILL.md`, step 1 | "as `check` step 1 reads one" pointed at text not in context on this path, so a `.pptx` the user changed in PowerPoint had no instruction when Read failed | fixed: check step 1's clause inlined: the text from what reads it in the session, else a PDF, a CSV or the text |
 | F3 | minor | `plugin/skills/learn/SKILL.md`, step 1 | With no draft, learn asks for it; the user's answer in the next turn reads the sign files after the grant has gone, a prompt in default mode and a skipped note in dontAsk | fixed: "their answer starts this skill again"; not run in a session |
 | F4 | minor | the release, `docs/releasing.md` step 3 | A minor ships without its empty-session try and prompt count | wontfix here: the try would run in the maintainer's real home; it runs right after the merge, from the marketplace, and the PR says so |
 
-The fixes are in the commit after `e78ed80`; `tests/test_render.py`'s ceiling moved to the new 5,488 bytes, and gate
+The fixes are in `76d5a68`; `tests/test_render.py`'s ceiling moved to the new 5,488 bytes, and gate
 quick and the render tests passed on it.
 
 Refuted: picks saved into the wrong style (step 2 fixes the style, and the two-drafts try passed); an eval that passes

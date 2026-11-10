@@ -22,7 +22,7 @@ styles, and the skills that read them. It is for the user's own writing, sent un
   issue; every two weeks an agent in CI drafts the changed signs with `propose-signs`, as one draft PR a person reads and merges. Nothing lands unread.
 - **The styles:** the user's ways of writing, learned from their own samples, each with its language and register, and
   assigned to kinds of writing (messages, mail, documents, decks, sheets), with a default per kind and language. They stay on the
-  user's machine.
+  user's machine; a project's go where the user puts the project.
 - **The plugin** (`plugin/`): skills that write and check text against the signs and a style, starting by themselves
   when the user writes mail, a message, a document, a deck or a sheet. They run no command: nothing but the plugin to install.
 - **Where the work stands:** the harness, the catalogue with its first signs (`any`, `en`, `zh`, `zh-Hant`, `ko`, `ja`, `ru`, `de`, `fr`, `hu`, `es`, `pt`, `ar`, `vi`, `it`, `tr`, `fi`), its rendering, the `write`, `check` and `learn` skills and the `scan` agent, for decks and sheets too (`write` writes their text, whatever makes files in the session makes the file), the refresh (`byhand refresh`, `refresh.yml`; `byhand fetch` and the agent, `refresh-agent.yml`). `docs/plans/2026-11-06-bootstrap.md`

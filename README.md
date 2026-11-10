@@ -43,7 +43,8 @@ claude plugin update byhand@byhand
   CSV; for a `.pptx` or an `.xlsx` it needs something in the session that reads one.
 
 Your styles live in `~/.byhand/styles/` (`%USERPROFILE%\.byhand\styles\` on Windows), on your
-machine only: an index and one short Markdown file per style, which you can edit.
+machine only: an index and one short Markdown file per style, which you can edit. A project can have its own in its
+`.byhand/styles/`, which goes where you put the project: start Claude Code in the folder that holds it.
 
 ## How it works
 

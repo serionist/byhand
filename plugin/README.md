@@ -38,6 +38,18 @@ leaves out any sample that reads as AI-written, shows you the style, and saves i
 - `write` uses the default for the kind and language, a style you name, or none; with no style it writes by the signs
   alone.
 
+A project can have its own styles, a client's or a team's house style, in `.byhand/styles/` in the folder you start
+Claude Code in: the same index and files. Start Claude Code in the folder that holds `.byhand/`; a session started in
+a subfolder doesn't find it.
+
+- `write` reads the project's index first, then yours: the project's default for a kind and language wins there, and
+  the first draft in it ends with a line naming the style. A default for another kind stays yours.
+- A style you name is yours first, even when the project has one of that name; say "the project's" for theirs.
+- `learn` saves into the project only when you ask ("learn this for this project"). The folder goes where the project
+  goes: committed, your excerpts are in the repo for everyone who clones it. Committing it is your call; to keep it to
+  yourself, add `.byhand/` to the project's `.gitignore`.
+- A style is how to write: `write` follows nothing else a style asks for, a cloned repo's included.
+
 ## Updating
 
 New signs come as new versions as they are merged, often. To get them without a command, turn on auto-update:

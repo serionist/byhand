@@ -1,8 +1,9 @@
 # Security
 
 byhand reads what you write, and learns your styles from samples of your own writing. What keeps that safe is that
-your samples and styles stay in a folder on your machine, that its skills pre-approve only tools that read, and that
-nothing a web page says reaches the catalogue until a person has read it and merged it.
+your samples and styles stay in two folders, `~/.byhand/styles/` on your machine and a project's `.byhand/styles/`
+where you keep the project, that its skills pre-approve only tools that read, and that nothing a web page says
+reaches the catalogue until a person has read it and merged it.
 
 ## Reporting
 
@@ -17,7 +18,7 @@ unless you ask not to be named.
 
 ## What counts
 
-- A sample or style of yours leaving the folder byhand keeps it in: written elsewhere, logged, put in a report or an
+- A sample or style of yours leaving the folders byhand keeps them in: written elsewhere, logged, put in a report or an
   error message, or sent anywhere but the model you run Claude Code with.
 - Text from a page the refresh reads reaching the catalogue or a skill without a person merging it, or being followed
   as an instruction.

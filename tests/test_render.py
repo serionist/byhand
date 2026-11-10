@@ -629,6 +629,21 @@ def test_every_sign_file_a_plugin_skill_names_is_one_render_writes():
     assert [name for name in named if not name.endswith(suffixes)] == []
 
 
+def test_every_variable_a_plugin_skill_names_is_one_byhand_uses():
+    # Claude Code leaves a misspelt `${...}` as it is, so a skill naming one reads nothing, silently, on every draft.
+    # The list is ours, not Claude Code's, so it never has to follow their docs. And `write` and `learn` name the
+    # project's styles, so a later trim that drops that read fails here.
+    plugin = pathlib.Path(signs.__file__).resolve().parents[2] / "plugin"
+    texts = {
+        path.relative_to(plugin).as_posix(): path.read_text(encoding="utf-8")
+        for path in [*plugin.glob("skills/**/*.md"), *plugin.glob("agents/*.md")]
+    }
+    named = {name for text in texts.values() for name in re.findall(r"\$\{([^}]*)\}", text)}
+    assert named == {"CLAUDE_PLUGIN_ROOT", "CLAUDE_PROJECT_DIR"}
+    for skill in ("write", "learn"):
+        assert "${CLAUDE_PROJECT_DIR}/.byhand/styles/" in texts[f"skills/{skill}/SKILL.md"]
+
+
 def test_no_rendered_file_can_be_read_as_a_claude_md():
     # On Windows and macOS `claude.md` is a CLAUDE.md, which Claude Code loads as project instructions.
     claude = (ModelRange("claude", Version(4)),)

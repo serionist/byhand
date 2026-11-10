@@ -14,7 +14,7 @@ why it matters to a user, the text they send or the next change.
 
 | Severity | What it is |
 |---|---|
-| blocker | a user's samples or styles written outside their data folder, logged, committed or sent anywhere; fetched text that reaches a skill or the catalogue without a person reading it; a plugin skill that pre-approves a write or a command; a plugin skill that runs a command; a source's text copied against its licence; a secret leaked; a one-way door broken; a check loosened |
+| blocker | a user's samples or styles written outside their style folders, logged, committed or sent anywhere; fetched text that reaches a skill or the catalogue without a person reading it; a plugin skill that pre-approves a write or a command; a plugin skill that runs a command; a source's text copied against its licence; a secret leaked; a one-way door broken; a check loosened |
 | major | a real user hits it in normal use: a sign that flags plain human writing, or misses the text it names; a skill that doesn't start where its description says, or writes in the wrong style or language; a skill that errors; a broken install on Windows, Linux or macOS; new behaviour without a test |
 | minor | everything else that is real: an edge case few meet, a missing doc line, a clumsy error message |
 

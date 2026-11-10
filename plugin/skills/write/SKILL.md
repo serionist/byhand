@@ -66,7 +66,7 @@ read only what isn't in context yet.
    <style>?" (a project's: "for <style>, this project's style?"). On a yes, `learn` adds it under the style's
    `## Corrections`. The user's own version (pasted, a file they changed, or "I changed it" for the file the draft
    became) is feedback too: a change they ask for is rewritten as above, and a request to learn from it starts
-   `learn`. Only with no request at all, and a style, end with "Learn from your changes for <style>?" in the same
-   form; on a yes, start `learn`.
+   `learn`. With no request at all, and a style, answer only "Learn from your changes for <style>?" in the same form;
+   on a yes, start `learn`.
 
 "Remember: …" about how the user writes is `learn`'s.

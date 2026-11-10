@@ -99,9 +99,10 @@ versions in one prompt and a style seeded into the run's home, in the uncommitte
   size this PR leaves.
 - **An edit:** `learn`'s SKILL.md, already read for "remember", grows by about 800 bytes; the style and the sign files
   are in context from the draft.
-- **As built:** `write`'s SKILL.md went from 5,137 to 5,490 bytes (353, against about 250), the ceiling the test
-  holds; `learn`'s from 5,386 to 7,023 (1,637, against about 800): the deck and sheet marks, the signs read when both
-  versions come from the user, and three fixes the tries asked for (Tests, As run).
+- **As built:** `write`'s SKILL.md went from 5,137 to 5,488 bytes (351, against about 250), the ceiling the test
+  holds; `learn`'s from 5,386 to 7,247 (1,861, against about 800): the deck and sheet marks, the signs read when both
+  versions come from the user, three fixes the tries asked for (Tests, As run), and the code review's
+  (`docs/reviews/2026-11-10-learn-from-edits-code.md`).
 
 ## Compatibility
 

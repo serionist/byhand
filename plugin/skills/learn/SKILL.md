@@ -110,11 +110,12 @@ The user's version of a byhand draft is Remember with rules you find:
 2. **The style:** the one that draft used, or none; both from the user: as Remember picks it. None: say so and offer
    to learn one from samples, without comparing.
 3. **The habits:** keep a change only if it would hold for the next text of this kind (a sign-off, a word, sentence
-   length, register, bold or bullets cut), never a fact of this text (a date, a name, a point) or what the style
-   holds.
+   length, register, bold or bullets cut), never a fact of this text (a date, a name, a point). One the style already
+   holds is no new rule: say so, and propose nothing.
 4. **One question:** each as a short rule with its before and after, numbered: which to keep? A rule that puts in
    what a sign names says so (the signs from the draft, else Read `any/any.short.md` and `<language>/any.short.md`
-   under `${CLAUDE_PLUGIN_ROOT}/signs/`). Silence saves nothing.
+   under `${CLAUDE_PLUGIN_ROOT}/signs/`). A style they would take past 4 KB: ask in it what to drop, as in Remember.
+   Silence saves nothing.
 5. **Save the picks** as Remember does. The user's version is never a sample or an excerpt: the lines they kept are
    yours.
 

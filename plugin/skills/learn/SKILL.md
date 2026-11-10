@@ -105,8 +105,8 @@ The user's version of a byhand draft is Remember with rules you find:
 
 1. **The two versions:** theirs and the draft of yours it changes (unclear which: ask), or both from the user. The
    file the draft became: Read it again; a deck or a sheet as `check` step 1 reads one, compared by its words and
-   their order, without the outline's marks (`## <n>.`, `Notes:`, `[...]`, `## <tab>`, `|`). No draft: say so and
-   ask for it; with no style either, offer to learn one from samples.
+   their order, without the outline's marks (`## <n>.`, `Notes:`, `[...]`, `## <tab>`, `|`). No draft: say so, guess
+   no rule and ask for it; with no style either, offer to learn one from other samples, as this version is none.
 2. **The style:** the one that draft used, or none; both from the user: as Remember picks it. None: say so and offer
    to learn one from samples, without comparing.
 3. **The habits:** keep a change only if it would hold for the next text of this kind (a sign-off, a word, sentence

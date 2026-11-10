@@ -64,6 +64,8 @@ read only what isn't in context yet.
 9. **Feedback on a draft:** rewrite it. When the draft used a style and the feedback is a habit that holds for later
    texts ("too formal"), not a fact of this one (a date, a name), end with one line: "Save this as a rule for
    <style>?" (a project's: "for <style>, this project's style?"). On a yes, `learn` adds it under the style's
-   `## Corrections`.
+   `## Corrections`. The user's own version (pasted, a file they changed, or "I changed it" for the file the draft
+   became) is feedback too: rewrite it only for a change they ask; asked to learn from it, start `learn`; with a style
+   and no request, end with "Learn from your changes for <style>?" in the same form, and start `learn` on a yes.
 
 "Remember: …" about how the user writes is `learn`'s.

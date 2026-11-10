@@ -48,8 +48,8 @@ an edit is Remember with rules it finds itself:
    drafts, the one it changes; unclear: ask); or both from the user. The file the draft became this session is read
    again by its path; a deck or a sheet as `check` step 1 reads one, and compared with the outline by its words and
    their order, leaving out the outline's own marks (a deck's `## <n>.`, `Notes:` and square brackets; a sheet's
-   `## <tab>` and the table's `|`). No draft to compare with: say so and ask for it; with no style either, offer to
-   learn one from samples.
+   `## <tab>` and the table's `|`). No draft to compare with: say so, guess no rule and ask for it; with no style
+   either, offer to learn one from other samples, as the user's version is none.
 2. **The style:** the one that draft used; a byhand draft that used none has none (the no-style path below); both
    versions from the user: as Remember picks it. No style: say so and offer to learn one from samples, without
    comparing: the user's version can't be a sample, so the rules would have nowhere to go. The style file is in
@@ -58,11 +58,12 @@ an edit is Remember with rules it finds itself:
    next text of this kind: a greeting or sign-off swapped, a word or phrase cut or replaced, sentences shortened or
    joined, the register moved, formatting removed (bold, bullets, headings). A change to a fact of this text (a date,
    a name, a number, a point added or cut) is no correction. A change the style's rules or corrections already hold
-   is no new one.
+   is no new one: said so, and not proposed again.
 4. **Show them with one question:** each as a short rule with its before and after, numbered, and which to keep
    (all, some by number, or none). A change that puts in what a sign names (the sign files are in context from the
-   draft) says so beside its rule, so the user keeps it knowingly, as the bootstrap plan has it for a learned rule
-   that matches a sign. Nothing is saved on silence.
+   draft; with both versions from the user, `learn` reads `any/any.short.md` and `<language>/any.short.md`) says so
+   beside its rule, so the user keeps it knowingly, as the bootstrap plan has it for a learned rule that matches a
+   sign. A style the picks would take past 4 KB is asked about in the same question. Nothing is saved on silence.
 5. **Save the picks** as Remember saves a rule.
 
 Remember gains two rules, for both ways in: a rule that repeats an older correction replaces it, with the new date;
@@ -98,6 +99,9 @@ versions in one prompt and a style seeded into the run's home, in the uncommitte
   size this PR leaves.
 - **An edit:** `learn`'s SKILL.md, already read for "remember", grows by about 800 bytes; the style and the sign files
   are in context from the draft.
+- **As built:** `write`'s SKILL.md went from 5,137 to 5,490 bytes (353, against about 250), the ceiling the test
+  holds; `learn`'s from 5,386 to 7,023 (1,637, against about 800): the deck and sheet marks, the signs read when both
+  versions come from the user, and three fixes the tries asked for (Tests, As run).
 
 ## Compatibility
 
@@ -132,7 +136,8 @@ file, as Remember does.
   - a sign-off swapped, bold cut and a date changed: the sign-off and the bold proposed, the date not;
   - the same in Hungarian;
   - a change the seeded style's corrections already hold: not proposed again;
-  - a version that puts back "Best regards", which a sign names: the note beside its rule;
+  - a version that puts in "I hope this email finds you well", which `any-letter-boilerplate` names: the note beside
+    its rule (the plan named "Best regards", but no sign names it);
   - a seeded style near 4 KB: the question about old corrections.
 - **By hand, in a real session** (`claude --plugin-dir plugin`), with invented styles in a temporary home, never the
   maintainer's `~/.byhand/`, on both models, in English and Hungarian:
@@ -147,6 +152,17 @@ file, as Remember does.
   - a document written to a file, changed by hand, then "I changed it": the file read again, its changes proposed;
   - a deck made from an outline, a title changed in the file: that change proposed, none for the outline's marks;
   - a sheet made from an outline, a header changed in the file: the same.
+- **As run (2026-11-10, Claude Code 2.1.321, Windows):** every run's temporary folder was moved off `C:` (`TEMP` in
+  the worktree's `.local/`), so no path a model saw named the maintainer's home, and every trace was searched for it:
+  none. The by-hand cases ran as resumed eval cases in a second uncommitted suite: each history was recorded in an
+  eval run of the plugin as built, in its temporary home, and the next turn appended from the run's trace. The two
+  saves granted only `Edit(~/.byhand/styles/**)`, the run's own home; the files were compared with their seeds after.
+  The document and the sheet could not be written by the recorded turn (a write under the worktree's `.claude/` is a
+  protected path, denied in an eval run), so the seed put the user's changed file in the workspace and the prompt
+  names it; the deck's slide text is pasted. Four changes came from the tries: `learn` guesses no rule without a
+  draft, proposes nothing the style holds, and asks about 4 KB in its one question; `write` offers only for a version
+  with no request at all. Not run: the minor's empty-session try (`docs/releasing.md`), a draft after `/compact`, and
+  the by-hand cases in Hungarian beyond the offer and "learn from it".
 - **What none can show:** whether the proposed rules are the habits the user means, over weeks of real mail. The
   maintainer's own use is that test.
 

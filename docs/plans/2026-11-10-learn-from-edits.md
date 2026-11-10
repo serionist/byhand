@@ -32,9 +32,10 @@ Two skill changes and a test, no new skill, agent, command, file or key in a sty
 
 Step 9 already turns feedback on a draft into "Save this as a rule for <style>?". One sentence joins it: the user's
 own version of the draft (pasted, a file they changed, or "I changed it" for the file the draft became) is feedback
-too. `write` doesn't rewrite it. When the user's words already ask to learn from it ("this is what I sent, learn from
-it"), `write` starts `learn` at once; for a bare version it offers, in step 9's own wording, to learn from the changes
-for <style>, and starts `learn` on a yes. The offer comes only when the draft used a style, as step 9's does, and it
+too. `write` rewrites it only when the user asks for a change to it ("make this warmer"), as for any feedback. When
+the user's words ask to learn from it ("this is what I sent, learn from it"), `write` starts `learn` at once; for a
+version with no request at all, it offers, in step 9's own wording, to learn from the changes for <style>, and starts
+`learn` on a yes. The offer comes only when the draft used a style, as step 9's does, and it
 takes the project wording #105 gives that offer if #105 merges first.
 
 ### `learn`, Remember gains the edit
@@ -43,10 +44,12 @@ Remember already picks the style the last draft used or the one the user names, 
 learn a style from samples when there is none, dates each rule and names the kind of text it came from. Learning from
 an edit is Remember with rules it finds itself:
 
-1. **The two versions:** byhand's draft, from the conversation, and the user's; or both from the user. The file the
-   draft became this session is read again by its path; a deck or a sheet as `check` step 1 reads one. No draft to
-   compare with: say so, and offer to learn a style from samples instead.
-2. **The style,** as Remember picks it. No style: say so and offer to learn one from samples, without comparing: the
+1. **The two versions:** the user's, and the draft of byhand's it is an edit of, from the conversation (with several
+   drafts, the one it changes; unclear: ask); or both from the user. The file the draft became this session is read
+   again by its path; a deck or a sheet as `check` step 1 reads one, and compared with the outline by its words and
+   their order, leaving out the outline's own marks (`## <n>.`, `Notes:`, the square brackets). No draft to compare
+   with: say so, and offer to learn a style from samples instead.
+2. **The style:** the one that draft used; else as Remember picks it. No style: say so and offer to learn one from samples, without comparing: the
    user's version can't be a sample, so the rules would have nowhere to go. The style file is in context from
    `write`'s step 4 unless the conversation was compacted; then it is read again.
 3. **The changes that are habits:** compare the two line by line, and keep a change only when it would hold for the
@@ -69,6 +72,10 @@ sample: the lines they left as byhand wrote them are byhand's text, and learn ne
 `learn`'s description stays as it is: `write`'s step 9 starts `learn` by name, and a direct "learn from my changes"
 is a request to learn how the user writes, which the description already names. The eval's `learn-started` grader
 (Steps) tries that first; words are added only if it fails.
+
+No eval resumes a recorded session (the maintainer's call, Round 1, Q1): a Claude Code transcript holds the recording
+account's email and ids, its CLAUDE.md files and its MCP setup, and it freezes the skill it loaded as it was then. So
+the cases that need a draft from an earlier turn are tried by hand.
 
 ### Alternatives
 
@@ -97,36 +104,42 @@ file, as Remember does.
 
 ## Steps
 
-1. **`learn`:** Remember gains the edit and its two rules. The eval `plugin/evals/learn-from-an-edit/`: a `case.yaml`
-   whose `context.history_file` is a recorded session in which `write` drafted an invented mail in an invented
-   style; the prompt is the user's version, with a sign-off swapped, bold cut and a date changed, and "learn from my
-   changes". Graders: `learn` started; an `llm` grader that the sign-off and the bold are proposed and the date is
-   not; no Write or Edit, since no one said yes. A second, one-prompt eval gives a version with no draft before it:
-   the offer to learn from samples. The recording is scrubbed of the recording machine's paths before it is
-   committed.
-2. **`write`:** step 9's sentence. The eval `plugin/evals/write-offers-learning-from-an-edit/`: the same recording,
-   then a bare version; graders: an `llm` grader that the offer is made and no new draft written, no Write or Edit.
-   The byte ceiling test for `write`'s SKILL.md in `tests/test_render.py`.
+1. **`learn`:** Remember gains the edit and its two rules. The eval `plugin/evals/learn-from-an-edit/`, one prompt
+   as every eval here: an invented mail "I sent instead of your draft", with "learn from my changes", and no draft
+   before it. Graders: `learn` started, which tries the unchanged description; an `llm` grader that it says there is
+   no draft to compare with and offers to learn a style from samples, and proposes no rule; `write` not started.
+2. **`write`:** step 9's sentence, tried by hand (Tests). The byte ceiling test for `write`'s SKILL.md in
+   `tests/test_render.py`.
 3. **The release:** a minor, `plugin.json` and its `CHANGELOG.md` section (`docs/releasing.md`); `README.md`'s Use it
    and Next; `plugin/README.md`.
+4. **finish-work:** `uv run tools/gate.py full`, `review-code` until clean, the tries by hand, the PR.
 
 ## Tests
 
 - **Unit (CI):** the gate's plugin and skill checks over both skills; the byte ceiling on `write`'s SKILL.md.
-- **Evals,** run by hand (`claude plugin eval`), on Claude Opus 5.5 and Sonnet 5.5: the three above.
+- **The eval,** run by hand (`claude plugin eval`), on Claude Opus 5.5 and Sonnet 5.5, with the plugin's other evals
+  around `learn` and `write`, so the unchanged descriptions still start the right skill.
 - **By hand, in a real session** (`claude --plugin-dir plugin`), with invented styles in a temporary home, never the
-  maintainer's `~/.byhand/`, in English and Hungarian, for what saves:
+  maintainer's `~/.byhand/`, on both models, in English and Hungarian:
+  - a mail drafted, then the user's bare version with a sign-off swapped, bold cut and a date changed: `write`
+    offers to learn and writes no new draft; on a yes, the sign-off and the bold are proposed and the date is not;
+  - the same version with "learn from it": `learn` starts with no offer before it;
+  - the same version with "make this warmer": rewritten, no offer;
+  - a version that puts back "Best regards", which a sign names: the note beside its rule;
+  - two drafts in two styles, then an edit of the first: its style, not the second's;
   - a yes to one of two: one dated line under `## Corrections`, nothing else in the file changed;
   - a change the style's corrections already hold: not proposed again;
   - "no": the file unchanged;
   - a style near 4 KB: the question about old corrections;
-  - a document written to a file, changed by hand, then "I changed it": the file read again, its changes proposed.
+  - a document written to a file, changed by hand, then "I changed it": the file read again, its changes proposed;
+  - a deck made from an outline, a title changed in the file: that change proposed, none for the outline's marks.
 - **What none can show:** whether the proposed rules are the habits the user means, over weeks of real mail. The
   maintainer's own use is that test.
 
 ## Docs
 
-`README.md` (Use it: "Tell it what you don't like" gains the edit; Next drops `0.5.0`), `plugin/README.md`,
+`README.md` (Use it: "Tell it what you don't like" gains the edit; Next drops learning from edits, and the version
+numbers, as each PR that changes the plugin is a release of its own), `plugin/README.md`,
 `CHANGELOG.md`'s section, and the bootstrap plan's progress log (its log alone: a merged plan changes only that).
 
 ## Risks
@@ -139,7 +152,7 @@ file, as Remember does.
 | A long document compared line by line costs many tokens | Accepted: it happens only when the user asks or says yes, once |
 | `write` offers on text that isn't an edit of its draft (a new mail pasted to reply to) | Accepted: the offer is one line, and a no costs nothing |
 | A direct "learn from my changes" doesn't start `learn` with its description unchanged | Resolved: the eval's `learn-started` grader shows it, and words are added only then |
-| A recorded session committed with a path or a name from the recording machine | Resolved: it is recorded on invented text and scrubbed before the commit; gitleaks runs over it |
+| `write`'s offer and `learn`'s comparison have no eval CI or a later model change runs | Accepted: an eval would need a recorded session (Design); the PR says what ran by hand, as for every plugin change |
 
 ## Plan review
 
@@ -166,3 +179,34 @@ Noticed on the way, for Round 1: Alternatives row 1 gave the wrong reason a hook
 2 and Tests said an eval is one prompt, but `context.history_file` resumes a transcript; `write` step 9's new offer had
 no project wording; `learn` step 2's no-style path couldn't be reached from `write`; Cost said the style file is read
 again, though it is in context from the draft.
+
+### Round 1
+
+**How:** a fresh general-purpose agent on Claude Opus 5.5 (`claude-opus-5-5`), 2026-11-10, on the plan at `1c89f25`.
+**Verdict:** needs-fixes. **Now:** Q1 answered by dropping the recorded evals, which removes P1 and P2 with their
+cause; P3 to P5 and I13 edited into the plan; Round 2 reads the edits.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P1 | major | Steps 1, Risks: a recorded session holds the recording account's email and ids, its private CLAUDE.md files, its MCP setup and its skill list; "scrubbed of paths" leaves all of that in the public repo, gitleaks finds none of it, and a recording made in the repo trips the gate's command check | fixed: no recorded session is committed (Q1) |
+| P2 | major | Steps 1, 2: the transcript holds `write`'s SKILL.md as it was when recorded, so the resumed eval tests the old step 9, and a later change to it fails nothing | fixed: no recorded session (Q1); step 9 is tried by hand |
+| P3 | minor | Design, `learn` step 2: "as Remember picks it" takes the last draft's style; an edit of an earlier draft in another style gets the wrong one | fixed: the draft the version is an edit of, and its style; several and unclear: ask |
+| P4 | minor | Design, `write` step 9: "doesn't rewrite it" refuses "make this warmer" on the user's own version | fixed: rewritten when asked; the offer only for a version with no request |
+| P5 | minor | Design, `learn` steps 1, 3: a deck or sheet file compared with its outline proposes rules for the outline's own marks | fixed: compared by words and their order, the outline's marks left out |
+
+Refuted: the five defects the Fit noticed, each fixed by the taken improvements; the eval's home with no style (the
+style was in the recorded history); a missing empty-session try (`docs/releasing.md` step 3 has it); two minors on one
+version with #105 (`docs/releasing.md` covers it); a `.jsonl` refused under `plugin/evals/` (the gate allows it); the
+150 bytes against the issue's "no cost" (the maintainer took "nearly zero", and the ceiling test holds it); folding
+corrections into the rules against Out of scope (it is the user's pick, for both ways in); the auto memory row (the
+memory docs bear it out); other scripts (the comparison is the model's reading, no code depends on a script).
+
+| # | Question | Recommendation | Answer |
+|---|---|---|---|
+| Q1 | How is an eval's recorded session made: recorded and filtered to its user and assistant lines with a gate check and a pin test, written by hand, or none? | none: the fixes cost a check, a test and a re-recording on every change to `write`, for a format the docs don't say still resumes once filtered | the maintainer, 2026-11-10: none; drop the recorded evals and try those cases by hand |
+
+| # | Improvement | Answer |
+|---|---|---|
+| I11 | A gate check that a `.jsonl` under `plugin/evals/` holds only user and assistant lines | left: no recorded session is committed (Q1) |
+| I12 | A test pinning the recorded `write` body to the current SKILL.md | left: no recorded session is committed (Q1) |
+| I13 | README's Next drops its version numbers, as each PR is a release now | taken |

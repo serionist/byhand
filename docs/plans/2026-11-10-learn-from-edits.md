@@ -1,9 +1,9 @@
 ---
 title: Learn a style's corrections from the user's edits to a draft
 issue: "#106"
-status: draft
-approved_by:
-approved_at:
+status: approved
+approved_by: serionist
+approved_at: 2026-11-10
 ---
 
 # Learn a style's corrections from the user's edits to a draft
@@ -47,11 +47,13 @@ an edit is Remember with rules it finds itself:
 1. **The two versions:** the user's, and the draft of byhand's it is an edit of, from the conversation (with several
    drafts, the one it changes; unclear: ask); or both from the user. The file the draft became this session is read
    again by its path; a deck or a sheet as `check` step 1 reads one, and compared with the outline by its words and
-   their order, leaving out the outline's own marks (`## <n>.`, `Notes:`, the square brackets). No draft to compare
-   with: say so, and offer to learn a style from samples instead.
-2. **The style:** the one that draft used; else as Remember picks it. No style: say so and offer to learn one from samples, without comparing: the
-   user's version can't be a sample, so the rules would have nowhere to go. The style file is in context from
-   `write`'s step 4 unless the conversation was compacted; then it is read again.
+   their order, leaving out the outline's own marks (a deck's `## <n>.`, `Notes:` and square brackets; a sheet's
+   `## <tab>` and the table's `|`). No draft to compare with: say so and ask for it; with no style either, offer to
+   learn one from samples.
+2. **The style:** the one that draft used; a byhand draft that used none has none (the no-style path below); both
+   versions from the user: as Remember picks it. No style: say so and offer to learn one from samples, without
+   comparing: the user's version can't be a sample, so the rules would have nowhere to go. The style file is in
+   context from `write`'s step 4 unless the conversation was compacted; then it is read again.
 3. **The changes that are habits:** compare the two line by line, and keep a change only when it would hold for the
    next text of this kind: a greeting or sign-off swapped, a word or phrase cut or replaced, sentences shortened or
    joined, the register moved, formatting removed (bold, bullets, headings). A change to a fact of this text (a date,
@@ -75,7 +77,8 @@ is a request to learn how the user writes, which the description already names. 
 
 No eval resumes a recorded session (the maintainer's call, Round 1, Q1): a Claude Code transcript holds the recording
 account's email and ids, its CLAUDE.md files and its MCP setup, and it freezes the skill it loaded as it was then. So
-the cases that need a draft from an earlier turn are tried by hand.
+`write`'s offer, which needs a draft from an earlier turn, is tried by hand. `learn`'s comparison needs none: both
+versions in one prompt and a style seeded into the run's home, in the uncommitted suite of Tests.
 
 ### Alternatives
 
@@ -90,8 +93,9 @@ the cases that need a draft from an earlier turn are tried by hand.
 
 ### Cost
 
-- **A session with no edit:** one sentence more in `write`'s step 9, read with each draft, about 150 bytes; nothing
-  in any description. A test holds `write`'s SKILL.md under a byte ceiling, set at the size this PR leaves.
+- **A session with no edit:** one sentence more in `write`'s step 9, read with each draft, about 250 bytes (the PR
+  names the real size); nothing in any description. A test holds `write`'s SKILL.md under a byte ceiling, set at the
+  size this PR leaves.
 - **An edit:** `learn`'s SKILL.md, already read for "remember", grows by about 800 bytes; the style and the sign files
   are in context from the draft.
 
@@ -107,7 +111,8 @@ file, as Remember does.
 1. **`learn`:** Remember gains the edit and its two rules. The eval `plugin/evals/learn-from-an-edit/`, one prompt
    as every eval here: an invented mail "I sent instead of your draft", with "learn from my changes", and no draft
    before it. Graders: `learn` started, which tries the unchanged description; an `llm` grader that it says there is
-   no draft to compare with and offers to learn a style from samples, and proposes no rule; `write` not started.
+   no draft to compare with and asks for it or offers to learn a style from samples, proposes no rule, and takes
+   the mail as no sample; `write` not started.
 2. **`write`:** step 9's sentence, tried by hand (Tests). The byte ceiling test for `write`'s SKILL.md in
    `tests/test_render.py`.
 3. **The release:** a minor, `plugin.json` and its `CHANGELOG.md` section (`docs/releasing.md`); `README.md`'s Use it
@@ -119,20 +124,29 @@ file, as Remember does.
 - **Unit (CI):** the gate's plugin and skill checks over both skills; the byte ceiling on `write`'s SKILL.md.
 - **The eval,** run by hand (`claude plugin eval`), on Claude Opus 5.5 and Sonnet 5.5, with the plugin's other evals
   around `learn` and `write`, so the unchanged descriptions still start the right skill.
+- **A seeded suite, never committed,** as the project-styles plan's (`docs/plans/2026-11-09-project-styles.md`,
+  Evals): a copy of `plugin/` in `.local/learn-from-edits-try/` (git-ignored), its cases' seed scripts writing
+  invented styles into the run's temporary `$HOME/.byhand/styles/`, run with `claude plugin eval
+  .local/learn-from-edits-try --scaffold --ablation none`, three runs a case on both models. Each case gives both
+  versions in one prompt with "learn from my changes":
+  - a sign-off swapped, bold cut and a date changed: the sign-off and the bold proposed, the date not;
+  - the same in Hungarian;
+  - a change the seeded style's corrections already hold: not proposed again;
+  - a version that puts back "Best regards", which a sign names: the note beside its rule;
+  - a seeded style near 4 KB: the question about old corrections.
 - **By hand, in a real session** (`claude --plugin-dir plugin`), with invented styles in a temporary home, never the
   maintainer's `~/.byhand/`, on both models, in English and Hungarian:
   - a mail drafted, then the user's bare version with a sign-off swapped, bold cut and a date changed: `write`
-    offers to learn and writes no new draft; on a yes, the sign-off and the bold are proposed and the date is not;
+    offers to learn and writes no new draft; on a yes, `learn` proposes its rules;
   - the same version with "learn from it": `learn` starts with no offer before it;
-  - the same version with "make this warmer": rewritten, no offer;
-  - a version that puts back "Best regards", which a sign names: the note beside its rule;
+  - the same version with "make this warmer": rewritten, no offer to learn from the changes (step 9's own offer to
+    save "warmer" as a rule may come);
   - two drafts in two styles, then an edit of the first: its style, not the second's;
   - a yes to one of two: one dated line under `## Corrections`, nothing else in the file changed;
-  - a change the style's corrections already hold: not proposed again;
   - "no": the file unchanged;
-  - a style near 4 KB: the question about old corrections;
   - a document written to a file, changed by hand, then "I changed it": the file read again, its changes proposed;
-  - a deck made from an outline, a title changed in the file: that change proposed, none for the outline's marks.
+  - a deck made from an outline, a title changed in the file: that change proposed, none for the outline's marks;
+  - a sheet made from an outline, a header changed in the file: the same.
 - **What none can show:** whether the proposed rules are the habits the user means, over weeks of real mail. The
   maintainer's own use is that test.
 
@@ -152,7 +166,7 @@ numbers, as each PR that changes the plugin is a release of its own), `plugin/RE
 | A long document compared line by line costs many tokens | Accepted: it happens only when the user asks or says yes, once |
 | `write` offers on text that isn't an edit of its draft (a new mail pasted to reply to) | Accepted: the offer is one line, and a no costs nothing |
 | A direct "learn from my changes" doesn't start `learn` with its description unchanged | Resolved: the eval's `learn-started` grader shows it, and words are added only then |
-| `write`'s offer and `learn`'s comparison have no eval CI or a later model change runs | Accepted: an eval would need a recorded session (Design); the PR says what ran by hand, as for every plugin change |
+| `write`'s offer and `learn`'s comparison have no committed eval to run again after a later change or a new model | Accepted: the offer would need a recorded session (Design), and the seeded suite stays uncommitted, as the gate refuses a seed script in `plugin/evals/`; the PR says what ran, as for every plugin change |
 
 ## Plan review
 
@@ -210,3 +224,30 @@ memory docs bear it out); other scripts (the comparison is the model's reading, 
 | I11 | A gate check that a `.jsonl` under `plugin/evals/` holds only user and assistant lines | left: no recorded session is committed (Q1) |
 | I12 | A test pinning the recorded `write` body to the current SKILL.md | left: no recorded session is committed (Q1) |
 | I13 | README's Next drops its version numbers, as each PR is a release now | taken |
+
+### Round 2
+
+**How:** a fresh general-purpose agent on Claude Opus 5.5 (`claude-opus-5-5`), 2026-11-10, on the edits from `1c89f25`
+to `3d99691` and Round 1's findings. **Verdict:** approved. **Now:** P6 to P8 and I15 to I17 edited into the plan;
+I14 taken by the maintainer, who approved the plan the same day.
+
+P1 to P5 are fixed by the edits, P3 and P5 with the gaps P6 and P7 left. Q1 is carried through Design, Steps, Tests
+and Risks.
+
+| # | Sev | Finding | Status |
+|---|---|---|---|
+| P6 | minor | Design, `learn` step 2: an edit of a draft that used no style fell to Remember's pick, the last draft's style, and could save Hungarian habits in an English style | fixed: a draft with no style has none, and takes the no-style path; Remember's pick only when the user gives both versions |
+| P7 | minor | Design, `learn` step 1: P5's fix named a deck outline's marks only; a sheet's `## <tab>` lost in its CSV would read as a habit | fixed: a sheet's marks named, and a sheet try added |
+| P8 | minor | Design, `learn` step 1 and the eval's grader: with no draft, learn offered samples to a user who has a style and could paste the draft | fixed: it asks for the draft; samples only with no style either; the grader takes either |
+
+Refuted: the byte ceiling test not in `tests/test_render.py` yet (Step 2 adds it); the empty-session try for a minor
+(`docs/releasing.md` step 3); README's Next (the Docs edit matches `docs/releasing.md`); an eval that shows nothing
+(the grader fails a mail taken as a sample); new behaviour without a test (tried by hand, the maintainer's Q1). The
+Fit's I5 still reads `taken`: a dated record, and Round 1's Now line says Q1 reversed it.
+
+| # | Improvement | Answer |
+|---|---|---|
+| I14 | A seeded suite, never committed, as the project-styles plan's, for `learn`'s comparison with both versions in one prompt: in place of four tries by hand, three runs a case on both models | taken |
+| I15 | Risks: the row implied evals run in CI, and that the comparison needs a recorded session | taken |
+| I16 | Tests: "make this warmer" expects no offer to learn from the changes, while step 9's own offer to save a rule may come | taken |
+| I17 | Cost: the three-way sentence is nearer 250 bytes than 150; the PR names the real size | taken |

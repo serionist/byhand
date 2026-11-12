@@ -10,12 +10,13 @@ before `1.0` a minor may break something, under Breaking.
 - `/byhand:write` picks a style by its name. When you name none, it takes the first style in the text's language that
   is the default for no kind and whose name plainly is who the text is for or its occasion (`vendor` for a mail to a
   supplier, `friends` for one to a friend), before the default for the kind of writing. A style that is the default
-  for a kind stays with that kind, and a name is never stretched to fit.
+  for a kind stays with that kind, and a name is never stretched to fit. Under the first draft in a style picked this
+  way it says so in one line ("In your style `friends`."), so a pick you didn't want is easy to see.
 - In a project, its styles are still read first: one of the project's picked by its name, then the project's default
   for the kind and language, then your own by name, then your own default. A project's style whose name fits now
   comes before the project's default.
 - `/byhand:learn` proposes a name that says who a style is for or its occasion.
-- `/byhand:write`'s own file, which every draft reads, grows from 5,488 to 5,855 bytes; a test holds it there.
+- `/byhand:write`'s own file, which every draft reads, grows from 5,488 to 5,946 bytes; a test holds it there.
 
 ## 0.4.0 (2026-11-10)
 

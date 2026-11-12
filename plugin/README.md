@@ -42,7 +42,9 @@ leaves out any sample that reads as AI-written, shows you the style, and saves i
 - `write` uses the style you name. With none named, it takes the first style in the text's language that is the
   default for no kind and whose name plainly is who the text is for or its occasion (`vendor` for a mail to a
   supplier, `friends` for one to a friend), else the default for the kind and language. It never stretches a name:
-  with no plain fit the default holds, and with no style it writes by the signs alone.
+  with no plain fit the default holds. The first draft in a style picked by its name ends with a line naming it.
+- With no default for the kind either, `write` uses your one style in that language that is the default for nothing,
+  whatever its name, and asks which when there are several. With no style it writes by the signs alone.
 - Name a style after its reader or its occasion (`clients`, `friends`): `write` picks by the name, and `learn`
   proposes one. A style that is the default for a kind stays with that kind, whatever its name.
 

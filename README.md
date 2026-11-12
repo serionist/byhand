@@ -64,8 +64,17 @@ The result is a list of styles, such as:
 | familie | de | message |
 | arbeit | de | email |
 
-`/byhand:write` uses the default for the kind of writing and its language, or the style you name. To see your list or
-change a default, ask for it.
+`/byhand:write` picks the style for each text, in this order:
+
+1. the style you name;
+2. a style that is the default for nothing and whose name plainly fits who the text is for, such as `friends` for a
+   mail to a friend;
+3. the default for the kind of writing and its language.
+
+So a style's name works as a short description of when to use it. When `/byhand:write` picks a style by its name, it
+says so in one line under the draft.
+
+To see your list or change a default, ask for it.
 
 You can also say "learn my style from these" with two or more of your own mails, messages, decks or sheets, as files
 or pasted text. `/byhand:learn` leaves out any sample that reads as AI-written.

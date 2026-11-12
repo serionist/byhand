@@ -37,7 +37,7 @@ Ask Claude Code as you always do, in any language. The skills start by themselve
 - Ask for a deck or a sheet. `/byhand:write` writes its text, and the file is made by whatever makes files in your
   session (such as the `pptx` skill or a script). If nothing there can make the file, you get the outline.
 - Ask "does this read as AI-written?" `/byhand:check` lists the signs it finds, with their lines and what a person
-  writes instead. It gives no score.
+  writes instead. It gives no score, because it is for your own writing and is no detector.
 
 `/byhand:write` isn't meant for text that lives with code, such as commit messages, READMEs and docstrings.
 
@@ -50,9 +50,12 @@ Learn my styles from my sent mail and my Slack and Discord messages of the last 
 Group them by language and by who I write to, and show me each style before you save it.
 ```
 
-Claude Code reads the messages with the tools your session has, such as an MCP server for your mail or the browser.
-byhand brings no such tool of its own. `/byhand:learn` then writes a style from each group, from your own lines only,
-and saves it only when you say yes.
+byhand reads no mailbox itself. Claude Code fetches the messages with the tools your session has, such as an MCP
+server for your mail or the browser. With no such tool, put the messages in a folder as files and name the folder in
+the request.
+
+`/byhand:learn` leaves out any sample that reads as AI-written, writes a style for each group from your own lines
+only, and saves a style only when you say yes.
 
 The result is a list of styles, such as:
 
@@ -67,17 +70,18 @@ The result is a list of styles, such as:
 `/byhand:write` picks the style for each text, in this order:
 
 1. the style you name;
-2. a style that is the default for nothing and whose name plainly fits who the text is for, such as `friends` for a
-   mail to a friend;
-3. the default for the kind of writing and its language.
+2. a style in the text's language that is the default for nothing and whose name plainly fits who the text is for,
+   such as `friends` for a mail to a friend;
+3. the default for the kind of writing and its language;
+4. with no default for the kind, your one style in that language that is the default for nothing.
 
 So a style's name works as a short description of when to use it. When `/byhand:write` picks a style by its name, it
-says so in one line under the draft.
+says so in one line under the first such draft.
 
 To see your list or change a default, ask for it.
 
-You can also say "learn my style from these" with two or more of your own mails, messages, decks or sheets, as files
-or pasted text. `/byhand:learn` leaves out any sample that reads as AI-written.
+For one style, say "learn my style from these" with two or more of your own mails, messages, decks or sheets, as
+files or pasted text.
 
 To fine-tune a style later:
 

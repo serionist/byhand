@@ -1,23 +1,24 @@
 # byhand
 
-A Claude Code plugin that writes the way you do: your mail, messages, posts, documents, decks and sheets, in your
-language and your own style, without the words, structure, formatting and layout that make text read as AI-written.
+A Claude Code plugin that writes your mail, messages, posts, documents, decks and sheets the way you do, without the
+words, structure, formatting and layout that make text read as AI-written.
 
 ## Install
+
+Run these in Claude Code:
 
 ```text
 /plugin marketplace add serionist/byhand
 /plugin install byhand@byhand
 ```
 
-That's all: no Python, nothing else to install or run. Claude Code may ask you to allow a byhand skill the first
-time it runs, and saving a style always asks first.
+There is nothing else to install or run. Claude Code may ask you to allow a byhand skill the first time it runs.
 
 ## Update
 
-New signs come as new versions as they are merged, often. To get them without a command, turn on auto-update:
-`/plugin`, Marketplaces, `byhand`, Enable auto-update. Or, for a new version, run this in your shell, then start a
-new session:
+New signs are released often, each as a new version of the plugin. To get them automatically, turn on auto-update in
+`/plugin` (Marketplaces, `byhand`, Enable auto-update). To update by hand, run this in your shell and start a new
+session:
 
 ```text
 claude plugin update byhand@byhand
@@ -25,51 +26,86 @@ claude plugin update byhand@byhand
 
 ## Use it
 
-- **Write as you always do.** Ask Claude Code for a mail, a Slack message, a post or a document, in any language.
-  `/byhand:write` starts by itself, writes it in your style without the signs of AI writing, and reads its own draft
-  before showing it. It isn't meant for text that lives with code, such as commit messages, READMEs and
-  docstrings, and seldom starts on it.
-- **Make a deck or a sheet.** Ask for one as you would ("make me a deck about the office move"). `/byhand:write`
-  writes its text first, slide by slide or tab by tab, and whatever makes files in your session (a skill such as
-  `pptx`, a tool, a script) makes the file from it. byhand itself makes no file. With nothing that can, you get the
-  outline.
-- **Teach it your style.** "Learn my style from these" with two or more of your own mails, messages, decks or
-  sheets, as files or pasted. `/byhand:learn` leaves out any sample that reads as AI-written, shows you the style,
-  and saves it only when you say yes. You can have several, and make one the default for each kind of writing and language.
-- **Tell it what you don't like.** After a draft in one of your styles, say what's off. If it's a habit, it offers to
-  keep it as a rule in that style; "remember: …" does the same. Or give it the version you sent instead, pasted or
-  as the file you changed: `/byhand:learn` names the habits behind your changes and keeps the ones you pick.
-- **Check a text.** "Does this read as AI-written?" `/byhand:check` lists the signs with their lines and what a person
-  writes instead. No score: it is for your own writing, not a detector. A deck or a sheet can come as a PDF or a
-  CSV; for a `.pptx` or an `.xlsx` it needs something in the session that reads one.
+Teaching it your style is optional. byhand works right after the install, and without a style it still leaves out
+the signs of AI writing. To get text in your own voice as well, teach it first with one large request (see
+[Teach it](#teach-it-optional)).
 
-Your styles live in `~/.byhand/styles/` (`%USERPROFILE%\.byhand\styles\` on Windows), on your
-machine only: an index and one short Markdown file per style, which you can edit. A project can have its own in its
-`.byhand/styles/`, which goes where you put the project: start Claude Code in the folder that holds it.
+Ask Claude Code as you always do, in any language. The skills start by themselves.
+
+- Ask for a mail, a Slack message, a post or a document. `/byhand:write` writes it in your style and reads its own
+  draft before showing it.
+- Ask for a deck or a sheet. `/byhand:write` writes its text, and the file is made by whatever makes files in your
+  session (such as the `pptx` skill or a script). If nothing there can make the file, you get the outline.
+- Ask "does this read as AI-written?" `/byhand:check` lists the signs it finds, with their lines and what a person
+  writes instead. It gives no score.
+
+`/byhand:write` isn't meant for text that lives with code, such as commit messages, READMEs and docstrings.
+
+## Teach it (optional)
+
+Start with one large request that covers everything you write, such as:
+
+```text
+Learn my styles from my sent mail and my Slack and Discord messages of the last six months.
+Group them by language and by who I write to, and show me each style before you save it.
+```
+
+Claude Code reads the messages with the tools your session has, such as an MCP server for your mail or the browser.
+byhand brings no such tool of its own. `/byhand:learn` then writes a style from each group, from your own lines only,
+and saves it only when you say yes.
+
+The result is a list of styles, such as:
+
+| Style | Language | Default for |
+|---|---|---|
+| work-mail | en | email |
+| team-chat | en | message |
+| friends | en | - |
+| familie | de | message |
+| arbeit | de | email |
+
+`/byhand:write` uses the default for the kind of writing and its language, or the style you name. To see your list or
+change a default, ask for it.
+
+You can also say "learn my style from these" with two or more of your own mails, messages, decks or sheets, as files
+or pasted text. `/byhand:learn` leaves out any sample that reads as AI-written.
+
+To fine-tune a style later:
+
+- Say what is wrong with a draft. If it is a habit, byhand offers to keep it as a rule in that style.
+- Say a rule, such as "remember: I never sign off with Best regards".
+- Give it the version you sent instead of its draft. `/byhand:learn` names the habits behind your changes and keeps
+  the ones you pick.
+- Edit the file. Your styles are short Markdown files in `~/.byhand/styles/` (`%USERPROFILE%\.byhand\styles\` on
+  Windows), and they stay on your machine.
+
+A project can have its own styles in its `.byhand/styles/` folder. See [plugin/README.md](plugin/README.md) for the
+detail on each skill and on styles.
 
 ## How it works
 
 byhand is two sets of Markdown files and the skills that read them:
 
-- **Signs:** what makes text read as AI-written, per language and per model family and version. English, Chinese
-  (Simplified and Traditional), Japanese, Korean, Russian, German, French, Hungarian, Spanish, Portuguese, Arabic,
-  Italian, Vietnamese, Turkish and Finnish have their own; every language gets the signs all languages share. Each sign says what a person writes instead.
-- **Styles:** how you write, learned from your own samples.
+- The signs say what makes text read as AI-written and what a person writes instead, for each language and for each
+  model family and version.
+- The styles say how you write. They are learned from your own samples.
 
-Each draft loads only the signs for its language, its kind of writing and the model writing it, plus one style: a few
-thousand tokens, never the whole catalogue. A model newer than the catalogue gets its family's current signs.
+A draft loads only the signs for its language, its kind of writing and the model writing it, plus one style. This is
+a few thousand tokens, and never the whole catalogue. A model that is newer than the catalogue gets the current signs
+of its family.
 
-The catalogue stays current: a daily job checks the sources it cites and opens an issue when one changes, and the new
-signs come as a pull request a person reads.
+The following languages have their own signs: English, Chinese (Simplified and Traditional), Japanese, Korean,
+Russian, German, French, Hungarian, Spanish, Portuguese, Arabic, Italian, Vietnamese, Turkish and Finnish. Every
+language also gets the signs that all languages share. More languages will be added, each from sources written in
+that language.
 
-## Next
-
-- **More languages,** each from sources in its own language.
+A daily job checks the sources that the catalogue cites and opens an issue when one changes. The new signs are added
+in a pull request that a person reads before it is merged.
 
 ## Contributing
 
-A sign for your language helps the most, and needs no code: see [CONTRIBUTING.md](CONTRIBUTING.md). The rules for
-changing the repo, for people and agents, are in [AGENTS.md](AGENTS.md).
+The most useful contribution is a sign for your language, and you don't need to write code for it. See
+[CONTRIBUTING.md](CONTRIBUTING.md). The rules for changing the repo are in [AGENTS.md](AGENTS.md).
 
 ## Licence
 

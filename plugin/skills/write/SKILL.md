@@ -29,6 +29,10 @@ read only what isn't in context yet.
    it again this conversation; the home folder itself: none), then `~/.byhand/styles/index.md`: one list, the
    project's rows first. Pick:
    - a style the user names; a name in both folders is the user's own (`~/`) unless they say the project's;
+   - else by name, among the styles in this language that are the default for no kind: the first whose name is what
+     this text's reader or occasion plainly is (`vendor`: a supplier; `leadership`: the CEO), never a stretch
+     (`client`: a recruiter), judged by the name alone. The user's own only when the project has no default for this
+     kind and language;
    - else the default for this kind and language (two rows claiming one: the first wins);
    - else the one style in this language that is the default for no kind;
    - else, with several such, ask which;
@@ -57,10 +61,11 @@ read only what isn't in context yet.
 7. **Read your draft** against the signs and the style, line by line, and rewrite what you find.
 8. **Answer with the draft** and nothing else the user didn't ask for: no line before it ("Here's a draft"), no list
    of what you avoided, no offer after it. A note only when you had to guess something the text needs (a date, a
-   name), and under the first draft in this conversation that uses a project's style, one line: "In this project's
-   style `<style>`." For a file, then make it from this text as you would without byhand (a skill, a tool the user
-   named, your own script): keep its words, order and slides; add no slide, title, label, number, picture, icon or
-   chart it doesn't give. With nothing that can make it: the draft alone.
+   name), and one line under a style's first draft in this conversation: "In this project's style `<style>`." for a
+   project's, "In your style `<style>`." for one of the user's picked by its name, never for their default. For a
+   file, then make it from this text as you would without byhand (a skill, a tool the user named, your own script):
+   keep its words, order and slides; add no slide, title, label, number, picture, icon or chart it doesn't give. With
+   nothing that can make it: the draft alone.
 9. **Feedback on a draft:** rewrite it. When the draft used a style and the feedback is a habit that holds for later
    texts ("too formal"), not a fact of this one (a date, a name), end with one line: "Save this as a rule for
    <style>?" (a project's: "for <style>, this project's style?"). On a yes, `learn` adds it under the style's

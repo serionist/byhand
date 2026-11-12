@@ -72,7 +72,9 @@ habits, words they like and words they never use.
 2. **Screen each one** by `check`'s steps 1 to 7: Read `${CLAUDE_PLUGIN_ROOT}/skills/check/SKILL.md`. Its paths name
    the plugin's folder with a variable: it is `${CLAUDE_PLUGIN_ROOT}`. A sample in which a sign counts reads as
    AI-written: leave it out and name it with its signs, unless the user says it is theirs.
-3. **Judge** the language from the samples, and propose a short name.
+3. **Judge** the language from the samples, and propose a short name that says who the style is for or its occasion
+   (`clients`, `csalad`): `write` picks a style by it when the user names none and the style is the default for no
+   kind.
 4. **Write the style** from the samples left, and from the user's own lines only: never a quoted reply, a forwarded
    message or code. How this person writes, in their own patterns, not a list of virtues. A deck style says what
    their slides hold: titles as topics or sentences, how much text, bullets or sentences, notes or none; a sheet

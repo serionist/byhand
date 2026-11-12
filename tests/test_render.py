@@ -646,9 +646,40 @@ def test_every_variable_a_plugin_skill_names_is_one_byhand_uses():
 
 def test_writes_skill_stays_within_its_bytes():
     # Every draft reads write's SKILL.md whole, so each byte it gains costs every draft, edited or not. The ceiling is
-    # its size after #106; a change that needs more raises it here, where a review sees the number move.
+    # its size after #110; a change that needs more raises it here, where a review sees the number move.
     plugin = pathlib.Path(signs.__file__).resolve().parents[2] / "plugin"
-    assert len((plugin / "skills" / "write" / "SKILL.md").read_bytes()) <= 5488
+    assert len((plugin / "skills" / "write" / "SKILL.md").read_bytes()) <= 5946
+
+
+def test_write_picks_a_style_by_its_name_before_the_users_default():
+    # No test runs a session, so this holds the order of write's picks: a trim that drops the pick by name, or moves
+    # it below the default, would send a mail to a friend out in the work style again.
+    plugin = pathlib.Path(signs.__file__).resolve().parents[2] / "plugin"
+    text = (plugin / "skills" / "write" / "SKILL.md").read_text(encoding="utf-8")
+    picks = (
+        "- a style the user names",
+        "- else by name, among the styles in this language that are the default for no kind",
+        "- else the default for this kind and language",
+    )
+    places = [text.index(pick) for pick in picks]
+    assert places == sorted(places)
+    # The pick's guards, each of which a trim to the byte ceiling could cut with the order still right. Without them a
+    # name is stretched (a mail to a landlord went out in a style named `vendor`, with a default there to take it), a
+    # second style is opened to judge it, two names that fit send the text to the default, or the user's own style
+    # writes a document in a project that has its house style.
+    by_name = " ".join(text[places[1] : places[2]].split())
+    guards = (
+        "the first whose name is what",
+        "never a stretch",
+        "judged by the name alone",
+        "The user's own only when the project has no default for this kind and language",
+    )
+    for guard in guards:
+        assert guard in by_name
+    # A pick by name is a judgement, so the draft says which style it took: a wrong one is seen, not sent. A draft in
+    # the default stays bare, as it was.
+    line = '"In your style `<style>`." for one of the user\'s picked by its name, never for their default'
+    assert line in " ".join(text.split())
 
 
 def test_no_rendered_file_can_be_read_as_a_claude_md():

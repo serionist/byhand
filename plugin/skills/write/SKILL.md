@@ -29,6 +29,10 @@ read only what isn't in context yet.
    it again this conversation; the home folder itself: none), then `~/.byhand/styles/index.md`: one list, the
    project's rows first. Pick:
    - a style the user names; a name in both folders is the user's own (`~/`) unless they say the project's;
+   - else the project's default for this kind and language;
+   - else the style in this language whose name is what this text's reader or occasion plainly is (`vendor`: a
+     supplier; `leadership`: the CEO), never a stretch (`client`: a recruiter), judged by the name alone; of several,
+     this kind's default, else the first;
    - else the default for this kind and language (two rows claiming one: the first wins);
    - else the one style in this language that is the default for no kind;
    - else, with several such, ask which;

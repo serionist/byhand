@@ -3,6 +3,18 @@
 What changed in each release, for the people who use byhand. Versions follow [semantic versioning](https://semver.org);
 before `1.0` a minor may break something, under Breaking.
 
+## 0.5.0 (2026-11-12)
+
+### Changed
+
+- `/byhand:write` picks a style by its name. When you name none, it takes the style in the text's language whose name
+  fits who the text is for or its occasion (`vendor` for a mail to a supplier, `friends` for one to a friend), before
+  your default for the kind of writing. Of several names that fit, the default for the kind wins, else the first in
+  the list. With no clear fit the default holds as before, and a project's default for the kind and language still
+  comes before a name that fits.
+- `/byhand:learn` proposes a name that says who a style is for or its occasion.
+- `/byhand:write`'s own file, which every draft reads, grows from 5,488 to 5,819 bytes; a test holds it there.
+
 ## 0.4.0 (2026-11-10)
 
 ### Added

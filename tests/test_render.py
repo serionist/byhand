@@ -646,9 +646,25 @@ def test_every_variable_a_plugin_skill_names_is_one_byhand_uses():
 
 def test_writes_skill_stays_within_its_bytes():
     # Every draft reads write's SKILL.md whole, so each byte it gains costs every draft, edited or not. The ceiling is
-    # its size after #106; a change that needs more raises it here, where a review sees the number move.
+    # its size after #110; a change that needs more raises it here, where a review sees the number move.
     plugin = pathlib.Path(signs.__file__).resolve().parents[2] / "plugin"
-    assert len((plugin / "skills" / "write" / "SKILL.md").read_bytes()) <= 5488
+    assert len((plugin / "skills" / "write" / "SKILL.md").read_bytes()) <= 5819
+
+
+def test_write_picks_a_style_by_its_name_before_the_users_default():
+    # No test runs a session, so this holds the order of write's picks: a trim that drops the pick by name, or moves
+    # it below the default, would send a mail to a friend out in the work style again, and one that moves it above
+    # the project's default would write a client's document in the user's own style.
+    plugin = pathlib.Path(signs.__file__).resolve().parents[2] / "plugin"
+    text = (plugin / "skills" / "write" / "SKILL.md").read_text(encoding="utf-8")
+    picks = (
+        "- a style the user names",
+        "- else the project's default for this kind and language",
+        "- else the style in this language whose name is what",
+        "- else the default for this kind and language",
+    )
+    places = [text.index(pick) for pick in picks]
+    assert places == sorted(places)
 
 
 def test_no_rendered_file_can_be_read_as_a_claude_md():

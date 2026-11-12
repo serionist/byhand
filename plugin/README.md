@@ -39,20 +39,21 @@ leaves out any sample that reads as AI-written, shows you the style, and saves i
   from the changes; `learn` lists the habits behind them as numbered rules, before and after, and adds the ones you
   pick under `## Corrections` of the style the draft used. A date or a name you changed is no habit, and your version
   never becomes an excerpt. A correction that repeats an older one replaces it; past 4 KB, `learn` asks which to drop.
-- `write` uses the style you name. With none named, it takes the style in the text's language whose name fits who the
-  text is for or its occasion (`vendor` for a mail to a supplier, `friends` for one to a friend), else the default for
-  the kind and language. Of several names that fit, the default for the kind wins, else the first in the list. It
-  never guesses: with no clear fit the default holds, and with no style it writes by the signs alone.
+- `write` uses the style you name. With none named, it takes the first style in the text's language that is the
+  default for no kind and whose name plainly is who the text is for or its occasion (`vendor` for a mail to a
+  supplier, `friends` for one to a friend), else the default for the kind and language. It never stretches a name:
+  with no plain fit the default holds, and with no style it writes by the signs alone.
 - Name a style after its reader or its occasion (`clients`, `friends`): `write` picks by the name, and `learn`
-  proposes one.
+  proposes one. A style that is the default for a kind stays with that kind, whatever its name.
 
 A project can have its own styles, a client's or a team's house style, in `.byhand/styles/` in the folder you start
 Claude Code in: the same index and files. Start Claude Code in the folder that holds `.byhand/`; a session started in
 a subfolder doesn't find it.
 
-- `write` reads the project's index first, then yours: the project's default for a kind and language wins there, over
-  a name that fits too, and the first draft in it ends with a line naming the style. A default for another kind stays
-  yours.
+- `write` reads the project's index first, then yours: a style of the project's picked by its name, then the project's
+  default for the kind and language, then your own. The project's default wins over your own styles there, one whose
+  name fits included, and the first draft in a project's style ends with a line naming it. A default for another kind
+  stays yours.
 - A style you name is yours first, even when the project has one of that name; say "the project's" for theirs.
 - `learn` saves into the project only when you ask ("learn this for this project"). The folder goes where the project
   goes: committed, your excerpts are in the repo for everyone who clones it. Committing it is your call; to keep it to

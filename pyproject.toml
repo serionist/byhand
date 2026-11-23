@@ -18,11 +18,11 @@ byhand = "byhand.cli:main"
 [dependency-groups]
 dev = [
     "basedpyright==1.40.2",
-    "coverage==7.17.2",
+    "coverage==7.17.3",
     "import-linter==2.16",
     "pytest==9.2.0",
     "pytest-xdist==3.8.0",
-    "ruff==0.17.4",
+    "ruff==0.17.5",
 ]
 
 [tool.hatch.build.targets.wheel]
